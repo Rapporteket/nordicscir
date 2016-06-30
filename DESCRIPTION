@@ -1,5 +1,5 @@
-Package: NorScir
-Title: Provide R resources for NorScir at Rapporteket
+Package: nordicscir
+Title: R-pakke for å generere resultater fra NordicScir
 Version: 0.1.0
 Authors@R: c(
   person("Olsen", "Lena Ringstad", email = "Lena.Ringstad.Olsen@unn.no",
