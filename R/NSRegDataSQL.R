@@ -12,9 +12,6 @@ NSRegDataSQL <- function() {
 
   query <- "SELECT
      Scietiol,
-     isVrtbrInj,
-     isAssocInj,
-     isSpnlSurg,
      VentAssi,
      PlaceDis,
      ASensLvlAreaL,
@@ -48,14 +45,19 @@ NSRegDataSQL <- function() {
      ReshId,
      DagerRehab,
      DagerTilRehab,
-     AlderAar,
-     ShNavn,
      NevrNivaaInn,
      NevrNivaaUt
 FROM
      MainFormDataContract"
 
   RegData <- rapbase::LoadRegData(registryName, query, dbType)
-
+  
+  #isVrtbrInj,
+  #isAssocInj,
+  #isSpnlSurg,
+  #AlderAar,
+  #ShNavn,
+  
+  
   return(RegData)
 }
