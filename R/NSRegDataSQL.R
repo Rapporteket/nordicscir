@@ -7,7 +7,7 @@
 
 NSRegDataSQL <- function() {
 
-  registryName <- "NorScir"
+  registryName <- "nordicscir"
   dbType <- "mysql"
 
   query <- "SELECT
