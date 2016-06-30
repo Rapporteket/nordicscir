@@ -24,7 +24,6 @@ NSRegDataSQL <- function() {
      FMtrLvlAreaL,
      FMtrLvlAreaR,
      FAis,
-     BirthDt,
      InjuryDt,
      AdmitDt,
      DischgDt,
@@ -37,26 +36,28 @@ NSRegDataSQL <- function() {
      InjuryDateUnknown,
      OutOfHosptlDy,
      HosptlDy,
-     isMale,
      SatGenrl,
      SatPhys,
      SatPsych,
-     SkjemaID,
      ReshId,
-     DagerRehab,
-     DagerTilRehab,
-     NevrNivaaInn,
-     NevrNivaaUt
 FROM
      MainFormDataContract"
 
   RegData <- rapbase::LoadRegData(registryName, query, dbType)
-  
+
+ #Tidligere med:  
   #isVrtbrInj,
   #isAssocInj,
   #isSpnlSurg,
   #AlderAar,
   #ShNavn,
+  #BirthDt,
+  #isMale,
+  #SkjemaID,
+  #DagerRehab,
+  #DagerTilRehab,
+  #NevrNivaaInn,
+  #NevrNivaaUt
   
   
   return(RegData)
