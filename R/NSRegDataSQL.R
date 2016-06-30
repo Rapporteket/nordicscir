@@ -29,16 +29,12 @@ NSRegDataSQL <- function() {
      DischgDt,
      ANeuExmDt,
      FNeuExmDt,
-     QolDt,
      AdmitRehDt,
      ANeuNoMeasure,
      FNeuNoMeasure,
      InjuryDateUnknown,
      OutOfHosptlDy,
      HosptlDy,
-     SatGenrl,
-     SatPhys,
-     SatPsych,
      ReshId
 FROM
      MainFormDataContract"
@@ -58,6 +54,10 @@ FROM
   #DagerTilRehab,
   #NevrNivaaInn,
   #NevrNivaaUt
+  #QolDt,
+  #SatGenrl,
+  #SatPhys,
+  #SatPsych,
   
   
   return(RegData)
