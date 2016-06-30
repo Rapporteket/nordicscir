@@ -39,7 +39,7 @@ NSRegDataSQL <- function() {
      SatGenrl,
      SatPhys,
      SatPsych,
-     ReshId,
+     ReshId
 FROM
      MainFormDataContract"
 
