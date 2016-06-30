@@ -1,4 +1,4 @@
-Package: NorScir
+Package: nordicscir
 Title: Provide R resources for NorScir at Rapporteket
 Version: 0.5.0
 Authors@R: c(
