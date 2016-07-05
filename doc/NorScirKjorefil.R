@@ -45,7 +45,7 @@ rm(list=ls())
 NSdata <- read.table('C:/Registre/NorScir/data/MainFormDataContract2016-06-08.csv', sep=';', header=T)
 RegData <- NSdata
 
-setwd("C:/ResultattjenesteGIT/norscir/")
+setwd("C:/ResultattjenesteGIT/nordicscir/")
 reshID <- 107627             ##105593-Haukeland, 106896-Sunnaas, 107627-St.Olavs, standard i funksj: 0 dvs. 'Alle'. Standard i rapporten skal v?re at man f?r opp eget sykehus.
 enhetsUtvalg <- 1
 minald <- 0
@@ -54,7 +54,7 @@ traume <- ''    #'ja','nei', standard: ikke valgt
 AIS <- ''	#c('A','B','U')		#AISgrad ved innleggelse alle(''), velge en eller flere fra A,B,C,D,E,U
 datoFra <- '2011-01-01'             #Standard: b?r v?re minste registrerte verdi ? min og max dato i utvalget vises alltid i figuren.
 datoTil <- '2016-12-31'
-erMann <- ''                      #1-menn, 0-kvinner, Standard: '', dvs. begge
+erMann <- 99                      #1-menn, 0-kvinner, Standard: '', dvs. begge
 valgtVar <- 'AAis'	#M? velge... AAis, FAis, Alder, DagerRehab, DagerTilRehab, 
 							#OpphTot[HosptlDy], Permisjon[OutOfHosptlDy], UtTil[PlaceDis], SkadeArsak[Scietiol]  
 							#Pustehjelp[VentAssi]
