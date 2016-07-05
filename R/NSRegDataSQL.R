@@ -20,6 +20,7 @@ NSRegDataSQL <- function() {
       ANeuNoMeasure,
       ASensLvlAreaL,
       ASensLvlAreaR,
+      BeforeRehDy,
       DischgDt,
       FAis,
       FMtrLvlAreaL,
@@ -36,6 +37,7 @@ NSRegDataSQL <- function() {
       PatientAge,
       PatientGender,
       PlaceDis,
+      RehabDy,
       ReshId,
       Scietiol,
       VentAssi

@@ -74,6 +74,16 @@ if (preprosess == 1) {
 
 
   #Variablene kjøres for angitt indeks, dvs. to ganger hvis vi skal ha sammenligning med Resten.
+  if (valgtVar=='Alder') {
+        tittel <- 'Aldersfordeling'
+        gr <- c(0,16,31,46,61,76,200)	#c(seq(0, 90, 15), 120)
+        RegData$Variabel <- cut(RegData$Alder, breaks=gr, include.lowest=TRUE, right=FALSE)
+        grtxt <- c('[0,15]','[16,30]','[31,45]','[46,60]','[61,75]','76+')
+        #	grtxt <- c(levels(RegData$Variabel)[1:(length(gr)-2)], '76+')
+        cexgr <- 0.9
+        subtxt <- 'Aldersgrupper'
+  }
+  
   if (valgtVar %in% c('AAis', 'FAis')) {
         #-1: Velg verdi, 1:A Komplett skade, 2:B Inkomplett, 3:C Inkomplett, 4:D Inkomplett, 5:E Normal, 
         #9: U Ukjent eller ikke anvendbar
@@ -85,6 +95,36 @@ if (preprosess == 1) {
     RegData$Variabel <- factor(RegData$Variabel, levels = c(1:5,9), labels = grtxt) 
   }
   
+  if (valgtVar %in% c('DagerRehab', 'DagerTilRehab', 'OpphTot')) {
+        
+        grmax <- switch(valgtVar,
+                        DagerRehab= '360+',
+                        DagerTilRehab = '100+',
+                        OpphTot = '300+')
+        gr <- switch(valgtVar, 
+                     DagerRehab = c(seq(0, 180, 20), 360, 1000),
+                     DagerTilRehab = c(seq(0, 100, 10), 1000),
+                     OpphTot = c(seq(0, 300, 30), 1000))
+        RegData$Variabel <- cut(RegData[ ,valgtVar], breaks=gr, include.lowest=TRUE, right=FALSE)
+        grtxt2 <- c(levels(RegData$Variabel)[1:(length(gr)-2)], grmax)
+        tittel <- switch(valgtVar, 
+                         DagerRehab='Antall dager med spesialisert rehabilitering', 
+                         DagerTilRehab = 'Tid fra innleggelse til spesialisert rehabilitering',
+                         OpphTot = 'Antall døgn innlagt på sykehus')
+        cexgr <- 0.9
+        txtretn <- 2
+        subtxt <- 'Antall døgn'
+  }	#Variable med antall dager
+  
+  if (valgtVar=='Permisjon') {
+        tittel <- 'Antall døgn ute av sykehus'
+        gr <- c(0,1,7,14,21,28,35, 1000)
+        grmax <- '50+'
+        RegData$Variabel <- cut(RegData$Permisjon, breaks=gr, include.lowest=TRUE, right=FALSE)
+        grtxt <- c('0','1-7','8-14','15-21','22-28','29-35', '35+')
+        cexgr <- 0.9
+        subtxt <- 'Antall døgn'
+  }
   if (valgtVar == 'Pustehjelp') {
     tittel <- 'Ventilasjonsstøtte'
     #gr <- (0:3,9) - Kodene som registereres. Nå bare 0:3?
@@ -93,46 +133,6 @@ if (preprosess == 1) {
     RegData$Variabel <- factor(as.numeric(RegData$Variabel), levels=c(0:3), labels = grtxt)
     retn <- 'H'
   }
-  if (valgtVar=='Alder') {
-    tittel <- 'Aldersfordeling'
-    gr <- c(0,16,31,46,61,76,200)	#c(seq(0, 90, 15), 120)
-    RegData$Variabel <- cut(RegData$Alder, breaks=gr, include.lowest=TRUE, right=FALSE)
-    grtxt <- c('[0,15]','[16,30]','[31,45]','[46,60]','[61,75]','76+')
-    #	grtxt <- c(levels(RegData$Variabel)[1:(length(gr)-2)], '76+')
-    cexgr <- 0.9
-    subtxt <- 'Aldersgrupper'
-  }
-
-  if (valgtVar=='Permisjon') {
-    tittel <- 'Antall døgn ute av sykehus'
-    gr <- c(0,1,7,14,21,28,35, 1000)
-    grmax <- '50+'
-    RegData$Variabel <- cut(RegData$Permisjon, breaks=gr, include.lowest=TRUE, right=FALSE)
-    grtxt <- c('0','1-7','8-14','15-21','22-28','29-35', '35+')
-    cexgr <- 0.9
-    subtxt <- 'Antall døgn'
-  }
-  if (valgtVar %in% c('DagerRehab', 'DagerTilRehab', 'OpphTot')) {
-    
-      grmax <- switch(valgtVar,
-            DagerRehab= '360+',
-            DagerTilRehab = '100+',
-            OpphTot = '300+')
-      gr <- switch(valgtVar, 
-            DagerRehab = c(seq(0, 180, 20), 360, 1000),
-            DagerTilRehab = c(seq(0, 100, 10), 1000),
-            OpphTot = c(seq(0, 300, 30), 1000))
-    RegData$Variabel <- cut(RegData[ ,valgtVar], breaks=gr, include.lowest=TRUE, right=FALSE)
-    grtxt2 <- c(levels(RegData$Variabel)[1:(length(gr)-2)], grmax)
-    tittel <- switch(valgtVar, 
-                     DagerRehab='Antall dager med spesialisert rehabilitering', 
-                     DagerTilRehab = 'Tid fra innleggelse til spesialisert rehabilitering',
-                     OpphTot = 'Antall døgn innlagt på sykehus')
-    cexgr <- 0.9
-    txtretn <- 2
-    subtxt <- 'Antall døgn'
-  }	#Variable med antall dager
-
 
   if (valgtVar == 'SkadeArsak') {
     tittel <- 'Skadeårsaker'

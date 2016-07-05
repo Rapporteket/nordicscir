@@ -1,6 +1,6 @@
 Package: nordicscir
 Title: R-pakke for å generere resultater fra NordicScir
-Version: 0.5.0
+Version: 0.6.0
 Authors@R: c(
   person("Olsen", "Lena Ringstad", email = "Lena.Ringstad.Olsen@unn.no",
   role = c("cre", "aut")),
