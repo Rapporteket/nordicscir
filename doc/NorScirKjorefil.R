@@ -51,7 +51,9 @@ enhetsUtvalg <- 1
 minald <- 0
 maxald <- 130
 traume <- ''    #'ja','nei', standard: ikke valgt
-AIS <- 1	#c('A','B','U')		#AISgrad ved innleggelse alle(''), velge en eller flere fra A,B,C,D,E,U
+AIS <- as.character(c(1,4))	#c('A','B','U')		#AISgrad ved innleggelse alle(''), velge en eller flere fra A,B,C,D,E,U
+#<defaultValueExpression><![CDATA["all"]]></defaultValueExpression>
+#      </parameter>
 datoFra <- '2011-01-01'             #Standard: b?r v?re minste registrerte verdi ? min og max dato i utvalget vises alltid i figuren.
 datoTil <- '2016-12-31'
 erMann <- 99                      #1-menn, 0-kvinner, Standard: '', dvs. begge

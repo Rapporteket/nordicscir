@@ -36,6 +36,7 @@ NSUtvalg <- function(RegData, datoFra='2010-01-01', datoTil='3000-05-25', minald
   indKjUt <- if (erMann %in% 0:1) {which(RegData$isMale != erMann)} else {indKjUt <- NULL}
 #  indAISut <- if (length(which(AIS %in% c(LETTERS[1:5],'U')))>0) {
 #        setdiff(1:Ninn, which(RegData$AAis %in% AIS))} else {NULL}
+AIS <- as.numeric(AIS)
   indAISut <- if (length(which(AIS %in% 1:5))>0) {
                         setdiff(1:Ninn, which(RegData$AAis %in% AIS))} else {NULL}
   indMed <- intersect(setdiff(1:Ninn, c(indAldUt, indDatoUt,
