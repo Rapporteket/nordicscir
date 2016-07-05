@@ -32,10 +32,12 @@ NSUtvalg <- function(RegData, datoFra='2010-01-01', datoTil='3000-05-25', minald
   indDatoUt <- setdiff(1:Ninn,
                        which(RegData$InnDato > as.POSIXlt(datoFra) & RegData$InnDato < as.POSIXlt(datoTil))) #Får bort NA
   traumeValgBort <- switch(traume, ja = c(6,9) , nei = c(1:5,9), alle = NULL) #6 ikke-tr, 1:5 traumer, 9 ukjent
-  indTrUt <-  which(RegData$Scietiol %in% traumeValgBort)
+  indTrUt <-  which(RegData$SkadeArsak %in% traumeValgBort)
   indKjUt <- if (erMann %in% 0:1) {which(RegData$isMale != erMann)} else {indKjUt <- NULL}
-  indAISut <- if (length(which(AIS %in% c(LETTERS[1:5],'U')))>0) {
-    setdiff(1:Ninn, which(RegData$AAis %in% AIS))} else {NULL}
+#  indAISut <- if (length(which(AIS %in% c(LETTERS[1:5],'U')))>0) {
+#        setdiff(1:Ninn, which(RegData$AAis %in% AIS))} else {NULL}
+  indAISut <- if (length(which(AIS %in% 1:5))>0) {
+                        setdiff(1:Ninn, which(RegData$AAis %in% AIS))} else {NULL}
   indMed <- intersect(setdiff(1:Ninn, c(indAldUt, indDatoUt,
                                         indTrUt, indKjUt, indAISut)),
                       indVarMed)
@@ -50,8 +52,9 @@ NSUtvalg <- function(RegData, datoFra='2010-01-01', datoTil='3000-05-25', minald
                                                        ' til ', if (N>0) {max(RegData$Alder, na.rm=T)} else {maxald}, ' år', sep='')},
                  if (traume %in% c('ja','nei')) {paste('Traume:', traume)},
                  if (erMann %in% 0:1){paste('Kjønn: ', c('kvinner', 'menn')[erMann+1], sep='')},
-                 if (length(which(AIS %in% c(LETTERS[1:5],'U')))>0) {paste('AIS, inn: ', paste(AIS, collapse=','), sep='')} )
-
+ #                if (length(which(AIS %in% c(LETTERS[1:5],'U')))>0) {paste('AIS, inn: ', paste(AIS, collapse=','), sep='')} )
+                 if (length(which(AIS %in% 1:5))>0) {paste('AIS, inn: ', paste(LETTERS[AIS], collapse=','), sep='')} )
+ 
 
   UtData <- list(RegData=RegData, utvalgTxt=utvalgTxt, fargepalett=fargepalett) #GronnHNpms624,
   return(invisible(UtData))
