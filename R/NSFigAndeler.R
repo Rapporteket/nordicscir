@@ -8,6 +8,7 @@
 #'     \item DagerRehab: Lengde på rehab.opphold (Utskrevet – Innl. rehab dato)
 #'     \item DagerTilRehab: Tid fra skadedato til oppstart rehab [trauma/ikke], 5d interv
 #'     \item OpphTot: Lengde på opphold – totalt (HosptlDy) 20d… >200, 
+#'     \item Permisjon: Antall døgn ute av sykehus NB: SJEKK OM NY DEFINISJON!
 #'     \item UtTil: Hva pasienten skrives ut til. [PlaceDis]
 #'     \item SkadeArsak: Årsak til skade [variabel: Scietiol]
 #'     \item Pustehjelp[VentAssi].
@@ -34,7 +35,7 @@
 
 NSFigAndeler <- function(RegData, outfile='', valgtVar,
                          datoFra='2010-01-01', datoTil='2050-01-01', AIS='',
-                         minald=0, maxald=120, erMann='', traume='',
+                         minald=0, maxald=120, erMann=99, traume='',
                          enhetsUtvalg=1, reshID, hentData=1, preprosess=1) {
 
   if (hentData == 1) {

@@ -1,5 +1,5 @@
 Package: nordicscir
-Title: Provide R resources for NorScir at Rapporteket
+Title: R-pakke for å generere resultater fra NordicScir
 Version: 0.5.0
 Authors@R: c(
   person("Olsen", "Lena Ringstad", email = "Lena.Ringstad.Olsen@unn.no",
@@ -7,7 +7,7 @@ Authors@R: c(
   person("Edvardsen", "Are", email =  "are.edvardsen@helsenord.no",
   role = "aut")
   )
-Description: An implemetation of all R related resources for NorScir at
+Description: An implemetation of all R related resources for NordicScir at
     Rapporteket, including R-functions for analysis and plotting, noweb-files and
     even artwork needed for producing R-dependent reports
 Depends:

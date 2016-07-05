@@ -16,7 +16,7 @@
 
 
 NSUtvalg <- function(RegData, datoFra='2010-01-01', datoTil='3000-05-25', minald=0, maxald=120,
-                        erMann='', traume='', AIS='', fargepalett='BlaaOff') {
+                        erMann=99, traume='', AIS='', fargepalett='BlaaOff') {
 
 
   #Hvis "Variabel" ikke definert
