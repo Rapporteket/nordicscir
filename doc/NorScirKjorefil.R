@@ -80,34 +80,32 @@ I_ABC <- which(RegData$AAis %in% c('A','B','C'))
 #------------------------------ Sentralm?l --------------------------
 rm(list=ls())
 #load('C:/Registre/NorScir/data/NSdata.Rdata')
-NSdata <- read.table('C:/Registre/NorScir/data//NorScir2014-09-30.csv', sep=';', header=T)
+NSdata <- read.table('C:/Registre/NorScir/data/MainFormDataContract2016-06-08.csv', sep=';', header=T)
+RegData <- NSdata
 #RegData <- NSdata
 # Inndata til funksjon:
 #egenReshID <- #105593-Haukeland, 106896-Sunnaas sykehus, 107627-St.Olavs #M? sendes med til funksjon
-#egenavd <- 1
-#Parameter som spesifiserer sammenligning?
 
 ##105593-Haukeland, 106896-Sunnaas, 107627-St.Olavs
 minald <- 0
-maxald <- 100
+maxald <- 130
 traume <- ''    #'ja','nei', standard: ikke valgt
 datoFra <- '2010-01-01'             #Standard: b?r v?re minste registrerte verdi ? min og max dato i utvalget vises alltid i figuren.
-datoTil <- '2013-05-25'
+datoTil <- '2017-05-25'
 erMann <- ''                   #1-menn, 0-kvinner, Standard: '', dvs. begge
 valgtVar <- 'OpphTot'	#M? velge... Alder, DagerRehab, DagerTilRehab, OpphTot[HosptlDy], 
 							#Permisjon[OutOfHosptlDy],
-valgtMaal='Med'	#'Med'-median, ellers gjennomsnitt
+valgtMaal=''	#'Med'-median, ellers gjennomsnitt
+setwd("C:/ResultattjenesteGIT/nordicscir/")
 outfile <- paste(valgtVar, '.png', sep='')	#Navn angis av Jasper
-setwd("C:/Registre/NorScir/trunk/RMeanMed")
 
 NSFigGjsnGrVar(RegData=NSdata, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
 		valgtMaal=valgtMaal, minald=minald, maxald=maxald, erMann=erMann, traume=traume)
 
-RegData <- NSdata
 for (valgtVar in c('Alder', 'DagerRehab', 'DagerTilRehab', 'OpphTot', 'Permisjon')) {
 	outfile <- paste(valgtVar, '.png', sep='')
-	FigMeanMed(RegData, outfile, libkat=libkat, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
-		valgtMaal=valgtMaal, minald=minald, maxald=maxald, erMann=erMann, traume=traume)
+	NSFigGjsnGrVar(RegData=NSdata, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
+	               valgtMaal=valgtMaal, minald=minald, maxald=maxald, erMann=erMann, traume=traume)
 }
 #------------------------------ Nevrologisk kategori --------------------------
 rm(list=ls())

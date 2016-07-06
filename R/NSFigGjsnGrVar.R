@@ -4,31 +4,40 @@
 #' og kan ta inn ulike numeriske variable. Funksjonen er delvis skrevet for å
 #' kunne brukes til andre grupperingsvariable enn sykehus.
 #'
+#' Argumentet \emph{valgtVar} har følgende valgmuligheter:
+#'    \itemize{
+#'     \item Alder: Aldersfordeling, 15-årige grupper 
+#'     \item DagerRehab: Lengde på rehab.opphold (Utskrevet – Innl. rehab dato)
+#'     \item DagerTilRehab: Tid fra skadedato til oppstart rehab [trauma/ikke], 5d interv
+#'     \item OpphTot: Lengde på opphold – totalt (HosptlDy) 20d… >200, 
+#'     \item Permisjon: Antall døgn ute av sykehus NB: SJEKK OM NY DEFINISJON!
+#'    }
+#'    
 #' @inheritParams NSFigAndeler
-#' @param valgtVar Må velges: ... Alder, DagerRehab, DagerTilRehab, OpphTot[HosptlDy],
 #' @param valgtMaal - 'Med' = median. Alt annet gir gjennomsnitt
 #'
 #' @export
 
-NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='Gjsn',
-                       datoFra='2010-01-01', datoTil='2050-12-31', AIS='',
-                       minald=0, maxald=130, erMann='', traume='', libkat,
-                       outfile='', hentData=1) {
+NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='Gjsn', datoFra='2010-01-01', datoTil='2050-12-31', 
+                           AIS='', minald=0, maxald=130, erMann='', traume='',
+                           preprosess=1, outfile='', hentData=0) {
 
-  if (hentData == 1) {
-    RegData <- NSLoadRegData()
-  }
-
-  #Definerer funksjonssperifikke variable................
+      if (hentData == 1) {
+            RegData <- NSRegDataSQL()
+      }
+      if (preprosess == 1) {
+            RegData <- NSPreprosesser(RegData)
+      }
+      
   grVar <- 'ShNavn'
   RegData[ ,grVar] <- factor(RegData[ ,grVar])  #, labels=c('Haukeland', 'St.Olav', 'Sunnaas'))
 
-  if (valgtVar %in% c('DagerRehab', 'DagerTilRehab')) {
+  if (valgtVar %in% c('Alder', 'DagerRehab', 'DagerTilRehab', 'OpphTot', 'Permisjon')) {
     RegData$Variabel <- RegData[ ,valgtVar] }
-  if (valgtVar == 'Alder') {RegData$Variabel <- RegData$AlderAar}
-  if (valgtVar == 'OpphTot') {RegData$Variabel <- as.numeric(RegData$HosptlDy)}
-  if (valgtVar == 'Permisjon') {RegData$Variabel <- RegData$OutOfHosptlDy
-                                RegData <- RegData[RegData$OutOfHosptlDy>0,]}	#Bare vits i å se på de som faktisk har permisjon
+
+  #Mange 0-verdier. Velger derfor bare de som har verdi >0 
+  RegData <- RegData[RegData$Variabel > 0,]
+  #if (valgtVar == 'Permisjon') {RegData <- RegData[RegData$Permisjon>0,]}	#Bare vits i å se på de som faktisk har permisjon
 
   #Tar ut de med manglende registrering av valgt variabel og gjør utvalg
   Utvalg <- NSUtvalg(RegData=RegData, datoFra=datoFra, datoTil=datoTil, minald=minald, maxald=maxald,
