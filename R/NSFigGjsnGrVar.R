@@ -7,10 +7,10 @@
 #' Argumentet \emph{valgtVar} har følgende valgmuligheter:
 #'    \itemize{
 #'     \item Alder: Aldersfordeling, 15-årige grupper 
-#'     \item DagerRehab: Lengde på rehab.opphold (Utskrevet – Innl. rehab dato)
-#'     \item DagerTilRehab: Tid fra skadedato til oppstart rehab [trauma/ikke], 5d interv
-#'     \item OpphTot: Lengde på opphold – totalt (HosptlDy) 20d… >200, 
-#'     \item Permisjon: Antall døgn ute av sykehus NB: SJEKK OM NY DEFINISJON!
+#'     \item DagerRehab: antall dager med rehabilitering [RehabDy]
+#'     \item DagerTilRehab: antall dager før rehabilitering [BeforeRehDy]
+#'     \item OpphTot: Lengde på opphold – totalt [HosptlDy] 
+#'     \item Permisjon: Antall døgn ute av sykehus [OutOfHosptlDy]
 #'    }
 #'    
 #' @inheritParams NSFigAndeler
