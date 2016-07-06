@@ -33,6 +33,8 @@ NSRegDataSQL <- function() {
       InjuryDateUnknown,
       InjuryDt,
       OutOfHosptlDy,
+      OutOfHosptlDy2,
+      OutOfRehabDy,
       PasientGUID,
       PatientAge,
       PatientGender,
