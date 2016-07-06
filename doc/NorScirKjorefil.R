@@ -21,20 +21,15 @@ save(NorScirEksData, file='E:/Registre/NorScir/data/NorScirEksData.Rdata')
 #--------------------------------------SAMLERAPPORT-----------------------------------
 rm(list=ls())
 library(knitr)
-setwd('C:/Registre/NorScir/trunk/RSamleDok')
-libkat <- 'C:/Registre/Rlib/trunk/'
+NSdata <- read.table('C:/Registre/NorScir/data/MainFormDataContract2016-06-08.csv', sep=';', header=T)
+setwd("C:/ResultattjenesteGIT/nordicscir/inst")
 reshID <- 106896	#0 - alle	#105593-Haukeland, 106896-Sunnaas, 107627-St.Olavs
-source("C:/Registre/NorScir/trunk/RFordeling/NSFigFordeling.R", encoding="UTF-8")
-source("C:/Registre/NorScir/trunk/RAndelStabel/NSFigAndelStabel.R", encoding="UTF-8")
-source("C:/Registre/NorScir/trunk/RMeanMed/NSFigMeanMed.R", encoding="UTF-8")
-source("C:/Registre/NorScir/trunk/lib/r/NSLibUtvalg.R", encoding="UTF-8")
-opts_chunk$set(fig.align='center', fig.show='hold', out.width='.3\\textwidth', cache=FALSE)
 
-NSdata <- read.table('C:/Registre/NorScir/data/NorScir2014-06-20.csv', sep=';', header=T)
 #knit('NSsamleDokLand.Rnw')
 knit('NSsamleDok.Rnw')
 #knit(input, output = NULL, tangle = FALSE, text = NULL, envir = parent.frame())
-
+library(tools)	#texi2pdf
+texi2dvi('NSsamleDok.Rnw')
 
 #------------------------------ Fordelinger --------------------------
 Fra jrxml:
@@ -56,16 +51,16 @@ AIS <- as.character(c(1,4))	#c('A','B','U')		#AISgrad ved innleggelse alle(''), 
 #      </parameter>
 datoFra <- '2011-01-01'             #Standard: b?r v?re minste registrerte verdi ? min og max dato i utvalget vises alltid i figuren.
 datoTil <- '2016-12-31'
-erMann <- 99                      #1-menn, 0-kvinner, Standard: '', dvs. begge
+erMann <-99                      #1-menn, 0-kvinner, Standard: '', dvs. begge
 valgtVar <- 'AAis'	#M? velge... AAis, FAis, Alder, DagerRehab, DagerTilRehab, 
 							#OpphTot[HosptlDy], Permisjon[OutOfHosptlDy], UtTil[PlaceDis], SkadeArsak[Scietiol]  
 							#Pustehjelp[VentAssi]
-outfile <- paste(valgtVar, '.png', sep='')	#Navn angis av Jasper
+outfile <- paste(valgtVar, '99.png', sep='')	#Navn angis av Jasper
 
 NSFigAndeler(RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
 		AIS=AIS, minald=minald, maxald=maxald, erMann=erMann, traume=traume, reshID=reshID, 
       		enhetsUtvalg=enhetsUtvalg, hentData=0)    #, preprosess=1
-		#egenavd=egenavd, sml=sml)
+	
 
 for (valgtVar in c('AAis', 'FAis', 'Alder', 'DagerRehab', 'DagerTilRehab', 
 				'OpphTot', 'UtTil', 'SkadeArsak', 'Pustehjelp')) {
@@ -93,7 +88,7 @@ traume <- ''    #'ja','nei', standard: ikke valgt
 datoFra <- '2010-01-01'             #Standard: b?r v?re minste registrerte verdi ? min og max dato i utvalget vises alltid i figuren.
 datoTil <- '2017-05-25'
 erMann <- ''                   #1-menn, 0-kvinner, Standard: '', dvs. begge
-valgtVar <- 'OpphTot'	#M? velge... Alder, DagerRehab, DagerTilRehab, OpphTot[HosptlDy], 
+valgtVar <- 'test'	#M? velge... Alder, DagerRehab, DagerTilRehab, OpphTot[HosptlDy], 
 							#Permisjon[OutOfHosptlDy],
 valgtMaal=''	#'Med'-median, ellers gjennomsnitt
 setwd("C:/ResultattjenesteGIT/nordicscir/")
@@ -125,7 +120,7 @@ datoTil <- '2015-05-25'
 enhetsUtvalg <- 0 #1:eget sykehus mot resten(standard), 0:hele landet, 2: eget 
 valgtVar <- 'NevrNivaaInn'	#M? velge... NevrNivaaInnUt, NevrNivaaInn, NevrNivaaUt, 
 outfile <- paste(valgtVar, '.png', sep='') #navn p? fil figuren skrives ned til
-setwd("C:/Registre/NorScir/trunk/RAndelStabel")
+setwd("C:/ResultattjenesteGIT/nordicscir/")
 
 NSFigAndelStabel(RegData=NSdata, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, 
 		datoTil=datoTil, traume=traume, 

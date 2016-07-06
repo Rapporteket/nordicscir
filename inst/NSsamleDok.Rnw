@@ -126,29 +126,20 @@ Der har du også mulighet for å lage egne figurer og tabeller.
 
 <<'Variabeldef og utvalg', results='asis', echo=FALSE>>=
 NSdata <- NSPreprosesser(RegData=NSdata)
-#alderVar <- 'AlderAar'
-#datoVar <- 'AdmitDt'
-#NSdata$InnDato <- as.POSIXlt(NSdata[ ,datoVar], format="%Y-%m-%d")	#"%d.%m.%Y"
 NSdata$Aar <- NSdata$InnDato$year+1900
-#NSdata$Alder <- NSdata[ ,alderVar]
-#ShNavn <- NSdata$ShNavn[which(NSdata$ReshId == reshID)[1]]
 ShNavn <- as.character(NSdata$ShNavn[match(reshID, NSdata$ReshId)])
 
 #Parametre
-#sml <- 1		#Sammenligne med resten av landet eller ikke. Ikke aktiv når hele landet valgt.
 minald <- 0
 maxald <- 120
 erMann <- ''	#...
-traume <- ''	#'ja','nei', standard: ikke utvalgt (
-AIS <- ''
+#traume <- ''	#'ja','nei', standard: ikke utvalgt (
+#AIS <- ''
 datoFra <- '2010-01-01'	#Standard: 0, dvs. alle år
 datoTil <- '2050-05-25'
 #reshID - gis fra Jasper	##105593-Haukeland, 106896-Sunnaas sykehus, 107627-St.Olavs, standard: 'Alle'
-#plotType='S'
 s1 <- 0.66	#Skaleringsparameter for enkeltfigurer
 #s2 <- 0.7	#Skaleringsparameter for "dobbeltfigurer"
-## next line not needed
-#library(xtable)
 
 #Utvalg/datarensk
 Ninn <- dim(NSdata)[1]
