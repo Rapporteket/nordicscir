@@ -30,7 +30,7 @@ knit('NSsamleRappLand.Rnw')
 texi2pdf('NSsamleRappLand.tex')
 #knit('NSsamleRapp.Rnw')
 texi2pdf('NSsamleRapp.tex')
-
+ 
 #------------------------------ Fordelinger --------------------------
 Fra jrxml:
 <defaultValueExpression><![CDATA["NSFigAndeler(RegData=0, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, AIS=AIS, minald=minald, maxald=maxald, erMann=erMann, traume=traume, enhetsUtvalg=enhetsUtvalg, reshID=" + $P{LoggedInUserAVD_RESH} + ")"]]></defaultValueExpression>
