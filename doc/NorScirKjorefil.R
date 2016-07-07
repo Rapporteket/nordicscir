@@ -23,12 +23,12 @@ rm(list=ls())
 library(knitr)
 NSdata <- read.table('C:/Registre/NorScir/data/MainFormDataContract2016-06-08.csv', sep=';', header=T)
 setwd("C:/ResultattjenesteGIT/nordicscir/inst")
-reshID <- 106896	#0 - alle	#105593-Haukeland, 106896-Sunnaas, 107627-St.Olavs
+reshID <- 107627	#0 - alle	#105593-Haukeland, 106896-Sunnaas, 107627-St.Olavs
 
 library(tools)	#texi2pdf
 knit('NSsamleRappLand.Rnw')
 texi2pdf('NSsamleRappLand.tex')
-#knit('NSsamleRapp.Rnw')
+knit('NSsamleRapp.Rnw')
 texi2pdf('NSsamleRapp.tex')
  
 #------------------------------ Fordelinger --------------------------

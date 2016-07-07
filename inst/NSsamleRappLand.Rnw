@@ -14,8 +14,6 @@
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \usepackage{amsmath}
-%package odfWeave provides functions for using Sweave in combination with OpenOffice Writer
-%rather than LATEX.
 
 %add rotating for plain tables
 \usepackage{rotating}
@@ -31,7 +29,6 @@
 
 %for nice looking tabs
 \usepackage{booktabs}
-
 
 %bytte font
 \renewcommand{\familydefault}{\sfdefault}
@@ -63,12 +60,10 @@
 \fancyhead[LO]{\colorbox{SKDE}{\textcolor{white}{\hspace*{2cm}\scshape\small Norsk Ryggmarksskaderegister}}} %Lengde på stripa
 %\fancyhead[RE]{\hspace*{2cm}\colorbox{SKDE}{\textcolor{white}{\scshape\small Norsk Ryggmarksskaderegister \hspace*{3cm}}}}
 \fancyfoot[LO]{\colorbox{SKDE}{\textcolor{white}{\scshape\small\thepage}}}
-%	\\ \vspace*{-0.1cm}\colorbox{SKDE}{\textcolor{SKDE}{\scshape\small\thepage}} \\ \vspace*{-0.1cm}\colorbox{SKDE}{\textcolor{SKDE}{\scshape\small\thepage}} }
 \fancyfoot[RE]{\colorbox{SKDE}{\textcolor{white}{\scshape\small\thepage}}}
-% \\ \vspace*{-0.1cm}\colorbox{SKDE}{\textcolor{SKDE}{\scshape\small\thepage}} \\ \vspace*{-0.1cm}\colorbox{SKDE}{\textcolor{SKDE}{\scshape\small\thepage}} \\ \vspace*{-0.1cm}\colorbox{SKDE}{\textcolor{SKDE}{\scshape\small\thepage}}}
 \renewcommand{\headrulewidth}{0pt} %\iffloatpage{0pt}{0.4pt}
  \renewcommand{\footrulewidth}{0pt}
-%evt. horisontal sidenummer
+%evt. horisontal sidenummerering
 \fancyfoot[LO]{\colorbox{SKDE}{\textcolor{white}{\hspace*{2cm} \small \thepage}}} \fancyfootoffset[LO]{4.4cm}
 \fancyfoot[RE]{\hspace*{2cm}\colorbox{SKDE}{\textcolor{white}{\small \thepage \hspace*{3cm}}}}  \fancyfootoffset[RE]{5.3cm}
 \setcounter{secnumdepth}{-1}
@@ -86,7 +81,6 @@
 \listoffigures
 \newpage
 
-
 <<setup, include=FALSE, cache=FALSE>>=
 knitr::opts_chunk$set(warnings=FALSE,echo=FALSE)
 knitr::opts_knit$set(root.dir = './')	#Settes også i rapbase
@@ -103,9 +97,9 @@ reshID <- 123456
 
 
 <<LasteData, echo=FALSE, eval=T>>=
-#if (!exists('NSdata')){
+if (!exists('NSdata')){
       NSdata <- nordicscir::NSRegDataSQL()
-#}
+}
 @
 
 

@@ -58,22 +58,22 @@
 \fancyfootoffset[LO]{1.5cm}
 \fancyfootoffset[RE]{1.5cm}
 \fancyhead[LO]{\colorbox{SKDE}{\textcolor{white}{\hspace*{2cm}\scshape\small Norsk Ryggmarksskaderegister}}} %Lengde på stripa
+%\fancyhead[RE]{\hspace*{2cm}\colorbox{SKDE}{\textcolor{white}{\scshape\small Norsk Ryggmarksskaderegister \hspace*{3cm}}}}
 \fancyfoot[LO]{\colorbox{SKDE}{\textcolor{white}{\scshape\small\thepage}}}
 \fancyfoot[RE]{\colorbox{SKDE}{\textcolor{white}{\scshape\small\thepage}}}
 \renewcommand{\headrulewidth}{0pt} %\iffloatpage{0pt}{0.4pt}
  \renewcommand{\footrulewidth}{0pt}
-%evt. horisontal sidenummer
+%evt. horisontal sidenummerering
 \fancyfoot[LO]{\colorbox{SKDE}{\textcolor{white}{\hspace*{2cm} \small \thepage}}} \fancyfootoffset[LO]{4.4cm}
 \fancyfoot[RE]{\hspace*{2cm}\colorbox{SKDE}{\textcolor{white}{\small \thepage \hspace*{3cm}}}}  \fancyfootoffset[RE]{5.3cm}
 \setcounter{secnumdepth}{-1}
 
 
-\title{Resultater fra NorScir}
-\author{Spinnalskaderegisteret og Lena Ringstad Olsen (SKDE)}
+\title{Resultater fra NorScir, egen enhet}
+%\author{Spinnalskaderegisteret og Lena Ringstad Olsen (SKDE)}
 \fancyhead[R]{\includegraphics[height=2cm]{\Sexpr{system.file("NorSCIR_logo_blue_norsk.pdf", package = "nordicscir")}}}
 
 \begin{document}
-
 \maketitle
 \tableofcontents
 %\newpage
