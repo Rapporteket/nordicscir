@@ -117,15 +117,8 @@ variable som finnes i registreringsskjema.
 \section{Data og nøkkeltall}
 
 <<'Variabeldef og utvalg', results='asis', echo=FALSE>>=
-NSdataAlleSkjema <- NSdata
-#------------NB: Siden vi bare har resultater fra skjema 1 filtreres nå på skjema 1.
-NSdata <- NSdata[which(NSdata$SkjemaID==1), ]
-
-alderVar <- 'AlderAar'
-datoVar <- 'AdmitDt'
-NSdata$InnDato <- as.POSIXlt(NSdata[ ,datoVar], format="%Y-%m-%d")	#"%d.%m.%Y"
+NSdata <- NSPreprosesser(RegData=NSdata)
 NSdata$Aar <- NSdata$InnDato$year+1900
-NSdata$Alder <- NSdata[ ,alderVar]
 ShNavn <- NSdata$ShNavn[which(NSdata$ReshId == reshID)[1]]
 
 #Parametre
@@ -135,7 +128,7 @@ erMann <- ''	#...
 traume <- ''	#'ja','nei', standard: ikke utvalgt (
 AIS <- ''
 datoFra <- '2011-01-01'	#Standard: 0, dvs. alle år
-datoTil <- '2014-12-31'
+datoTil <- '2016-12-31'
 s1 <- 0.8	#Skaleringsparameter for enkeltfigurer
 #s2 <- 0.7	#Skaleringsparameter for "dobbeltfigurer"
 
@@ -143,13 +136,12 @@ s1 <- 0.8	#Skaleringsparameter for enkeltfigurer
 Ninn <- dim(NSdata)[1]
 Utvalg <- NSUtvalg(RegData=NSdata, datoFra=datoFra, datoTil=datoTil)
 NSdata <- Utvalg$RegData
-NSdataEget <- NSdata[NSdata$ReshId == reshID,]
 
 
 Ntot <- dim(NSdata)[1]
 #Nskj1 <- length(NSdata$SkjemaID==1)
 Npas <- Ntot #unique(NSdata$PasientID)
-tabKjPst <- round(table(NSdata$isMale)/Npas*100, digits=1)
+tabKjPst <- round(table(NSdata$erMann)/Npas*100, digits=1)
 @
 
 Alle resultater i dette dokumentet basert på innleggelser i perioden
@@ -195,10 +187,10 @@ utvalg <- switch(hvem,
 		St.Olav = which(NSdata$ReshId == 107627))
 
 	Alder <- NSdata$Alder[utvalg]
-	BehDager <- NSdata$HosptlDy[utvalg]
+	BehDager <- NSdata$OpphTot[utvalg]
 	RehabDager <- NSdata$DagerRehab[utvalg]
 	Ventetid <- NSdata$DagerTilRehab[utvalg]
-	Permisjon <- NSdata$OutOfHosptlDy[intersect(utvalg,which(NSdata$OutOfHosptlDy>0))]
+	Permisjon <- NSdata$Permisjon[intersect(utvalg,which(NSdata$Permisjon>0))]
 
 #if (sum(RehabDager>0, na.rm=T)>0 ) {
 
@@ -248,11 +240,11 @@ utvalg <- switch(hvem,
 		St.Olav = which(NSdata$ReshId == 107627))
 
 Nutv <- length(utvalg)
-Kjonn <- table(NSdata$isMale[utvalg])
-AntTilHjem <- c(sum(NSdata$PlaceDis[utvalg]==1), sum(NSdata$PlaceDis[utvalg] %in% 1:10))
-AntAssSkade <-c(sum(NSdata$isAssocInj[utvalg]==1), sum(NSdata$isAssocInj[utvalg] %in% 0:1))
-AntSpinkir <- c(sum(NSdata$isSpnlSurg[utvalg]==1), sum(NSdata$isSpnlSurg[utvalg] %in% 0:1))
-AntTraumer <- c(sum(NSdata$Scietiol[utvalg] %in% 1:5), sum(NSdata$Scietiol[utvalg] %in% 1:6))
+Kjonn <- table(NSdata$erMann[utvalg])
+AntTilHjem <- c(sum(NSdata$UtTil[utvalg]==1), sum(NSdata$UtTil[utvalg] %in% 1:10))
+AntAssSkade <-c(sum(NSdata$AssocInj[utvalg]==1), sum(NSdata$AssocInj[utvalg] %in% 0:1))
+AntSpinkir <- c(sum(NSdata$SpnlSurg[utvalg]==1), sum(NSdata$SpnlSurg[utvalg] %in% 0:1))
+AntTraumer <- c(sum(NSdata$SkadeArsak[utvalg] %in% 1:5), sum(NSdata$SkadeArsak[utvalg] %in% 1:6))
 
 Andeler <- rbind('Kvinner' = c(Kjonn[1], Kjonn[1]/Nutv),
 	'Menn' = c(Kjonn[2], Kjonn[2]/Nutv),
@@ -305,17 +297,17 @@ av data til figurene.
 	Følgelig vil det være misvisende å skulle ha den med.
 
 
-	\item [Nevrologisk kategori]
-	Figur \ref{fig:NevrKatInnUtLand} viser ei sammenligning av
-	nevrologisk kategori ved inn-og utskriving.
-	Alle registreringer som var kodet 'U' enten ved inn-eller utskriving er tatt bort så vi har
-	gyldig AIS registrering for den aktuelle pasienten både ved inn og utskrivelse.
-	Det betyr at hvis en pasient er i kategori D ved innskriving og U ved utskrivelse el. omvendt,
-	er pasienten tatt ut. \\
-	For at vi skal sammenligne, må vi ha samme pasientutvalg i de to søylene Inn og Ut.
-	Kategorien C1-4 omfatter derfor de som var i gruppa C1-4 \textit{både} ved inn- og utskriving.
-	Det vil si at hvis en pasient har status C4 ved innskriving og
-	C5 ved utskrivelse blir ikke pasienten med i datagrunnlaget til figuren.
+%	\item [Nevrologisk kategori]
+%	Figur \ref{fig:NevrKatInnUtLand} viser ei sammenligning av
+%	nevrologisk kategori ved inn-og utskriving.
+%	Alle registreringer som var kodet 'U' enten ved inn-eller utskriving er tatt bort så vi har
+%	gyldig AIS registrering for den aktuelle pasienten både ved inn og utskrivelse.
+%	Det betyr at hvis en pasient er i kategori D ved innskriving og U ved utskrivelse el. omvendt,
+%	er pasienten tatt ut. \\
+%	For at vi skal sammenligne, må vi ha samme pasientutvalg i de to søylene Inn og Ut.
+%	Kategorien C1-4 omfatter derfor de som var i gruppa C1-4 \textit{både} ved inn- og utskriving.
+%	Det vil si at hvis en pasient har status C4 ved innskriving og
+%	C5 ved utskrivelse blir ikke pasienten med i datagrunnlaget til figuren.
 
 	\item [Liggedager/Rehab.] Ved beregning av total liggetid (antall døgn innlagt på sykehus)
 	er antall dager pasienten har vært ute av sykehuset trukket fra. I innregistreringa er det kun

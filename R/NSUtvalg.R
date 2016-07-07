@@ -7,7 +7,7 @@
 #' @export
 
 
-NSUtvalg <- function(RegData, datoFra='2010-01-01', datoTil='3000-05-25', minald=0, maxald=120,
+NSUtvalg <- function(RegData, datoFra='2010-01-01', datoTil='3000-05-25', minald=0, maxald=130,
                      erMann=99, traume='', AIS='', fargepalett='BlaaOff') {
       
       

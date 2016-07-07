@@ -133,8 +133,8 @@ ShNavn <- as.character(NSdata$ShNavn[match(reshID, NSdata$ReshId)])
 minald <- 0
 maxald <- 120
 erMann <- ''	#...
-#traume <- ''	#'ja','nei', standard: ikke utvalgt (
-#AIS <- ''
+traume <- ''	#'ja','nei', standard: ikke utvalgt (
+AIS <- ''
 datoFra <- '2010-01-01'	#Standard: 0, dvs. alle år
 datoTil <- '2050-05-25'
 #reshID - gis fra Jasper	##105593-Haukeland, 106896-Sunnaas sykehus, 107627-St.Olavs, standard: 'Alle'
@@ -179,40 +179,40 @@ xtable::xtable(tabAvdN, digits=0, align=c('l', rep('r', ncol(tabAvdN))),
 Tabell \ref{tab:EkstrObs} viser variable med ekstremobservasjoner fra \Sexpr{ShNavn}.
 Hva som er en ekstremobservasjon er definert ut fra følgende kriterier: \\
 \textit{Total liggetid} mer enn 1 år eller 0. \\
-\textit{Tid til rehabilitering} mer enn 80 dager eller 0.\\
-\textit{Tid i rehabilitering} mer enn 1 år eller 0.\\
+\textit{Tid til rehabilitering} mer enn 80 dager (eller 0- fjernet pga. mange 0-verdier).\\
+\textit{Tid i rehabilitering} mer enn 1 år (eller 0 - fjernet pga. mange 0-verdier).\\
 \textit{Permisjonstid} mer enn 20 dager.\\
 Merk at ekstremobservasjoner kan forekomme uten at det nødvendigvis er feil i registreringene,
 men det kan være lurt å dobbeltsjekke de aktuelle registreringene.
 
 <<'Ekstremverdier',echo=FALSE,  results='asis', message=FALSE, eval=TRUE>>=
-EkstrVar <- c('HosptlDy', 'DagerRehab','DagerTilRehab','OutOfHosptlDy')
+EkstrVar <- c('OpphTot', 'DagerRehab','DagerTilRehab','Permisjon')
 grenser <- c(365,365,80,20)
-varnavn <- c('Liggetid','DagerRehab','DagerTilRehab', 'Permisjon')
-names(grenser) <- varnavn
+names(grenser) <- EkstrVar
 
 #NB: Må ta høyde for at ikke ekstremobservasjoner !!!!!!!!!!!!!!
-Avv <- t((t(NSdataEget[ ,EkstrVar]) <= c(0,0,0,-1) ) | (t(NSdataEget[ ,EkstrVar]) > grenser))
+Avv <- t((t(NSdataEget[ ,EkstrVar]) <= c(0,-1,-1,-1) ) | (t(NSdataEget[ ,EkstrVar]) > grenser))
+#Avv <- t(NSdataEget[ ,EkstrVar]) > grenser
 Avv[is.na(NSdataEget[ ,EkstrVar])] <- FALSE
 AntAvv <- colSums(Avv)
 NSdataEget$InnDatoEkstrV <- as.character(NSdataEget$InnDato)
-NSdataEget$DatasettGuid <- as.character(NSdataEget$DatasettGuid)
+NSdataEget$SkjemaGUID <- as.character(NSdataEget$SkjemaGUID)
 #cbind(NSdataEget[ ,EkstrVar[1]],Avv[1])
-EkstrTab <- rbind(if (AntAvv[1]>0) {cbind(NSdataEget[Avv[,1]==TRUE, 'DatasettGuid'],
+EkstrTab <- rbind(if (AntAvv[1]>0) {cbind(NSdataEget[Avv[,1]==TRUE, 'SkjemaGUID'],
 			'Liggetid',  as.numeric(NSdataEget[Avv[,1]==TRUE, EkstrVar[1]]))},
-				if (AntAvv[2]>0) {cbind(NSdataEget[Avv[,2]==TRUE,'DatasettGuid'],
+				if (AntAvv[2]>0) {cbind(NSdataEget[Avv[,2]==TRUE,'SkjemaGUID'],
 			'Dager med rehab',  as.numeric(NSdataEget[Avv[,2]==TRUE, EkstrVar[2]]))},
-				if (AntAvv[3]>0) {cbind(NSdataEget[Avv[,3]==TRUE, c('DatasettGuid')],
+				if (AntAvv[3]>0) {cbind(NSdataEget[Avv[,3]==TRUE, c('SkjemaGUID')],
 			'Dager til rehab', as.numeric(NSdataEget[Avv[,3]==TRUE, EkstrVar[3]]))},
-				if (AntAvv[4]>0) {cbind(NSdataEget[Avv[,4]==TRUE, c('DatasettGuid')],
+				if (AntAvv[4]>0) {cbind(NSdataEget[Avv[,4]==TRUE, c('SkjemaGUID')],
 			'Permisjon', as.numeric(NSdataEget[Avv[,4]==TRUE, EkstrVar[4]]))}
 				)
-colnames(EkstrTab) <- c('DatasettGuid','Variabel', 'Verdi')
+colnames(EkstrTab) <- c('SkjemaGUID','Variabel', 'Verdi')
 
 if (reshID !=0) { Tabtxt <- paste('Ekstremverdier, ',ShNavn, sep='')
 } else {Tabtxt <- 'Tabellen kan bare vises for enkeltsykehus'}
 
-EkstrTabTex <- xtable::xtable(EkstrTab[order(EkstrTab[, 'DatasettGuid']), ],
+EkstrTabTex <- xtable::xtable(EkstrTab[order(EkstrTab[, 'SkjemaGUID']), ],
 		align=c('l', 'l', 'l', 'r'),  digits = 0,
 		caption=Tabtxt, label="tab:EkstrObs")
 print(EkstrTabTex, include.rownames=FALSE)	#,tabular.environment="longtable")
@@ -233,7 +233,7 @@ og hvor stor prosentandel dette utgjør.
 #105593-Haukeland, 106896-Sunnaas sykehus, 107627-St.Olavs
 
 options(warn = -1)
-for (hvem in c('Norge', 'Haukeland', 'Sunnaas', 'St.Olav')){
+for (hvem in c('Norge', 'Haukeland', 'Sunnaas', 'St.Olav')){      #NB: Må gjøres mer robust!!!!!!!
 utvalg <- switch(hvem,
 		Norge = 1:dim(NSdata)[1],
 		Haukeland = which(NSdata$ReshId == 105593),
@@ -241,10 +241,10 @@ utvalg <- switch(hvem,
 		St.Olav = which(NSdata$ReshId == 107627))
 
 	Alder <- NSdata$Alder[utvalg]
-	BehDager <- NSdata$HosptlDy[utvalg]
+	BehDager <- NSdata$OpphTot[utvalg]
 	RehabDager <- NSdata$DagerRehab[utvalg]
 	Ventetid <- NSdata$DagerTilRehab[utvalg]
-	Permisjon <- NSdata$OutOfHosptlDy[intersect(utvalg,which(NSdata$OutOfHosptlDy>0))]
+	Permisjon <- NSdata$Permisjon[intersect(utvalg,which(NSdata$Permisjon>0))]
 
 #if (sum(RehabDager>0, na.rm=T)>0 ) {
 
@@ -295,10 +295,10 @@ utvalg <- switch(hvem,
 
 Nutv <- length(utvalg)
 Kjonn <- table(NSdata$erMann[utvalg])
-AntTilHjem <- c(sum(NSdata$PlaceDis[utvalg]==1), sum(NSdata$PlaceDis[utvalg] %in% 1:10))
-AntAssSkade <-c(sum(NSdata$isAssocInj[utvalg]==1), sum(NSdata$isAssocInj[utvalg] %in% 0:1))
-AntSpinkir <- c(sum(NSdata$isSpnlSurg[utvalg]==1), sum(NSdata$isSpnlSurg[utvalg] %in% 0:1))
-AntTraumer <- c(sum(NSdata$Scietiol[utvalg] %in% 1:5), sum(NSdata$Scietiol[utvalg] %in% 1:6))
+AntTilHjem <- c(sum(NSdata$UtTil[utvalg]==1), sum(NSdata$UtTil[utvalg] %in% 1:10))
+AntAssSkade <-c(sum(NSdata$AssocInj[utvalg]==1), sum(NSdata$AssocInj[utvalg] %in% 0:1))
+AntSpinkir <- c(sum(NSdata$SpnlSurg[utvalg]==1), sum(NSdata$SpnlSurg[utvalg] %in% 0:1))
+AntTraumer <- c(sum(NSdata$SkadeArsak[utvalg] %in% 1:5), sum(NSdata$SkadeArsak[utvalg] %in% 1:6))
 
 Andeler <- rbind('Kvinner' = c(Kjonn[1], Kjonn[1]/Nutv),
 	'Menn' = c(Kjonn[2], Kjonn[2]/Nutv),
@@ -352,17 +352,17 @@ av data til figurene.
 	Følgelig vil det være misvisende å skulle ha den med.
 
 
-	\item [Nevrologisk kategori]
-	Figur \ref{fig:NevrKatInnUtEget} og \ref{fig:NevrKatInnUtLand} viser ei sammenligning av
-	nevrologisk kategori ved inn-og utskriving.
-	Alle registreringer som var kodet 'U' enten ved inn-eller utskriving er tatt bort så vi har
-	gyldig AIS registrering for den aktuelle pasienten både ved inn og utskrivelse.
-	Det betyr at hvis en pasient er i kategori D ved innskriving og U ved utskrivelse el. omvendt,
-	er pasienten tatt ut. \\
-	For at vi skal sammenligne, må vi ha samme pasientutvalg i de to søylene Inn og Ut.
-	Kategorien C1-4 omfatter derfor de som var i gruppa C1-4 \textit{både} ved inn- og utskriving.
-	Det vil si at hvis en pasient har status C4 ved innskriving og
-	C5 ved utskrivelse blir ikke pasienten med i datagrunnlaget til figuren.
+%	\item [Nevrologisk kategori]
+%	Figur \ref{fig:NevrKatInnUtEget} og \ref{fig:NevrKatInnUtLand} viser ei sammenligning av
+%	nevrologisk kategori ved inn-og utskriving.
+%	Alle registreringer som var kodet 'U' enten ved inn-eller utskriving er tatt bort så vi har
+%	gyldig AIS registrering for den aktuelle pasienten både ved inn og utskrivelse.
+%	Det betyr at hvis en pasient er i kategori D ved innskriving og U ved utskrivelse el. omvendt,
+%	er pasienten tatt ut. \\
+%	For at vi skal sammenligne, må vi ha samme pasientutvalg i de to søylene Inn og Ut.
+%	Kategorien C1-4 omfatter derfor de som var i gruppa C1-4 \textit{både} ved inn- og utskriving.
+%	Det vil si at hvis en pasient har status C4 ved innskriving og
+%	C5 ved utskrivelse blir ikke pasienten med i datagrunnlaget til figuren.
 
 	\item [Liggedager/Rehab.] Ved beregning av total liggetid (antall døgn innlagt på sykehus)
 	er antall dager pasienten har vært ute av sykehuset trukket fra. I innregistreringa er det kun
@@ -560,7 +560,7 @@ av data til figurene.
 \begin{center}
 \scalebox{\Sexpr{s1}}{
 <<FigAlderGjsn, echo=FALSE>>=
-	FigGjsnGrVar(NSdata, valgtVar='Alder', datoFra=datoFra, datoTil=datoTil,
+	NSFigGjsnGrVar(NSdata, valgtVar='Alder', datoFra=datoFra, datoTil=datoTil,
 		valgtMaal='', minald=minald, maxald=maxald, erMann=erMann, traume=traume, preprosess=0, hentData=0)
 @
 }
@@ -573,7 +573,7 @@ av data til figurene.
 \begin{center}
 \scalebox{\Sexpr{s1}}{
 <<FigAlderMed, echo=FALSE>>=
-	FigGjsnGrVar(NSdata,   valgtVar='Alder', datoFra=datoFra, datoTil=datoTil,
+	NSFigGjsnGrVar(NSdata,   valgtVar='Alder', datoFra=datoFra, datoTil=datoTil,
 		valgtMaal='Med', minald=minald, maxald=maxald, erMann=erMann,
     traume=traume, preprosess=0, hentData=0)
 @
@@ -588,7 +588,7 @@ av data til figurene.
 \begin{center}
 \scalebox{\Sexpr{s1}}{
 <<FigDagerRehabGjsn, echo=FALSE>>=
-	FigGjsnGrVar(NSdata,   valgtVar='DagerRehab', datoFra=datoFra, datoTil=datoTil,
+	NSFigGjsnGrVar(NSdata,   valgtVar='DagerRehab', datoFra=datoFra, datoTil=datoTil,
 		valgtMaal='', minald=minald, maxald=maxald, erMann=erMann, traume=traume, preprosess=0, hentData=0)
 @
 }
@@ -601,7 +601,7 @@ av data til figurene.
 \begin{center}
 \scalebox{\Sexpr{s1}}{
 <<FigDagerRehabMed, echo=FALSE>>=
-	FigGjsnGrVar(NSdata,   valgtVar='DagerRehab', datoFra=datoFra, datoTil=datoTil,
+	NSFigGjsnGrVar(NSdata,   valgtVar='DagerRehab', datoFra=datoFra, datoTil=datoTil,
 		valgtMaal='Med', minald=minald, maxald=maxald, erMann=erMann,
     traume=traume, preprosess=0, hentData=0)
 @
@@ -616,7 +616,7 @@ av data til figurene.
 \begin{center}
 \scalebox{\Sexpr{s1}}{
 <<FigDagerTilRehabGjsn, echo=FALSE>>=
-	FigGjsnGrVar(NSdata,   valgtVar='DagerTilRehab', datoFra=datoFra, datoTil=datoTil,
+	NSFigGjsnGrVar(NSdata,   valgtVar='DagerTilRehab', datoFra=datoFra, datoTil=datoTil,
 		valgtMaal='', minald=minald, maxald=maxald, erMann=erMann, traume=traume,
     preprosess=0, hentData=0)
 @
@@ -630,7 +630,7 @@ av data til figurene.
 \begin{center}
 \scalebox{\Sexpr{s1}}{
 <<FigDagerTilRehabMed, echo=FALSE>>=
-	FigGjsnGrVar(NSdata,   valgtVar='DagerTilRehab', datoFra=datoFra, datoTil=datoTil,
+	NSFigGjsnGrVar(NSdata,   valgtVar='DagerTilRehab', datoFra=datoFra, datoTil=datoTil,
 		valgtMaal='Med', minald=minald, maxald=maxald, erMann=erMann,
     traume=traume, preprosess=0, hentData=0)
 @
@@ -644,7 +644,7 @@ av data til figurene.
 \begin{center}
 \scalebox{\Sexpr{s1}}{
 <<FigPermisjonGjSn, echo=FALSE>>=
-	FigGjsnGrVar(NSdata,   valgtVar='Permisjon', datoFra=datoFra, datoTil=datoTil,
+	NSFigGjsnGrVar(NSdata,   valgtVar='Permisjon', datoFra=datoFra, datoTil=datoTil,
 		valgtMaal='', minald=minald, maxald=maxald, erMann=erMann, traume=traume, preprosess=0, 
     hentData=0)
 @
@@ -658,7 +658,7 @@ av data til figurene.
 \begin{center}
 \scalebox{\Sexpr{s1}}{
 <<FigPermisjonMed, echo=FALSE>>=
-	FigGjsnGrVar(NSdata,   valgtVar='Permisjon', datoFra=datoFra, datoTil=datoTil,
+	NSFigGjsnGrVar(NSdata,   valgtVar='Permisjon', datoFra=datoFra, datoTil=datoTil,
 		valgtMaal='Med', minald=minald, maxald=maxald, erMann=erMann, preprosess=0, 
     traume=traume, hentData=0)
 @
@@ -673,7 +673,7 @@ av data til figurene.
 \begin{center}
 \scalebox{\Sexpr{s1}}{
 <<FigOpphTotGjsn, echo=FALSE>>=
-	FigGjsnGrVar(NSdata,   valgtVar='OpphTot', datoFra=datoFra, datoTil=datoTil,
+	NSFigGjsnGrVar(NSdata,   valgtVar='OpphTot', datoFra=datoFra, datoTil=datoTil,
 		valgtMaal='', minald=minald, maxald=maxald, erMann=erMann, traume=traume, preprosess=0, 
     hentData=0)
 @
@@ -687,7 +687,7 @@ av data til figurene.
 \begin{center}
 \scalebox{\Sexpr{s1}}{
 <<FigOpphTotMed, echo=FALSE>>=
-	FigGjsnGrVar(NSdata, valgtVar='OpphTot', datoFra=datoFra, datoTil=datoTil,
+	NSFigGjsnGrVar(NSdata, valgtVar='OpphTot', datoFra=datoFra, datoTil=datoTil,
 		valgtMaal='Med', minald=minald, maxald=maxald, erMann=erMann, preprosess=0, 
     traume=traume, hentData=0)
 @
