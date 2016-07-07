@@ -76,7 +76,7 @@
 
 \title{Resultater fra NorScir}
 %\author{Lena Ringstad Olsen (SKDE)}
-\fancyhead[R]{\includegraphics[height=2cm]{\Sexpr{system.file("NorSCIR_logo_blue_norsk.pdf", package = "NorScir")}}}
+\fancyhead[R]{\includegraphics[height=2cm]{\Sexpr{system.file("NorSCIR_logo_blue_norsk.pdf", package = "nordicscir")}}}
 
 \begin{document}
 \maketitle
@@ -96,7 +96,7 @@ options(replace.assign=TRUE, width=90) #, warnings=FALSE, echo=FALSE, fig.align=
 
 <<"WARNINGLoadSampleDataWARNING", echo=FALSE, eval=FALSE>>=
 #load(NorScirSampleData)
-data(NorScirSampleData, package="NorScir")
+data(NorScirSampleData, package="nordicscir")
 NSdata <- NorScirSampleData
 reshID <- 123456
 @
@@ -104,7 +104,7 @@ reshID <- 123456
 
 <<LasteData, echo=FALSE, eval=T>>=
 if (!exists('NSdata')){
-      NSdata <- NSRegDataSQL()
+      NSdata <- nordicscir::NSRegDataSQL()
 }
 @
 

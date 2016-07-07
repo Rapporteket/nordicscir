@@ -14,8 +14,6 @@
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \usepackage{amsmath}
-%package odfWeave provides functions for using Sweave in combination with OpenOffice Writer
-%rather than LATEX.
 
 %add rotating for plain tables
 \usepackage{rotating}
@@ -31,9 +29,6 @@
 
 %for nice looking tabs
 \usepackage{booktabs}
-
-%ensure knitr processing?
-% !Rnw weave = knitr
 
 %bytte font
 \renewcommand{\familydefault}{\sfdefault}
@@ -63,11 +58,8 @@
 \fancyfootoffset[LO]{1.5cm}
 \fancyfootoffset[RE]{1.5cm}
 \fancyhead[LO]{\colorbox{SKDE}{\textcolor{white}{\hspace*{2cm}\scshape\small Norsk Ryggmarksskaderegister}}} %Lengde på stripa
-%\fancyhead[RE]{\hspace*{2cm}\colorbox{SKDE}{\textcolor{white}{\scshape\small Norsk Ryggmarksskaderegister \hspace*{3cm}}}}
 \fancyfoot[LO]{\colorbox{SKDE}{\textcolor{white}{\scshape\small\thepage}}}
-%	\\ \vspace*{-0.1cm}\colorbox{SKDE}{\textcolor{SKDE}{\scshape\small\thepage}} \\ \vspace*{-0.1cm}\colorbox{SKDE}{\textcolor{SKDE}{\scshape\small\thepage}} }
 \fancyfoot[RE]{\colorbox{SKDE}{\textcolor{white}{\scshape\small\thepage}}}
-% \\ \vspace*{-0.1cm}\colorbox{SKDE}{\textcolor{SKDE}{\scshape\small\thepage}} \\ \vspace*{-0.1cm}\colorbox{SKDE}{\textcolor{SKDE}{\scshape\small\thepage}} \\ \vspace*{-0.1cm}\colorbox{SKDE}{\textcolor{SKDE}{\scshape\small\thepage}}}
 \renewcommand{\headrulewidth}{0pt} %\iffloatpage{0pt}{0.4pt}
  \renewcommand{\footrulewidth}{0pt}
 %evt. horisontal sidenummer
@@ -77,14 +69,11 @@
 
 
 \title{Resultater fra NorScir}
-\author{Lena Ringstad Olsen (SKDE)}
-%\fancyhead[R]{\includegraphics[height=2cm]{../NorSCIR_logo_blue_norsk.pdf}}
-\fancyhead[R]{\includegraphics[height=2cm]{\Sexpr{system.file("NorSCIR_logo_blue_norsk.pdf", package = "NorScir")}}}
+\author{Spinnalskaderegisteret og Lena Ringstad Olsen (SKDE)}
+\fancyhead[R]{\includegraphics[height=2cm]{\Sexpr{system.file("NorSCIR_logo_blue_norsk.pdf", package = "nordicscir")}}}
 
 \begin{document}
-%\SweaveOpts{concordance=TRUE}
-%%check the next one
-%\SweaveOpts{concordance=TRUE}
+
 \maketitle
 \tableofcontents
 %\newpage
@@ -99,16 +88,16 @@ knitr::opts_chunk$set(fig.align='center', fig.show='hold', fig.path='', out.widt
 options(replace.assign=TRUE, width=90) #, warnings=FALSE, echo=FALSE, fig.align='center', fig.show='hold', out.width='.7\\textwidth', cache=FALSE)
 @
 
-<<"WARNINGLoadSampleDataWARNING", echo=FALSE, eval=FALSE>>=
-#load(NorScirSampleData)
-data(NorScirSampleData, package="NorScir")
-NSdata <- NorScirSampleData
-reshID <- 123456
-@
+%<<"WARNINGLoadSampleDataWARNING", echo=FALSE, eval=FALSE>>=
+%#load(NorScirSampleData)
+%data(NorScirSampleData, package="nordicscir")
+%NSdata <- NorScirSampleData
+%reshID <- 123456
+%@
 
 <<LasteData, echo=FALSE, eval=T>>=
 if (!exists('NSdata')){
-      NSdata <- NSRegDataSQL()
+      NSdata <- nordicscir::NSRegDataSQL()
 }
 @
 
@@ -131,7 +120,7 @@ ShNavn <- as.character(NSdata$ShNavn[match(reshID, NSdata$ReshId)])
 
 #Parametre
 minald <- 0
-maxald <- 120
+maxald <- 130
 erMann <- ''	#...
 traume <- ''	#'ja','nei', standard: ikke utvalgt (
 AIS <- ''
