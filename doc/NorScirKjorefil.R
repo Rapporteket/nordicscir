@@ -26,10 +26,10 @@ setwd("C:/ResultattjenesteGIT/nordicscir/inst")
 reshID <- 106896	#0 - alle	#105593-Haukeland, 106896-Sunnaas, 107627-St.Olavs
 
 library(tools)	#texi2pdf
-knit('NSsamleDokLand.Rnw')
-texi2pdf('NSsamleDokLand.tex')
-#knit('NSsamleDok.Rnw')
-texi2pdf('NSsamleDok.tex')
+knit('NSsamleRappLand.Rnw')
+texi2pdf('NSsamleRappLand.tex')
+#knit('NSsamleRapp.Rnw')
+texi2pdf('NSsamleRapp.tex')
 
 #------------------------------ Fordelinger --------------------------
 Fra jrxml:
