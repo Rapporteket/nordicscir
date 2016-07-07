@@ -103,9 +103,9 @@ reshID <- 123456
 
 
 <<LasteData, echo=FALSE, eval=T>>=
-if (!exists('NSdata')){
+#if (!exists('NSdata')){
       NSdata <- nordicscir::NSRegDataSQL()
-}
+#}
 @
 
 
