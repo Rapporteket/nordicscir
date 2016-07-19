@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-07-05T13:33:28 -->
+<!-- Created with Jaspersoft Studio version 6.0.0.final using JasperReports Library version 6.0.0  -->
+<!-- 2016-07-19T09:57:55 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="FigAndeler" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" scriptletClass="no.skde.report.norscir.NorScirCommonScriptletRPackage" isIgnorePagination="true" uuid="1e5ff9d1-11ac-4f35-a45e-0491016fbb9c">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<property name="ireport.jasperserver.url" value="https://test.helseregister.no/rapporteket_test/"/>
+	<property name="ireport.jasperserver.url" value="http://tos-hreg-app-08.nreg.no:8080/rapporteket_test/"/>
 	<property name="ireport.jasperserver.report.resource" value="/organizations/NordicSCIR/Reports/Kliniske/NSFigAndeler_files/Main_Jrxml"/>
 	<property name="ireport.jasperserver.reportUnit" value="/organizations/NordicSCIR/Reports/Kliniske/NSFigAndeler"/>
 	<property name="ireport.jasperserver.user" value="superuser"/>
@@ -29,7 +29,7 @@
 		<defaultValueExpression><![CDATA[new String("nordicscir")]]></defaultValueExpression>
 	</parameter>
 	<parameter name="rFunctionCallString" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA[new String("NSFigAndeler(RegData=0, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, AIS=AIS, minald=minald, maxald=maxald, erMann=erMann, traume=traume, enhetsUtvalg=enhetsUtvalg, hentData=1, reshID=" + $P{LoggedInUserAVD_RESH} + ")")]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[new String("NSFigAndeler(RegData=0, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, AIS=AIS, minald=minald, maxald=maxald, erMann=erMann, traume=traume, enhetsUtvalg=enhetsUtvalg, hentData=1, reshID=reshID)")]]></defaultValueExpression>
 	</parameter>
 	<parameter name="varName" class="java.lang.String">
 		<defaultValueExpression><![CDATA[new String("Alder")]]></defaultValueExpression>
