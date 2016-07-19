@@ -42,6 +42,7 @@ NSRegDataSQL <- function() {
       RehabDy,
       ReshId,
       Scietiol,
+      SkjemaGUID,
       VentAssi
 FROM
      MainFormDataContract"
