@@ -14,8 +14,6 @@
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \usepackage{amsmath}
-%package odfWeave provides functions for using Sweave in combination with OpenOffice Writer
-%rather than LATEX.
 
 %add rotating for plain tables
 \usepackage{rotating}
@@ -31,7 +29,6 @@
 
 %for nice looking tabs
 \usepackage{booktabs}
-
 
 %bytte font
 \renewcommand{\familydefault}{\sfdefault}
@@ -63,12 +60,10 @@
 \fancyhead[LO]{\colorbox{SKDE}{\textcolor{white}{\hspace*{2cm}\scshape\small Norsk Ryggmarksskaderegister}}} %Lengde på stripa
 %\fancyhead[RE]{\hspace*{2cm}\colorbox{SKDE}{\textcolor{white}{\scshape\small Norsk Ryggmarksskaderegister \hspace*{3cm}}}}
 \fancyfoot[LO]{\colorbox{SKDE}{\textcolor{white}{\scshape\small\thepage}}}
-%	\\ \vspace*{-0.1cm}\colorbox{SKDE}{\textcolor{SKDE}{\scshape\small\thepage}} \\ \vspace*{-0.1cm}\colorbox{SKDE}{\textcolor{SKDE}{\scshape\small\thepage}} }
 \fancyfoot[RE]{\colorbox{SKDE}{\textcolor{white}{\scshape\small\thepage}}}
-% \\ \vspace*{-0.1cm}\colorbox{SKDE}{\textcolor{SKDE}{\scshape\small\thepage}} \\ \vspace*{-0.1cm}\colorbox{SKDE}{\textcolor{SKDE}{\scshape\small\thepage}} \\ \vspace*{-0.1cm}\colorbox{SKDE}{\textcolor{SKDE}{\scshape\small\thepage}}}
 \renewcommand{\headrulewidth}{0pt} %\iffloatpage{0pt}{0.4pt}
  \renewcommand{\footrulewidth}{0pt}
-%evt. horisontal sidenummer
+%evt. horisontal sidenummerering
 \fancyfoot[LO]{\colorbox{SKDE}{\textcolor{white}{\hspace*{2cm} \small \thepage}}} \fancyfootoffset[LO]{4.4cm}
 \fancyfoot[RE]{\hspace*{2cm}\colorbox{SKDE}{\textcolor{white}{\small \thepage \hspace*{3cm}}}}  \fancyfootoffset[RE]{5.3cm}
 \setcounter{secnumdepth}{-1}
@@ -76,7 +71,7 @@
 
 \title{Resultater fra NorScir}
 %\author{Lena Ringstad Olsen (SKDE)}
-\fancyhead[R]{\includegraphics[height=2cm]{\Sexpr{system.file("NorSCIR_logo_blue_norsk.pdf", package = "NorScir")}}}
+\fancyhead[R]{\includegraphics[height=2cm]{\Sexpr{system.file("NorSCIR_logo_blue_norsk.pdf", package = "nordicscir")}}}
 
 \begin{document}
 \maketitle
@@ -86,24 +81,25 @@
 \listoffigures
 \newpage
 
-
-<<"knitrSettings", include=FALSE, echo=FALSE, eval=TRUE>>=
-knitr::opts_chunk$set(fig.align='center', fig.show='hold', out.width='.7\\textwidth',cache=FALSE, fig.path='')
+<<setup, include=FALSE, cache=FALSE>>=
+knitr::opts_chunk$set(warnings=FALSE,echo=FALSE)
+knitr::opts_knit$set(root.dir = './')	#Settes også i rapbase
+knitr::opts_chunk$set(fig.align='center', fig.show='hold', fig.path='', out.width='.7\\textwidth', cache=FALSE)
+options(replace.assign=TRUE, width=90) #, warnings=FALSE, echo=FALSE, fig.align='center', fig.show='hold', out.width='.7\\textwidth', cache=FALSE)
 @
 
-<<"WARNINGLoadSampleDataWARNING", echo=FALSE, eval=TRUE>>=
+<<"WARNINGLoadSampleDataWARNING", echo=FALSE, eval=FALSE>>=
 #load(NorScirSampleData)
-data(NorScirSampleData, package="NorScir")
+data(NorScirSampleData, package="nordicscir")
 NSdata <- NorScirSampleData
-libkat <- './'
 reshID <- 123456
 @
 
-<<'LasteDataDb', include=FALSE, echo=FALSE, eval=FALSE>>=
-NSdata <- NSLoadRegData()
 
-# may be removed?
-libkat <- './'
+<<LasteData, echo=FALSE, eval=T>>=
+if (!exists('NSdata')){
+      NSdata <- nordicscir::NSRegDataSQL()
+}
 @
 
 
@@ -115,44 +111,31 @@ variable som finnes i registreringsskjema.
 \section{Data og nøkkeltall}
 
 <<'Variabeldef og utvalg', results='asis', echo=FALSE>>=
-NSdataAlleSkjema <- NSdata
-#------------NB: Siden vi bare har resultater fra skjema 1 filtreres nå på skjema 1.
-NSdata <- NSdata[which(NSdata$SkjemaID==1), ]
-
-alderVar <- 'AlderAar'
-datoVar <- 'AdmitDt'
-NSdata$InnDato <- as.POSIXlt(NSdata[ ,datoVar], format="%Y-%m-%d")	#"%d.%m.%Y"
+NSdata <- NSPreprosesser(RegData=NSdata)
 NSdata$Aar <- NSdata$InnDato$year+1900
-NSdata$Alder <- NSdata[ ,alderVar]
 ShNavn <- NSdata$ShNavn[which(NSdata$ReshId == reshID)[1]]
 
 #Parametre
-#sml <- 1		#Sammenligne med resten av landet eller ikke. Ikke aktiv når hele landet valgt.
 minald <- 0
 maxald <- 130
 erMann <- ''	#...
 traume <- ''	#'ja','nei', standard: ikke utvalgt (
 AIS <- ''
 datoFra <- '2011-01-01'	#Standard: 0, dvs. alle år
-datoTil <- '2014-12-31'
-#egenavd=0
-#reshID - gis fra Jasper	##105593-Haukeland, 106896-Sunnaas sykehus, 107627-St.Olavs, standard: 'Alle'
-#plotType='S'
+datoTil <- '2016-12-31'
 s1 <- 0.8	#Skaleringsparameter for enkeltfigurer
 #s2 <- 0.7	#Skaleringsparameter for "dobbeltfigurer"
 
 #Utvalg/datarensk
 Ninn <- dim(NSdata)[1]
-Utvalg <- NorScir::NSLibUtvalg(RegData=NSdata, datoFra=datoFra,
-                               datoTil=datoTil)
+Utvalg <- NSUtvalg(RegData=NSdata, datoFra=datoFra, datoTil=datoTil)
 NSdata <- Utvalg$RegData
-NSdataEget <- NSdata[NSdata$ReshId == reshID,]
 
 
 Ntot <- dim(NSdata)[1]
 #Nskj1 <- length(NSdata$SkjemaID==1)
 Npas <- Ntot #unique(NSdata$PasientID)
-tabKjPst <- round(table(NSdata$isMale)/Npas*100, digits=1)
+tabKjPst <- round(table(NSdata$erMann)/Npas*100, digits=1)
 @
 
 Alle resultater i dette dokumentet basert på innleggelser i perioden
@@ -198,10 +181,10 @@ utvalg <- switch(hvem,
 		St.Olav = which(NSdata$ReshId == 107627))
 
 	Alder <- NSdata$Alder[utvalg]
-	BehDager <- NSdata$HosptlDy[utvalg]
+	BehDager <- NSdata$OpphTot[utvalg]
 	RehabDager <- NSdata$DagerRehab[utvalg]
 	Ventetid <- NSdata$DagerTilRehab[utvalg]
-	Permisjon <- NSdata$OutOfHosptlDy[intersect(utvalg,which(NSdata$OutOfHosptlDy>0))]
+	Permisjon <- NSdata$Permisjon[intersect(utvalg,which(NSdata$Permisjon>0))]
 
 #if (sum(RehabDager>0, na.rm=T)>0 ) {
 
@@ -251,11 +234,11 @@ utvalg <- switch(hvem,
 		St.Olav = which(NSdata$ReshId == 107627))
 
 Nutv <- length(utvalg)
-Kjonn <- table(NSdata$isMale[utvalg])
-AntTilHjem <- c(sum(NSdata$PlaceDis[utvalg]==1), sum(NSdata$PlaceDis[utvalg] %in% 1:10))
-AntAssSkade <-c(sum(NSdata$isAssocInj[utvalg]==1), sum(NSdata$isAssocInj[utvalg] %in% 0:1))
-AntSpinkir <- c(sum(NSdata$isSpnlSurg[utvalg]==1), sum(NSdata$isSpnlSurg[utvalg] %in% 0:1))
-AntTraumer <- c(sum(NSdata$Scietiol[utvalg] %in% 1:5), sum(NSdata$Scietiol[utvalg] %in% 1:6))
+Kjonn <- table(NSdata$erMann[utvalg])
+AntTilHjem <- c(sum(NSdata$UtTil[utvalg]==1), sum(NSdata$UtTil[utvalg] %in% 1:10))
+AntAssSkade <-c(sum(NSdata$AssocInj[utvalg]==1), sum(NSdata$AssocInj[utvalg] %in% 0:1))
+AntSpinkir <- c(sum(NSdata$SpnlSurg[utvalg]==1), sum(NSdata$SpnlSurg[utvalg] %in% 0:1))
+AntTraumer <- c(sum(NSdata$SkadeArsak[utvalg] %in% 1:5), sum(NSdata$SkadeArsak[utvalg] %in% 1:6))
 
 Andeler <- rbind('Kvinner' = c(Kjonn[1], Kjonn[1]/Nutv),
 	'Menn' = c(Kjonn[2], Kjonn[2]/Nutv),
@@ -308,17 +291,17 @@ av data til figurene.
 	Følgelig vil det være misvisende å skulle ha den med.
 
 
-	\item [Nevrologisk kategori]
-	Figur \ref{fig:NevrKatInnUtLand} viser ei sammenligning av
-	nevrologisk kategori ved inn-og utskriving.
-	Alle registreringer som var kodet 'U' enten ved inn-eller utskriving er tatt bort så vi har
-	gyldig AIS registrering for den aktuelle pasienten både ved inn og utskrivelse.
-	Det betyr at hvis en pasient er i kategori D ved innskriving og U ved utskrivelse el. omvendt,
-	er pasienten tatt ut. \\
-	For at vi skal sammenligne, må vi ha samme pasientutvalg i de to søylene Inn og Ut.
-	Kategorien C1-4 omfatter derfor de som var i gruppa C1-4 \textit{både} ved inn- og utskriving.
-	Det vil si at hvis en pasient har status C4 ved innskriving og
-	C5 ved utskrivelse blir ikke pasienten med i datagrunnlaget til figuren.
+%	\item [Nevrologisk kategori]
+%	Figur \ref{fig:NevrKatInnUtLand} viser ei sammenligning av
+%	nevrologisk kategori ved inn-og utskriving.
+%	Alle registreringer som var kodet 'U' enten ved inn-eller utskriving er tatt bort så vi har
+%	gyldig AIS registrering for den aktuelle pasienten både ved inn og utskrivelse.
+%	Det betyr at hvis en pasient er i kategori D ved innskriving og U ved utskrivelse el. omvendt,
+%	er pasienten tatt ut. \\
+%	For at vi skal sammenligne, må vi ha samme pasientutvalg i de to søylene Inn og Ut.
+%	Kategorien C1-4 omfatter derfor de som var i gruppa C1-4 \textit{både} ved inn- og utskriving.
+%	Det vil si at hvis en pasient har status C4 ved innskriving og
+%	C5 ved utskrivelse blir ikke pasienten med i datagrunnlaget til figuren.
 
 	\item [Liggedager/Rehab.] Ved beregning av total liggetid (antall døgn innlagt på sykehus)
 	er antall dager pasienten har vært ute av sykehuset trukket fra. I innregistreringa er det kun
@@ -337,35 +320,35 @@ av data til figurene.
 
 
 <<Figurer, echo=FALSE, message=FALSE>>=
-dum <- NorScir::FigAndelStabel(NSdata, libkat=libkat, valgtVar='NevrNivaaInnUt', outfile='FigNevrNivaaInnUt.pdf',
-		datoFra=datoFra, datoTil=datoTil, erMann=erMann, traume=traume, enhetsUtvalg=0, reshID=reshID, hentData=0)
-dum <- NorScir::FigFordeling(NSdata, libkat=libkat, valgtVar='Alder', outfile='FigAlder.pdf',
+#dum <- NSNSFigAndelStabel(NSdata, preprosess=0,valgtVar='NevrNivaaInnUt', outfile='FigNevrNivaaInnUt.pdf',
+#		datoFra=datoFra, datoTil=datoTil, erMann=erMann, traume=traume, enhetsUtvalg=0, reshID=reshID, hentData=0)
+dum <- NSFigAndeler(NSdata, preprosess=0,valgtVar='Alder', outfile='FigAlder.pdf',
 		datoFra=datoFra, datoTil=datoTil, traume=traume, enhetsUtvalg=0, reshID=reshID, hentData=0)
-dum <- NorScir::FigFordeling(NSdata, libkat=libkat, valgtVar='OpphTot', outfile='FigOpphTot.pdf',
+dum <- NSFigAndeler(NSdata, preprosess=0, valgtVar='OpphTot', outfile='FigOpphTot.pdf',
 		datoFra=datoFra, datoTil=datoTil, traume=traume, enhetsUtvalg=0, reshID=reshID, hentData=0)
-dum <- NorScir::FigFordeling(NSdata, libkat=libkat, valgtVar='DagerTilRehab', outfile='FigDagerTilRehab.pdf',
+dum <- NSFigAndeler(NSdata, preprosess=0, valgtVar='DagerTilRehab', outfile='FigDagerTilRehab.pdf',
 		datoFra=datoFra, datoTil=datoTil, traume=traume, enhetsUtvalg=0, reshID=reshID, hentData=0)
-dum <- NorScir::FigFordeling(NSdata, libkat=libkat, valgtVar='DagerRehab', outfile='FigDagerRehab.pdf',
+dum <- NSFigAndeler(NSdata, preprosess=0, valgtVar='DagerRehab', outfile='FigDagerRehab.pdf',
 		datoFra=datoFra, datoTil=datoTil, traume=traume, enhetsUtvalg=0, reshID=reshID, hentData=0)
-dum <- NorScir::FigFordeling(NSdata, libkat=libkat, valgtVar='Permisjon', outfile='FigPermisjon.pdf',
+dum <- NSFigAndeler(NSdata, preprosess=0, valgtVar='Permisjon', outfile='FigPermisjon.pdf',
 		datoFra=datoFra, datoTil=datoTil, traume=traume, enhetsUtvalg=0, reshID=reshID, hentData=0)
-dum <- NorScir::FigFordeling(NSdata, libkat=libkat, valgtVar='UtTil', outfile='FigUtTil.pdf',
+dum <- NSFigAndeler(NSdata, preprosess=0, valgtVar='UtTil', outfile='FigUtTil.pdf',
 		datoFra=datoFra, datoTil=datoTil, traume=traume, enhetsUtvalg=0, reshID=reshID, hentData=0)
-dum <- NorScir::FigFordeling(NSdata, libkat=libkat, valgtVar='SkadeArsak', outfile='FigSkadeArsak.pdf',
+dum <- NSFigAndeler(NSdata, preprosess=0, valgtVar='SkadeArsak', outfile='FigSkadeArsak.pdf',
 		datoFra=datoFra, datoTil=datoTil, traume=traume, enhetsUtvalg=0, reshID=reshID, hentData=0)
-dum <- NorScir::FigFordeling(NSdata, libkat=libkat, valgtVar='Pustehjelp', outfile='FigPustehjelp.pdf',
+dum <- NSFigAndeler(NSdata, preprosess=0, valgtVar='Pustehjelp', outfile='FigPustehjelp.pdf',
 		datoFra=datoFra, datoTil=datoTil, traume=traume, enhetsUtvalg=0, reshID=reshID, hentData=0)
-dum <- NorScir::FigFordeling(NSdata, libkat=libkat, valgtVar='AAis', outfile='FigAISinn.pdf',
+dum <- NSFigAndeler(NSdata, preprosess=0, valgtVar='AAis', outfile='FigAISinn.pdf',
 		datoFra=datoFra, datoTil=datoTil, traume=traume, enhetsUtvalg=0, reshID=reshID, hentData=0)
-dum <- 	NorScir::FigFordeling(NSdata, libkat=libkat, valgtVar='FAis', outfile='FigAISut.pdf',
+dum <- 	NSFigAndeler(NSdata, preprosess=0, valgtVar='FAis', outfile='FigAISut.pdf',
 		datoFra=datoFra, datoTil=datoTil, traume=traume, enhetsUtvalg=0, reshID=reshID, hentData=0)
 
 @
 
-\begin{figure}[ht]
- \centerline{ \scalebox{\Sexpr{s1}}{\includegraphics{FigNevrNivaaInnUt.pdf}}  }
- \caption{\label{fig:NevrKatInnUtLand} Nevrologisk nivå, alle sykehus.}
-\end{figure}
+%\begin{figure}[ht]
+% \centerline{ \scalebox{\Sexpr{s1}}{\includegraphics{FigNevrNivaaInnUt.pdf}}  }
+% \caption{\label{fig:NevrKatInnUtLand} Nevrologisk nivå, alle sykehus.}
+%\end{figure}
 
 \begin{figure}[ht]
  \centerline{ \scalebox{\Sexpr{s1}}{\includegraphics{FigAlder.pdf}}  }
@@ -423,25 +406,25 @@ dum <- 	NorScir::FigFordeling(NSdata, libkat=libkat, valgtVar='FAis', outfile='F
 
 
 <<Figurer2, echo=FALSE, message=FALSE>>=
-dum <- 	NorScir::FigMeanMed(NSdata, libkat=libkat, valgtVar='Alder', outfile='FigAlderGjsn.pdf',
+dum <- 	NSFigGjsnGrVar(NSdata, preprosess=0, valgtVar='Alder', outfile='FigAlderGjsn.pdf',
 		datoFra=datoFra, datoTil=datoTil, valgtMaal='', erMann=erMann, traume=traume, hentData=0)
-dum <- 	NorScir::FigMeanMed(NSdata, libkat=libkat, valgtVar='Alder', outfile='FigAlderMed.pdf',
+dum <- 	NSFigGjsnGrVar(NSdata, preprosess=0, valgtVar='Alder', outfile='FigAlderMed.pdf',
 		datoFra=datoFra, datoTil=datoTil, valgtMaal='Med', erMann=erMann, traume=traume, hentData=0)
-dum <- NorScir::FigMeanMed(NSdata, libkat=libkat, valgtVar='DagerRehab', outfile='FigDagerRehabGjsn.pdf',
+dum <- NSFigGjsnGrVar(NSdata, preprosess=0, valgtVar='DagerRehab', outfile='FigDagerRehabGjsn.pdf',
 		datoFra=datoFra, datoTil=datoTil, valgtMaal='', erMann=erMann, traume=traume, hentData=0)
-dum <- NorScir::FigMeanMed(NSdata, libkat=libkat, valgtVar='DagerRehab', outfile='FigDagerRehabMed.pdf',
+dum <- NSFigGjsnGrVar(NSdata, preprosess=0, valgtVar='DagerRehab', outfile='FigDagerRehabMed.pdf',
 		datoFra=datoFra, datoTil=datoTil, valgtMaal='Med', erMann=erMann, traume=traume, hentData=0)
-dum <- NorScir::FigMeanMed(NSdata, libkat=libkat, valgtVar='DagerTilRehab', outfile='FigDagerTilRehabGjsn.pdf',
+dum <- NSFigGjsnGrVar(NSdata, preprosess=0, valgtVar='DagerTilRehab', outfile='FigDagerTilRehabGjsn.pdf',
 		datoFra=datoFra, datoTil=datoTil, valgtMaal='', erMann=erMann, traume=traume, hentData=0)
-dum <- NorScir::FigMeanMed(NSdata, libkat=libkat, valgtVar='DagerTilRehab', outfile='FigDagerTilRehabMed.pdf',
+dum <- NSFigGjsnGrVar(NSdata, preprosess=0, valgtVar='DagerTilRehab', outfile='FigDagerTilRehabMed.pdf',
 		datoFra=datoFra, datoTil=datoTil, valgtMaal='Med', erMann=erMann, traume=traume, hentData=0)
-dum <- NorScir::FigMeanMed(NSdata, libkat=libkat, valgtVar='Permisjon', outfile='FigPermisjonGjSn.pdf',
+dum <- NSFigGjsnGrVar(NSdata, preprosess=0, valgtVar='Permisjon', outfile='FigPermisjonGjSn.pdf',
 		datoFra=datoFra, datoTil=datoTil, valgtMaal='', erMann=erMann, traume=traume, hentData=0)
-dum <- NorScir::FigMeanMed(NSdata, libkat=libkat, valgtVar='Permisjon', outfile='FigPermisjonMed.pdf',
+dum <- NSFigGjsnGrVar(NSdata, preprosess=0, valgtVar='Permisjon', outfile='FigPermisjonMed.pdf',
 		datoFra=datoFra, datoTil=datoTil, valgtMaal='Med', erMann=erMann, traume=traume, hentData=0)
-dum <- NorScir::FigMeanMed(NSdata, libkat=libkat, valgtVar='OpphTot', outfile='FigOpphTotGjsn.pdf',
+dum <- NSFigGjsnGrVar(NSdata, preprosess=0, valgtVar='OpphTot', outfile='FigOpphTotGjsn.pdf',
 		datoFra=datoFra, datoTil=datoTil, valgtMaal='', erMann=erMann, traume=traume, hentData=0)
-dum <- NorScir::FigMeanMed(NSdata, libkat=libkat, valgtVar='OpphTot', outfile='FigOpphTotMed.pdf',
+dum <- NSFigGjsnGrVar(NSdata, preprosess=0, valgtVar='OpphTot', outfile='FigOpphTotMed.pdf',
 		datoFra=datoFra, datoTil=datoTil, valgtMaal='Med', erMann=erMann, traume=traume, hentData=0)
 
 @

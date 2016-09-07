@@ -13,4 +13,8 @@ inst/*.gz
 inst/Fig*
 inst/NSsamleDok.pdf
 inst/NSsamleDokLand.pdf
+<<<<<<< HEAD
+=======
+*.png
+>>>>>>> rel
 nordicscir.Rproj

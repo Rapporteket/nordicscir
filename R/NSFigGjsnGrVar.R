@@ -4,51 +4,43 @@
 #' og kan ta inn ulike numeriske variable. Funksjonen er delvis skrevet for å
 #' kunne brukes til andre grupperingsvariable enn sykehus.
 #'
-#' @param RegData Ei dataramme med alle nødvendige variable fra registeret
-#' @param libkat Sti til bibliotekkatalog (utgår)
-#' @param outfile - navn på fil figuren skrives ned til
-#' @param valgtVar Må velges: ... Alder, DagerRehab, DagerTilRehab, OpphTot[HosptlDy],
-#' @param erMann - kjønn, 1-menn, 0-kvinner, standard: '' (alt annet enn 0 og 1), dvs. begge
-#' @param minald - alder, fra og med
-#' @param maxald - alder, til og med
-#' @param traume - 'ja','nei', standard: ikke valgt
-#' @param AIS - AISgrad ved innleggelse alle(''), velge en eller flere fra A,B,C,D,E,U
-#' @param datoFra <- '2010-01-01'. Min og max dato i utvalget vises alltid i figuren.
-#' @param datoTil <- '2013-05-25'
+#' Argumentet \emph{valgtVar} har følgende valgmuligheter:
+#'    \itemize{
+#'     \item Alder: Aldersfordeling, 15-årige grupper 
+#'     \item DagerRehab: antall dager med rehabilitering [RehabDy]
+#'     \item DagerTilRehab: antall dager før rehabilitering [BeforeRehDy]
+#'     \item OpphTot: Lengde på opphold – totalt [HosptlDy] 
+#'     \item Permisjon: Antall døgn ute av sykehus [OutOfHosptlDy]
+#'    }
+#'    
+#' @inheritParams NSFigAndeler
 #' @param valgtMaal - 'Med' = median. Alt annet gir gjennomsnitt
-#' @param hentData Settes til 1 (standard) om data skal lastes i funksjonen.
-#' Settes til en annen verdi om data leveres til funksjonen gjennom 'RegData',
-#' eksempelvis ved bruk av eksempeldatasettet eller ved kall fra andre
-#' funksjoner der data allerede er tilgjengelig.
 #'
 #' @export
 
-FigMeanMed <- function(RegData, valgtVar, valgtMaal='Gjsn',
-                       datoFra='2010-01-01', datoTil='2050-12-31', AIS='',
-                       minald=0, maxald=130, erMann='', traume='', libkat,
-                       outfile='', hentData=1) {
+NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='Gjsn', datoFra='2010-01-01', datoTil='2050-12-31', 
+                           AIS='', minald=0, maxald=130, erMann='', traume='',
+                           preprosess=1, outfile='', hentData=0) {
 
-  # in a package, these will no longer be needed
-  #source(paste(libkat, 'LibFigFilType.R', sep=''), encoding="UTF-8")
-  #source(paste(libkat, 'NSLibUtvalg.R', sep=''), encoding="UTF-8")
-
-  if (hentData == 1) {
-    RegData <- NSLoadRegData()
-  }
-
-  #Definerer funksjonssperifikke variable................
+      if (hentData == 1) {
+            RegData <- NSRegDataSQL()
+      }
+      if (preprosess == 1) {
+            RegData <- NSPreprosesser(RegData)
+      }
+      
   grVar <- 'ShNavn'
   RegData[ ,grVar] <- factor(RegData[ ,grVar])  #, labels=c('Haukeland', 'St.Olav', 'Sunnaas'))
 
-  if (valgtVar %in% c('DagerRehab', 'DagerTilRehab')) {
+  if (valgtVar %in% c('Alder', 'DagerRehab', 'DagerTilRehab', 'OpphTot', 'Permisjon')) {
     RegData$Variabel <- RegData[ ,valgtVar] }
-  if (valgtVar == 'Alder') {RegData$Variabel <- RegData$AlderAar}
-  if (valgtVar == 'OpphTot') {RegData$Variabel <- as.numeric(RegData$HosptlDy)}
-  if (valgtVar == 'Permisjon') {RegData$Variabel <- RegData$OutOfHosptlDy
-                                RegData <- RegData[RegData$OutOfHosptlDy>0,]}	#Bare vits i å se på de som faktisk har permisjon
+
+  #Mange 0-verdier. Velger derfor bare de som har verdi >0 
+  RegData <- RegData[RegData$Variabel > 0,]
+  #if (valgtVar == 'Permisjon') {RegData <- RegData[RegData$Permisjon>0,]}	#Bare vits i å se på de som faktisk har permisjon
 
   #Tar ut de med manglende registrering av valgt variabel og gjør utvalg
-  Utvalg <- NSLibUtvalg(RegData=RegData, datoFra=datoFra, datoTil=datoTil, minald=minald, maxald=maxald,
+  Utvalg <- NSUtvalg(RegData=RegData, datoFra=datoFra, datoTil=datoTil, minald=minald, maxald=maxald,
                         erMann=erMann, traume=traume, AIS=AIS)
   RegData <- Utvalg$RegData
   utvalgTxt <- Utvalg$utvalgTxt
