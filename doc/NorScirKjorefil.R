@@ -31,6 +31,9 @@ texi2pdf('NSsamleRappLand.tex')
 knit('NSsamleRapp.Rnw')
 texi2pdf('NSsamleRapp.tex')
  
+
+NSurin <- read.table('C:/Registre/NordicScir/data/UrinaryTractFunctionFormDataContract2016-09-21.csv', sep=';', header=T)
+
 #------------------------------ Fordelinger --------------------------
 Fra jrxml:
 <defaultValueExpression><![CDATA["NSFigAndeler(RegData=0, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, AIS=AIS, minald=minald, maxald=maxald, erMann=erMann, traume=traume, enhetsUtvalg=enhetsUtvalg, reshID=" + $P{LoggedInUserAVD_RESH} + ")"]]></defaultValueExpression>
