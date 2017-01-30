@@ -13,9 +13,7 @@ NSPreprosesser <- function(RegData)
       #Kun ferdigstilte registreringer:
       # Rapporteket får kun levert ferdigstilte registreringer fra MRS/NHN.
       
-      #Sykehusnavn - MRS leverer pt. ikke sykehusnavn for NorSCir
-            #105593-Haukeland, 106896-Sunnaas, 107627-St.Olavs
-      RegData$ShNavn <- factor(RegData$ReshId, levels=c(105593, 106896, 107627), 
+  #   RegData$ShNavn <- factor(RegData$ReshId, levels=c(105593, 106896, 107627), 
                                           labels=c('Haukeland', 'Sunnaas', 'St.Olavs'))
       
      #Med bruk av ekstra pakker kan dette gjøres mer elegant 
