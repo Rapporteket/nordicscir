@@ -18,12 +18,12 @@ save(NorScirEksData, file='E:/Registre/NordicScir/data/NorScirEksData.Rdata')
 #write.table(NorScirEksData, file='E:/Registre/NordicScir/data/NorScirEksData.csv', sep=';')
 
 #------------------------Teste data-------------------------------------
-HovedSkjema <- read.table('C:/Registre/NordicScir/data/MainFormDataContract2017-02-10.csv', sep=';', header=T)
-Livskvalitet <- read.table('C:/Registre/NordicScir/data/LifeQualityFormDataContract2017-02-10.csv', sep=';', header=T)
-Kontroll <- read.table('C:/Registre/NordicScir/data/ControlFormDataContract2017-02-10.csv', sep=';', header=T)
-Bowel <- read.table('C:/Registre/NordicScir/data/BowelFunctionFormDataContract2017-02-10.csv', sep=';', header=T)
-Fornoyd <- read.table('C:/Registre/NordicScir/data/ActivityAndParticipationSatisfactionFormDataContract2017-02-10.csv', sep=';', header=T)
-Performance <- read.table('C:/Registre/NordicScir/data/ActivityAndParticipationPerformanceFormDataContract2017-02-10.csv', sep=';', header=T)
+HovedSkjema <- read.table('C:/Registre/NordicScir/data/MainFormDataContract2017-02-13.csv', sep=';', header=T)
+Livskvalitet <- read.table('C:/Registre/NordicScir/data/LifeQualityFormDataContract2017-02-13.csv', sep=';', header=T)
+Kontroll <- read.table('C:/Registre/NordicScir/data/ControlFormDataContract2017-02-13.csv', sep=';', header=T)
+Bowel <- read.table('C:/Registre/NordicScir/data/BowelFunctionFormDataContract2017-02-13.csv', sep=';', header=T)
+Fornoyd <- read.table('C:/Registre/NordicScir/data/ActivityAndParticipationSatisfactionFormDataContract2017-02-13.csv', sep=';', header=T)
+Performance <- read.table('C:/Registre/NordicScir/data/ActivityAndParticipationPerformanceFormDataContract2017-02-13.csv', sep=';', header=T)
 
 #Sjekk for hvilke variabelnavn som finnes i begge datasett
 varBegge <- intersect(names(Livskvalitet),names(HovedSkjema))
@@ -32,10 +32,24 @@ Livskvalitet <- Livskvalitet[ ,c("HovedskjemaGUID", names(Livskvalitet)[!(names(
 HovedSkjema$SkjemaGUID <- tolower(HovedSkjema$SkjemaGUID)
 
 NSData <- merge(HovedSkjema, Livskvalitet, suffixes = c('','XX'),
-                   by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all=F, all.x = T, all.y=F)
+                   by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = F, all.y=F)
 
-test <- match(HovedSkjema$SkjemaGUID, Livskvalitet$HovedskjemaGUID)
-andelLivskval <- length(na.omit(test))/length(test)
+#---Oppsummering/test av andel som har fått oppfølging---
+test <- HovedSkjema$SkjemaGUID %in% Livskvalitet$HovedskjemaGUID
+
+tabVar <- c('HealthUnitName','Aar')
+Hskjema <- HovedSkjema[c('SkjemaGUID','HealthUnitName','AdmitDt')][order(HovedSkjema$SkjemaGUID),]
+RaaTab <- cbind(Hskjema,
+      Aar = as.POSIXlt(Hskjema$AdmitDt, format="%Y-%m-%d")$year +1900,
+      MedLivskval = match(Hskjema$SkjemaGUID, sort(Livskvalitet$HovedskjemaGUID)),
+      MedKtr = match(HovedSkjema$SkjemaGUID, sort(Kontroll$HovedskjemaGUID))
+)
+#RaaTab <- RaaTab1[which(as.Date(Hskjema$AdmitDt)> '2014-12-31'),]
+Tot <- table(is.na(RaaTab$MedLivskval))/dim(RaaTab)[1]*100  #'MedKtr'
+AndelLivskval <- round(100*ftable(RaaTab[!is.na(RaaTab$MedLivskval),tabVar])/ftable(RaaTab[,tabVar]),1)
+AndelKtr <- round(100*ftable(RaaTab[!is.na(RaaTab$MedKtr),tabVar])/ftable(RaaTab[,tabVar]),1)
+
+
 
 
 #--------------------------------------SAMLERAPPORT-----------------------------------

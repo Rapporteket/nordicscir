@@ -43,6 +43,7 @@ NSPreprosesser <- function(RegData)
       
       #Riktig format på datovariable:
       RegData$InnDato <- as.POSIXlt(RegData$AdmitDt, format="%Y-%m-%d")
+      RegData$Aar <- as.POSIXlt(HovedSkjema$AdmitDt, format="%Y-%m-%d")$year +1900
       
       #RegData <- RegData[which(RegData$DateAdmittedIntensive!=''),]	#Tar ut registreringer som ikke har innleggelsesdato
       #RegData$InnDato <- as.POSIXlt(RegData$DateAdmittedIntensive, format="%Y-%m-%d") 
