@@ -14,14 +14,48 @@ NorScirEksData$PasientId <- NorScirEksData$PasientId[sample(N,N)]
 NorScirEksData$isMale <- NorScirEksData$isMale[sample(N,N)]
 NorScirEksData$AlderAar <- NorScirEksData$AlderAar[sample(N,N)]
 
-save(NorScirEksData, file='E:/Registre/NorScir/data/NorScirEksData.Rdata')
-#write.table(NorScirEksData, file='E:/Registre/NorScir/data/NorScirEksData.csv', sep=';')
+save(NorScirEksData, file='E:/Registre/NordicScir/data/NorScirEksData.Rdata')
+#write.table(NorScirEksData, file='E:/Registre/NordicScir/data/NorScirEksData.csv', sep=';')
+
+#------------------------Teste data-------------------------------------
+HovedSkjema <- read.table('C:/Registre/NordicScir/data/MainFormDataContract2017-02-13.csv', sep=';', header=T)
+Livskvalitet <- read.table('C:/Registre/NordicScir/data/LifeQualityFormDataContract2017-02-13.csv', sep=';', header=T)
+Kontroll <- read.table('C:/Registre/NordicScir/data/ControlFormDataContract2017-02-13.csv', sep=';', header=T)
+Bowel <- read.table('C:/Registre/NordicScir/data/BowelFunctionFormDataContract2017-02-13.csv', sep=';', header=T)
+Fornoyd <- read.table('C:/Registre/NordicScir/data/ActivityAndParticipationSatisfactionFormDataContract2017-02-13.csv', sep=';', header=T)
+Performance <- read.table('C:/Registre/NordicScir/data/ActivityAndParticipationPerformanceFormDataContract2017-02-13.csv', sep=';', header=T)
+
+#Sjekk for hvilke variabelnavn som finnes i begge datasett
+varBegge <- intersect(names(Livskvalitet),names(HovedSkjema))
+Livskvalitet <- Livskvalitet[ ,c("HovedskjemaGUID", names(Livskvalitet)[!(names(Livskvalitet) %in% varBegge)])]  #"SkjemaGUID",
+
+HovedSkjema$SkjemaGUID <- tolower(HovedSkjema$SkjemaGUID)
+
+NSData <- merge(HovedSkjema, Livskvalitet, suffixes = c('','XX'),
+                   by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = F, all.y=F)
+
+#---Oppsummering/test av andel som har fått oppfølging---
+test <- HovedSkjema$SkjemaGUID %in% Livskvalitet$HovedskjemaGUID
+
+tabVar <- c('HealthUnitName','Aar')
+Hskjema <- HovedSkjema[c('SkjemaGUID','HealthUnitName','AdmitDt')][order(HovedSkjema$SkjemaGUID),]
+RaaTab <- cbind(Hskjema,
+      Aar = as.POSIXlt(Hskjema$AdmitDt, format="%Y-%m-%d")$year +1900,
+      MedLivskval = match(Hskjema$SkjemaGUID, sort(Livskvalitet$HovedskjemaGUID)),
+      MedKtr = match(HovedSkjema$SkjemaGUID, sort(Kontroll$HovedskjemaGUID))
+)
+#RaaTab <- RaaTab1[which(as.Date(Hskjema$AdmitDt)> '2014-12-31'),]
+Tot <- table(is.na(RaaTab$MedLivskval))/dim(RaaTab)[1]*100  #'MedKtr'
+AndelLivskval <- round(100*ftable(RaaTab[!is.na(RaaTab$MedLivskval),tabVar])/ftable(RaaTab[,tabVar]),1)
+AndelKtr <- round(100*ftable(RaaTab[!is.na(RaaTab$MedKtr),tabVar])/ftable(RaaTab[,tabVar]),1)
+
+
 
 
 #--------------------------------------SAMLERAPPORT-----------------------------------
 rm(list=ls())
 library(knitr)
-NSdata <- read.table('C:/Registre/NorScir/data/MainFormDataContract2016-06-08.csv', sep=';', header=T)
+NSdata <- read.table('C:/Registre/NordicScir/data/MainFormDataContract2016-06-08.csv', sep=';', header=T)
 setwd("C:/ResultattjenesteGIT/nordicscir/inst")
 reshID <- 107627	#0 - alle	#105593-Haukeland, 106896-Sunnaas, 107627-St.Olavs
 
@@ -31,13 +65,12 @@ texi2pdf('NSsamleRappLand.tex')
 knit('NSsamleRapp.Rnw')
 texi2pdf('NSsamleRapp.tex')
  
-#------------------------------ Fordelinger --------------------------
-Fra jrxml:
-<defaultValueExpression><![CDATA["NSFigAndeler(RegData=0, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, AIS=AIS, minald=minald, maxald=maxald, erMann=erMann, traume=traume, enhetsUtvalg=enhetsUtvalg, reshID=" + $P{LoggedInUserAVD_RESH} + ")"]]></defaultValueExpression>
-      
 
+NSurin <- read.table('C:/Registre/NordicScir/data/UrinaryTractFunctionFormDataContract2016-09-21.csv', sep=';', header=T)
+
+#------------------------------ Fordelinger --------------------------
 rm(list=ls())
-NSdata <- read.table('C:/Registre/NorScir/data/MainFormDataContract2016-06-08.csv', sep=';', header=T)
+NSdata <- read.table('C:/Registre/NordicScir/data/MainFormDataContract2016-06-08.csv', sep=';', header=T)
 RegData <- NSdata
 
 setwd("C:/ResultattjenesteGIT/nordicscir/")
@@ -74,8 +107,8 @@ I_ABC <- which(RegData$AAis %in% c('A','B','C'))
 
 #------------------------------ Sentralm?l --------------------------
 rm(list=ls())
-#load('C:/Registre/NorScir/data/NSdata.Rdata')
-NSdata <- read.table('C:/Registre/NorScir/data/MainFormDataContract2016-06-08.csv', sep=';', header=T)
+#load('C:/Registre/NordicScir/data/NSdata.Rdata')
+NSdata <- read.table('C:/Registre/NordicScir/data/MainFormDataContract2016-06-08.csv', sep=';', header=T)
 RegData <- NSdata
 #RegData <- NSdata
 # Inndata til funksjon:
@@ -104,8 +137,8 @@ for (valgtVar in c('Alder', 'DagerRehab', 'DagerTilRehab', 'OpphTot', 'Permisjon
 }
 #------------------------------ Nevrologisk kategori --------------------------
 rm(list=ls())
-#load('C:/Registre/NorScir/data/NSdata.Rdata')
-NSdata <- read.table('C:/Registre/NorScir/data/NorScir2014-09-30.csv', sep=';', header=T)
+#load('C:/Registre/NordicScir/data/NSdata.Rdata')
+NSdata <- read.table('C:/Registre/NordicScir/data/NordicScir2014-09-30.csv', sep=';', header=T)
 RegData <- NSdata
 # Inndata til funksjon:
 

@@ -13,9 +13,7 @@ NSPreprosesser <- function(RegData)
       #Kun ferdigstilte registreringer:
       # Rapporteket får kun levert ferdigstilte registreringer fra MRS/NHN.
       
-      #Sykehusnavn - MRS leverer pt. ikke sykehusnavn for NorSCir
-            #105593-Haukeland, 106896-Sunnaas, 107627-St.Olavs
-      RegData$ShNavn <- factor(RegData$ReshId, levels=c(105593, 106896, 107627), 
+  #   RegData$ShNavn <- factor(RegData$ReshId, levels=c(105593, 106896, 107627), 
                                           labels=c('Haukeland', 'Sunnaas', 'St.Olavs'))
       
      #Med bruk av ekstra pakker kan dette gjøres mer elegant 
@@ -45,6 +43,7 @@ NSPreprosesser <- function(RegData)
       
       #Riktig format på datovariable:
       RegData$InnDato <- as.POSIXlt(RegData$AdmitDt, format="%Y-%m-%d")
+      RegData$Aar <- as.POSIXlt(HovedSkjema$AdmitDt, format="%Y-%m-%d")$year +1900
       
       #RegData <- RegData[which(RegData$DateAdmittedIntensive!=''),]	#Tar ut registreringer som ikke har innleggelsesdato
       #RegData$InnDato <- as.POSIXlt(RegData$DateAdmittedIntensive, format="%Y-%m-%d") 

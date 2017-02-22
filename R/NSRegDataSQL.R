@@ -6,11 +6,11 @@
 #' @export
 
 NSRegDataSQL <- function() {
-
-  registryName <- "nordicscir"
-  dbType <- "mysql"
-
-  query <- "SELECT
+      
+registryName <- "nordicscir"
+dbType <- "mysql"
+      
+query <- "SELECT
       AAis,
       AdmitDt,
       AdmitRehDt,
@@ -29,6 +29,7 @@ NSRegDataSQL <- function() {
       FNeuNoMeasure,
       FSensLvlAreaL,
       FSensLvlAreaR,
+      HealthUnitName,
       HosptlDy,
       InjuryDateUnknown,
       InjuryDt,
@@ -40,33 +41,33 @@ NSRegDataSQL <- function() {
       PatientGender,
       PlaceDis,
       RehabDy,
-      ReshId,
+      UnitId AS ReshId,
       Scietiol,
       SkjemaGUID,
       VentAssi
 FROM
-     MainFormDataContract"
+      MainFormDataContract"
 
-  RegData <- rapbase::LoadRegData(registryName, query, dbType)
+RegData <- rapbase::LoadRegData(registryName, query, dbType)
 
- #Tidligere med:  
-  #isVrtbrInj,
-  #isAssocInj,
-  #isSpnlSurg,
-  #AlderAar,
-  #ShNavn,
-  #BirthDt,
-  #isMale,
-  #SkjemaID,
-  #DagerRehab,
-  #DagerTilRehab,
-  #NevrNivaaInn,
-  #NevrNivaaUt
-  #QolDt,
-  #SatGenrl,
-  #SatPhys,
-  #SatPsych,
-  
-  
-  return(RegData)
+#Tidligere med:
+#isVrtbrInj,
+#isAssocInj,
+#isSpnlSurg,
+#AlderAar,
+#ShNavn,
+#BirthDt,
+#isMale,
+#SkjemaID,
+#DagerRehab,
+#DagerTilRehab,
+#NevrNivaaInn,
+#NevrNivaaUt
+#QolDt,
+#SatGenrl,
+#SatPhys,
+#SatPsych,
+
+
+      return(RegData)
 }

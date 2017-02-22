@@ -84,7 +84,7 @@
 <<setup, include=FALSE, cache=FALSE>>=
 knitr::opts_chunk$set(warnings=FALSE,echo=FALSE)
 knitr::opts_knit$set(root.dir = './')	#Settes også i rapbase
-knitr::opts_chunk$set(fig.align='center', fig.show='hold', fig.path='', out.width='.7\\textwidth', cache=FALSE)
+knitr::opts_chunk$set(fig.align='center', fig.show='hold', fig.path='', out.width='.8\\textwidth', cache=FALSE)
 options(replace.assign=TRUE, width=90) #, warnings=FALSE, echo=FALSE, fig.align='center', fig.show='hold', out.width='.7\\textwidth', cache=FALSE)
 @
 
@@ -127,7 +127,7 @@ AIS <- ''
 datoFra <- '2010-01-01'	#Standard: 0, dvs. alle år
 datoTil <- '2050-05-25'
 #reshID - gis fra Jasper	##105593-Haukeland, 106896-Sunnaas sykehus, 107627-St.Olavs, standard: 'Alle'
-s1 <- 0.66	#Skaleringsparameter for enkeltfigurer
+s1 <- 0.8	#Skaleringsparameter for enkeltfigurer
 #s2 <- 0.7	#Skaleringsparameter for "dobbeltfigurer"
 
 #Utvalg/datarensk

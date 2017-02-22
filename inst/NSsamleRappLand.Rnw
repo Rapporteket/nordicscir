@@ -88,12 +88,12 @@ knitr::opts_chunk$set(fig.align='center', fig.show='hold', fig.path='', out.widt
 options(replace.assign=TRUE, width=90) #, warnings=FALSE, echo=FALSE, fig.align='center', fig.show='hold', out.width='.7\\textwidth', cache=FALSE)
 @
 
-<<"WARNINGLoadSampleDataWARNING", echo=FALSE, eval=FALSE>>=
-#load(NorScirSampleData)
-data(NorScirSampleData, package="nordicscir")
-NSdata <- NorScirSampleData
-reshID <- 123456
-@
+%<<"WARNINGLoadSampleDataWARNING", echo=FALSE, eval=FALSE>>=
+%load(NorScirSampleData)
+%data(NorScirSampleData, package="nordicscir")
+%NSdata <- NorScirSampleData
+%reshID <- 123456
+%@
 
 
 <<LasteData, echo=FALSE, eval=T>>=
