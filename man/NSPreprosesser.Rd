@@ -15,4 +15,3 @@ Data En liste med det filtrerte datasettet
 \description{
 Denne funksjonen navner om variabler og beregner evt. nye.
 }
-

@@ -14,7 +14,7 @@ NSPreprosesser <- function(RegData)
       # Rapporteket får kun levert ferdigstilte registreringer fra MRS/NHN.
       
   #   RegData$ShNavn <- factor(RegData$ReshId, levels=c(105593, 106896, 107627), 
-                                          labels=c('Haukeland', 'Sunnaas', 'St.Olavs'))
+  #                                        labels=c('Haukeland', 'Sunnaas', 'St.Olavs'))
       
      #Med bruk av ekstra pakker kan dette gjøres mer elegant 
       
@@ -28,6 +28,9 @@ NSPreprosesser <- function(RegData)
       #RegData$Region <- RegData$RHF
       
       # Endre variabelnavn:
+      
+      names(RegData)[which(names(RegData) == 'UnitId')] <- 'ReshId'
+      names(RegData)[which(names(RegData) == 'HealthUnitName')] <- 'ShNavn'
       names(RegData)[which(names(RegData) == 'PatientAge')] <- 'Alder'
       names(RegData)[which(names(RegData) == 'HosptlDy')] <- 'OpphTot'  #Sjekk forskjell HosptlDy og ..2
       names(RegData)[which(names(RegData) == 'PlaceDis')] <- 'UtTil' 
@@ -43,7 +46,7 @@ NSPreprosesser <- function(RegData)
       
       #Riktig format på datovariable:
       RegData$InnDato <- as.POSIXlt(RegData$AdmitDt, format="%Y-%m-%d")
-      RegData$Aar <- as.POSIXlt(HovedSkjema$AdmitDt, format="%Y-%m-%d")$year +1900
+      RegData$Aar <- as.POSIXlt(RegData$AdmitDt, format="%Y-%m-%d")$year +1900
       
       #RegData <- RegData[which(RegData$DateAdmittedIntensive!=''),]	#Tar ut registreringer som ikke har innleggelsesdato
       #RegData$InnDato <- as.POSIXlt(RegData$DateAdmittedIntensive, format="%Y-%m-%d") 

@@ -37,6 +37,7 @@ by using the wrapper of the \emph{rapbase} package, \emph{e.g.}
 Artwork is accessed in the same way as for the noweb-files, \emph{e.g}
 \code{system.file("NorSCIR_logo_blue_norsk.pdf", package = "NorScir")}
 }
+
 \examples{
 data(NorScirSampleData)
 names(NorScirSampleData)
@@ -44,4 +45,3 @@ NSFigAndeler(RegData = NorScirSampleData, valgtVar = "Alder", reshID = 123456, h
 knitr::knit(system.file("NSsamleDok.Rnw", package = "NorScir"))
 
 }
-

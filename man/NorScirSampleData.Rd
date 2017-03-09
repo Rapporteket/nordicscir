@@ -114,4 +114,3 @@
 A dataset containing a sample data with nonesense personal info.
 For testing purposes. Someone please provide variable descriptions...
 }
-

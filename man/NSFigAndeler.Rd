@@ -5,8 +5,8 @@
 \title{Søylediagram som viser fordeling av valgt variabel}
 \usage{
 NSFigAndeler(RegData, outfile = "", valgtVar, datoFra = "2010-01-01",
-  datoTil = "2050-01-01", AIS = "", minald = 0, maxald = 120,
-  erMann = "", traume = "", enhetsUtvalg = 1, reshID, hentData = 1,
+  datoTil = "2050-01-01", AIS = "", minald = 0, maxald = 130,
+  erMann = 99, traume = "", enhetsUtvalg = 1, reshID, hentData = 0,
   preprosess = 1)
 }
 \arguments{
@@ -30,27 +30,30 @@ NSFigAndeler(RegData, outfile = "", valgtVar, datoFra = "2010-01-01",
 
 \item{traume}{- 'ja','nei', standard: ikke valgt}
 
-\item{enhetsUtvalg}{- 1:eget sykehus, 0:hele landet (standard) Kun for valgtVar=='NevrNivaaInnUt'}
+\item{enhetsUtvalg}{- 1:eget sykehus, 0:hele landet (standard)}
 
 \item{reshID}{- avdelingsid for egen avdeling, standard: 0-hele landet.}
 
-\item{hentData}{Settes til 1 (standard) om data skal lastes i funksjonen.
-Settes til en annen verdi om data leveres til funksjonen gjennom 'RegData',
-eksempelvis ved bruk av eksempeldatasettet eller ved kall fra andre
-funksjoner der data allerede er tilgjengelig.}
+\item{hentData}{Gjør spørring mot database hvis data ikke er levert fra andre kilder.
+0: Nei, RegData gis som input til funksjonen (Standard)
+1: Ja}
+
+\item{preprosess}{Preprosesser data
+0: Nei
+1: Ja (Standard)}
 }
 \description{
 Argumentet \emph{valgtVar} har følgende valgmuligheter:
    \itemize{
-    \item Alder: Aldersfordeling, 10-årige grupper 
+    \item Alder: Aldersfordeling, 15-årige grupper 
     \item AAis: A-E+U, innleggelse
     \item FAis: A-E+U, kontroll
     \item DagerRehab: Lengde på rehab.opphold (Utskrevet – Innl. rehab dato)
     \item DagerTilRehab: Tid fra skadedato til oppstart rehab [trauma/ikke], 5d interv
     \item OpphTot: Lengde på opphold – totalt (HosptlDy) 20d… >200, 
+    \item Permisjon: Antall døgn ute av sykehus 
     \item UtTil: Hva pasienten skrives ut til. [PlaceDis]
     \item SkadeArsak: Årsak til skade [variabel: Scietiol]
     \item Pustehjelp[VentAssi].
    }
 }
-

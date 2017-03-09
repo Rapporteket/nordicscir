@@ -5,15 +5,16 @@
 \title{Søylediagram som sammenligner fordeling (vha. stablede søyler) av valgt variabel}
 \usage{
 NSFigAndelStabel(RegData, outfile = "", valgtVar, datoFra = "2010-01-01",
-  datoTil = "3000-01-01", minald = 0, maxald = 120, erMann = "",
-  traume = "", enhetsUtvalg = enhetsUtvalg, reshID, hentData = 1)
+  datoTil = "3000-01-01", minald = 0, maxald = 130, erMann = "",
+  traume = "", preprosess = 1, enhetsUtvalg = enhetsUtvalg, reshID,
+  hentData = 0)
 }
 \arguments{
 \item{RegData}{- ei dataramme med alle nødvendige variable fra registeret.}
 
 \item{outfile}{- navn på fil figuren skrives ned til.}
 
-\item{valgtVar}{- Må velges: ... NevrNivaaInnUt, NevrNivaaInn, NevrNivaaUt}
+\item{valgtVar}{- variabelen det skal genereres resultat for}
 
 \item{datoFra}{<- '2010-01-01'    # min og max dato i utvalget vises alltid i figuren.}
 
@@ -27,14 +28,17 @@ NSFigAndelStabel(RegData, outfile = "", valgtVar, datoFra = "2010-01-01",
 
 \item{traume}{- 'ja','nei', standard: ikke valgt}
 
+\item{preprosess}{Preprosesser data
+0: Nei
+1: Ja (Standard)}
+
 \item{enhetsUtvalg}{- 1:eget sykehus, 0:hele landet (standard) Kun for valgtVar=='NevrNivaaInnUt'}
 
 \item{reshID}{- avdelingsid for egen avdeling, standard: 0-hele landet.}
 
-\item{hentData}{Settes til 1 (standard) om data skal lastes i funksjonen.
-Settes til en annen verdi om data leveres til funksjonen gjennom 'RegData',
-eksempelvis ved bruk av eksempeldatasettet eller ved kall fra andre
-funksjoner der data allerede er tilgjengelig.}
+\item{hentData}{Gjør spørring mot database hvis data ikke er levert fra andre kilder.
+0: Nei, RegData gis som input til funksjonen (Standard)
+1: Ja}
 }
 \description{
 Søylediagram som sammenligner fordeling (vha. stablede søyler) av valgt variabel
@@ -48,4 +52,3 @@ Hvilke kombinasjonsmuligheter har vi?
 Inn / Ut (Velge: bare eget/hele landet)
 Eget / resten av landet (Velge: Inn eller Ut)
 }
-

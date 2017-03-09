@@ -18,6 +18,7 @@ library(NorScir)
 
 This package depend on the the _rapbase_ package. Underlying processing of 
 registry data is describe in this document.
+DENNE DOKUMENTASJONEN ER IKKE OPPDATERT.
 
 ## Sample data
 This package comes with a sample data set for testing purposes
@@ -72,20 +73,20 @@ usually several, set of results at _Rapporteket_.
 Provides figure of stacked bars, _e.g._:
 
 ```{r, fig.width=7}
-FigAndelStabel(RegData=NorScirSampleData, outfile='', libkat='',
+NSFigAndelStabel(RegData=NorScirSampleData, outfile='', 
                valgtVar='NevrNivaaInnUt', datoFra='2010-01-01',
                datoTil='3000-01-01', minald=0, maxald=120, erMann='',
                traume='', enhetsUtvalg='0', reshID=12345, hentData=0)
 ```
 
 
-### NSFigFordeling.R
+### NSFigAndeler.R
 Provide distribution as bars, _e.g._:
 ```{r, fig.width=7}
-FigFordeling(RegData=NorScirSampleData, libkat='', outfile='', valgtVar='AAis',
-             datoFra='2010-01-01', datoTil='2050-01-01', AIS='', minald=0,
-             maxald=120, erMann='', traume='', enhetsUtvalg=0, reshID=12345,
-             sml=1, hentData=0)
+#NSFigAndeler(RegData=NorScirSampleData, outfile='', valgtVar='AAis',
+#             datoFra='2010-01-01', datoTil='2050-01-01', AIS='', minald=0,
+#             maxald=120, erMann='', traume='', enhetsUtvalg=0, reshID=12345,
+#             hentData=0)
 ```
 
 #### Analysis
@@ -94,12 +95,12 @@ at some point. In the above function "None" is recoded as "U" as requested by
 the registry during autumn 2015.
 
 
-### NSFigMeanMed.R
+### NSFigGjsnGrVar.R
 Provide mean and median per hospital, _e.g._:
 ```{r, fig.width=7}
-FigMeanMed(RegData=NorScirSampleData, valgtVar='Alder', valgtMaal='Gjsn',
+NSFigGjsnGrVar(RegData=NorScirSampleData, valgtVar='Alder', valgtMaal='Gjsn',
            datoFra='2010-01-01', datoTil='2015-12-31', AIS='', minald=0,
-           maxald=130, erMann='', traume='', libkat='', outfile='', hentData=0)
+           maxald=130, erMann='', traume='', outfile='', hentData=0)
 ```
 
 
