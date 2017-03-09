@@ -6,13 +6,13 @@
 \usage{
 NSFigGjsnGrVar(RegData, valgtVar, valgtMaal = "Gjsn",
   datoFra = "2010-01-01", datoTil = "2050-12-31", AIS = "", minald = 0,
-  maxald = 130, erMann = "", traume = "", libkat, outfile = "",
-  hentData = 1)
+  maxald = 130, erMann = "", traume = "", preprosess = 1,
+  outfile = "", hentData = 0)
 }
 \arguments{
 \item{RegData}{- ei dataramme med alle nødvendige variable fra registeret.}
 
-\item{valgtVar}{Må velges: ... Alder, DagerRehab, DagerTilRehab, OpphTot[HosptlDy],}
+\item{valgtVar}{- variabelen det skal genereres resultat for}
 
 \item{valgtMaal}{- 'Med' = median. Alt annet gir gjennomsnitt}
 
@@ -30,16 +30,28 @@ NSFigGjsnGrVar(RegData, valgtVar, valgtMaal = "Gjsn",
 
 \item{traume}{- 'ja','nei', standard: ikke valgt}
 
+\item{preprosess}{Preprosesser data
+0: Nei
+1: Ja (Standard)}
+
 \item{outfile}{- navn på fil figuren skrives ned til.}
 
-\item{hentData}{Settes til 1 (standard) om data skal lastes i funksjonen.
-Settes til en annen verdi om data leveres til funksjonen gjennom 'RegData',
-eksempelvis ved bruk av eksempeldatasettet eller ved kall fra andre
-funksjoner der data allerede er tilgjengelig.}
+\item{hentData}{Gjør spørring mot database hvis data ikke er levert fra andre kilder.
+0: Nei, RegData gis som input til funksjonen (Standard)
+1: Ja}
 }
 \description{
 Funksjon som genererer en figur med gjennomsnitt/median for hvert sykehus
 og kan ta inn ulike numeriske variable. Funksjonen er delvis skrevet for å
 kunne brukes til andre grupperingsvariable enn sykehus.
 }
-
+\details{
+Argumentet \emph{valgtVar} har følgende valgmuligheter:
+   \itemize{
+    \item Alder: Aldersfordeling, 15-årige grupper 
+    \item DagerRehab: antall dager med rehabilitering [RehabDy]
+    \item DagerTilRehab: antall dager før rehabilitering [BeforeRehDy]
+    \item OpphTot: Lengde på opphold – totalt [HosptlDy] 
+    \item Permisjon: Antall døgn ute av sykehus [OutOfHosptlDy]
+   }
+}

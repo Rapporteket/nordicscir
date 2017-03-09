@@ -2,33 +2,30 @@
 % Please edit documentation in R/NSUtvalg.R
 \name{NSUtvalg}
 \alias{NSUtvalg}
-\title{Støttefunksjon for NorScir}
+\title{Funksjon som gjør utvalg av data basert på brukervalg.}
 \usage{
 NSUtvalg(RegData, datoFra = "2010-01-01", datoTil = "3000-05-25",
-  minald = 0, maxald = 120, erMann = "", traume = "", AIS = "",
+  minald = 0, maxald = 130, erMann = 99, traume = "", AIS = "",
   fargepalett = "BlaaOff")
 }
 \arguments{
-\item{RegData}{- ei dataramme med alle nødvendige variable fra registeret}
+\item{RegData}{- ei dataramme med alle nødvendige variable fra registeret.}
 
-\item{datoFra}{<- '2010-01-01'. Min og max dato i utvalget vises alltid i figuren.}
+\item{datoFra}{<- '2010-01-01'    # min og max dato i utvalget vises alltid i figuren.}
 
-\item{datoTil}{<- '3000-05-25'}
+\item{datoTil}{<- '2013-05-25'}
 
 \item{minald}{- alder, fra og med}
 
 \item{maxald}{- alder, til og med}
 
-\item{erMann}{- kjønn, 1-menn, 0-kvinner, standard: ''(alt annet enn 0 og 1), dvs. begge}
+\item{erMann}{- kjønn, 1-menn, 0-kvinner, standard: '' (alt annet enn 0 og 1), dvs. begge}
 
-\item{traume}{???}
+\item{traume}{- 'ja','nei', standard: ikke valgt}
 
-\item{AIS}{???}
-
-\item{fargepalett}{???}
+\item{AIS}{- AISgrad ved innleggelse alle(''), velge en eller flere fra A,B,C,D,E,U}
 }
 \description{
 Funksjon som gjør utvalg av dataene, returnerer det reduserte datasettet og
 utvalgsteksten.
 }
-

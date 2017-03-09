@@ -12,4 +12,3 @@ RegData data frame
 \description{
 Provides NorScir data from staging
 }
-
