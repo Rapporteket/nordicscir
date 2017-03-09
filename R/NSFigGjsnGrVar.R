@@ -144,7 +144,7 @@ NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='Gjsn', datoFra='2010-01
     cexgr <- 1.1
     #Tilpasse marger for å kunne skrive utvalgsteksten
     NutvTxt <- length(utvalgTxt)
-    vmarg <- max(0, strwidth(ShNavnSort, units='figure', cex=cexgr)*0.8)
+    vmarg <- max(0, strwidth(ShNavnSort, units='figure', cex=cexgr)*0.9)
     par('fig'=c(vmarg, 1, 0, 1-0.02*(NutvTxt-1)))	#Har alltid datoutvalg med
 
     #plot.new()
