@@ -28,6 +28,9 @@ NSPreprosesser <- function(RegData)
       #RegData$Region <- RegData$RHF
       
       # Endre variabelnavn:
+      
+      names(RegData)[which(names(RegData) == 'UnitId')] <- 'ReshId'
+      names(RegData)[which(names(RegData) == 'HealthUnitName')] <- 'ShNavn'
       names(RegData)[which(names(RegData) == 'PatientAge')] <- 'Alder'
       names(RegData)[which(names(RegData) == 'HosptlDy')] <- 'OpphTot'  #Sjekk forskjell HosptlDy og ..2
       names(RegData)[which(names(RegData) == 'PlaceDis')] <- 'UtTil' 

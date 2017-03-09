@@ -31,7 +31,7 @@ Livskvalitet <- Livskvalitet[ ,c("HovedskjemaGUID", names(Livskvalitet)[!(names(
 
 HovedSkjema$SkjemaGUID <- tolower(HovedSkjema$SkjemaGUID)
 
-NSData <- merge(HovedSkjema, Livskvalitet, suffixes = c('','XX'),
+NSdata <- merge(HovedSkjema, Livskvalitet, suffixes = c('','XX'),
                    by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = F, all.y=F)
 
 #---Oppsummering/test av andel som har fått oppfølging---
@@ -79,7 +79,7 @@ enhetsUtvalg <- 1
 minald <- 0
 maxald <- 130
 traume <- ''    #'ja','nei', standard: ikke valgt
-AIS <- as.character(c(1,4))	#c('A','B','U')		#AISgrad ved innleggelse alle(''), velge en eller flere fra A,B,C,D,E,U
+AIS <- '' # as.character(c(1,4))	#c('A','B','U')		#AISgrad ved innleggelse alle(''), velge en eller flere fra A,B,C,D,E,U
 #<defaultValueExpression><![CDATA["all"]]></defaultValueExpression>
 #      </parameter>
 datoFra <- '2011-01-01'             #Standard: b?r v?re minste registrerte verdi ? min og max dato i utvalget vises alltid i figuren.
@@ -121,11 +121,11 @@ traume <- ''    #'ja','nei', standard: ikke valgt
 datoFra <- '2010-01-01'             #Standard: b?r v?re minste registrerte verdi ? min og max dato i utvalget vises alltid i figuren.
 datoTil <- '2017-05-25'
 erMann <- ''                   #1-menn, 0-kvinner, Standard: '', dvs. begge
-valgtVar <- 'test'	#M? velge... Alder, DagerRehab, DagerTilRehab, OpphTot[HosptlDy], 
+valgtVar <- 'Alder'	#M? velge... Alder, DagerRehab, DagerTilRehab, OpphTot[HosptlDy], 
 							#Permisjon[OutOfHosptlDy],
 valgtMaal=''	#'Med'-median, ellers gjennomsnitt
 setwd("C:/ResultattjenesteGIT/nordicscir/")
-outfile <- paste(valgtVar, '.png', sep='')	#Navn angis av Jasper
+outfile <- '' #paste(valgtVar, '.png', sep='')	#Navn angis av Jasper
 
 NSFigGjsnGrVar(RegData=NSdata, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
 		valgtMaal=valgtMaal, minald=minald, maxald=maxald, erMann=erMann, traume=traume)
