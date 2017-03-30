@@ -8,18 +8,24 @@
 
 
 NSUtvalg <- function(RegData, datoFra='2010-01-01', datoTil='3000-05-25', minald=0, maxald=130,
-                     erMann=99, traume='', AIS='', fargepalett='BlaaOff') {
+                     erMann=99, traume='', AIS='', enhetsUtvalg=0, reshID=0, fargepalett='BlaaOff') {
       
       
-      #Hvis "Variabel" ikke definert
-      #  if (length(which(names(RegData) == 'Variabel')) == 0 ) {
-      #    RegData$Variabel <- 0
-      #  }
-      Ninn <- dim(RegData)[1]
-      #indVarMed <- intersect(intersect(which(RegData$Variabel != 'NA'),
-      #                                 which(RegData$Variabel != 'NaN')),
-      #                       which(RegData$Variabel != ''))
-      #indSkjemaUt <- which(RegData$SkjemaID != 1)     #NB: Kan senere bli variabelspesifikk!!!
+     # Definer intersect-operator
+      "%i%" <- intersect
+      
+      #Enhetsutvalg:
+      #Når bare skal sammenlikne med sykehusgruppe eller region, eller ikke sammenlikne, 
+      #trengs ikke data for hele landet:
+      reshID <- as.numeric(reshID)
+      indEgen1 <- match(reshID, RegData$ReshId)
+      if (enhetsUtvalg == 2) {	
+				RegData <- RegData[which(RegData$ReshId == reshID),]	#kun egen enhet
+                           }
+      
+
+	  Ninn <- dim(RegData)[1]
+	   #indSkjemaUt <- which(RegData$SkjemaID != 1)     #NB: Kan senere bli variabelspesifikk!!!
       indAldUt <- which(RegData$Alder < minald | RegData$Alder > maxald)
       indDatoUt <- setdiff(1:Ninn,
                            which(RegData$InnDato > as.POSIXlt(datoFra) & RegData$InnDato < as.POSIXlt(datoTil))) #Får bort NA
@@ -46,8 +52,29 @@ NSUtvalg <- function(RegData, datoFra='2010-01-01', datoTil='3000-05-25', minald
                      if (erMann %in% 0:1){paste('Kjønn: ', c('kvinner', 'menn')[erMann+1], sep='')},
                      #                if (length(which(AIS %in% c(LETTERS[1:5],'U')))>0) {paste('AIS, inn: ', paste(AIS, collapse=','), sep='')} )
                      if (length(which(AIS %in% 1:5))>0) {paste('AIS, inn: ', paste(LETTERS[AIS], collapse=','), sep='')} )
+ 
+      #Enhetsutvalg:
+      indEgen1 <- match(reshID, RegData$ReshId)
+      if (enhetsUtvalg %in% c(1,2)) {	#Involverer egen enhet
+            hovedgrTxt <- as.character(RegData$ShNavn[indEgen1]) 
+			} else {
+                  hovedgrTxt <- 'Hele landet'}
       
       
-      UtData <- list(RegData=RegData, utvalgTxt=utvalgTxt, fargepalett=fargepalett) #GronnHNpms624,
+      ind <- list(Hoved=0, Rest=0)
+      smltxt <- ''      
+      medSml <- 0
+      ind$Hoved <- 1:dim(RegData)[1]	#Tidligere redusert datasettet for 2
+      ind$Rest <- NULL
+      
+      if (enhetsUtvalg ==1 ) {	#Egen mot resten
+                ind$Hoved <-which(as.numeric(RegData$ReshId)==reshID)
+				medSml <- 1
+				smltxt <- 'landet forøvrig'
+				ind$Rest <- which(as.numeric(RegData$ReshId) != reshID)
+					}								
+      
+      
+      UtData <- list(RegData=RegData, utvalgTxt=utvalgTxt, medSml=medSml, fargepalett=fargepalett) #GronnHNpms624,
       return(invisible(UtData))
 }

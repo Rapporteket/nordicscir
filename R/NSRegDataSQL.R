@@ -1,6 +1,15 @@
-#' Provide global dataframe for NorScir
+#' Henter data for NordicScir fra  staging
 #'
-#' Provides NorScir data from staging
+#' Spørring som henter og kobler sammen data fra ulike skjema i NordicScir
+#'
+#' Aktuelle skjema: 
+#' ActivityAndParticipationPerformanceFormDataContract: Aktivitetsfunksjon
+#' ActivityAndParticipationSatisfactionFormDataContract: Aktivitetsfornøydhet
+#' BowelFunctionFormDataContract: Tarmfunksjon (?)
+#' ControlFormDataContract: Kontroll. Noen variable er oppfølging av målinger i hovedskjema
+#' LifeQualityFormDataContract: Livskvalitet
+#' MainFormDataContract: HOVEDSKJEMA
+#' UrinaryTractFunctionFormDataContract: Urinfunksjon
 #'
 #' @return RegData data frame
 #' @export

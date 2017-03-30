@@ -46,218 +46,178 @@ NSFigAndeler <- function(RegData, outfile='', valgtVar,
       if (preprosess == 1) {
             RegData <- NSPreprosesser(RegData)
       }
+    
+      #--------------- Tilrettelegge variable og gjøre utvalg ------------------------------
       
-      RegData$Variabel <- RegData[ ,valgtVar]
+      NSVarSpes <- NSVarTilrettelegg(RegData=RegData, valgtVar=valgtVar)
+	  RegData <- NSVarSpes$RegData
       
-      shtxt <- switch(as.character(enhetsUtvalg), 	'0' = 'Hele landet',
-                      '1' = as.character(RegData$ShNavn[match(reshID, RegData$ReshId)]),
-                      '2' = as.character(RegData$ShNavn[match(reshID, RegData$ReshId)]))
       
-      if (enhetsUtvalg == 2) {RegData <- RegData[which(RegData$ReshId == reshID), ]}
-      
-      #Tar ut de med manglende registrering av valgt variabel og gjør utvalg
       Utvalg <- NSUtvalg(RegData=RegData, datoFra=datoFra, datoTil=datoTil, minald=minald, maxald=maxald,
-                         erMann=erMann, traume=traume, AIS=AIS)
+                         erMann=erMann, traume=traume, AIS=AIS, enhetsUtvalg = enhetsUtvalg)
       RegData <- Utvalg$RegData
       utvalgTxt <- Utvalg$utvalgTxt
+	
+#gml      RegData$Variabel <- RegData[ ,valgtVar]
       
+#      shtxt <- switch(as.character(enhetsUtvalg), 	'0' = 'Hele landet',
+#                      '1' = as.character(RegData$ShNavn[match(reshID, RegData$ReshId)]),
+#                      '2' = as.character(RegData$ShNavn[match(reshID, RegData$ReshId)]))
+      
+#      if (enhetsUtvalg == 2) {RegData <- RegData[which(RegData$ReshId == reshID), ]}
+      
+     
       N <- dim(RegData)[1]
       
       
       #-----------Må ha en del som er registerspesifikk, så må selve plottet være i pakken, dvs. funksjoner.
-      cexgr <- 1.1
-      retn <- 'V'
-      txtretn <- 1
-      grtxt <- ''
-      grtxt2 <- ''
-      utvalg <- c('Sh', 'Rest')
-      Andeler <- list(Sh = 0, Rest =0)
-      Nutv <- N
       
       
-      #Variablene kjøres for angitt indeks, dvs. to ganger hvis vi skal ha sammenligning med Resten.
-      if (valgtVar=='Alder') {
-            tittel <- 'Aldersfordeling'
-            gr <- c(0,16,31,46,61,76,200)	#c(seq(0, 90, 15), 120)
-            RegData$Variabel <- cut(RegData$Alder, breaks=gr, include.lowest=TRUE, right=FALSE)
-            grtxt <- c('[0,15]','[16,30]','[31,45]','[46,60]','[61,75]','76+')
-            #	grtxt <- c(levels(RegData$Variabel)[1:(length(gr)-2)], '76+')
-            cexgr <- 0.9
-            subtxt <- 'Aldersgrupper'
-      }
-      
-      if (valgtVar %in% c('AAis', 'FAis')) {
-            #-1: Velg verdi, 1:A Komplett skade, 2:B Inkomplett, 3:C Inkomplett, 4:D Inkomplett, 5:E Normal, 
-            #9: U Ukjent eller ikke anvendbar
-            tittel <- paste('Fordeling av', switch(valgtVar, AAis = 'AIS ved innleggelse', FAis = 'AIS ved utskriving'))
-            grtxt <- c('A','B','C','D','E','U')
-            # Tar med -1 i Ukjent
-            RegData$Variabel[RegData$Variabel==-1] <- 9
-            subtxt <- 'AIS kategori'
-            RegData$Variabel <- factor(RegData$Variabel, levels = c(1:5,9), labels = grtxt) 
-      }
-      
-      if (valgtVar %in% c('DagerRehab', 'DagerTilRehab', 'OpphTot')) {
-            
-            grmax <- switch(valgtVar,
-                            DagerRehab= '360+',
-                            DagerTilRehab = '100+',
-                            OpphTot = '300+')
-            gr <- switch(valgtVar, 
-                         DagerRehab = c(seq(0, 180, 20), 360, 1000),
-                         DagerTilRehab = c(seq(0, 100, 10), 1000),
-                         OpphTot = c(seq(0, 300, 30), 1000))
-            RegData$Variabel <- cut(RegData[ ,valgtVar], breaks=gr, include.lowest=TRUE, right=FALSE)
-            grtxt2 <- c(levels(RegData$Variabel)[1:(length(gr)-2)], grmax)
-            tittel <- switch(valgtVar, 
-                             DagerRehab='Antall dager med spesialisert rehabilitering', 
-                             DagerTilRehab = 'Tid fra innleggelse til spesialisert rehabilitering',
-                             OpphTot = 'Antall døgn innlagt på sykehus')
-            cexgr <- 0.9
-            txtretn <- 2
-            subtxt <- 'Antall døgn'
-      }	#Variable med antall dager
-      
-      if (valgtVar=='Permisjon') {
-            tittel <- 'Antall døgn ute av sykehus'
-            gr <- c(0,1,7,14,21,28,35, 1000)
-            grmax <- '50+'
-            RegData$Variabel <- cut(RegData$Permisjon, breaks=gr, include.lowest=TRUE, right=FALSE)
-            grtxt <- c('0','1-7','8-14','15-21','22-28','29-35', '35+')
-            cexgr <- 0.9
-            subtxt <- 'Antall døgn'
-      }
-      if (valgtVar == 'Pustehjelp') {
-            tittel <- 'Ventilasjonsstøtte'
-            #gr <- (0:3,9) - Kodene som registereres. Nå bare 0:3?
-            grtxt <- c('Nei', 'Mindre enn 24t/dag', 'Hele døgnet', 'Ukjent ant timer')
-            subtxt <- ''
-            RegData$Variabel <- factor(as.numeric(RegData$Variabel), levels=c(0:3), labels = grtxt)
-            retn <- 'H'
-      }
-      
-      if (valgtVar == 'SkadeArsak') {
-            tittel <- 'Skadeårsaker'
-            #gr <- (1:6,9) - Kodene som registereres
-            RegData$Variabel[which(RegData$SkadeArsak==9)] <- 7
-            grtxtAlle <- c('Idrett', 'Vold', 'Transport', 'Fall', 'Andre traumer',
-                           'Ikke-traumatisk', 'Uspesifisert')
-            grtxt <- grtxtAlle
-            subtxt <- 'Utskrevet til'
-            RegData$Variabel <- factor(as.numeric(RegData$Variabel), levels=1:7, labels = grtxtAlle)
-            retn <- 'H'
-      }
-      if (valgtVar == 'UtTil') {
-            tittel <- 'Utskrevet til'
-            #gr <- (1:10,99) - Kodene som registereres
-            RegData$Variabel[which(RegData$UtTil==99)] <- 11
-            grtxtAlle <- c('Hjem', 'Sykehus', 'Pleiehjem', 'Omsorgsbolig', 'Bofellesskap',
-                           'Kriminalomsorg', 'Hotell', 'Bostedsløs', 'Avdød', 'Annet', 'Ukjent')
-            grtxt <- grtxtAlle
-            subtxt <- 'Utskrevet til'
-            RegData$Variabel <- factor(as.numeric(RegData$Variabel), levels=1:11, labels = grtxtAlle)
-            #Vurder om skal ta med bare de som er registrert
-            #grtxt <- grtxtAlle[as.numeric(names(table(as.numeric(RegData$PlaceDis))))] #De som er reg.
-            retn <- 'H'
-      }
       
       
       #--------------- Gjøre beregninger ------------------------------
-      medSml <- 0
-      utvalg <- c('Sh', 'Rest')	#Sh vil angi enhet, evt. hele landet hvis ikke gjøre sml, 'Rest' utgjør sammenligningsgruppa
-      Andeler <- list(Sh = 0, Rest =0)
+#      medSml <- 0
+#      utvalg <- c('Sh', 'Rest')	#Sh vil angi enhet, evt. hele landet hvis ikke gjøre sml, 'Rest' utgjør sammenligningsgruppa
+#      Andeler <- list(Sh = 0, Rest =0)
       
       #Hvis det skal gjøres sammenligning:
-      if (enhetsUtvalg == 1) {
-            indSh <-which(RegData$ReshId == reshID)
-            indRest <- which(RegData$ReshId != reshID)
-            RegDataLand <- RegData
-            ind <- list(Sh=indSh, Rest=indRest)
-            medSml <- 1
-      }
+ #     if (enhetsUtvalg == 1) {
+ #           indSh <-which(RegData$ReshId == reshID)
+ #           indRest <- which(RegData$ReshId != reshID)
+ #           RegDataLand <- RegData
+ #           ind <- list(Sh=indSh, Rest=indRest)
+ #           medSml <- 1
+ #     }
       
-      Nrest <- 0
-      for (teller in 1:(medSml+1)) {
-            if (medSml == 1) {
-                  RegData <- RegDataLand[switch(utvalg[teller], Sh = ind$Sh, Rest=ind$Rest), ]
-            }
+ #     Nrest <- 0
+ #     for (teller in 1:(medSml+1)) {
+ #           if (medSml == 1) {
+ #                 RegData <- RegDataLand[switch(utvalg[teller], Sh = ind$Sh, Rest=ind$Rest), ]
+ #           }
             
-            if (teller == 1) {Andeler$Sh <- round(table(RegData$Variabel)/length(RegData$Variabel)*100,2)
-            Nsh <- dim(RegData)[1]}
-            if (teller == 2) {Andeler$Rest <- round(table(RegData$Variabel)/length(RegData$Variabel)*100,2)
-            Nrest <- dim(RegData)[1]}
+ #           if (teller == 1) {Andeler$Sh <- round(table(RegData$Variabel)/length(RegData$Variabel)*100,2)
+ #           Nsh <- dim(RegData)[1]}
+ #           if (teller == 2) {Andeler$Rest <- round(table(RegData$Variabel)/length(RegData$Variabel)*100,2)
+ #           Nrest <- dim(RegData)[1]}
+ #     }
+
+     #--------------- Gjøre beregninger ------------------------------
+      #Gjør beregninger selv om det evt ikke skal vise figur ut. Trenger utdata.
+      AggVerdier <- list(Hoved = 0, Rest =0)
+      N <- list(Hoved = 0, Rest =0)
+      Ngr <- list(Hoved = 0, Rest =0)
+      ind <- Utvalg$ind
+      
+      Ngr$Hoved <- switch(as.character(NSVarSpes$flerevar), 
+                          '0' = table(RegData$VariabelGr[ind$Hoved]),
+                          '1' = colSums(sapply(RegData[ind$Hoved ,variable], as.numeric), na.rm=T))
+      N$Hoved <- switch(as.character(NSVarSpes$flerevar), 
+                        '0' = sum(Ngr$Hoved),	#length(ind$Hoved)- Kan inneholde NA
+                        '1' = length(ind$Hoved))
+      AggVerdier$Hoved <- 100*Ngr$Hoved/N$Hoved
+      
+      if (Utvalg$medSml==1) {
+            Ngr$Rest <- switch(as.character(NSVarSpes$flerevar), 
+                               '0' = table(RegData$VariabelGr[ind$Rest]),
+                               '1' = colSums(sapply(RegData[ind$Rest ,variable], as.numeric), na.rm=T))
+            N$Rest <- switch(as.character(NSVarSpes$flerevar), 
+                             '0' = sum(Ngr$Rest),	#length(ind$Rest)- Kan inneholde NA
+                             '1' = length(ind$Rest))
+            AggVerdier$Rest <- 100*Ngr$Rest/N$Rest
       }
       
+      
+      #grtxt <- paste0(rev(NSVarSpes$grtxt), ' (', rev(sprintf('%.1f',AggVerdier$Hoved)), '%)') 
+      grtxt2 <- paste0('(', sprintf('%.1f',AggVerdier$Hoved), '%)')
+      yAkseTxt='Andel pasienter (%)'
+      
+      FigDataParam <- list(AggVerdier=AggVerdier, N=N, 
+                           Ngr=Ngr,	
+                           KImaal <- NSVarSpes$KImaal,
+                           #soyletxt=soyletxt,
+                           grtxt2=grtxt2, 
+                           grtxt=NSVarSpes$grtxt,
+                           tittel=NSVarSpes$tittel, 
+                           retn=NSVarSpes$retn, 
+                           xAkseTxt=NSVarSpes$xAkseTxt,
+                           yAkseTxt=yAkseTxt,
+                           utvalgTxt=Utvalg$utvalgTxt, 
+                           fargepalett=Utvalg$fargepalett, 
+                           medSml=Utvalg$medSml,
+                           hovedgrTxt=NSUtvalg,
+                           smltxt=Utvalg$smltxt)
+   
+#-----------Figur---------------------------------------
+       
       #-----Hvis få registreringer: ---------------------
-      if (Nsh < 5 | (medSml ==1 & Nrest<5)) {
+      if (N$Hoved < 5 | (Utvalg$medSml ==1 & N$Rest<5)) {
             FigTypUt <- rapbase::figtype(outfile)
             farger <- FigTypUt$farger
             plot.new()
-            title(tittel)	#, line=-6)
+            title(NSVarSpes$tittel)	#, line=-6)
             legend('topleft',utvalgTxt, bty='n', cex=0.9, text.col=farger[1])
             text(0.5, 0.6, 'Færre enn 5 egne registreringer,', cex=1.2)
             text(0.5, 0.5, 'eller færre enn 5 i sammenlikningsgruppa', cex=1.2)
             if ( outfile != '') {dev.off()}
       } else {
             
-            #-----------Figur---------------------------------------
-            #Inn parametre: subtxt, grtxt, grtxt2, tittel, Andeler
+            #Inn parametre: xAkseTxt, grtxt, grtxt2, tittel, AggVerdier
             #Plottspesifikke parametre:
             
             #Plottspesifikke parametre:
             FigTypUt <- rapbase::figtype(outfile, fargepalett=Utvalg$fargepalett)
             #Tilpasse marger for å kunne skrive utvalgsteksten
             NutvTxt <- length(utvalgTxt)
-            grtxtpst <- paste(rev(grtxt), ' (', rev(sprintf('%.1f',Andeler$Sh)), '%)', sep='')
-            vmarg <- switch(retn, V=0, H=max(0, strwidth(grtxtpst, units='figure', cex=cexgr)*0.7))
+            grtxtpst <- paste0(rev(NSVarSpes$grtxt), ' (', rev(sprintf('%.1f',AggVerdier$Hoved)), '%)')
+            vmarg <- switch(NSVarSpes$retn, V=0, H=max(0, strwidth(grtxtpst, units='figure', cex=cexgr)*0.7))
             par('fig'=c(vmarg, 1, 0, 1-0.02*(NutvTxt-1)))	#Har alltid datoutvalg med
             
             farger <- FigTypUt$farger
-            fargeSh <- farger[1]
+            fargeHoved <- farger[1]
             fargeRest <- farger[3]
             antGr <- length(grtxt)
             lwdRest <- 3	#tykkelse på linja som repr. landet
             cexleg <- 1.1	#Størrelse på legendtekst
             
-            if (retn == 'V' ) {
+            if (NSVarSpes$retn == 'V' ) {
                   #Vertikale søyler eller linje
-                  if (grtxt2 == '') {grtxt2 <- paste('(', sprintf('%.1f',Andeler$Sh), '%)', sep='')}
-                  ymax <- max(c(Andeler$Sh, Andeler$Rest),na.rm=T)*1.15
-                  pos <- barplot(as.numeric(Andeler$Sh), beside=TRUE, las=txtretn, ylab="Andel pasienter (%)",	#main=tittel,
-                                 cex.lab=cexleg, sub=subtxt, cex.sub=cexleg,	col=fargeSh, border='white', ylim=c(0, ymax))	#farger[c(1,3)] #names.arg=grtxt, cex.names=cexgr,
+                  if (grtxt2 == '') {grtxt2 <- paste0('(', sprintf('%.1f',AggVerdier$Hoved), '%)')}
+                  ymax <- max(c(AggVerdier$Hoved, AggVerdier$Rest),na.rm=T)*1.15
+                  pos <- barplot(as.numeric(AggVerdier$Hoved), beside=TRUE, las=txtretn, ylab="Andel pasienter (%)",	#main=tittel,
+                                 cex.lab=cexleg, sub=xAkseTxt, cex.sub=cexleg,	col=fargeHoved, border='white', ylim=c(0, ymax))	#farger[c(1,3)] #names.arg=grtxt, cex.names=cexgr,
                   mtext(at=pos, grtxt, side=1, las=1, cex=cexgr, adj=0.5, line=0.5)
                   mtext(at=pos, grtxt2, side=1, las=txtretn, cex=cexgr-0.1, adj=0.5, line=1.5)
                   if (medSml == 1) {
-                        points(pos, as.numeric(Andeler$Rest), col=fargeRest,  cex=2, pch=18) #c("p","b","o"),
-                        legend('top', c(paste(shtxt, ' (N=', Nsh,')', sep=''), paste('Landet forøvrig (N=', Nrest,')', sep='')),
+                        points(pos, as.numeric(AggVerdier$Rest), col=fargeRest,  cex=2, pch=18) #c("p","b","o"),
+                        legend('top', c(paste0(shtxt, ' (N=', N$Hoved,')'), paste0('Landet forøvrig (N=', N$Rest,')')),
                                border=c(fargeSh,NA), col=c(fargeSh,fargeRest), bty='n', pch=c(15,18), pt.cex=2, lty=NA,
                                lwd=lwdRest, ncol=2, cex=cexleg)
                   } else {
-                        legend('top', paste(shtxt, ' (N=', N,')', sep=''),
+                        legend('top', paste0(shtxt, ' (N=', N$Hoved,')'),
                                border=NA, fill=fargeSh, bty='n', ncol=1, cex=cexleg)
                   }
             }
             
-            if (retn == 'H') {
+            if (NSVarSpes$retn == 'H') {
                   #Horisontale søyler
                   ymax <- antGr*1.4
-                  xmax <- min(max(c(Andeler$Sh, Andeler$Rest),na.rm=T)*1.25, 100)
+                  xmax <- min(max(c(AggVerdier$Hoved, AggVerdier$Rest),na.rm=T)*1.25, 100)
                   #par('fig'=c(0.1, 1, 0, 0.9))
-                  pos <- barplot(rev(as.numeric(Andeler$Sh)), horiz=TRUE, beside=TRUE, las=1, xlab="Andel pasienter (%)", #main=tittel,
+                  pos <- barplot(rev(as.numeric(AggVerdier$Hoved)), horiz=TRUE, beside=TRUE, las=1, xlab="Andel pasienter (%)", #main=tittel,
                                  cex.lab=cexleg,col=fargeSh, border='white', font.main=1, xlim=c(0, xmax), ylim=c(0,ymax))	#
                   mtext(at=pos+0.1, text=grtxtpst, side=2, las=1, cex=cexgr, adj=1, line=0.25)	#text=rev(grtxt)
                   if (medSml == 1) {
-                        points(as.numeric(rev(Andeler$Rest)), pos, col=fargeRest,  cex=2, pch=18) #c("p","b","o"),
-                        legend('topleft', c(paste(shtxt, ' (N=', Nsh,')', sep=''), paste('Landet forøvrig (N=', Nrest,')', sep='')),
+                        points(as.numeric(rev(AggVerdier$Rest)), pos, col=fargeRest,  cex=2, pch=18) #c("p","b","o"),
+                        legend('topleft', c(paste0(shtxt, ' (N=', N$Hoved,')', sep=''), paste('Landet forøvrig (N=', Nrest,')')),
                                border=c(fargeSh,NA), col=c(fargeSh,fargeRest), bty='n', pch=c(15,18), pt.cex=2, lty=NA,
                                lwd=lwdRest, ncol=2, cex=cexleg)
                   } else {
-                        legend('top', paste(shtxt, ' (N=', N,')', sep=''),
+                        legend('top', paste0(shtxt, ' (N=', N$Hoved,')'),
                                border=NA, fill=fargeSh, bty='n', ncol=1, cex=cexleg)
                   }
             }
             
-            title(tittel, line=1, font.main=1, cex.main=1.5)
+            title(NSVarSpes$tittel, line=1, font.main=1, cex.main=1.5)
             
             #Tekst som angir hvilket utvalg som er gjort
             mtext(utvalgTxt, side=3, las=1, cex=cexleg-0.1, adj=0, col=farger[1], line=c(3+0.9*((NutvTxt-1):0)))

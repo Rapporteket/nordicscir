@@ -39,7 +39,7 @@ NSPreprosesser <- function(RegData)
       names(RegData)[which(names(RegData) == 'RehabDy')] <- 'DagerRehab' 
       names(RegData)[which(names(RegData) == 'BeforeRehDy')] <- 'DagerTilRehab' 
       #names(RegData)[which(names(RegData) == 'OutOfHosptlDy')] <- 'Permisjon'
-      RegData$Permisjon <- with(RegData, OutOfHosptlDy+OutOfHosptlDy2+OutOfRehabDy)
+      #RegData$Permisjon <- with(RegData, OutOfHosptlDy+OutOfHosptlDy2+OutOfRehabDy)
       
       # Riktig format
       #	RegData$alder <- as.numeric(RegData$decimalAge)	#
