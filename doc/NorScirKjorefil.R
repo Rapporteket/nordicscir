@@ -36,30 +36,55 @@ NSurin <- read.table('C:/Registre/NordicScir/data/UrinaryTractFunctionFormDataCo
 
 #------------------------ LASTE DATA -------------------------------------
 
-HovedSkjema <- read.table('C:/Registre/NordicScir/data/MainFormDataContract2017-03-30.csv', sep=';', header=T)
-Livskvalitet <- read.table('C:/Registre/NordicScir/data/LifeQualityFormDataContract2017-03-30.csv', sep=';', header=T)
-Kontroll <- read.table('C:/Registre/NordicScir/data/ControlFormDataContract2017-03-30.csv', sep=';', header=T)
-Bowel <- read.table('C:/Registre/NordicScir/data/BowelFunctionFormDataContract2017-03-30.csv', sep=';', header=T)
-Fornoyd <- read.table('C:/Registre/NordicScir/data/ActivityAndParticipationSatisfactionFormDataContract2017-03-30.csv', sep=';', header=T)
-Performance <- read.table('C:/Registre/NordicScir/data/ActivityAndParticipationPerformanceFormDataContract2017-03-30.csv', sep=';', header=T)
+rm(list=ls())
+
+TilLogiskeVar <- function(Skjema){
+      verdiGML <- c('True','False')
+      verdiNY <- c(TRUE,FALSE)
+      mapping <- data.frame(verdiGML,verdiNY)
+      LogVar <- names(Skjema)[which(Skjema[1,] %in% verdiGML)]
+      for (k in 1:length(LogVar)) {
+            Skjema[,LogVar[k]] <- mapping$verdiNY[match(Skjema[,LogVar[k]], mapping$verdiGML)]
+      }
+      return(Skjema)
+}
+
+HovedSkjema <- read.table('C:/Registre/NordicScir/data/MainFormDataContract2017-03-30.csv', stringsAsFactors=FALSE, sep=';', header=T)
+Livskvalitet <- read.table('C:/Registre/NordicScir/data/LifeQualityFormDataContract2017-03-30.csv', stringsAsFactors=FALSE, sep=';', header=T)
+#Kontroll <- read.table('C:/Registre/NordicScir/data/ControlFormDataContract2017-03-30.csv', stringsAsFactors=FALSE, sep=';', header=T)
+Urin <- read.table('C:/Registre/NordicScir/data/UrinaryTractFunctionFormDataContract2017-03-30.csv', stringsAsFactors=FALSE, sep=';', header=T)
+Tarm <- read.table('C:/Registre/NordicScir/data/BowelFunctionFormDataContract2017-03-30.csv', stringsAsFactors=FALSE, sep=';', header=T)
+Satisfact <- read.table('C:/Registre/NordicScir/data/ActivityAndParticipationSatisfactionFormDataContract2017-03-30.csv', stringsAsFactors=FALSE, sep=';', header=T)
+Performance <- read.table('C:/Registre/NordicScir/data/ActivityAndParticipationPerformanceFormDataContract2017-03-30.csv', stringsAsFactors=FALSE, sep=';', header=T)
+
+HovedSkjema <- TilLogiskeVar(HovedSkjema)
+Kontroll <- TilLogiskeVar(Kontroll)
+Urin <- TilLogiskeVar(Urin)
+Tarm <- TilLogiskeVar(Tarm)
+Satisfact <- TilLogiskeVar(Satisfact)
 
 HovedSkjema$SkjemaGUID <- tolower(HovedSkjema$SkjemaGUID)
+Kontroll$SkjemaGUID <- tolower(Kontroll$SkjemaGUID)
+Performance$SkjemaGUID <- tolower(Performance$SkjemaGUID)
 
 #Sjekk for hvilke variabelnavn som finnes i begge datasett
-varBegge <- intersect(names(Livskvalitet),names(HovedSkjema))
-Livskvalitet <- Livskvalitet[ ,c("HovedskjemaGUID", names(Livskvalitet)[!(names(Livskvalitet) %in% varBegge)])]  #"SkjemaGUID",
+Skjema2 <- Urin
+KobleMedHoved <- function(HovedSkjema,Skjema2) {
+      varBegge <- intersect(names(Skjema2),names(HovedSkjema))
+      Skjema2 <- Skjema2[ ,c("HovedskjemaGUID", names(Skjema2)[!(names(Skjema2) %in% varBegge)])]  #"SkjemaGUID",
+      NSdata <- merge(HovedSkjema, Skjema2, suffixes = c('','XX'),
+                      by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = F, all.y=F)
+return(NSdata)
+}
 
-
-NSdata <- merge(HovedSkjema, Livskvalitet, suffixes = c('','XX'),
-                by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = F, all.y=F)
-RegData <- NSdata
+RegData <- KobleMedHoved(HovedSkjema,Urin)
 
 #------------------------ TESTE DATA -------------------------------------
 
 #---Oppsummering/test av andel som har fått oppfølging---
 paste0('Ant. Livskvalitet m/hovedskjema: ',sum(HovedSkjema$SkjemaGUID %in% Livskvalitet$HovedskjemaGUID))
 paste0('Ant. Performance m/hovedskjema: ', sum(HovedSkjema$SkjemaGUID %in% Performance$HovedskjemaGUID))
-paste0('Ant. Fornøyd m/hovedskjema: ', sum(HovedSkjema$SkjemaGUID %in% Fornoyd$HovedskjemaGUID))
+paste0('Ant. Satisfaction m/Performance: ', sum(Fornoyd$HovedskjemaGUID %in% Performance$SkjemaGUID))
 sum(test)
 
 tabVar <- c('HealthUnitName','Aar')
@@ -85,21 +110,25 @@ AndelPerform <- round(100*ftable(RaaTab[!is.na(RaaTab$MedPerform),tabVar])/ftabl
 rm(list=ls())
 setwd("C:/ResultattjenesteGIT/nordicscir/")
 reshID <- 107627             ##105593-Haukeland, 106896-Sunnaas, 107627-St.Olavs, standard i funksj: 0 dvs. 'Alle'. Standard i rapporten skal v?re at man f?r opp eget sykehus.
-enhetsUtvalg <- 1
+enhetsUtvalg <- 0
 minald <- 0
 maxald <- 130
-erMann <- 1                      #1-menn, 0-kvinner, Standard: '', dvs. begge
+erMann <- ''                      #1-menn, 0-kvinner, Standard: '', dvs. begge
 traume <- ''    #'ja','nei', standard: ikke valgt
 AIS <- '' # as.character(c(1,4))	#c('A','B','U')		#AISgrad ved innleggelse alle(''), velge en eller flere fra A,B,C,D,E,U
-datoFra <- '2011-01-01'             #Standard: b?r v?re minste registrerte verdi ? min og max dato i utvalget vises alltid i figuren.
+datoFra <- '2013-01-01'             #Standard: b?r v?re minste registrerte verdi ? min og max dato i utvalget vises alltid i figuren.
 datoTil <- '2017-12-31'
 
 
 #------------------------------ Fordelinger --------------------------
 RegData <- HovedSkjema
-valgtVar <- 'AAis'	#M? velge... AAis, FAis, Alder, DagerRehab, DagerTilRehab, 
+valgtVar <- 'FAis'	#M? velge... AAis, FAis, Alder, DagerRehab, DagerTilRehab, 
 							#OpphTot[HosptlDy], Permisjon[OutOfHosptlDy], UtTil[PlaceDis], SkadeArsak[Scietiol]  
 							#Pustehjelp[VentAssi]
+
+#UrinSkjema: Inkontinens
+valgtVar <- 'Inkontinens'
+
 outfile <- '' #paste0(valgtVar, '.png')	#Navn angis av Jasper
 
 NSFigAndeler(RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
@@ -108,8 +137,10 @@ NSFigAndeler(RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoT
 #Aktuelt å legge til en parameter som sier hvilket skjema variabelen tilhører. Dette for å koble
 #sammen riktig skjema til hovedskjema.
 
-for (valgtVar in c('AAis', 'FAis', 'Alder', 'DagerRehab', 'DagerTilRehab', 
-				'OpphTot', 'UtTil', 'SkadeArsak', 'Pustehjelp')) {
+variable <- c('AAis', 'FAis', 'Alder', 'DagerRehab', 'DagerTilRehab', 
+              'OpphTot', 'UtTil', 'SkadeArsak', 'Pustehjelp')
+variable <- c('AAis', 'FAis')
+for (valgtVar in variable) {
 	outfile <- paste0(valgtVar, '.png')
 	NSFigAndeler(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
 	             AIS=AIS, minald=minald, maxald=maxald, erMann=erMann, traume=traume, reshID=reshID, 

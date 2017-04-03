@@ -75,6 +75,6 @@ NSUtvalg <- function(RegData, datoFra='2010-01-01', datoTil='3000-05-25', minald
 					}								
       
       
-      UtData <- list(RegData=RegData, utvalgTxt=utvalgTxt, medSml=medSml, fargepalett=fargepalett) #GronnHNpms624,
+      UtData <- list(RegData=RegData, utvalgTxt=utvalgTxt, hovedgrTxt=hovedgrTxt, smltxt=smltxt, medSml=medSml, ind=ind, fargepalett=fargepalett) #GronnHNpms624,
       return(invisible(UtData))
 }

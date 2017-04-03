@@ -32,10 +32,10 @@ NSPreprosesser <- function(RegData)
       names(RegData)[which(names(RegData) == 'UnitId')] <- 'ReshId'
       names(RegData)[which(names(RegData) == 'HealthUnitName')] <- 'ShNavn'
       names(RegData)[which(names(RegData) == 'PatientAge')] <- 'Alder'
-      names(RegData)[which(names(RegData) == 'HosptlDy')] <- 'OpphTot'  #Sjekk forskjell HosptlDy og ..2
       names(RegData)[which(names(RegData) == 'PlaceDis')] <- 'UtTil' 
       names(RegData)[which(names(RegData) == 'Scietiol')] <- 'SkadeArsak' 
       names(RegData)[which(names(RegData) == 'VentAssi')] <- 'Pustehjelp' 
+      names(RegData)[which(names(RegData) == 'HosptlDy')] <- 'OpphTot'  #Sjekk forskjell HosptlDy og ..2
       names(RegData)[which(names(RegData) == 'RehabDy')] <- 'DagerRehab' 
       names(RegData)[which(names(RegData) == 'BeforeRehDy')] <- 'DagerTilRehab' 
       #names(RegData)[which(names(RegData) == 'OutOfHosptlDy')] <- 'Permisjon'
