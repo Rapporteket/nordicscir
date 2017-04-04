@@ -67,10 +67,9 @@ HovedSkjema$SkjemaGUID <- tolower(HovedSkjema$SkjemaGUID)
 Kontroll$SkjemaGUID <- tolower(Kontroll$SkjemaGUID)
 Performance$SkjemaGUID <- tolower(Performance$SkjemaGUID)
 
-#Sjekk for hvilke variabelnavn som finnes i begge datasett
-Skjema2 <- Urin
+
 KobleMedHoved <- function(HovedSkjema,Skjema2) {
-      varBegge <- intersect(names(Skjema2),names(HovedSkjema))
+      varBegge <- intersect(names(Skjema2),names(HovedSkjema)) ##Variabelnavn som finnes i begge datasett
       Skjema2 <- Skjema2[ ,c("HovedskjemaGUID", names(Skjema2)[!(names(Skjema2) %in% varBegge)])]  #"SkjemaGUID",
       NSdata <- merge(HovedSkjema, Skjema2, suffixes = c('','XX'),
                       by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = F, all.y=F)
@@ -110,7 +109,7 @@ AndelPerform <- round(100*ftable(RaaTab[!is.na(RaaTab$MedPerform),tabVar])/ftabl
 rm(list=ls())
 setwd("C:/ResultattjenesteGIT/nordicscir/")
 reshID <- 107627             ##105593-Haukeland, 106896-Sunnaas, 107627-St.Olavs, standard i funksj: 0 dvs. 'Alle'. Standard i rapporten skal v?re at man f?r opp eget sykehus.
-enhetsUtvalg <- 0
+enhetsUtvalg <- 1
 minald <- 0
 maxald <- 130
 erMann <- ''                      #1-menn, 0-kvinner, Standard: '', dvs. begge
@@ -125,10 +124,14 @@ RegData <- HovedSkjema
 valgtVar <- 'FAis'	#M? velge... AAis, FAis, Alder, DagerRehab, DagerTilRehab, 
 							#OpphTot[HosptlDy], Permisjon[OutOfHosptlDy], UtTil[PlaceDis], SkadeArsak[Scietiol]  
 							#Pustehjelp[VentAssi]
-
-#UrinSkjema: Inkontinens
-valgtVar <- 'Inkontinens'
-
+#UrinSkjema: 
+RegData <- KobleMedHoved(HovedSkjema,Urin)
+valgtVar <- 'UrinLegemidlerHvilke'   #'UrinInkontinens', 'UrinLegemidler','UrinLegemidlerHvilke', 'UrinKirInngr', 
+                                    #'UrinTomBlareHoved', 'UrinTomBlareTillegg'
+#TarmSkjema: 
+RegData <- KobleMedHoved(HovedSkjema,Tarm)
+valgtVar <- 'TarmKirInngrepHvilke'   #'TarmAvfHoved','TarmAvfTillegg', TarmAvfmiddel, TarmAvfmiddelHvilke
+                              #TarmInkontinens, TarmKirInngrep, TarmKirInngrepHvilke
 outfile <- '' #paste0(valgtVar, '.png')	#Navn angis av Jasper
 
 NSFigAndeler(RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
@@ -137,9 +140,11 @@ NSFigAndeler(RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoT
 #Aktuelt å legge til en parameter som sier hvilket skjema variabelen tilhører. Dette for å koble
 #sammen riktig skjema til hovedskjema.
 
-variable <- c('AAis', 'FAis', 'Alder', 'DagerRehab', 'DagerTilRehab', 
+variableHoved <- c('AAis', 'FAis', 'Alder', 'DagerRehab', 'DagerTilRehab', 
               'OpphTot', 'UtTil', 'SkadeArsak', 'Pustehjelp')
-variable <- c('AAis', 'FAis')
+variableUrin <- c('UrinInkontinens', 'UrinLegemidler','UrinLegemidlerHvilke', 'UrinKirInngr', 
+                  'UrinTomBlareHoved', 'UrinTomBlareTillegg')
+variable <- variableUrin
 for (valgtVar in variable) {
 	outfile <- paste0(valgtVar, '.png')
 	NSFigAndeler(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 

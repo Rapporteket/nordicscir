@@ -54,9 +54,8 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar=''){
  
       
       RegData$VariabelGr <- 0
-      #Kan her definere opp alle aktuelle grupperingsvariable og deres tekst, eller 
-      #sende inn grupperingsvariabel og så gjøre beregninger. (Ulempe: Ekstra avhengigheter)
-      
+      variable <- ''
+
       
       #--------------- Definere variable ------------------------------
       #Variabeltyper: Numeriske, kategoriske, indikator
@@ -160,8 +159,19 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar=''){
             retn <- 'H'
       }
   
-#----------------URIN-skjema:
-      if (valgtVar=='Inkontinens') {
+#----------------URIN-skjema (start 01.01.2015):
+      #For flerevar=1 må vi omdefinere variablene slik at alle gyldige registreringer 
+      #(dvs. alle registreringer som skal telles med) er 0 eller 1. De som har oppfylt spørsmålet
+      # er 1, mens ugyldige registreringer er NA. Det betyr at hvis vi skal ta bort registreringer
+      # som i kategorier av typen "Ukjent" kodes disse som NA, mens hvis de skal være med kodes de
+      # som 0.
+      #Vi kan velge å sende tilbake alle variable som indikatorvariable, dvs. med 0,1,NA
+      #Eller vi kan gjøre beregninga her og sende tilbake teller og nevner for den sammensatte variabelen
+      
+      #NB:  LutfxnDt	<= DischgDt
+
+      if (valgtVar=='UrinInkontinens') {
+            RegData <- RegData[which((RegData$AnyDrugs==1) & (RegData$InnDato >= as.POSIXlt('2015-01-01'))), ]
             #0:4,9: Nei, Ja daglig, Ja ukentlig, Ja månedlig, Ikke relevant, Ukjent	
             tittel <- 'Ufrivillig urinlekkasje'
             gr <- c(0:4,9)
@@ -169,53 +179,165 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar=''){
             grtxt <- c('Nei', 'Ja, daglig', 'Ja, ukentlig', 'Ja, månedlig', 'Ikke relevant', 'Ukjent')
             RegData$VariabelGr <- factor(RegData$Incontnc, levels = gr, labels = grtxt)
       }
-      
       if (valgtVar=='UrinKirInngr') {
             flerevar <- 1
-            tittel <- 'Kirurgiske inngrep i urinveiene'
-      #For Surgicalpr=='ja' Ta med egen kolonne for nei? Nei, for mange	
-      Innsetting av suprapubiskateter	suprapubiskateter	Spcath		hvis Surgicalpr==1 & SpcathDt>=AdmitDt
-      Fjerning av blærestein	Bstnrm		hvis Surgicalpr==1 & BstnrmDt>=AdmitDt
-      Fjerning av andre stein	Ustnrm		hvis Surgicalpr==1 & UstnrmDt>=AdmitDt
-      Blæreforstørrelse	Bladag		hvis Surgicalpr==1 & BladagDt>=AdmitDt
-      Sfinkterotomi	Ustent		hvis Surgicalpr==1 & UstentDt>=AdmitDt
-      Botulinumtoksininjeksjon	Botox		hvis Surgicalpr==1 & BotoxDt>=AdmitDt
-      Kunstig sfinkter	Artsph		hvis Surgicalpr==1 & ArtsphDt>=AdmitDt
-      Ilovesikostomi	Ilvscs		hvis Surgicalpr==1 & IlvscsDt>=AdmitDt
-      Ileoureterostomi	Ilurts		hvis Surgicalpr==1 & IlurtsDt>=AdmitDt
-      Kateteriserbar urostomi	Ccathv		hvis Surgicalpr==1 & CcathvDt>=AdmitDt
-      Sakralnervestimulator	Sarstm		hvis Surgicalpr==1 & SarstmDt>=AdmitDt
-      Annet	Othsrg		hvis Surgicalpr==1 & OthsrgDt>=AdmitDt
-      
-       #(valgtVar == 'NegHend' ) 
-            #For flerevar=1 må vi omdefinere variablene slik at alle gyldige registreringer 
-            #(dvs. alle registreringer som skal telles med) er 0 eller 1. De som har oppfylt spørsmålet
-            # er 1, mens ugyldige registreringer er NA. Det betyr at hvis vi skal ta bort registreringer
-            # som i kategorier av typen "Ukjent" kodes disse som NA, mens hvis de skal være med kodes de
-            # som 0.
-            #Vi kan velge å sende tilbake alle variable som indikatorvariable, dvs. med 0,1,NA
-            #Eller vi kan gjøre beregninga her og sende tilbake teller og nevner for den sammensatte variabelen
-            flerevar <- 1
-            variable <- c('B17FysMishandl', 'B18PsykMishandl', 'B19Overgrep', 'B20Mobbing')
-            #Sjekk <- RegData[,variable]
             retn <- 'H'
-            grtxt <- c('Fysisk mishandl.', 'Psykisk mishandl.', 'Overgrep', 'Mobbing')
-            ind01 <- which(RegData[ ,variable] < 2, arr.ind = T) #Alle ja/nei
-            ind1 <- which(RegData[ ,variable] == 1, arr.ind=T) #Ja i alle variable
-            RegData[ ,variable] <- NA
-            #RegData[,variable] <- 
-            RegData[ ,variable][ind01] <- 0
+            tittel <- 'Kirurgiske inngrep i urinveiene'
+            RegData <- RegData[which((RegData$Surgicalpr==1) & (RegData$InnDato >= as.POSIXlt('2015-01-01'))), ]
+            #For Surgicalpr=='ja' Ta med egen kolonne for nei? Nei, for mange	
+            variable <- c('Spcath', 'Bstnrm', 'Ustnrm', 'Bladag', 'Ustent', 'Botox', 'Artsph','Ilvscs', 
+                          'Ilurts', 'Ccathv', 'Sarstm', 'Othsrg')
+            grtxt <- c('Innsatt suprapubiskateter', 'Fjernet blærestein', 'Fjernet andre stein', 'Blæreforstørrelse', 
+                       'Sfinkterotomi', 'Botulinumtoksininjeksjon', 'Kunstig sfinkter', 'Ilovesikostomi', 'Ileoureterostomi',
+                       'Kateteriserbar urostomi', 'Sakralnervestimulator', 'Annet')
+            indDato <- cbind(Spcath = RegData$SpcathDt >= RegData$AdmitDt,
+                             Bstnrm = RegData$BstnrmDt>= RegData$AdmitDt,
+                             Ustnrm = RegData$UstnrmDt>= RegData$AdmitDt,
+                             Bladag = RegData$BladagDt>= RegData$AdmitDt,
+                             Ustent = RegData$UstentDt>= RegData$AdmitDt,
+                             Botox = RegData$BotoxDt>= RegData$AdmitDt,
+                             Artsph = RegData$ArtsphDt>= RegData$AdmitDt,
+                             Ilvscs = RegData$IlvscsDt>= RegData$AdmitDt,
+                             Ilurts = RegData$IlurtsDt>= RegData$AdmitDt,
+                             Ccathv = RegData$CcathvDt>= RegData$AdmitDt,
+                             Sarstm = RegData$SarstmDt>= RegData$AdmitDt,
+                             Othsrg = RegData$OthsrgDt>= RegData$AdmitDt)
+            ind1 <- which(RegData[,variable]==TRUE & indDato==TRUE, arr.ind=T)
+            RegData[ ,variable] <- 0
             RegData[ ,variable][ind1] <- 1
-            #Beregne direkte:
-            #apply(RegData[,variable], MARGIN=2, FUN=function(x) sum(x %in% 0:1))
-            tittel <- 'Negative hendelser'
       }
+      if (valgtVar=='UrinLegemidler') {
+            RegData <- RegData[which(RegData$InnDato >= as.POSIXlt('2015-01-01')), ]
+            #0:1,9: Nei, Ja, Ukjent	
+            tittel <- 'Bruk av legemidler som påvirker urinveiene'
+            gr <- c(0:1,9)
+            RegData <- RegData[RegData$AnyDrugs %in% gr,]
+            grtxt <- c('Ja', 'Nei', 'Ukjent')
+            RegData$VariabelGr <- factor(RegData$AnyDrugs, levels = gr, labels = grtxt)
+      }
+      if (valgtVar=='UrinLegemidlerHvilke') {
+            flerevar <- 1
+            retn <- 'H'
+            tittel <- 'Legemidler som påvirker urinveiene'
+            RegData <- RegData[which((RegData$AnyDrugs==1) & (RegData$InnDato >= as.POSIXlt('2015-01-01'))), ]
+            variable <- c('Bladrelx', 'Spncrelx', 'DrugsAnti', 'Antiuti', 'Antiprop', 'Othdrg')
+            grtxt <- c('Blæreavslappende legemidler', 'Avslappende, sfinkter/blærehals', 'Antibiotika/antiseptika', 
+                       '...behandling av UVI', '...forebyggende', 'Annet')
+            cexgr <- 1
+            Dum <- RegData
+            ind1 <- which(RegData[,variable]==TRUE , arr.ind=T)
+            indIkkeAnti <- which(Dum$DrugsAnti==FALSE)
+            RegData[ ,variable] <- 0
+            RegData[indIkkeAnti ,c('Antiuti', 'Antiprop')] <- NA
+            RegData[ ,variable][ind1] <- 1
       }
       
+      
+      if (valgtVar %in% c('UrinTomBlareHoved','UrinTomBlareTillegg')) {
+            flerevar <- 1
+            retn <- 'H'
+            tittel <- switch(valgtVar,
+                             UrinTomBlareHoved = 'Blæretømming, hovedmetode',
+                             UrinTomBlareTillegg = 'Blæretømming, tilleggsmetode')
+            RegData <- RegData[RegData$InnDato >= as.POSIXlt('2015-01-01'), ]
+            variable <- switch(valgtVar,
+                               UrinTomBlareHoved =  c('EmbladUn', 'EmbladM1', 'EmbladM2', 'EmbladM3', 'EmbladM4', 'EmbladM5', 'EmbladM6', 
+                                                  'EmbladM7', 'EmbladM8', 'EmbladM9', 'EmbladM10', 'EmbladM11', 'EmbladM12'),
+                               UrinTomBlareTillegg =c('EmbladS1', 'EmbladS2', 'EmbladS3', 'EmbladS4', 'EmbladS5', 'EmbladS6', 
+                                                  'EmbladS7', 'EmbladS8', 'EmbladS9', 'EmbladS10', 'EmbladS11', 'EmbladS12'))
+            grtxt <- c('Ukjent', 'Normal vannlating', 'Viljestyrt', 'Ufrivillig', 'Pressing', 'Ekstern kompresjon',
+                       'Selvkateterisering', 'Kateterisering m/hjelp', 'Transuretralt', 'Suprapubisk', 
+                       'Sakral nerverotstimulering', 'Stomi', 'Annen metode')
+            if (valgtVar == 'UrinTomBlareTillegg'){grtxt <- grtxt[-1]}
+            #Ikke nødvendig å gjøre om til 01 når har boolske variable
+            ind1 <- which(RegData[,variable]==TRUE, arr.ind=T)
+            RegData[ ,variable] <- 0
+            RegData[ ,variable][ind1] <- 1
+      }
+
+#----------------TARM-skjema (start 01.01.2015):
+      #BfxnbaDt	<= DischgDt
+      
+      if (valgtVar=='TarmAvfmiddel') {
+            RegData <- RegData[which(RegData$InnDato >= as.POSIXlt('2016-01-01')), ]
+            tittel <- 'Bruk av perorale avføringsmidler'
+            gr <- c(0:1,9)
+            RegData <- RegData[RegData$OralLaxatives %in% gr,]
+            grtxt <- c('Nei', 'Ja', 'Ukjent')
+            RegData$VariabelGr <- factor(RegData$OralLaxatives, levels = gr, labels = grtxt)
+      }
+      
+      if (valgtVar=='TarmKirInngrep') {
+            RegData <- RegData[which(RegData$InnDato >= as.POSIXlt('2016-01-01')), ]
+            tittel <- 'Kirurgisk inngrep i mage/–tarm kanalen'
+            gr <- c(0:1,9)
+            RegData <- RegData[RegData$SurgicalIntervention %in% gr,]
+            grtxt <- c('Nei', 'Ja', 'Ukjent')
+            RegData$VariabelGr <- factor(RegData$SurgicalIntervention, levels = gr, labels = grtxt)
+      }
+      
+      if (valgtVar=='TarmKirInngrepHvilke') {
+            RegData <- RegData[which((RegData$SurgicalIntervention==1) & (RegData$InnDato >= as.POSIXlt('2016-01-01'))), ]
+            flerevar <- 1
+            retn <- 'H'
+            tittel <- 'Kirurgiske inngrep i mage/–tarm kanalen'
+            variable <- c('Apndec', 'Chcyec', 'Colost', 'Ileost', 'Otgisurg')
+            grtxt <- c('Appendektomi','Fjerning av galleblæren', 'Kolostomi', 'Ileostomi', 'Annet')
+            cexgr <- 1
+            ind1 <- which(RegData[,variable]==TRUE , arr.ind=T)
+            RegData[ ,variable] <- 0
+            RegData[ ,variable][ind1] <- 1
+      }
+      if (valgtVar=='TarmInkontinens') {
+            RegData <- RegData[which(RegData$InnDato >= as.POSIXlt('2016-01-01')), ]
+            tittel <- 'Hyppighet av fekal inkontinens'
+            gr <- c(1:7,9)
+            RegData <- RegData[RegData$Fcincfrq %in% gr,]
+            grtxt <- c('Mer enn daglig', 'Daglig', 'Ukentlig', 'Mer enn månedlig',
+                       'Månedlig', 'Mindre enn månedlig', 'Aldri', 'Ukjent')
+            RegData$VariabelGr <- factor(RegData$OralLaxatives, levels = gr, labels = grtxt)
+      }
+      
+      if (valgtVar=='TarmAvfmiddelHvilke') {
+            RegData <- RegData[which((RegData$OralLaxatives==1) & (RegData$InnDato >= as.POSIXlt('2016-01-01'))), ]
+            flerevar <- 1
+            retn <- 'H'
+            tittel <- 'Perorale avføringsmidler'
+            variable <- c('Osmodrp', 'Osmotab', 'Irrtdrp', 'Irrttab', 'Prokinet', 'Othorlax')
+            grtxt <- c('Osmotisk, flytende', 'Osmotisk, fast form', 'Tarmirriterende, flytende',
+                       'Tarmirriterende, fast form', 'Prokinetiske', 'Annet')
+            cexgr <- 1
+            ind1 <- which(RegData[,variable]==TRUE , arr.ind=T)
+            RegData[ ,variable] <- 0
+            RegData[ ,variable][ind1] <- 1
+      }
+      
+      
+      if (valgtVar %in% c('TarmAvfHoved','TarmAvfTillegg')) {
+            RegData <- RegData[which(RegData$InnDato >= as.POSIXlt('2016-01-01')), ]
+            flerevar <- 1
+            retn <- 'H'
+            tittel <- switch(valgtVar,
+                             TarmAvfHoved = 'Avføring, hovedmetode',
+                             TarmAvfTillegg = 'Avføring, tilleggsmetode')
+            RegData <- RegData[RegData$InnDato >= as.POSIXlt('2016-01-01'), ]
+            variable <- switch(valgtVar,
+                               TarmAvfHoved =  c('DefcmthUn', 'DefcmthM1', 'DefcmthM2', 'DefcmthM3', 'DefcmthM4', 'DefcmthM5',
+                                                      'DefcmthM6', 'DefcmthM7', 'DefcmthM8', 'DefcmthM9', 'DefcmthM10'),
+                               TarmAvfTillegg =c('OthdefS1', 'OthdefS2', 'OthdefS3', 'OthdefS4', 'OthdefS5',
+                                                      'OthdefS6', 'OthdefS7', 'OthdefS8', 'OthdefS9', 'OthdefS10'))
+            grtxt <- c('Ukjent', 'Normal avføring', 'Pressing/trykking', 'Digital stimulering', 'Stikkpiller',
+                       'Manuell fjerning', 'Miniklyster', 'Klyster (>150ml)', 'Kolostomi', 'Sakralstimulering', 'Annen')
+            if (valgtVar == 'TarmAvfTillegg'){grtxt <- grtxt[-1]}
+            #Ikke nødvendig å gjøre om til 01 når har boolske variable
+            ind1 <- which(RegData[,variable]==TRUE, arr.ind=T)
+            RegData[ ,variable] <- 0
+            RegData[ ,variable][ind1] <- 1
+      }
       
 
       UtData <- list(RegData=RegData, grtxt=grtxt, xAkseTxt=xAkseTxt, cexgr=cexgr, KImaal=KImaal, retn=retn,
-                     tittel=tittel, flerevar=flerevar, sortAvtagende=sortAvtagende)
+                     tittel=tittel, flerevar=flerevar, variable=variable, sortAvtagende=sortAvtagende)
       #!!!!!!!!!!!!!RegData inneholder nå variablene 'Variabel' og 'VariabelGr'. Hm. her er bare VariabelGr... Sjekk med INTENSIV
       return(invisible(UtData)) 
       

@@ -57,49 +57,55 @@ NSFigAndeler <- function(RegData, outfile='', valgtVar,
                          erMann=erMann, traume=traume, AIS=AIS, enhetsUtvalg = enhetsUtvalg, reshID = reshID)
       RegData <- Utvalg$RegData
       utvalgTxt <- Utvalg$utvalgTxt
-	
-#gml      RegData$Variabel <- RegData[ ,valgtVar]
-      
-#      shtxt <- switch(as.character(enhetsUtvalg), 	'0' = 'Hele landet',
-#                      '1' = as.character(RegData$ShNavn[match(reshID, RegData$ReshId)]),
-#                      '2' = as.character(RegData$ShNavn[match(reshID, RegData$ReshId)]))
-      
-#      if (enhetsUtvalg == 2) {RegData <- RegData[which(RegData$ReshId == reshID), ]}
-      
-     
-      N <- dim(RegData)[1]
-      
-      
-      #-----------Må ha en del som er registerspesifikk, så må selve plottet være i pakken, dvs. funksjoner.
-      
-      
-      
-      
-     #--------------- Gjøre beregninger ------------------------------
-      #Gjør beregninger selv om det evt ikke skal vise figur ut. Trenger utdata.
-      AggVerdier <- list(Hoved = 0, Rest =0)
-      N <- list(Hoved = 0, Rest =0)
-      Ngr <- list(Hoved = 0, Rest =0)
-      ind <- Utvalg$ind
       medSml <- Utvalg$medSml
       
-      Ngr$Hoved <- switch(as.character(NSVarSpes$flerevar), 
+     #--------------- Gjøre beregninger ------------------------------
+      AggVerdier <- list(Hoved = 0, Rest =0)
+      N <- list(Hoved = 0, Rest =0)   #Nevner
+      Ngr <- list(Hoved = 0, Rest =0) #Teller 
+      Nfig <- list(Hoved = 0, Rest =0) #figurtekst: N i legend
+      ind <- Utvalg$ind
+      variable <- NSVarSpes$variable
+      flerevar <- NSVarSpes$flerevar
+      
+      Ngr$Hoved <- switch(as.character(flerevar), 
                           '0' = table(RegData$VariabelGr[ind$Hoved]),
-                          '1' = colSums(sapply(RegData[ind$Hoved ,variable], as.numeric), na.rm=T))
-      N$Hoved <- switch(as.character(NSVarSpes$flerevar), 
+                          '1' = apply(RegData[ind$Hoved,variable], MARGIN=2, 
+                                      FUN=function(x) sum(x == 1, na.rm=T)))
+      #N$ gjelder selv om totalutvalget er ulikt for de ulike variablene i flerevar
+      N$Hoved <- switch(as.character(flerevar), 
                         '0' = sum(Ngr$Hoved),	#length(ind$Hoved)- Kan inneholde NA
-                        '1' = length(ind$Hoved))
+                        '1' = apply(RegData[ind$Hoved,variable], MARGIN=2, 
+                                    FUN=function(x) sum(x %in% 0:1, na.rm=T)))
       AggVerdier$Hoved <- 100*Ngr$Hoved/N$Hoved
       
+      
+      
       if (medSml==1) {
-            Ngr$Rest <- switch(as.character(NSVarSpes$flerevar), 
+            Ngr$Rest <- switch(as.character(flerevar), 
                                '0' = table(RegData$VariabelGr[ind$Rest]),
-                               '1' = colSums(sapply(RegData[ind$Rest ,variable], as.numeric), na.rm=T))
-            N$Rest <- switch(as.character(NSVarSpes$flerevar), 
+                               '1' = apply(RegData[ind$Rest,variable], MARGIN=2, 
+                                           FUN=function(x) sum(x == 1, na.rm=T)))
+            N$Rest <- switch(as.character(flerevar), 
                              '0' = sum(Ngr$Rest),	#length(ind$Rest)- Kan inneholde NA
-                             '1' = length(ind$Rest))
+                             '1' = apply(RegData[ind$Rest,variable], MARGIN=2, 
+                                         FUN=function(x) sum(x %in% 0:1, na.rm=T)))
             AggVerdier$Rest <- 100*Ngr$Rest/N$Rest
       }
+      
+      if(flerevar==1) {
+            Nfig$Hoved <- max(N$Hoved)
+                  #ifelse(min(N$Hoved)==max(N$Hoved),
+                  #              min(N$Hoved[1]), 
+                  #               paste0(min(N$Hoved),'-',max(N$Hoved)))
+            Nfig$Rest <- max(N$Rest)
+                  #ifelse(min(N$Rest)==max(N$Rest),
+                  #              min(N$Rest[1]), 
+                  #              paste0(min(N$Rest),'-',max(N$Rest)))
+      } else {
+            Nfig <- N}
+      
+      
       
       
       #grtxt <- paste0(rev(NSVarSpes$grtxt), ' (', rev(sprintf('%.1f',AggVerdier$Hoved)), '%)') 
@@ -128,7 +134,8 @@ NSFigAndeler <- function(RegData, outfile='', valgtVar,
 #-----------Figur---------------------------------------
        
       #-----Hvis få registreringer: ---------------------
-      if (N$Hoved < 5 | (medSml ==1 & N$Rest<5)) {
+      Ngrense <- 0      ## ENDRE TIL 5 FØR LEGGES PÅ RAPPORTEKET
+      if (sum(N$Hoved) < Ngrense | (medSml ==1 & sum(N$Rest)< Ngrense)) {
             FigTypUt <- rapbase::figtype(outfile)
             farger <- FigTypUt$farger
             plot.new()
@@ -147,7 +154,7 @@ NSFigAndeler <- function(RegData, outfile='', valgtVar,
             #Tilpasse marger for å kunne skrive utvalgsteksten
             NutvTxt <- length(utvalgTxt)
             grtxtpst <- paste0(rev(grtxt), ' (', rev(sprintf('%.1f',AggVerdier$Hoved)), '%)')
-            vmarg <- switch(NSVarSpes$retn, V=0, H=max(0, strwidth(grtxtpst, units='figure', cex=cexgr)*0.7))
+            vmarg <- switch(NSVarSpes$retn, V=0, H=max(0, strwidth(grtxtpst, units='figure', cex=cexgr)*0.8))
             par('fig'=c(vmarg, 1, 0, 1-0.02*(NutvTxt-1)))	#Har alltid datoutvalg med
             
             farger <- FigTypUt$farger
@@ -155,7 +162,7 @@ NSFigAndeler <- function(RegData, outfile='', valgtVar,
             fargeRest <- farger[3]
             antGr <- length(grtxt)
             lwdRest <- 3	#tykkelse på linja som repr. landet
-            cexleg <- 1.1	#Størrelse på legendtekst
+            cexleg <- 1	#Størrelse på legendtekst
             
             
             if (NSVarSpes$retn == 'V' ) {
@@ -168,11 +175,11 @@ NSFigAndeler <- function(RegData, outfile='', valgtVar,
                   mtext(at=pos, grtxt2, side=1, cex=cexgr-0.1, adj=0.5, line=1.5) #las=txtretn, 
                   if (medSml == 1) {
                         points(pos, as.numeric(AggVerdier$Rest), col=fargeRest,  cex=2, pch=18) #c("p","b","o"),
-                        legend('top', c(paste0(hovedgrTxt, ' (N=', N$Hoved,')'), paste0('Landet forøvrig (N=', N$Rest,')')),
+                        legend('top', c(paste0(hovedgrTxt, ' (N=', Nfig$Hoved,')'), paste0('Landet forøvrig (N=', Nfig$Rest,')')),
                                border=c(fargeHoved,NA), col=c(fargeHoved,fargeRest), bty='n', pch=c(15,18), pt.cex=2, lty=NA,
                                lwd=lwdRest, ncol=2, cex=cexleg)
                   } else {
-                        legend('top', paste0(hovedgrTxt, ' (N=', N$Hoved,')'),
+                        legend('top', paste0(hovedgrTxt, ' (N=', Nfig$Hoved,')'),
                                border=NA, fill=fargeHoved, bty='n', ncol=1, cex=cexleg)
                   }
             }
@@ -187,11 +194,11 @@ NSFigAndeler <- function(RegData, outfile='', valgtVar,
                   mtext(at=pos+0.1, text=grtxtpst, side=2, las=1, cex=cexgr, adj=1, line=0.25)	#text=rev(grtxt)
                   if (medSml == 1) {
                         points(as.numeric(rev(AggVerdier$Rest)), pos, col=fargeRest,  cex=2, pch=18) #c("p","b","o"),
-                        legend('topleft', c(paste0(hovedgrTxt, ' (N=', N$Hoved,')', sep=''), paste('Landet forøvrig (N=', Nrest,')')),
+                        legend('topleft', c(paste0(hovedgrTxt, ' (N=', Nfig$Hoved,')'), paste0('Landet forøvrig (N=', Nfig$Rest,')')),
                                border=c(fargeHoved,NA), col=c(fargeHoved,fargeRest), bty='n', pch=c(15,18), pt.cex=2, lty=NA,
                                lwd=lwdRest, ncol=2, cex=cexleg)
                   } else {
-                        legend('top', paste0(hovedgrTxt, ' (N=', N$Hoved,')'),
+                        legend('top', paste0(hovedgrTxt, ' (N=', Nfig$Hoved,')'),
                                border=NA, fill=fargeHoved, bty='n', ncol=1, cex=cexleg)
                   }
             }
@@ -199,7 +206,7 @@ NSFigAndeler <- function(RegData, outfile='', valgtVar,
             title(NSVarSpes$tittel, line=1, font.main=1, cex.main=1.5)
             
             #Tekst som angir hvilket utvalg som er gjort
-            mtext(utvalgTxt, side=3, las=1, cex=cexleg-0.1, adj=0, col=farger[1], line=c(3+0.9*((NutvTxt-1):0)))
+            mtext(utvalgTxt, side=3, las=1, cex=cexgr, adj=0, col=farger[1], line=c(3+0.9*((NutvTxt-1):0)))
             
             par('fig'=c(0, 1, 0, 1))
             if ( outfile != '') {dev.off()}
