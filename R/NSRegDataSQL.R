@@ -231,15 +231,24 @@ varTarm <- c('
 valgtSkjema <- substr(valgtVar,1,4)
 variable <- ifelse (valgtSkjema %in% c('Livs', 'Urin', 'Tarm', 'Sati', 'Perf', 'Kont'), paste0('var',valgtSkjema),'')
 
+variable <- switch(valgtSkjema,
+                  Livs = varLivs,
+                  Urin = varUrin, 
+                  Tarm = varTarm,
+                  Sati = varSati,
+                  Perf = varPerf,
+                  Kont = varKont)
+
+
 qSkjema <- switch(valgtSkjema, #Dette vil bare fungere hvis konsekvent med navngiving i valgtVar
-           Livs = 'INNER JOIN LifeQualityFormDataContract l',
+           Livs = 'INNER JOIN LifeQualityFormDataContract l ',
            Urin = 'INNER JOIN UrinaryTractFunctionFormDataContract u 
-                        ON UPPER(h.SkjemaGUID) = UPPER(u.HovedskjemaGUID)',
+                        ON UPPER(h.SkjemaGUID) = UPPER(u.HovedskjemaGUID) ',
            Tarm = 'INNER JOIN BowelFunctionFormDataContract t
-                       ON UPPER(h.SkjemaGUID) = UPPER(t.HovedskjemaGUID)',
-           Sati = 'INNER JOIN ActivityAndParticipationSatisfactionFormDataContract s',
-           Perf = 'INNER JOIN ActivityAndParticipationPerformanceFormDataContract p',
-           Kont = 'INNER JOIN ControlFormDataContract k'
+                       ON UPPER(h.SkjemaGUID) = UPPER(t.HovedskjemaGUID) ',
+           Sati = 'INNER JOIN ActivityAndParticipationSatisfactionFormDataContract s ',
+           Perf = 'INNER JOIN ActivityAndParticipationPerformanceFormDataContract p ',
+           Kont = 'INNER JOIN ControlFormDataContract k '
            )
 #qSkjema er NULL hvis ingen treff
 
@@ -247,7 +256,7 @@ qSkjema <- switch(valgtSkjema, #Dette vil bare fungere hvis konsekvent med navng
 query <- paste0('SELECT ',
                varHoved,
                variable,
-            'FROM
+            ' FROM
             MainFormDataContract h ',
             qSkjema
             )
