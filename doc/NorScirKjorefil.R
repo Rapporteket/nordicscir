@@ -58,14 +58,14 @@ Satisfact <- read.table('C:/Registre/NordicScir/data/ActivityAndParticipationSat
 Performance <- read.table('C:/Registre/NordicScir/data/ActivityAndParticipationPerformanceFormDataContract2017-03-30.csv', stringsAsFactors=FALSE, sep=';', header=T)
 
 HovedSkjema <- TilLogiskeVar(HovedSkjema)
-Kontroll <- TilLogiskeVar(Kontroll)
 Urin <- TilLogiskeVar(Urin)
 Tarm <- TilLogiskeVar(Tarm)
 Satisfact <- TilLogiskeVar(Satisfact)
+Kontroll <- TilLogiskeVar(Kontroll)
 
 HovedSkjema$SkjemaGUID <- tolower(HovedSkjema$SkjemaGUID)
-Kontroll$SkjemaGUID <- tolower(Kontroll$SkjemaGUID)
 Performance$SkjemaGUID <- tolower(Performance$SkjemaGUID)
+Kontroll$SkjemaGUID <- tolower(Kontroll$SkjemaGUID)
 
 
 KobleMedHoved <- function(HovedSkjema,Skjema2) {
@@ -115,6 +115,7 @@ maxald <- 130
 erMann <- ''                      #1-menn, 0-kvinner, Standard: '', dvs. begge
 traume <- ''    #'ja','nei', standard: ikke valgt
 AIS <- '' # as.character(c(1,4))	#c('A','B','U')		#AISgrad ved innleggelse alle(''), velge en eller flere fra A,B,C,D,E,U
+paratetra <- 1
 datoFra <- '2013-01-01'             #Standard: b?r v?re minste registrerte verdi ? min og max dato i utvalget vises alltid i figuren.
 datoTil <- '2017-12-31'
 
@@ -130,13 +131,13 @@ valgtVar <- 'UrinLegemidlerHvilke'   #'UrinInkontinens', 'UrinLegemidler','UrinL
                                     #'UrinTomBlareHoved', 'UrinTomBlareTillegg'
 #TarmSkjema: 
 RegData <- KobleMedHoved(HovedSkjema,Tarm)
-valgtVar <- 'TarmKirInngrepHvilke'   #'TarmAvfHoved','TarmAvfTillegg', TarmAvfmiddel, TarmAvfmiddelHvilke
+valgtVar <- 'TarmInkontinens'   #'TarmAvfHoved','TarmAvfTillegg', TarmAvfmiddel, TarmAvfmiddelHvilke
                               #TarmInkontinens, TarmKirInngrep, TarmKirInngrepHvilke
 outfile <- '' #paste0(valgtVar, '.png')	#Navn angis av Jasper
 
 NSFigAndeler(RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
-		AIS=AIS, minald=minald, maxald=maxald, erMann=erMann, traume=traume, reshID=reshID, 
-      		enhetsUtvalg=enhetsUtvalg, hentData=0)    #, preprosess=1
+		AIS=AIS, minald=minald, maxald=maxald, erMann=erMann, traume=traume, paratetra=paratetra,
+		reshID=reshID, enhetsUtvalg=enhetsUtvalg, hentData=0)    #, preprosess=1
 #Aktuelt å legge til en parameter som sier hvilket skjema variabelen tilhører. Dette for å koble
 #sammen riktig skjema til hovedskjema.
 
@@ -144,7 +145,9 @@ variableHoved <- c('AAis', 'FAis', 'Alder', 'DagerRehab', 'DagerTilRehab',
               'OpphTot', 'UtTil', 'SkadeArsak', 'Pustehjelp')
 variableUrin <- c('UrinInkontinens', 'UrinLegemidler','UrinLegemidlerHvilke', 'UrinKirInngr', 
                   'UrinTomBlareHoved', 'UrinTomBlareTillegg')
-variable <- variableUrin
+variableTarm <- c('TarmAvfHoved','TarmAvfTillegg', 'TarmAvfmiddel', 'TarmAvfmiddelHvilke',
+                  'TarmInkontinens', 'TarmKirInngrep', 'TarmKirInngrepHvilke')
+variable <- variableTarm
 for (valgtVar in variable) {
 	outfile <- paste0(valgtVar, '.png')
 	NSFigAndeler(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 

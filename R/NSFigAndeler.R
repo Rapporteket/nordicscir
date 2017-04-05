@@ -25,6 +25,7 @@
 #' @param maxald - alder, til og med
 #' @param traume - 'ja','nei', standard: ikke valgt
 #' @param AIS - AISgrad ved innleggelse alle(''), velge en eller flere fra A,B,C,D,E,U
+#' @param paratetra - Lammelser ved innleggelse, flervalgs tetraplegi, paraplegi, ukjent
 #' @param enhetsUtvalg - 1:eget sykehus, 0:hele landet (standard) 
 #' @param preprosess Preprosesser data
 #'                 0: Nei
@@ -37,11 +38,11 @@
 
 NSFigAndeler <- function(RegData, outfile='', valgtVar,
                          datoFra='2010-01-01', datoTil='2050-01-01', AIS='',
-                         minald=0, maxald=130, erMann=99, traume='',
+                         minald=0, maxald=130, erMann=99, traume='',paratetra=99,
                          enhetsUtvalg=1, reshID, hentData=0, preprosess=1) {
       
       if (hentData == 1) {
-            RegData <- NSRegDataSQL()
+            RegData <- NSRegDataSQL(valgtVar=valgtVar)
       }
       if (preprosess == 1) {
             RegData <- NSPreprosesser(RegData)
@@ -54,7 +55,8 @@ NSFigAndeler <- function(RegData, outfile='', valgtVar,
       
       
       Utvalg <- NSUtvalg(RegData=RegData, datoFra=datoFra, datoTil=datoTil, minald=minald, maxald=maxald,
-                         erMann=erMann, traume=traume, AIS=AIS, enhetsUtvalg = enhetsUtvalg, reshID = reshID)
+                         erMann=erMann, traume=traume, AIS=AIS, paratetra=paratetra,
+                         enhetsUtvalg = enhetsUtvalg, reshID = reshID)
       RegData <- Utvalg$RegData
       utvalgTxt <- Utvalg$utvalgTxt
       medSml <- Utvalg$medSml
@@ -134,7 +136,7 @@ NSFigAndeler <- function(RegData, outfile='', valgtVar,
 #-----------Figur---------------------------------------
        
       #-----Hvis få registreringer: ---------------------
-      Ngrense <- 0      ## ENDRE TIL 5 FØR LEGGES PÅ RAPPORTEKET
+      Ngrense <- 1      ## ENDRE TIL 5 FØR LEGGES PÅ RAPPORTEKET
       if (sum(N$Hoved) < Ngrense | (medSml ==1 & sum(N$Rest)< Ngrense)) {
             FigTypUt <- rapbase::figtype(outfile)
             farger <- FigTypUt$farger

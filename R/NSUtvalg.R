@@ -8,7 +8,8 @@
 
 
 NSUtvalg <- function(RegData, datoFra='2010-01-01', datoTil='3000-05-25', minald=0, maxald=130,
-                     erMann=99, traume='', AIS='', enhetsUtvalg=0, reshID=0, fargepalett='BlaaOff') {
+                     erMann=99, traume='', AIS='', enhetsUtvalg=0, paratetra=99,
+                     reshID=0, fargepalett='BlaaOff') {
       
       
      # Definer intersect-operator
@@ -32,26 +33,30 @@ NSUtvalg <- function(RegData, datoFra='2010-01-01', datoTil='3000-05-25', minald
       traumeValgBort <- switch(traume, ja = c(6,9) , nei = c(1:5,9), alle = NULL) #6 ikke-tr, 1:5 traumer, 9 ukjent
       indTrUt <-  which(RegData$SkadeArsak %in% traumeValgBort)
       indKjUt <- if (erMann %in% 0:1) {which(RegData$erMann != erMann)} else {indKjUt <- NULL}
-      #  indAISut <- if (length(which(AIS %in% c(LETTERS[1:5],'U')))>0) {
-      #        setdiff(1:Ninn, which(RegData$AAis %in% AIS))} else {NULL}
-      AIS <- as.numeric(AIS)
+      #AIS <- as.numeric(AIS)
       indAISut <- if (length(which(AIS %in% 1:5))>0) {
             setdiff(1:Ninn, which(RegData$AAis %in% AIS))} else {NULL}
-      indMed <- setdiff(1:Ninn, c(indAldUt, indDatoUt, indTrUt, indKjUt, indAISut))
+      indPTbort <- if (paratetra %in% c(0,1,9)) {which(RegData$TetraplegiInn %in% paratetra)} else {NULL}
+      
+      indMed <- setdiff(1:Ninn, 
+                        unique(c(indAldUt, indDatoUt, indTrUt, indKjUt, indAISut, indPTbort)))
                           
       RegData <- RegData[indMed,]
       
       N <- length(indMed)
       
-      utvalgTxt <- c(paste('Innleggelsesperiode: ',
+      utvalgTxt <- c(paste0('Innleggelsesperiode: ',
                            if (N>0) {min(RegData$InnDato, na.rm=T)} else {datoFra},
-                           ' til ', if (N>0) {max(RegData$InnDato, na.rm=T)} else {datoTil}, sep='' ),
-                     if ((minald>0) | (maxald<130)) {paste('Pasienter fra ', if (N>0) {min(RegData$Alder, na.rm=T)} else {minald},
-                                                           ' til ', if (N>0) {max(RegData$Alder, na.rm=T)} else {maxald}, ' år', sep='')},
-                     if (traume %in% c('ja','nei')) {paste('Traume:', traume)},
-                     if (erMann %in% 0:1){paste('Kjønn: ', c('kvinner', 'menn')[erMann+1], sep='')},
+                           ' til ', if (N>0) {max(RegData$InnDato, na.rm=T)} else {datoTil}),
+                     if ((minald>0) | (maxald<130)) {paste0('Pasienter fra ', if (N>0) {min(RegData$Alder, na.rm=T)} else {minald},
+                                                           ' til ', if (N>0) {max(RegData$Alder, na.rm=T)} else {maxald}, ' år')},
+                     if (traume %in% c('ja','nei')) {paste0('Traume:', traume)},
+                     if (erMann %in% 0:1){paste0('Kjønn: ', c('kvinner', 'menn')[erMann+1])},
                      #                if (length(which(AIS %in% c(LETTERS[1:5],'U')))>0) {paste('AIS, inn: ', paste(AIS, collapse=','), sep='')} )
-                     if (length(which(AIS %in% 1:5))>0) {paste('AIS, inn: ', paste(LETTERS[AIS], collapse=','), sep='')} )
+                     if (length(which(AIS %in% 1:5))>0) {paste0('AIS, inn: ', paste0(LETTERS[AIS], collapse=','))},
+                     if (length(which(paratetra %in% c(0,1,9))>0)) {paste0('Lammelser: ', 
+                                                                         paste0(c('Paraplegi','Tetraplegi',3:9,'Ukjent')[paratetra+1], collapse=','))}
+      )
  
       #Enhetsutvalg:
       indEgen1 <- match(reshID, RegData$ReshId)

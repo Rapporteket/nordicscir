@@ -168,8 +168,10 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar=''){
       #Vi kan velge å sende tilbake alle variable som indikatorvariable, dvs. med 0,1,NA
       #Eller vi kan gjøre beregninga her og sende tilbake teller og nevner for den sammensatte variabelen
       
-      #NB:  LutfxnDt	<= DischgDt
-
+ if (substr(valgtVar,1,4)=='Urin') {
+       RegData <- RegData[which(RegData$InnDato >= as.POSIXlt('2015-01-01') & 
+                                   RegData$LutfxnDt <= RegData$DischgDt), ]}
+ 
       if (valgtVar=='UrinInkontinens') {
             RegData <- RegData[which((RegData$AnyDrugs==1) & (RegData$InnDato >= as.POSIXlt('2015-01-01'))), ]
             #0:4,9: Nei, Ja daglig, Ja ukentlig, Ja månedlig, Ikke relevant, Ukjent	
@@ -257,49 +259,20 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar=''){
 
 #----------------TARM-skjema (start 01.01.2015):
       #BfxnbaDt	<= DischgDt
-      
+      if (substr(valgtVar,1,4)=='Tarm') {
+            RegData <- RegData[which(RegData$InnDato >= as.POSIXlt('2016-01-01') & 
+                                           RegData$BfxnbaDt <= RegData$DischgDt), ]}
+                               
+           
       if (valgtVar=='TarmAvfmiddel') {
-            RegData <- RegData[which(RegData$InnDato >= as.POSIXlt('2016-01-01')), ]
             tittel <- 'Bruk av perorale avføringsmidler'
             gr <- c(0:1,9)
             RegData <- RegData[RegData$OralLaxatives %in% gr,]
             grtxt <- c('Nei', 'Ja', 'Ukjent')
             RegData$VariabelGr <- factor(RegData$OralLaxatives, levels = gr, labels = grtxt)
       }
-      
-      if (valgtVar=='TarmKirInngrep') {
-            RegData <- RegData[which(RegData$InnDato >= as.POSIXlt('2016-01-01')), ]
-            tittel <- 'Kirurgisk inngrep i mage/–tarm kanalen'
-            gr <- c(0:1,9)
-            RegData <- RegData[RegData$SurgicalIntervention %in% gr,]
-            grtxt <- c('Nei', 'Ja', 'Ukjent')
-            RegData$VariabelGr <- factor(RegData$SurgicalIntervention, levels = gr, labels = grtxt)
-      }
-      
-      if (valgtVar=='TarmKirInngrepHvilke') {
-            RegData <- RegData[which((RegData$SurgicalIntervention==1) & (RegData$InnDato >= as.POSIXlt('2016-01-01'))), ]
-            flerevar <- 1
-            retn <- 'H'
-            tittel <- 'Kirurgiske inngrep i mage/–tarm kanalen'
-            variable <- c('Apndec', 'Chcyec', 'Colost', 'Ileost', 'Otgisurg')
-            grtxt <- c('Appendektomi','Fjerning av galleblæren', 'Kolostomi', 'Ileostomi', 'Annet')
-            cexgr <- 1
-            ind1 <- which(RegData[,variable]==TRUE , arr.ind=T)
-            RegData[ ,variable] <- 0
-            RegData[ ,variable][ind1] <- 1
-      }
-      if (valgtVar=='TarmInkontinens') {
-            RegData <- RegData[which(RegData$InnDato >= as.POSIXlt('2016-01-01')), ]
-            tittel <- 'Hyppighet av fekal inkontinens'
-            gr <- c(1:7,9)
-            RegData <- RegData[RegData$Fcincfrq %in% gr,]
-            grtxt <- c('Mer enn daglig', 'Daglig', 'Ukentlig', 'Mer enn månedlig',
-                       'Månedlig', 'Mindre enn månedlig', 'Aldri', 'Ukjent')
-            RegData$VariabelGr <- factor(RegData$OralLaxatives, levels = gr, labels = grtxt)
-      }
-      
       if (valgtVar=='TarmAvfmiddelHvilke') {
-            RegData <- RegData[which((RegData$OralLaxatives==1) & (RegData$InnDato >= as.POSIXlt('2016-01-01'))), ]
+            RegData <- RegData[which(RegData$OralLaxatives==1), ]
             flerevar <- 1
             retn <- 'H'
             tittel <- 'Perorale avføringsmidler'
@@ -311,10 +284,38 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar=''){
             RegData[ ,variable] <- 0
             RegData[ ,variable][ind1] <- 1
       }
+      if (valgtVar=='TarmInkontinens') {
+            retn <- 'H'
+            tittel <- 'Hyppighet av fekal inkontinens'
+            gr <- c(1:7,9)
+            RegData <- RegData[RegData$Fcincfrq %in% gr,]
+            grtxt <- c('Mer enn daglig', 'Daglig', 'Ukentlig', 'Mer enn månedlig',
+                       'Månedlig', 'Mindre enn månedlig', 'Aldri', 'Ukjent')
+            RegData$VariabelGr <- factor(RegData$Fcincfrq, levels = gr, labels = grtxt)
+      }
+      if (valgtVar=='TarmKirInngrep') {
+            tittel <- 'Kirurgisk inngrep i mage/–tarm kanalen'
+            gr <- c(0:1,9)
+            RegData <- RegData[RegData$SurgicalIntervention %in% gr,]
+            grtxt <- c('Nei', 'Ja', 'Ukjent')
+            RegData$VariabelGr <- factor(RegData$SurgicalIntervention, levels = gr, labels = grtxt)
+      }
+      
+      if (valgtVar=='TarmKirInngrepHvilke') {
+            RegData <- RegData[which(RegData$SurgicalIntervention==1),  ]
+            flerevar <- 1
+            retn <- 'H'
+            tittel <- 'Kirurgiske inngrep i mage/–tarm kanalen'
+            variable <- c('Apndec', 'Chcyec', 'Colost', 'Ileost', 'Otgisurg')
+            grtxt <- c('Appendektomi','Fjerning av galleblæren', 'Kolostomi', 'Ileostomi', 'Annet')
+            cexgr <- 1
+            ind1 <- which(RegData[,variable]==TRUE , arr.ind=T)
+            RegData[ ,variable] <- 0
+            RegData[ ,variable][ind1] <- 1
+      }
       
       
       if (valgtVar %in% c('TarmAvfHoved','TarmAvfTillegg')) {
-            RegData <- RegData[which(RegData$InnDato >= as.POSIXlt('2016-01-01')), ]
             flerevar <- 1
             retn <- 'H'
             tittel <- switch(valgtVar,
