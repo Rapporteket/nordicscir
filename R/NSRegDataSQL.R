@@ -63,7 +63,6 @@ varHoved <- paste0("
       h.UnitId AS ReshId,
       h.Scietiol,
       h.SkjemaGUID,
-     u.HovedskjemaGUID,
       h.VentAssi
 ")
 
