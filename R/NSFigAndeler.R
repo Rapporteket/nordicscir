@@ -25,7 +25,7 @@
 #' @param maxald - alder, til og med
 #' @param traume - 'ja','nei', standard: ikke valgt
 #' @param AIS - AISgrad ved innleggelse alle(''), velge en eller flere fra A,B,C,D,E,U
-#' @param paratetra - Lammelser ved innleggelse, flervalgs tetraplegi, paraplegi, ukjent
+#' @param paratetra - Nivå ved utreise, flervalgs tetraplegi, paraplegi, ukjent
 #' @param enhetsUtvalg - 1:eget sykehus, 0:hele landet (standard) 
 #' @param preprosess Preprosesser data
 #'                 0: Nei

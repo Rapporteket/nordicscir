@@ -36,7 +36,7 @@ NSUtvalg <- function(RegData, datoFra='2010-01-01', datoTil='3000-05-25', minald
       #AIS <- as.numeric(AIS)
       indAISut <- if (length(which(AIS %in% 1:5))>0) {
             setdiff(1:Ninn, which(RegData$AAis %in% AIS))} else {NULL}
-      indPTbort <- if (paratetra %in% c(0,1,9)) {which(RegData$TetraplegiInn %in% paratetra)} else {NULL}
+      indPTbort <- if (paratetra %in% 0:1) {which(RegData$TetraplegiUt %in% paratetra)} else {NULL}
       
       indMed <- setdiff(1:Ninn, 
                         unique(c(indAldUt, indDatoUt, indTrUt, indKjUt, indAISut, indPTbort)))
@@ -54,9 +54,8 @@ NSUtvalg <- function(RegData, datoFra='2010-01-01', datoTil='3000-05-25', minald
                      if (erMann %in% 0:1){paste0('Kjønn: ', c('kvinner', 'menn')[erMann+1])},
                      #                if (length(which(AIS %in% c(LETTERS[1:5],'U')))>0) {paste('AIS, inn: ', paste(AIS, collapse=','), sep='')} )
                      if (length(which(AIS %in% 1:5))>0) {paste0('AIS, inn: ', paste0(LETTERS[AIS], collapse=','))},
-                     if (length(which(paratetra %in% c(0,1,9))>0)) {paste0('Lammelser: ', 
-                                                                         paste0(c('Paraplegi','Tetraplegi',3:9,'Ukjent')[paratetra+1], collapse=','))}
-      )
+                     if (paratetra %in% 0:1) {paste0('Nivå: ', (c('Paraplegi','Tetraplegi'))[paratetra+1])}
+                        )
  
       #Enhetsutvalg:
       indEgen1 <- match(reshID, RegData$ReshId)

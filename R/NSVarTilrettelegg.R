@@ -65,16 +65,30 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar=''){
       
  tittel <- '' #I AndelerGrVar og GjsnGrVar genereres tittel i beregningsfunksjonen
 
-      if (valgtVar=='Alder') {
-            tittel <- 'Aldersfordeling'
+      if (valgtVar=='Alder') { #Fordeling, GjsnGrVar
+            tittel <- 'Alder ved innleggelse'
             gr <- c(0,16,31,46,61,76,200)	#c(seq(0, 90, 15), 120)
+            RegData$Variabel <- RegData$Alder   #til GjsnGrVar
             RegData$VariabelGr <- cut(RegData$Alder, breaks=gr, include.lowest=TRUE, right=FALSE)
-            grtxt <- c('[0,15]','[16,30]','[31,45]','[46,60]','[61,75]','76+')
-            #	grtxt <- c(levels(RegData$VariabelGr)[1:(length(gr)-2)], '76+')
+            grtxt <- c('0-15','16-30','31-45','46-60','61-75','76+')
             cexgr <- 0.9
-            xAkseTxt <- 'Aldersgrupper'
+            xAkseTxt <- 'Aldersgrupper (år)'
       }
-       
+     # if (valgtVar=='alder') {	#NIR: Fordeling, GjsnGrVar
+      #      RegData <- RegData[which(RegData$Alder>=0), ]    #Tar bort alder<0
+       #     RegData$Variabel<-RegData$Alder  	#GjsnTid, GjsnGrVar
+       #     xAkseTxt <- 'alder (år)'	
+       #     tittel <- 'Alder ved innleggelse'
+       #     if (grVar == '') {	#Fordelingsfigur
+       #           gr <- c(seq(0, 100, 10),150)		
+       #           RegData$VariabelGr <- cut(RegData$Alder, breaks=gr, include.lowest=TRUE, right=FALSE)	
+       #           grtxt <- c('0-9','10-19','20-29','30-39','40-49','50-59','60-69','70-79','80-89','90-99','100+')
+       #           xAkseTxt <- 'Aldersgrupper (år)'
+       #           }
+       #     sortAvtagende <- FALSE
+      #}
+#GjSnGrVar: 'Alder', 'DagerRehab', 'DagerTilRehab', 'OpphTot'
+            
       if (valgtVar %in% c('AAis', 'FAis')) {
             retn <- 'H'
             #-1: Velg verdi, 1:A Komplett skade, 2:B Inkomplett, 3:C Inkomplett, 4:D Inkomplett, 5:E Normal, 
@@ -114,6 +128,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar=''){
                          DagerTilRehab = c(seq(0, 100, 10), 1000),
                          OpphTot = c(seq(0, 240, 30), 1000))
             RegData$VariabelGr <- cut(RegData[ ,valgtVar], breaks=gr, include.lowest=TRUE, right=FALSE)
+            RegData$Variabel <- RegData[,valgtVar]
             grtxt <- c(levels(RegData$VariabelGr)[1:(length(gr)-2)], grmax)
             tittel <- switch(valgtVar, 
                              DagerRehab='Tid innlagt på ryggmargsskadeavdeling', 
@@ -134,6 +149,20 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar=''){
 #            xAkseTxt <- 'Antall døgn'
 #      }
       
+      if (valgtVar == 'NivaaInn') {
+            tittel <- 'Nivå ved innleggelse'
+            #gr <- (1:6,9) - Kodene som registereres
+            grtxt <- c('Paraplegi','Tetraplegi','Ukjent')
+            #xAkseTxt <- ''
+            RegData$VariabelGr <- factor(as.numeric(RegData$TetraplegiInn), levels=c(0:1,9), labels = grtxt)
+      }
+      if (valgtVar == 'NivaaUt') {
+            tittel <- 'Nivå ved utreise'
+            #gr <- (1:6,9) - Kodene som registereres
+            grtxt <- c('Paraplegi','Tetraplegi','Ukjent')
+            #xAkseTxt <- ''
+            RegData$VariabelGr <- factor(as.numeric(RegData$TetraplegiUt), levels=c(0:1,9), labels = grtxt)
+      }
       if (valgtVar == 'SkadeArsak') {
             tittel <- 'Skadeårsaker'
             #gr <- (1:6,9) - Kodene som registereres
@@ -158,7 +187,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar=''){
             #grtxt <- grtxtAlle[as.numeric(names(table(as.numeric(RegData$PlaceDis))))] #De som er reg.
             retn <- 'H'
       }
-  
+      
 #----------------URIN-skjema (start 01.01.2015):
       #For flerevar=1 må vi omdefinere variablene slik at alle gyldige registreringer 
       #(dvs. alle registreringer som skal telles med) er 0 eller 1. De som har oppfylt spørsmålet
@@ -167,13 +196,45 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar=''){
       # som 0.
       #Vi kan velge å sende tilbake alle variable som indikatorvariable, dvs. med 0,1,NA
       #Eller vi kan gjøre beregninga her og sende tilbake teller og nevner for den sammensatte variabelen
+
+      if (substr(valgtVar,1,4)=='Livs') {
+            indDato <- which(RegData$InnDato >= as.POSIXlt('2015-01-01')) #Ikke filtrer på startdato
+            indTidspkt <- which(RegData$QolDt <= RegData$DischgDt)
+            RegData <- RegData[indTidspkt, ]
+            }
       
- if (substr(valgtVar,1,4)=='Urin') {
+      if (valgtVar == 'LivsGen') {
+            tittel <- 'Fornøydhet med livet'
+            RegData <- RegData[RegData$SatGenrl %in% 0:10, ]
+            grtxt <- 0:10
+            RegData$VariabelGr <- factor(as.numeric(RegData$SatGenrl), levels=0:10, labels = grtxt)
+            RegData$Variabel <- as.numeric(RegData$SatGenrl)
+            sortAvtagende <- FALSE
+      }
+      if (valgtVar == 'LivsFys') {
+            tittel <- 'Fornøydhet med fysisk helse'
+            RegData <- RegData[RegData$SatPhys %in% 0:10, ]
+            grtxt <- 0:10
+            RegData$VariabelGr <- factor(as.numeric(RegData$SatPhys), levels=0:10, labels = grtxt)
+            RegData$Variabel <- as.numeric(RegData$SatPhys)
+            sortAvtagende <- FALSE
+      }
+
+      if (valgtVar == 'LivsPsyk') {
+            tittel <- 'Fornøydhet med psykisk helse'
+            RegData <- RegData[RegData$SatPsych %in% 0:10, ]
+            grtxt <- 0:10
+            RegData$VariabelGr <- factor(as.numeric(RegData$SatPsych), levels=0:10, labels = grtxt)
+            RegData$Variabel <- as.numeric(RegData$SatPsych)
+            sortAvtagende <- FALSE
+      }
+      
+#----------------URIN-skjema (start 01.01.2015):
+      if (substr(valgtVar,1,4)=='Urin') {
        RegData <- RegData[which(RegData$InnDato >= as.POSIXlt('2015-01-01') & 
                                    RegData$LutfxnDt <= RegData$DischgDt), ]}
  
       if (valgtVar=='UrinInkontinens') {
-            RegData <- RegData[which((RegData$AnyDrugs==1) & (RegData$InnDato >= as.POSIXlt('2015-01-01'))), ]
             #0:4,9: Nei, Ja daglig, Ja ukentlig, Ja månedlig, Ikke relevant, Ukjent	
             tittel <- 'Ufrivillig urinlekkasje'
             gr <- c(0:4,9)
