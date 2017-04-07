@@ -241,7 +241,8 @@ variable <- switch(valgtSkjema,
 
 
 qSkjema <- switch(valgtSkjema, #Dette vil bare fungere hvis konsekvent med navngiving i valgtVar
-           Livs = 'INNER JOIN LifeQualityFormDataContract l ',
+           Livs = 'INNER JOIN LifeQualityFormDataContract l 
+                        ON UPPER(h.SkjemaGUID) = UPPER(l.HovedskjemaGUID) ',
            Urin = 'INNER JOIN UrinaryTractFunctionFormDataContract u 
                         ON UPPER(h.SkjemaGUID) = UPPER(u.HovedskjemaGUID) ',
            Tarm = 'INNER JOIN BowelFunctionFormDataContract t

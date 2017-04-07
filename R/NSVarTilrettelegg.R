@@ -166,23 +166,23 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar=''){
       if (valgtVar == 'SkadeArsak') {
             tittel <- 'Skadeårsaker'
             #gr <- (1:6,9) - Kodene som registereres
-            RegData$VariabelGr[which(RegData$SkadeArsak==9)] <- 7
+            RegData$SkadeArsak[which(RegData$SkadeArsak==9)] <- 7
             grtxtAlle <- c('Idrett', 'Vold', 'Transport', 'Fall', 'Andre traumer',
                            'Ikke-traumatisk', 'Uspesifisert')
             grtxt <- grtxtAlle
             xAkseTxt <- 'Utskrevet til'
-            RegData$VariabelGr <- factor(as.numeric(RegData$VariabelGr), levels=1:7, labels = grtxtAlle)
+            RegData$VariabelGr <- factor(as.numeric(RegData$SkadeArsak), levels=1:7, labels = grtxtAlle)
             retn <- 'H'
       }
       if (valgtVar == 'UtTil') {
             tittel <- 'Utskrevet til'
             #gr <- (1:10,99) - Kodene som registereres
-            RegData$VariabelGr[which(RegData$UtTil==99)] <- 11
+            RegData$UtTil[which(RegData$UtTil==99)] <- 11
             grtxtAlle <- c('Hjem', 'Sykehus', 'Pleiehjem', 'Omsorgsbolig', 'Bofellesskap',
                            'Kriminalomsorg', 'Hotell', 'Bostedsløs', 'Avdød', 'Annet', 'Ukjent')
             grtxt <- grtxtAlle
             xAkseTxt <- 'Utskrevet til'
-            RegData$VariabelGr <- factor(as.numeric(RegData$VariabelGr), levels=1:11, labels = grtxtAlle)
+            RegData$VariabelGr <- factor(as.numeric(RegData$UtTil), levels=1:11, labels = grtxtAlle)
             #Vurder om skal ta med bare de som er registrert
             #grtxt <- grtxtAlle[as.numeric(names(table(as.numeric(RegData$PlaceDis))))] #De som er reg.
             retn <- 'H'

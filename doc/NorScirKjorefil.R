@@ -109,7 +109,7 @@ AndelPerform <- round(100*ftable(RaaTab[!is.na(RaaTab$MedPerform),tabVar])/ftabl
 rm(list=ls())
 library(nordicscir)
 setwd("C:/ResultattjenesteGIT/nordicscir/")
-reshID <- 107627             ##105593-Haukeland, 106896-Sunnaas, 107627-St.Olavs, standard i funksj: 0 dvs. 'Alle'. Standard i rapporten skal v?re at man f?r opp eget sykehus.
+reshID <- 105593             ##105593-Haukeland, 106896-Sunnaas, 107627-St.Olavs, standard i funksj: 0 dvs. 'Alle'. Standard i rapporten skal v?re at man f?r opp eget sykehus.
 enhetsUtvalg <- 1
 minald <- 0
 maxald <- 130
@@ -117,14 +117,14 @@ erMann <- 9                      #1-menn, 0-kvinner, Standard: '', dvs. begge
 traume <- ''    #'ja','nei', standard: ikke valgt
 AIS <- 99 # as.character(c(1,4))	#AISgrad ved innleggelse alle(''), velge en eller flere fra 1:5
 paratetra <- 99
-datoFra <- '2010-01-01'             #Standard: b?r v?re minste registrerte verdi ? min og max dato i utvalget vises alltid i figuren.
-datoTil <- '2017-12-31'
+datoFra <- '2011-01-01'             #Standard: b?r v?re minste registrerte verdi ? min og max dato i utvalget vises alltid i figuren.
+datoTil <- '2016-12-10'
 valgtMaal='Gjsn'	#'Med'-median, 'Gjsn' gjennomsnitt
 grVar <- 'ShNavn'
 
 #------------------------------ Fordelinger --------------------------
 RegData <- HovedSkjema
-valgtVar <- 'NivaaUt'	#M? velge... AAis, FAis, Alder, DagerRehab, DagerTilRehab, NivaaInn
+valgtVar <- 'SkadeArsak'	#M? velge... AAis, FAis, Alder, DagerRehab, DagerTilRehab, NivaaInn
 							#OpphTot[HosptlDy], Permisjon[OutOfHosptlDy], UtTil[PlaceDis], SkadeArsak[Scietiol]  
 							#Pustehjelp[VentAssi]
 #UrinSkjema: 
@@ -148,14 +148,18 @@ NSFigAndeler(RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoT
 #Aktuelt å legge til en parameter som sier hvilket skjema variabelen tilhører. Dette for å koble
 #sammen riktig skjema til hovedskjema.
 
-variableHoved <- c('AAis', 'FAis', 'Alder', 'DagerRehab', 'DagerTilRehab', 'NivaaInn', 'NivaaUt',
-              'OpphTot', 'UtTil', 'SkadeArsak', 'Pustehjelp')
-variableUrin <- c('UrinInkontinens', 'UrinLegemidler','UrinLegemidlerHvilke', 'UrinKirInngr', 
+#Hoved
+variable <- c('AAis', 'FAis', 'Alder', 'DagerRehab', 'DagerTilRehab', 'NivaaInn', 'NivaaUt',
+              'OpphTot', 'UtTil', 'SkadeArsak')
+#Urin
+variable <- c('UrinInkontinens', 'UrinLegemidler','UrinLegemidlerHvilke', 'UrinKirInngr', 
                   'UrinTomBlareHoved', 'UrinTomBlareTillegg')
-variableTarm <- c('TarmAvfHoved','TarmAvfTillegg', 'TarmAvfmiddel', 'TarmAvfmiddelHvilke',
+#Tarm
+variable <- c('TarmAvfHoved','TarmAvfTillegg', 'TarmAvfmiddel', 'TarmAvfmiddelHvilke',
                   'TarmInkontinens', 'TarmKirInngrep', 'TarmKirInngrepHvilke')
-variableLivs <- c('LivsGen', 'LivsFys', 'LivsPsyk')
-variable <- variableHoved
+#Livs
+variable  <- c('LivsGen', 'LivsFys', 'LivsPsyk')
+
 for (valgtVar in variable) {
 	outfile <- paste0(valgtVar, '.png')
 	NSFigAndeler(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
@@ -172,7 +176,7 @@ NSFigGjsnGrVar(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=dato
 variable <- c('Alder', 'DagerRehab', 'DagerTilRehab', 'OpphTot') 
 variable <- c('LivsGen', 'LivsFys', 'LivsPsyk') #Koble på livskvalitetsdata
 for (valgtVar in variable) {
-	outfile <- paste0(valgtVar, '.png')
+	outfile <- paste0('M_',valgtVar, '.png')
 	NSFigGjsnGrVar(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
 	               valgtMaal=valgtMaal, minald=minald, maxald=maxald, erMann=erMann, traume=traume,
 	               AIS=AIS, paratetra = paratetra)
