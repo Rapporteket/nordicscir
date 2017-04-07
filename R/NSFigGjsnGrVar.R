@@ -24,7 +24,7 @@ NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='Gjsn', grVar='ShNavn',
 					preprosess=1, outfile='', hentData=0) {
 
       if (hentData == 1) {
-            RegData <- NSRegDataSQL()
+            RegData <- NSRegDataSQL(valgtVar=valgtVar)
       }
       if (preprosess == 1) {
             RegData <- NSPreprosesser(RegData)
