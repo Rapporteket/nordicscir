@@ -33,6 +33,7 @@ NSUtvalg <- function(RegData, datoFra='2010-01-01', datoTil='3000-05-25', minald
       traumeValgBort <- switch(traume, ja = c(6,9) , nei = c(1:5,9), alle = NULL) #6 ikke-tr, 1:5 traumer, 9 ukjent
       indTrUt <-  which(RegData$SkadeArsak %in% traumeValgBort)
       indKjUt <- if (erMann %in% 0:1) {which(RegData$erMann != erMann)} else {indKjUt <- NULL}
+      AIS <- as.numeric(AIS)
       indAISut <- if (length(which(as.numeric(AIS) %in% 1:5))>0) {
             setdiff(1:Ninn, which(RegData$AAis %in% AIS))} else {NULL}
       indPTbort <- if (paratetra %in% 0:1) {which(RegData$TetraplegiUt %in% paratetra)} else {NULL}
@@ -53,7 +54,7 @@ NSUtvalg <- function(RegData, datoFra='2010-01-01', datoTil='3000-05-25', minald
                      if (erMann %in% 0:1){paste0('Kjønn: ', c('kvinner', 'menn')[erMann+1])},
                      #if (length(which(AIS %in% c(LETTERS[1:5],'U')))>0) {paste0('AIS, inn: ', paste0(AIS, collapse=','))} 
                         #Får character fra Jasper
-                     if (length(which(as.numeric(AIS) %in% 1:5))>0) {paste0('AIS, inn: ', paste0(LETTERS[AIS], collapse=','))},
+                     if (length(which(AIS %in% 1:5))>0) {paste0('AIS, inn: ', paste0(LETTERS[AIS], collapse=','))},
                      if (paratetra %in% 0:1) {paste0('Nivå: ', (c('Paraplegi','Tetraplegi'))[paratetra+1])}
                         )
 
