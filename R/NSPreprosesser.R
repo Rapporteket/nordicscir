@@ -67,6 +67,20 @@ NSPreprosesser <- function(RegData)
       RegData$InnDato <- as.POSIXlt(RegData$AdmitDt, format="%Y-%m-%d")
       RegData$Aar <- as.POSIXlt(RegData$AdmitDt, format="%Y-%m-%d")$year +1900
       
+      #Konvertere boolske variable fra tekst til boolske variable...
+      TilLogiskeVar <- function(Skjema){
+            verdiGML <- c('True','False')
+            verdiNY <- c(TRUE,FALSE)
+            mapping <- data.frame(verdiGML,verdiNY)
+            LogVar <- names(Skjema)[which(Skjema[1,] %in% verdiGML)]
+            for (k in 1:length(LogVar)) {
+                  Skjema[,LogVar[k]] <- mapping$verdiNY[match(Skjema[,LogVar[k]], mapping$verdiGML)]
+            }
+            return(Skjema)
+      }
+      
+      RegData <- TilLogiskeVar(RegData)
+      
       
       return(invisible(RegData))
 }
