@@ -16,7 +16,7 @@ NSPreprosesser <- function(RegData)
   #   RegData$ShNavn <- factor(RegData$ReshId, levels=c(105593, 106896, 107627), 
   #                                        labels=c('Haukeland', 'Sunnaas', 'St.Olavs'))
       
-     #Med bruk av ekstra pakker kan dette gjøres mer elegant 
+     #med bruk av ekstra pakker kan dette gjøres mer elegant 
       #NYE VARIABLE
       #Kjønn
       RegData$erMann <- NULL

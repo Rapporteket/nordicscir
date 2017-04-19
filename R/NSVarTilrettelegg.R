@@ -63,20 +63,20 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar=''){
       # Definer og gjør utvalg for variabelen
       # tittel, xAkseTxt, sortAvtagende (standard: TRUE)
       
- tittel <- '' #I AndelerGrVar og GjsnGrVar genereres tittel i beregningsfunksjonen
+ tittel <- '' #I AndelerGrVar og gjsnGrVar genereres tittel i beregningsfunksjonen
 
-      if (valgtVar=='Alder') { #Fordeling, GjsnGrVar
+      if (valgtVar=='Alder') { #Fordeling, gjsnGrVar
             tittel <- 'Alder ved innleggelse'
             gr <- c(0,16,31,46,61,76,200)	#c(seq(0, 90, 15), 120)
-            RegData$Variabel <- RegData$Alder   #til GjsnGrVar
+            RegData$Variabel <- RegData$Alder   #til gjsnGrVar
             RegData$VariabelGr <- cut(RegData$Alder, breaks=gr, include.lowest=TRUE, right=FALSE)
             grtxt <- c('0-15','16-30','31-45','46-60','61-75','76+')
             cexgr <- 0.9
             xAkseTxt <- 'Aldersgrupper (år)'
       }
-     # if (valgtVar=='alder') {	#NIR: Fordeling, GjsnGrVar
+     # if (valgtVar=='alder') {	#NIR: Fordeling, gjsnGrVar
       #      RegData <- RegData[which(RegData$Alder>=0), ]    #Tar bort alder<0
-       #     RegData$Variabel<-RegData$Alder  	#GjsnTid, GjsnGrVar
+       #     RegData$Variabel<-RegData$Alder  	#gjsnTid, gjsnGrVar
        #     xAkseTxt <- 'alder (år)'	
        #     tittel <- 'Alder ved innleggelse'
        #     if (grVar == '') {	#Fordelingsfigur
@@ -87,7 +87,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar=''){
        #           }
        #     sortAvtagende <- FALSE
       #}
-#GjSnGrVar: 'Alder', 'DagerRehab', 'DagerTilRehab', 'OpphTot'
+#gjsnGrVar: 'Alder', 'DagerRehab', 'DagerTilRehab', 'OpphTot'
             
       if (valgtVar %in% c('AAis', 'FAis')) {
             retn <- 'H'
@@ -132,7 +132,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar=''){
             grtxt <- c(levels(RegData$VariabelGr)[1:(length(gr)-2)], grmax)
             tittel <- switch(valgtVar, 
                              DagerRehab='Tid innlagt på ryggmargsskadeavdeling', 
-                             DagerTilRehab = 'Tid fra akuttinnleggelse til innleggelse på ryggmargsskadeavdeling',
+                             DagerTilRehab = 'Tid fra akuttinnleggelse til innleggelse på ryggmargsskadeavd.',
                              OpphTot = 'Total tid innlagt på sykehus')
             cexgr <- 0.9
             txtretn <- 2

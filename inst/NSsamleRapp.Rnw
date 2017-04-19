@@ -117,6 +117,7 @@ Der har du også mulighet for å lage egne figurer og tabeller.
 NSdata <- NSPreprosesser(RegData=NSdata)
 NSdata$Aar <- NSdata$InnDato$year+1900
 ShNavn <- as.character(NSdata$ShNavn[match(reshID, NSdata$ReshId)])
+'%i%' <- intersect
 
 #Parametre
 minald <- 0
@@ -124,7 +125,7 @@ maxald <- 130
 erMann <- ''	#...
 traume <- ''	#'ja','nei', standard: ikke utvalgt (
 AIS <- ''
-datoFra <- '2010-01-01'	#Standard: 0, dvs. alle år
+datoFra <- '2011-01-01'	#Standard: 0, dvs. alle år
 datoTil <- '2050-05-25'
 #reshID - gis fra Jasper	##105593-Haukeland, 106896-Sunnaas sykehus, 107627-St.Olavs, standard: 'Alle'
 s1 <- 0.8	#Skaleringsparameter for enkeltfigurer
@@ -170,17 +171,16 @@ Hva som er en ekstremobservasjon er definert ut fra følgende kriterier: \\
 \textit{Total liggetid} mer enn 1 år eller 0. \\
 \textit{Tid til rehabilitering} mer enn 80 dager (eller 0- fjernet pga. mange 0-verdier).\\
 \textit{Tid i rehabilitering} mer enn 1 år (eller 0 - fjernet pga. mange 0-verdier).\\
-\textit{Permisjonstid} mer enn 20 dager.\\
 Merk at ekstremobservasjoner kan forekomme uten at det nødvendigvis er feil i registreringene,
 men det kan være lurt å dobbeltsjekke de aktuelle registreringene.
 
 <<'Ekstremverdier',echo=FALSE,  results='asis', message=FALSE, eval=TRUE>>=
-EkstrVar <- c('OpphTot', 'DagerRehab','DagerTilRehab','Permisjon')
-grenser <- c(365,365,80,20)
+EkstrVar <- c('OpphTot', 'DagerRehab','DagerTilRehab')
+grenser <- c(365,365,80)
 names(grenser) <- EkstrVar
 
 #NB: Må ta høyde for at ikke ekstremobservasjoner !!!!!!!!!!!!!!
-Avv <- t((t(NSdataEget[ ,EkstrVar]) <= c(0,-1,-1,-1) ) | (t(NSdataEget[ ,EkstrVar]) > grenser))
+Avv <- t((t(NSdataEget[ ,EkstrVar]) <= c(0,-1,-1) ) | (t(NSdataEget[ ,EkstrVar]) > grenser))
 #Avv <- t(NSdataEget[ ,EkstrVar]) > grenser
 Avv[is.na(NSdataEget[ ,EkstrVar])] <- FALSE
 AntAvv <- colSums(Avv)
@@ -192,9 +192,7 @@ EkstrTab <- rbind(if (AntAvv[1]>0) {cbind(NSdataEget[Avv[,1]==TRUE, 'SkjemaGUID'
 				if (AntAvv[2]>0) {cbind(NSdataEget[Avv[,2]==TRUE,'SkjemaGUID'],
 			'Dager med rehab',  as.numeric(NSdataEget[Avv[,2]==TRUE, EkstrVar[2]]))},
 				if (AntAvv[3]>0) {cbind(NSdataEget[Avv[,3]==TRUE, c('SkjemaGUID')],
-			'Dager til rehab', as.numeric(NSdataEget[Avv[,3]==TRUE, EkstrVar[3]]))},
-				if (AntAvv[4]>0) {cbind(NSdataEget[Avv[,4]==TRUE, c('SkjemaGUID')],
-			'Permisjon', as.numeric(NSdataEget[Avv[,4]==TRUE, EkstrVar[4]]))}
+			'Dager til rehab', as.numeric(NSdataEget[Avv[,3]==TRUE, EkstrVar[3]]))}
 				)
 colnames(EkstrTab) <- c('SkjemaGUID','Variabel', 'Verdi')
 
@@ -222,6 +220,8 @@ og hvor stor prosentandel dette utgjør.
 #105593-Haukeland, 106896-Sunnaas sykehus, 107627-St.Olavs
 
 options(warn = -1)
+fra2015 <- which(NSdata$InnDato >= as.POSIXlt('2015-01-01'))
+
 for (hvem in c('Norge', 'Haukeland', 'Sunnaas', 'St.Olav')){      #NB: Må gjøres mer robust!!!!!!!
 utvalg <- switch(hvem,
 		Norge = 1:dim(NSdata)[1],
@@ -229,32 +229,27 @@ utvalg <- switch(hvem,
 		Sunnaas = which(NSdata$ReshId == 106896),
 		St.Olav = which(NSdata$ReshId == 107627))
 
+                                               
 	Alder <- NSdata$Alder[utvalg]
 	BehDager <- NSdata$OpphTot[utvalg]
-	RehabDager <- NSdata$DagerRehab[utvalg]
-	Ventetid <- NSdata$DagerTilRehab[utvalg]
-	Permisjon <- NSdata$Permisjon[intersect(utvalg,which(NSdata$Permisjon>0))]
+	RehabDager <- NSdata$DagerRehab[(utvalg %i% fra2015)]
+	Ventetid <- NSdata$DagerTilRehab[utvalg %i% fra2015 ]
 
-#if (sum(RehabDager>0, na.rm=T)>0 ) {
 
 	VerdiOmr <- rbind('Alder' = c(round(c(median(Alder), mean(Alder), sd(Alder))),
-			paste('[',min(Alder), ', ' ,max(Alder), ']', sep=''),
+			paste0('[',min(Alder), ', ' ,max(Alder), ']'),
 			length(Alder)),
 		'Behandlingsdager, totalt' = c(round(c(mean(BehDager), median(BehDager), sd(BehDager))),
-			paste('[',min(BehDager), ', ' ,max(BehDager), ']', sep=''),
+			paste0('[',min(BehDager), ', ' ,max(BehDager), ']'),
 			sum(BehDager>=0, na.rm=T)),
 		'Dager med rehabilitering' = c(round(c(mean(RehabDager, na.rm=T), median(RehabDager, na.rm=T),
 			sd(RehabDager, na.rm=T))),
-			paste('[',min(RehabDager, na.rm=T), ', ' ,max(RehabDager, na.rm=T), ']', sep=''),
+			paste0('[',min(RehabDager, na.rm=T), ', ' ,max(RehabDager, na.rm=T), ']'),
 			sum(RehabDager>=0, na.rm=T)),
 		'Dager til rehabilitering' = c(round(c(mean(Ventetid, na.rm=T), median(Ventetid, na.rm=T),
 			sd(Ventetid, na.rm=T))),
-			paste('[',min(Ventetid, na.rm=T), ', ' ,max(Ventetid, na.rm=T), ']', sep=''),
-			sum(Ventetid>=0, na.rm=T)),
-		'Dager i permisjon (>0)' = c(round(c(mean(Permisjon, na.rm=T), median(Permisjon, na.rm=T),
-			sd(Permisjon, na.rm=T))),
-			paste('[',min(Permisjon, na.rm=T), ', ' ,max(Permisjon, na.rm=T), ']', sep=''),
-			sum(Permisjon>0, na.rm=T))
+			paste0('[',min(Ventetid, na.rm=T), ', ' ,max(Ventetid, na.rm=T), ']'),
+			sum(Ventetid>=0, na.rm=T))
 		)
 
 #	} else {
@@ -262,7 +257,7 @@ utvalg <- switch(hvem,
 #	}
 colnames(VerdiOmr) <- c('Middelverdi', 'Median', 'SD', 'Verdiområde', 'Ant. obs')
 labVO <- paste0("tab:VerdiOmr", hvem)
-capVO <- paste0('Noen variabelkarakteristikker, ', hvem)
+capVO <- paste0('Noen variabelkarakteristikker, ', hvem, '(opplysninger om rehabilitering gjelder f.o.m. 2015)')
 VOTabell <- xtable::xtable(VerdiOmr, digits=0, align=c('l', rep('r', 5)),
 		caption = capVO,
 		label = labVO)
@@ -362,9 +357,9 @@ av data til figurene.
 	(figurene \ref{fig:DagerTilRehab} og \ref{fig:DagerRehab} )
 	avvike fra total liggetid (figur \ref{fig:OpphTot}).
 
-	\item [Middelverdier] Figurene \ref{fig:AlderGjsn} - \ref{fig:DagerTilRehabMed}
+	\item [Middelverdier] Figurene \ref{fig:Aldergjsn} - \ref{fig:DagerTilRehabMed}
 	viser median/middelverdi m/konfidensintervall
-	for variablene: Alder, dager rehab, tid innleggelse-rehab, permisjon (for permisjon $>0$) og liggedøgn.
+	for variablene: Alder, dager rehab, tid innleggelse-rehab, og liggedøgn.
 	Her vises resultat for alle tre sykehus sammenlignet med totalen for hele landet.
 \end{itemize}
 
@@ -465,19 +460,6 @@ av data til figurene.
 \begin{figure}[ht]
 \begin{center}
 \scalebox{\Sexpr{s1}}{
-<<FigPermisjon, echo=FALSE>>=
-	NSFigAndeler(NSdata,   valgtVar='Permisjon', datoFra=datoFra, datoTil=datoTil,
-			traume=traume, enhetsUtvalg=1, reshID=reshID, preprosess=0,hentData=0)
-@
-}
-  \caption{\label{fig:Permisjon} Antall døgn ute av sykehus}
-\end{center}
-\end{figure}
-
-
-\begin{figure}[ht]
-\begin{center}
-\scalebox{\Sexpr{s1}}{
 <<FigUtTil, echo=FALSE>>=
 	NSFigAndeler(NSdata,   valgtVar='UtTil', datoFra=datoFra, datoTil=datoTil,
 			minald=minald, maxald=maxald, traume=traume, enhetsUtvalg=1, reshID=reshID, preprosess=0,hentData=0)
@@ -501,17 +483,17 @@ av data til figurene.
 \end{center}
 \end{figure}
 
-\begin{figure}[ht]
-\begin{center}
-\scalebox{\Sexpr{s1}}{
-<<FigPustehjelp, echo=FALSE>>=
-	NSFigAndeler(NSdata,   valgtVar='Pustehjelp', datoFra=datoFra, datoTil=datoTil,
-			minald=minald, maxald=maxald, traume=traume, enhetsUtvalg=1, reshID=reshID, preprosess=0, hentData=0)
-@
-}
-  \caption{\label{fig:Pustehjelp} Ventilasjonsstøtte}
-\end{center}
-\end{figure}
+%\begin{figure}[ht]
+%\begin{center}
+%\scalebox{\Sexpr{s1}}{
+%<<FigPustehjelp, echo=FALSE>>=
+%	NSFigAndeler(NSdata,   valgtVar='Pustehjelp', datoFra=datoFra, datoTil=datoTil,
+%			minald=minald, maxald=maxald, traume=traume, enhetsUtvalg=1, reshID=reshID, preprosess=0, hentData=0)
+%@
+%}
+%  \caption{\label{fig:Pustehjelp} Ventilasjonsstøtte}
+%\end{center}
+%\end{figure}
 
 
 \begin{figure}[ht]
@@ -548,13 +530,13 @@ av data til figurene.
 \begin{figure}[ht]
 \begin{center}
 \scalebox{\Sexpr{s1}}{
-<<FigAlderGjsn, echo=FALSE>>=
+<<FigAldergjsn, echo=FALSE>>=
 	NSFigGjsnGrVar(NSdata, valgtVar='Alder', datoFra=datoFra, datoTil=datoTil,
-		valgtMaal='', minald=minald, maxald=maxald, erMann=erMann, traume=traume, preprosess=0, hentData=0)
+		valgtMaal='gjsn', minald=minald, maxald=maxald, erMann=erMann, traume=traume, preprosess=0, hentData=0)
 @
 }
   \caption{Gjennomsnittlig alder, totalt og ved hvert sykehus}
-  \label{fig:AlderGjsn}
+  \label{fig:Aldergjsn}
 \end{center}
 \end{figure}
 
@@ -563,7 +545,7 @@ av data til figurene.
 \scalebox{\Sexpr{s1}}{
 <<FigAlderMed, echo=FALSE>>=
 	NSFigGjsnGrVar(NSdata,   valgtVar='Alder', datoFra=datoFra, datoTil=datoTil,
-		valgtMaal='Med', minald=minald, maxald=maxald, erMann=erMann,
+		valgtMaal='med', minald=minald, maxald=maxald, erMann=erMann,
     traume=traume, preprosess=0, hentData=0)
 @
 }
@@ -576,13 +558,13 @@ av data til figurene.
 \begin{figure}[ht]
 \begin{center}
 \scalebox{\Sexpr{s1}}{
-<<FigDagerRehabGjsn, echo=FALSE>>=
+<<FigDagerRehabgjsn, echo=FALSE>>=
 	NSFigGjsnGrVar(NSdata,   valgtVar='DagerRehab', datoFra=datoFra, datoTil=datoTil,
-		valgtMaal='', minald=minald, maxald=maxald, erMann=erMann, traume=traume, preprosess=0, hentData=0)
+		valgtMaal='gjsn', minald=minald, maxald=maxald, erMann=erMann, traume=traume, preprosess=0, hentData=0)
 @
 }
   \caption{Gjennomsnittlig antall dager med rehabilitering, totalt og ved hvert sykehus}
-  \label{fig:DagerRehabGjsn}
+  \label{fig:DagerRehabgjsn}
 \end{center}
 \end{figure}
 
@@ -591,7 +573,7 @@ av data til figurene.
 \scalebox{\Sexpr{s1}}{
 <<FigDagerRehabMed, echo=FALSE>>=
 	NSFigGjsnGrVar(NSdata,   valgtVar='DagerRehab', datoFra=datoFra, datoTil=datoTil,
-		valgtMaal='Med', minald=minald, maxald=maxald, erMann=erMann,
+		valgtMaal='med', minald=minald, maxald=maxald, erMann=erMann,
     traume=traume, preprosess=0, hentData=0)
 @
 }
@@ -604,14 +586,14 @@ av data til figurene.
 \begin{figure}[ht]
 \begin{center}
 \scalebox{\Sexpr{s1}}{
-<<FigDagerTilRehabGjsn, echo=FALSE>>=
+<<FigDagerTilRehabgjsn, echo=FALSE>>=
 	NSFigGjsnGrVar(NSdata,   valgtVar='DagerTilRehab', datoFra=datoFra, datoTil=datoTil,
-		valgtMaal='', minald=minald, maxald=maxald, erMann=erMann, traume=traume,
+		valgtMaal='gjsn', minald=minald, maxald=maxald, erMann=erMann, traume=traume,
     preprosess=0, hentData=0)
 @
 }
   \caption{Gjennomsnittlig antall dager før rehabilitering, totalt og ved hvert sykehus}
-  \label{fig:DagerTilRehabGjsn}
+  \label{fig:DagerTilRehabgjsn}
 \end{center}
 \end{figure}
 
@@ -620,7 +602,7 @@ av data til figurene.
 \scalebox{\Sexpr{s1}}{
 <<FigDagerTilRehabMed, echo=FALSE>>=
 	NSFigGjsnGrVar(NSdata,   valgtVar='DagerTilRehab', datoFra=datoFra, datoTil=datoTil,
-		valgtMaal='Med', minald=minald, maxald=maxald, erMann=erMann,
+		valgtMaal='med', minald=minald, maxald=maxald, erMann=erMann,
     traume=traume, preprosess=0, hentData=0)
 @
 }
@@ -629,46 +611,19 @@ av data til figurene.
 \end{center}
 \end{figure}
 
-\begin{figure}[ht]
-\begin{center}
-\scalebox{\Sexpr{s1}}{
-<<FigPermisjonGjSn, echo=FALSE>>=
-	NSFigGjsnGrVar(NSdata,   valgtVar='Permisjon', datoFra=datoFra, datoTil=datoTil,
-		valgtMaal='', minald=minald, maxald=maxald, erMann=erMann, traume=traume, preprosess=0, 
-    hentData=0)
-@
-}
-  \caption{Gjennomsnittlig antall døgn ute av sykehus, totalt og ved hvert sykehus}
-  \label{fig:PermisjonGjsn}
-\end{center}
-\end{figure}
-
-\begin{figure}[ht]
-\begin{center}
-\scalebox{\Sexpr{s1}}{
-<<FigPermisjonMed, echo=FALSE>>=
-	NSFigGjsnGrVar(NSdata,   valgtVar='Permisjon', datoFra=datoFra, datoTil=datoTil,
-		valgtMaal='Med', minald=minald, maxald=maxald, erMann=erMann, preprosess=0, 
-    traume=traume, hentData=0)
-@
-}
-  \caption{Median antall døgn ute av sykehus, totalt og ved hvert sykehus}
-  \label{fig:PermisjonMed}
-\end{center}
-\end{figure}
 
 %OpphTot[HosptlDy]
 \begin{figure}[ht]
 \begin{center}
 \scalebox{\Sexpr{s1}}{
-<<FigOpphTotGjsn, echo=FALSE>>=
+<<FigOpphTotgjsn, echo=FALSE>>=
 	NSFigGjsnGrVar(NSdata,   valgtVar='OpphTot', datoFra=datoFra, datoTil=datoTil,
-		valgtMaal='', minald=minald, maxald=maxald, erMann=erMann, traume=traume, preprosess=0, 
+		valgtMaal='gjsn', minald=minald, maxald=maxald, erMann=erMann, traume=traume, preprosess=0, 
     hentData=0)
 @
 }
   \caption{Gjennomsnittlig antall dager i behandling, totalt og ved hvert sykehus}
-  \label{fig:OpphTotGjsn}
+  \label{fig:OpphTotgjsn}
 \end{center}
 \end{figure}
 
@@ -677,7 +632,7 @@ av data til figurene.
 \scalebox{\Sexpr{s1}}{
 <<FigOpphTotMed, echo=FALSE>>=
 	NSFigGjsnGrVar(NSdata, valgtVar='OpphTot', datoFra=datoFra, datoTil=datoTil,
-		valgtMaal='Med', minald=minald, maxald=maxald, erMann=erMann, preprosess=0, 
+		valgtMaal='med', minald=minald, maxald=maxald, erMann=erMann, preprosess=0, 
     traume=traume, hentData=0)
 @
 }

@@ -20,7 +20,7 @@ save(NorScirEksData, file='E:/Registre/NordicScir/data/NorScirEksData.Rdata')
 #--------------------------------------SAMLERAPPORT-----------------------------------
 rm(list=ls())
 library(knitr)
-NSdata <- read.table('C:/Registre/NordicScir/data/MainFormDataContract2016-06-08.csv', sep=';', header=T)
+NSdata <- HovedSkjema
 setwd("C:/ResultattjenesteGIT/nordicscir/inst")
 reshID <- 107627	#0 - alle	#105593-Haukeland, 106896-Sunnaas, 107627-St.Olavs
 
@@ -31,23 +31,9 @@ knit('NSsamleRapp.Rnw')
 texi2pdf('NSsamleRapp.tex')
 
 
-NSurin <- read.table('C:/Registre/NordicScir/data/UrinaryTractFunctionFormDataContract2016-09-21.csv', sep=';', header=T)
-
-
 #------------------------ LASTE DATA -------------------------------------
 
 rm(list=ls())
-
-TilLogiskeVar <- function(Skjema){
-      verdiGML <- c('True','False')
-      verdiNY <- c(TRUE,FALSE)
-      mapping <- data.frame(verdiGML,verdiNY)
-      LogVar <- names(Skjema)[which(Skjema[1,] %in% verdiGML)]
-      for (k in 1:length(LogVar)) {
-            Skjema[,LogVar[k]] <- mapping$verdiNY[match(Skjema[,LogVar[k]], mapping$verdiGML)]
-      }
-      return(Skjema)
-}
 
 HovedSkjema <- read.table('C:/Registre/NordicScir/data/MainFormDataContract2017-03-30.csv', stringsAsFactors=FALSE, sep=';', header=T)
 Livskvalitet <- read.table('C:/Registre/NordicScir/data/LifeQualityFormDataContract2017-03-30.csv', stringsAsFactors=FALSE, sep=';', header=T)
@@ -56,12 +42,6 @@ Urin <- read.table('C:/Registre/NordicScir/data/UrinaryTractFunctionFormDataCont
 Tarm <- read.table('C:/Registre/NordicScir/data/BowelFunctionFormDataContract2017-03-30.csv', stringsAsFactors=FALSE, sep=';', header=T)
 Satisfact <- read.table('C:/Registre/NordicScir/data/ActivityAndParticipationSatisfactionFormDataContract2017-03-30.csv', stringsAsFactors=FALSE, sep=';', header=T)
 Performance <- read.table('C:/Registre/NordicScir/data/ActivityAndParticipationPerformanceFormDataContract2017-03-30.csv', stringsAsFactors=FALSE, sep=';', header=T)
-
-HovedSkjema <- TilLogiskeVar(HovedSkjema)
-Urin <- TilLogiskeVar(Urin)
-Tarm <- TilLogiskeVar(Tarm)
-Satisfact <- TilLogiskeVar(Satisfact)
-Kontroll <- TilLogiskeVar(Kontroll)
 
 HovedSkjema$SkjemaGUID <- tolower(HovedSkjema$SkjemaGUID)
 Performance$SkjemaGUID <- tolower(Performance$SkjemaGUID)
@@ -118,8 +98,8 @@ traume <- ''    #'ja','nei', standard: ikke valgt
 AIS <- 99 # as.character(c(1,4))	#AISgrad ved innleggelse alle(''), velge en eller flere fra 1:5
 paratetra <- 99
 datoFra <- '2011-01-01'             #Standard: b?r v?re minste registrerte verdi ? min og max dato i utvalget vises alltid i figuren.
-datoTil <- '2016-12-10'
-valgtMaal='Gjsn'	#'Med'-median, 'Gjsn' gjennomsnitt
+datoTil <- '2017-12-10'
+valgtMaal='gjsn'	#'Med'-median, 'Gjsn' gjennomsnitt
 grVar <- 'ShNavn'
 
 #------------------------------ Fordelinger --------------------------
@@ -169,7 +149,7 @@ for (valgtVar in variable) {
 
 #------------------------------ Sentralmål --------------------------
 outfile <- '' #paste(valgtVar, '.png', sep='')	#Navn angis av Jasper
-valgtVar <- 'LivsFys'   #'Alder', 'DagerRehab', 'DagerTilRehab', 'OpphTot', 'LivsGen', 'LivsFys', 'LivsPsyk'
+valgtVar <- 'DagerRehab'   #'Alder', 'DagerRehab', 'DagerTilRehab', 'OpphTot', 'LivsGen', 'LivsFys', 'LivsPsyk'
 NSFigGjsnGrVar(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
 		valgtMaal=valgtMaal, AIS=AIS, minald=minald, maxald=maxald, erMann=erMann, traume=traume)
 

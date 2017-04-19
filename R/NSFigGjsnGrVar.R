@@ -14,11 +14,11 @@
 #'    }
 #'    
 #' @inheritParams NSFigAndeler
-#' @param valgtMaal - 'Med' = median. Alt annet gir gjennomsnitt
+#' @param valgtMaal - 'med' = median. Alt annet gir gjennomsnitt
 #'
 #' @export
 
-NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='Gjsn', grVar='ShNavn',
+NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='gjsn', grVar='ShNavn',
                               datoFra='2010-01-01', datoTil='2050-12-31', 
 					AIS='', minald=0, maxald=130, erMann='', traume='', paratetra=99, 
 					preprosess=1, outfile='', hentData=0) {
@@ -67,8 +67,8 @@ NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='Gjsn', grVar='ShNavn',
   
   
   t1 <- switch(valgtMaal,
-               Med = 'Median ',
-               Gjsn = 'Gjennomsnittlig ')
+               med = 'Median ',
+               gjsn = 'Gjennomsnittlig ')
   tittel <- paste0(t1, vt)
 
   KIHele <- c(0,0)    
@@ -77,7 +77,7 @@ NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='Gjsn', grVar='ShNavn',
   dummy0 <- NA #-0.0001
 
     #Kommer ut ferdig sortert!
-  if (valgtMaal=='Med') {
+  if (valgtMaal=='med') {
         MedIQR <- plot(RegData[ ,grVar], RegData$Variabel, notch=TRUE, plot=FALSE)
         MedIQR$stats[ ,indGrUt] <- dummy0
         MedIQR$conf[ ,indGrUt] <- dummy0
@@ -98,7 +98,7 @@ NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='Gjsn', grVar='ShNavn',
         #roughly a 95% confidence interval for the difference in two medians. 	
   } 
   
-  if (valgtMaal=='Gjsn') {	#Gjennomsnitt er standard, men må velges.
+  if (valgtMaal=='gjsn') {	#Gjennomsnitt er standard, men må velges.
               Gjsn <- tapply(RegData$Variabel, RegData[ ,grVar], mean, na.rm=T)
               SE <- tapply(RegData$Variabel, RegData[ ,grVar], sd, na.rm=T)/sqrt(Ngr)
               MidtHele <- mean(RegData$Variabel)	#mean(RegData$Variabel)
@@ -106,7 +106,7 @@ NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='Gjsn', grVar='ShNavn',
         Gjsn[indGrUt] <- dummy0
         SE[indGrUt] <- 0
         sortInd <- order(Gjsn, decreasing=NSVarSpes$sortAvtagende, na.last = FALSE) 
-        Midt <- Gjsn[sortInd] #as.numeric(Gjsn[sortInd])
+        Midt <- Gjsn[sortInd] #as.numeric(gjsn[sortInd])
         KIned <- Midt - 2*SE[sortInd]
         KIopp <- Midt + 2*SE[sortInd]
   }
@@ -130,7 +130,7 @@ NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='Gjsn', grVar='ShNavn',
                   DagerTilRehab='dager',
                   OpphTot= 'dager')
   
-  #Se NSFigSoyler for forklaring av innhold i lista GjsnGrVarData
+  #Se NSFigSoyler for forklaring av innhold i lista gjsnGrVarData
   GjsnGrVarData <- list(AggVerdier=AggVerdier, #Endres til Soyleverdi? Evt. AggVerdier
                         AggTot=MidtHele, #Til AggVerdiTot?
                         N=list(Hoved=N), 
@@ -191,7 +191,7 @@ NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='Gjsn', grVar='ShNavn',
     par('fig'=c(vmarg, 1, 0, 1-0.02*(NutvTxt-1)))	#Har alltid datoutvalg med
 
     #plot.new()
-    pos <- barplot(as.numeric(Midt), horiz=T, border=NA, col=farger[3], 
+    pos <- barplot(as.numeric(Midt), horiz=T, border=NA, col=farger[3], axes = FALSE,
                    xlim=c(0,xmax), ylim=c(0.3,4.1), xlab='', las=1) 	#xlim=c(0,ymax),
     posKI <- pos[1:AntGr]
     ybunn <- 0.1
