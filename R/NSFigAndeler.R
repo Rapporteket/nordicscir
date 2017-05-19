@@ -11,7 +11,23 @@
 #'     \item Permisjon: Antall døgn ute av sykehus 
 #'     \item UtTil: Hva pasienten skrives ut til. [PlaceDis]
 #'     \item SkadeArsak: Årsak til skade [variabel: Scietiol]
-#'     \item Pustehjelp[VentAssi].
+#'     \item Pustehjelp[VentAssi]
+#'     \item LivsGen:  Fornøydhet med livet
+#'     \item LivsFys:  Fornøydhet med fysisk helse
+#'     \item LivsPsyk:  Fornøydhet med psykisk helse
+#'     \item UrinInkontinens: Ufrivillig urinlekkasje
+#'     \item UrinKirInngr: Kirurgiske inngrep i urinveiene
+#'     \item UrinLegemidler: Bruk av legemidler som påvirker urinveiene
+#'     \item UrinLegemidlerHvilke: Legemidler som påvirker urinveiene
+#'     \item UrinTomBlareHoved: Blæretømming, hovedmetode
+#'     \item UrinTomBlareTillegg: Blæretømming, tilleggsmetode
+#'     \item TarmAvfmiddel: Bruk av perorale avføringsmidler
+#'     \item TarmAvfmiddelHvilke: Perorale avføringsmidler
+#'     \item TarmInkontinens: Hyppighet av fekal inkontinens
+#'     \item TarmKirInngrep: Kirurgisk inngrep i mage/–tarm kanalen
+#'     \item TarmKirInngrepHvilke: Kirurgiske inngrep i mage/–tarm kanalen
+#'     \item TarmAvfHoved: Avføring, hovedmetode
+#'     \item TarmAvfTillegg: Avføring, tilleggsmetode
 #'    }
 #' 
 #' @param RegData - ei dataramme med alle nødvendige variable fra registeret.

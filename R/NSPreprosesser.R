@@ -64,7 +64,7 @@ NSPreprosesser <- function(RegData)
       #	RegData$alder <- as.numeric(RegData$decimalAge)	#
       
       #Riktig format på datovariable:
-      RegData$InnDato <- as.POSIXlt(RegData$AdmitDt, format="%Y-%m-%d")
+      RegData$InnDato <- as.POSIXlt(RegData$AdmitDt, format="%Y-%m-%d") #as.POSIXlt(RegData$AdmitDt, format="%Y-%m-%d")
       RegData$Aar <- as.POSIXlt(RegData$AdmitDt, format="%Y-%m-%d")$year +1900
       
       #Konvertere boolske variable fra tekst til boolske variable...

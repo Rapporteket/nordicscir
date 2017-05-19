@@ -34,14 +34,14 @@ texi2pdf('NSsamleRapp.tex')
 #------------------------ LASTE DATA -------------------------------------
 
 rm(list=ls())
-
-HovedSkjema <- read.table('C:/Registre/NordicScir/data/MainFormDataContract2017-03-30.csv', stringsAsFactors=FALSE, sep=';', header=T)
-Livskvalitet <- read.table('C:/Registre/NordicScir/data/LifeQualityFormDataContract2017-03-30.csv', stringsAsFactors=FALSE, sep=';', header=T)
+dato <- 'FormDataContract2017-05-19'
+HovedSkjema <- read.table(paste0('C:/Registre/NordicScir/data/Main',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
+Livskvalitet <- read.table(paste0('C:/Registre/NordicScir/data/LifeQuality',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
 #Kontroll <- read.table('C:/Registre/NordicScir/data/ControlFormDataContract2017-03-30.csv', stringsAsFactors=FALSE, sep=';', header=T)
-Urin <- read.table('C:/Registre/NordicScir/data/UrinaryTractFunctionFormDataContract2017-03-30.csv', stringsAsFactors=FALSE, sep=';', header=T)
-Tarm <- read.table('C:/Registre/NordicScir/data/BowelFunctionFormDataContract2017-03-30.csv', stringsAsFactors=FALSE, sep=';', header=T)
-Satisfact <- read.table('C:/Registre/NordicScir/data/ActivityAndParticipationSatisfactionFormDataContract2017-03-30.csv', stringsAsFactors=FALSE, sep=';', header=T)
-Performance <- read.table('C:/Registre/NordicScir/data/ActivityAndParticipationPerformanceFormDataContract2017-03-30.csv', stringsAsFactors=FALSE, sep=';', header=T)
+Urin <- read.table(paste0('C:/Registre/NordicScir/data/UrinaryTractFunction',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
+Tarm <- read.table(paste0('C:/Registre/NordicScir/data/BowelFunctionFormDataContract',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
+Satisfact <- read.table(paste0('C:/Registre/NordicScir/data/ActivityAndParticipationSatisfaction',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
+Performance <- read.table(paste0('C:/Registre/NordicScir/data/ActivityAndParticipationPerformance',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
 
 HovedSkjema$SkjemaGUID <- tolower(HovedSkjema$SkjemaGUID)
 Performance$SkjemaGUID <- tolower(Performance$SkjemaGUID)
@@ -90,26 +90,26 @@ rm(list=ls())
 library(nordicscir)
 setwd("C:/ResultattjenesteGIT/nordicscir/")
 reshID <- 105593             ##105593-Haukeland, 106896-Sunnaas, 107627-St.Olavs, standard i funksj: 0 dvs. 'Alle'. Standard i rapporten skal v?re at man f?r opp eget sykehus.
-enhetsUtvalg <- 1
+enhetsUtvalg <- 0
 minald <- 0
 maxald <- 130
 erMann <- 9                      #1-menn, 0-kvinner, Standard: '', dvs. begge
 traume <- ''    #'ja','nei', standard: ikke valgt
 AIS <- 99 # as.character(c(1,4))	#AISgrad ved innleggelse alle(''), velge en eller flere fra 1:5
 paratetra <- 99
-datoFra <- '2011-01-01'             #Standard: b?r v?re minste registrerte verdi ? min og max dato i utvalget vises alltid i figuren.
-datoTil <- '2017-12-10'
+datoFra <- '2015-01-01'             #Standard: b?r v?re minste registrerte verdi ? min og max dato i utvalget vises alltid i figuren.
+datoTil <- '2015-12-31'
 valgtMaal='gjsn'	#'Med'-median, 'Gjsn' gjennomsnitt
 grVar <- 'ShNavn'
 
 #------------------------------ Fordelinger --------------------------
 RegData <- HovedSkjema
-valgtVar <- 'SkadeArsak'	#M? velge... AAis, FAis, Alder, DagerRehab, DagerTilRehab, NivaaInn
+valgtVar <- 'Alder'	#M? velge... AAis, FAis, Alder, DagerRehab, DagerTilRehab, NivaaInn
 							#OpphTot[HosptlDy], Permisjon[OutOfHosptlDy], UtTil[PlaceDis], SkadeArsak[Scietiol]  
 							#Pustehjelp[VentAssi]
 #UrinSkjema: 
 RegData <- KobleMedHoved(HovedSkjema,Urin)
-valgtVar <- 'UrinInkontinens'   #'UrinInkontinens', 'UrinLegemidler','UrinLegemidlerHvilke', 'UrinKirInngr', 
+valgtVar <- 'UrinLegemidlerHvilke'   #'UrinInkontinens', 'UrinLegemidler','UrinLegemidlerHvilke', 'UrinKirInngr', 
                                     #'UrinTomBlareHoved', 'UrinTomBlareTillegg'
 #TarmSkjema: 
 RegData <- KobleMedHoved(HovedSkjema,Tarm)

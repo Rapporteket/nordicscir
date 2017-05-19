@@ -275,7 +275,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar=''){
             tittel <- 'Bruk av legemidler som påvirker urinveiene'
             gr <- c(0:1,9)
             RegData <- RegData[RegData$AnyDrugs %in% gr,]
-            grtxt <- c('Ja', 'Nei', 'Ukjent')
+            grtxt <- c('Nei', 'Ja', 'Ukjent')
             RegData$VariabelGr <- factor(RegData$AnyDrugs, levels = gr, labels = grtxt)
       }
       if (valgtVar=='UrinLegemidlerHvilke') {
