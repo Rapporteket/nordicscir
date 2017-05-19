@@ -56,7 +56,7 @@ NSUtvalg <- function(RegData, datoFra='2010-01-01', datoTil='3000-05-25', minald
                         #Får character fra Jasper
                      if (length(which(AIS %in% 1:5))>0) {paste0('AIS, inn: ', paste0(LETTERS[AIS], collapse=','))},
                      if (paratetra %in% c(0,1,9)) {paste0('Nivå ved utreise: ', 
-                                                          (c('Paraplegi','Tetraplegi',rep('',6), 'Ukjent'))[paratetra+1])}
+                                                          (c('Paraplegi','Tetraplegi',rep('',7), 'Ukjent'))[paratetra+1])}
                         )
 
 
