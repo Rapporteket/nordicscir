@@ -67,10 +67,10 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar=''){
 
       if (valgtVar=='Alder') { #Fordeling, gjsnGrVar
             tittel <- 'Alder ved innleggelse'
-            gr <- c(0,16,31,46,61,76,200)	#c(seq(0, 90, 15), 120)
+            gr <- c(0,15,30,45,60,75,200)	#c(seq(0, 90, 15), 120)
             RegData$Variabel <- RegData$Alder   #til gjsnGrVar
             RegData$VariabelGr <- cut(RegData$Alder, breaks=gr, include.lowest=TRUE, right=FALSE)
-            grtxt <- c('0-15','16-30','31-45','46-60','61-75','76+')
+            grtxt <- c('0-14','15-29','30-44','45-59','60-74','75+')
             cexgr <- 0.9
             xAkseTxt <- 'Aldersgrupper (år)'
       }

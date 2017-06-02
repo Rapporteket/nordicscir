@@ -34,12 +34,12 @@ texi2pdf('NSsamleRapp.tex')
 #------------------------ LASTE DATA -------------------------------------
 
 rm(list=ls())
-dato <- 'FormDataContract2017-05-19'
+dato <- 'FormDataContract2017-05-24'
 HovedSkjema <- read.table(paste0('C:/Registre/NordicScir/data/Main',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
 Livskvalitet <- read.table(paste0('C:/Registre/NordicScir/data/LifeQuality',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
-#Kontroll <- read.table('C:/Registre/NordicScir/data/ControlFormDataContract2017-03-30.csv', stringsAsFactors=FALSE, sep=';', header=T)
+Kontroll <- read.table(paste0('C:/Registre/NordicScir/data/Control',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
 Urin <- read.table(paste0('C:/Registre/NordicScir/data/UrinaryTractFunction',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
-Tarm <- read.table(paste0('C:/Registre/NordicScir/data/BowelFunctionFormDataContract',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
+Tarm <- read.table(paste0('C:/Registre/NordicScir/data/BowelFunction',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
 Satisfact <- read.table(paste0('C:/Registre/NordicScir/data/ActivityAndParticipationSatisfaction',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
 Performance <- read.table(paste0('C:/Registre/NordicScir/data/ActivityAndParticipationPerformance',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
 
@@ -56,14 +56,14 @@ KobleMedHoved <- function(HovedSkjema,Skjema2) {
 return(NSdata)
 }
 
-RegData <- KobleMedHoved(HovedSkjema,Urin)
+RegData <- KobleMedHoved(HovedSkjema,Tarm)
 
 #------------------------ TESTE DATA -------------------------------------
 
 #---Oppsummering/test av andel som har fått oppfølging---
 paste0('Ant. Livskvalitet m/hovedskjema: ',sum(HovedSkjema$SkjemaGUID %in% Livskvalitet$HovedskjemaGUID))
 paste0('Ant. Performance m/hovedskjema: ', sum(HovedSkjema$SkjemaGUID %in% Performance$HovedskjemaGUID))
-paste0('Ant. Satisfaction m/Performance: ', sum(Fornoyd$HovedskjemaGUID %in% Performance$SkjemaGUID))
+paste0('Ant. Satisfaction m/Performance: ', sum(Satisfact$HovedskjemaGUID %in% Performance$SkjemaGUID))
 sum(test)
 
 tabVar <- c('HealthUnitName','Aar')
@@ -72,7 +72,7 @@ RaaTab <- cbind(Hskjema,
       Aar = as.POSIXlt(Hskjema$AdmitDt, format="%Y-%m-%d")$year +1900,
       MedLivskval = match(Hskjema$SkjemaGUID, sort(Livskvalitet$HovedskjemaGUID)),
       MedKtr = match(HovedSkjema$SkjemaGUID, sort(Kontroll$HovedskjemaGUID)),
-      MedSatisfact = match(HovedSkjema$SkjemaGUID, sort(Fornoyd$HovedskjemaGUID)),
+      MedSatisfact = match(HovedSkjema$SkjemaGUID, sort(Satisfact$HovedskjemaGUID)),
       MedPerform = match(HovedSkjema$SkjemaGUID, sort(Performance$HovedskjemaGUID))
 )
 #RaaTab <- RaaTab1[which(as.Date(Hskjema$AdmitDt)> '2014-12-31'),]
@@ -96,9 +96,9 @@ maxald <- 130
 erMann <- 9                      #1-menn, 0-kvinner, Standard: '', dvs. begge
 traume <- ''    #'ja','nei', standard: ikke valgt
 AIS <- 99 # as.character(c(1,4))	#AISgrad ved innleggelse alle(''), velge en eller flere fra 1:5
-paratetra <- 9
-datoFra <- '2015-01-01'             #Standard: b?r v?re minste registrerte verdi ? min og max dato i utvalget vises alltid i figuren.
-datoTil <- '2015-12-31'
+paratetra <- 99
+datoFra <- '2016-01-01'             #Standard: b?r v?re minste registrerte verdi ? min og max dato i utvalget vises alltid i figuren.
+datoTil <- '2016-12-31'
 valgtMaal='gjsn'	#'Med'-median, 'Gjsn' gjennomsnitt
 grVar <- 'ShNavn'
 
@@ -113,7 +113,7 @@ valgtVar <- 'UrinLegemidler'   #'UrinInkontinens', 'UrinLegemidler','UrinLegemid
                                     #'UrinTomBlareHoved', 'UrinTomBlareTillegg'
 #TarmSkjema: 
 RegData <- KobleMedHoved(HovedSkjema,Tarm)
-valgtVar <- 'TarmInkontinens'   #'TarmAvfHoved','TarmAvfTillegg', TarmAvfmiddel, TarmAvfmiddelHvilke
+valgtVar <- 'TarmAvfHoved'   #'TarmAvfHoved','TarmAvfTillegg', TarmAvfmiddel, TarmAvfmiddelHvilke
                               #TarmInkontinens, TarmKirInngrep, TarmKirInngrepHvilke
 
 #Livskvalitet
