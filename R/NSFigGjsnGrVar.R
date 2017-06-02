@@ -36,7 +36,7 @@ NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='gjsn', grVar='ShNavn',
       
       #------- Gjøre utvalg
       Utvalg <- NSUtvalg(RegData=RegData, datoFra=datoFra, datoTil=datoTil, minald=minald, maxald=maxald,
-                         erMann=erMann, traume=traume, AIS=AIS)
+                         erMann=erMann, traume=traume, AIS=AIS, paratetra=paratetra)
       RegData <- Utvalg$RegData
       utvalgTxt <- Utvalg$utvalgTxt
             
