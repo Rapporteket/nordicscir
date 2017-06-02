@@ -1,0 +1,801 @@
+* Encoding: UTF-8.
+
+Fil med hovedskjema
+Fil nedre urinveierskjema
+Fil kontrollskjema
+*************************************************************************************************************************************************.
+*Legger på labels på Reshid.
+VALUE LABELS Reshid
+105593 'Haukeland'
+106896 'Sunnaas'
+107627 'St. Olavs'.
+
+RECODE Reshid (105593=1) (107627=2) (106896 =3) into Sykehus.
+VALUE LABELS Sykehus
+1 'Haukeland'
+2 'St. Olavs'
+3 'Sunnaas'.
+
+FREQUENCIES Sykehus Reshid.
+
+
+
+RECODE PatientAge (0 thru 15=1) (16 thru 30=2) (31 thru 45=3) (46 thru 60=4) (61 thru 75=5) (76 thru 130=6) Into Aldersgrupper.
+VALUE LABELS Aldersgrupper
+1 '0-15 år'
+2 '16-30 år'
+3 '31-45 år'
+4 '46-60 år'
+5 '61-75 år' 
+6 '76 år +'.
+
+FREQUENCIES Aldersgrupper.
+
+FREQUENCIES Scietiol.
+
+COMPUTE ATRAUMATISK=0.
+IF Scietiol = 6 ATRAUMATISK=1.
+VALUE LABELS ATRAUMATISK
+0 'Traumatisk'
+1 'Ikke-traumatisk'.
+
+FREQUENCIES ATRAUMATISK.
+
+
+RECODE PatientAge (0 thru 30=1) (31 thru 60=2) (61 thru 130=3) Into Aldersgruppe3.
+VALUE LABELS Aldersgruppe3
+1 '0-30 år'
+2 '31-60 år'
+3 '61 år +'.
+FREQUENCIES Aldersgruppe3.
+
+##########################################################
+
+****'Tetraplegi*****.
+Compute Tetraplegi=0.
+If ((ASensLvlAreaL=1) OR (ASensLvlAreaR=1) OR (AMtrLvlAreaL=1) OR (AMtrLvlAreaR=1)) Tetraplegi=1.
+If ((ASensLvlAreaL=9) AND (ASensLvlAreaR=9) AND (AMtrLvlAreaL=9) AND (AMtrLvlAreaR=9)) Tetraplegi=9.
+If ((ASensLvlAreaL=-1) AND (ASensLvlAreaR=-1) AND (AMtrLvlAreaL=-1) AND (AMtrLvlAreaR=-1)) Tetraplegi=9.
+VALUE LABELS Tetraplegi
+0 'Paraplegi'
+1 'Tetraplegi'
+9 'Ukjent'.
+Execute.
+
+FREQUENCIES TETRAPLEGI.
+
+****'Tetraplegi ved utskrivning*****.
+Compute F_Tetraplegi=0.
+If ((FSensLvlAreaL=1) OR (FSensLvlAreaR=1) OR (FMtrLvlAreaL=1) OR (FMtrLvlAreaR=1)) F_Tetraplegi=1.
+If ((FSensLvlAreaL=9) AND (FSensLvlAreaR=9) AND (FMtrLvlAreaL=9) AND (FMtrLvlAreaR=9)) F_Tetraplegi=9.
+If ((FSensLvlAreaL=-1) AND (FSensLvlAreaR=-1) AND (FMtrLvlAreaL=-1) AND (FMtrLvlAreaR=-1)) F_Tetraplegi=9.
+VALUE LABELS F_Tetraplegi
+0 'F_Paraplegi'
+1 'F_Tetraplegi'
+9 'F_Ukjent'.
+Execute.
+
+FREQUENCIES F_TETRAPLEGI.
+
+*****************************************************************
+Figur Nevrologisk klassifikasjon og funksjonsgrad - ved ankomst (_A og utreise/"Final" _F)
+*****************************************************************.
+*Kjører først tall kun for tetraplegi - og legger på filter slik at vi bare jobber med tetraplegikere.
+USE ALL.
+COMPUTE filter_$=(Tetraplegi = 1).
+VARIABLE LABELS filter_$ 'Tetraplegi = 1 (FILTER)'.
+VALUE LABELS filter_$ 0 'Not Selected' 1 'Selected'.
+FORMATS filter_$ (f1.0).
+FILTER BY filter_$.
+EXECUTE.
+
+Compute A_Motorisk_høyre=0.
+If AMtrLvlRC=1 or AMtrLvlRC=2 or AMtrLvlRC=3 or AMtrLvlRC=4 A_Motorisk_høyre=1.
+If AMtrLvlRC=-1 A_Motorisk_høyre=9.
+VALUE LABELS A_Motorisk_høyre
+0 'C5-8'
+1 'C1-4'
+9 'Ukjent'.
+Execute.
+
+Compute A_Motorisk_venstre=0.
+If AMtrLvlLC=1 or AMtrLvlLC=2 or AMtrLvlLC=3 or AMtrLvlLC=4 A_Motorisk_venstre=1.
+If AMtrLvlLC=-1 A_Motorisk_venstre=9.
+VALUE LABELS A_Motorisk_venstre
+0 'C5-8'
+1 'C1-4'
+9 'Ukjent'.
+Execute.
+
+Compute A_Sensorisk_høyre=0.
+If ASensLvlRC=1 or ASensLvlRC=2 or ASensLvlRC=3 or ASensLvlRC=4 A_Sensorisk_høyre=1.
+If ASensLvlRC=-1 A_Sensorisk_høyre=9.
+VALUE LABELS A_Sensorisk_høyre
+0 'C5-8'
+1 'C1-4'
+9 'Ukjent'.
+Execute.
+
+Compute A_Sensorisk_venstre=0.
+If ASensLvlLC=1 or ASensLvlLC=2 or ASensLvlLC=3 or ASensLvlLC=4 A_Sensorisk_venstre=1.
+If ASensLvlLC=-1 A_Sensorisk_venstre=9.
+VALUE LABELS A_Sensorisk_venstre
+0 'C5-8'
+1 'C1-4'
+9 'Ukjent'.
+Execute.
+
+Compute A_Nevrologisk_klassifikasjon=0.
+If A_Motorisk_høyre=1 or A_Motorisk_venstre=1 or A_Sensorisk_høyre=1 or A_Sensorisk_venstre=1 A_Nevrologisk_klassifikasjon=1.
+If A_Motorisk_høyre=9 and A_Motorisk_venstre=9 and A_Sensorisk_høyre=9 and A_Sensorisk_venstre=9 A_Nevrologisk_klassifikasjon=9.
+VALUE LABELS A_Nevrologisk_klassifikasjon
+0 'C5-8'
+1 'C1-4'
+9 'Ukjent'.
+Execute.
+
+USE ALL.
+Compute Figur_A_Nevr_klass=9.
+If A_Nevrologisk_klassifikasjon=1 Figur_A_Nevr_klass=1.
+If A_Nevrologisk_klassifikasjon=0 Figur_A_Nevr_klass=2.
+If Tetraplegi=0 Figur_A_Nevr_klass=3.
+VALUE LABELS Figur_A_Nevr_klass
+1 'C1-4'
+2 'C5-8'
+3 'Paraplegi'
+9 'Ukjent'.
+Execute.
+
+FREQUENCIES Figur_A_Nevr_klass.
+
+* Krysstabell Aais og Figur_A_Nevr_klass.
+CTABLES
+  /VLABELS VARIABLES=Figur_A_Nevr_klass AAis DISPLAY=LABEL
+  /TABLE Figur_A_Nevr_klass [COUNT F40.0] BY AAis [C]
+  /CATEGORIES VARIABLES=Figur_A_Nevr_klass AAis ORDER=A KEY=VALUE EMPTY=INCLUDE.
+
+*AMtrLvlRC (motorisk høyre side)
+AMtrLvlLC (Motorisk venstre side)
+ASensLvlRC (sensorisk høyre side)
+ASensLvlLC (sensorisk venstre side).
+*Verdi på en eller flere av disse. Men dersom verdi på flere - av verdisettene så skal høyeste (C1-C4) benyttes.
+
+****'F_Tetraplegi Final/utreise*****.
+Compute F_Tetraplegi=0.
+If ((FSensLvlAreaL=1) OR (FSensLvlAreaR=1) OR (FMtrLvlAreaL=1) OR (FMtrLvlAreaR=1)) F_Tetraplegi=1.
+If ((FSensLvlAreaL=-1) AND (FSensLvlAreaR=-1) AND (FMtrLvlAreaL=-1) AND (FMtrLvlAreaR=-1)) F_Tetraplegi=9.
+If ((FSensLvlAreaL=9) AND (FSensLvlAreaR=9) AND (FMtrLvlAreaL=9) AND (FMtrLvlAreaR=9)) F_Tetraplegi=9.
+VALUE LABELS F_Tetraplegi
+0 'Paraplegi Final'
+1 'Tetraplegi Final'
+9 'Ukjent Final'.
+Execute.
+
+FREQUENCIES F_TETRAPLEGI.
+
+Compute F_Motorisk_høyre=0.
+If FMtrLvlRC=1 or FMtrLvlRC=2 or FMtrLvlRC=3 or FMtrLvlRC=4 F_Motorisk_høyre=1.
+If FMtrLvlRC=-1 F_Motorisk_høyre=9.
+VALUE LABELS F_Motorisk_høyre
+0 'C5-8 Final'
+1 'C1-4 Final'
+9 'Ukjent Final'.
+Execute.
+
+Compute F_Motorisk_venstre=0.
+If FMtrLvlLC=1 or FMtrLvlLC=2 or FMtrLvlLC=3 or FMtrLvlLC=4 F_Motorisk_venstre=1.
+If FMtrLvlLC=-1 F_Motorisk_venstre=9.
+VALUE LABELS F_Motorisk_venstre
+0 'C5-8 Final'
+1 'C1-4 Final'
+9 'Ukjent Final'.
+Execute.
+
+Compute F_Sensorisk_høyre=0.
+If FSensLvlRC=1 or FSensLvlRC=2 or FSensLvlRC=3 or FSensLvlRC=4 F_Sensorisk_høyre=1.
+If FSensLvlRC=-1 F_Sensorisk_høyre=9.
+VALUE LABELS F_Sensorisk_høyre
+0 'C5-8 Final'
+1 'C1-4 Final'
+9 'Ukjent Final'.
+Execute.
+
+Compute F_Sensorisk_venstre=0.
+If FSensLvlLC=1 or FSensLvlLC=2 or FSensLvlLC=3 or FSensLvlLC=4 F_Sensorisk_venstre=1.
+If FSensLvlLC=-1 F_Sensorisk_venstre=9.
+VALUE LABELS F_Sensorisk_venstre
+0 'C5-8 Final'
+1 'C1-4 Final'
+9 'Ukjent Final'.
+Execute.
+
+Compute F_Nevrologisk_klassifikasjon=0.
+If F_Motorisk_høyre=1 or F_Motorisk_venstre=1 or F_Sensorisk_høyre=1 or F_Sensorisk_venstre=1 F_Nevrologisk_klassifikasjon=1.
+If F_Motorisk_høyre=9 and F_Motorisk_venstre=9 and F_Sensorisk_høyre=9 and F_Sensorisk_venstre=9 F_Nevrologisk_klassifikasjon=9.
+VALUE LABELS F_Nevrologisk_klassifikasjon
+0 'C5-8 Final'
+1 'C1-4 Final'
+9 'Ukjent Final'.
+Execute.
+
+USE ALL.
+Compute Figur_F_Nevr_klass=9.
+If F_Nevrologisk_klassifikasjon=1 Figur_F_Nevr_klass=1.
+If F_Nevrologisk_klassifikasjon=0 Figur_F_Nevr_klass=2.
+If F_Tetraplegi=0 Figur_F_Nevr_klass=3.
+VALUE LABELS Figur_F_Nevr_klass
+1 'C1-4 Final'
+2 'C5-8 Final'
+3 'Paraplegi Final'
+9 'Ukjent Final'.
+Execute.
+
+FREQUENCIES Figur_F_Nevr_klass.
+
+* Krysstabell Fais og Figur_F_Nevr_klass.
+CTABLES
+  /VLABELS VARIABLES=Figur_F_Nevr_klass AAis DISPLAY=LABEL
+  /TABLE Figur_F_Nevr_klass [COUNT F40.0] BY FAis [C]
+  /CATEGORIES VARIABLES=Figur_F_Nevr_klass FAis ORDER=A KEY=VALUE EMPTY=INCLUDE.
+
+*********************************************************************************************************************************************
+************************** KVALITETSINDIKATOR Nevologisk klassifikasjon*********************************************************
+*********************************************************************************************************************************************.
+FILTER OFF.
+USE ALL.
+EXECUTE.
+
+COMMENT: 1 Antall pasienter i datadump per sykehus. Hovedskjema.
+FREQUENCIES Sykehus.
+
+COMMENT: 2 RehabDy over 28 dager. Dette er NEVNEREN. 
+*Sjekker at ikke missing først.
+FREQUENCIES Sykehus.
+FREQUENCIES RehabDy.
+
+COMPUTE KvalindNEVRKLASS = 0.
+IF (RehabDy>28) KvalindNEVRKLASS=1.
+EXECUTE.
+VALUE LABELS KvalindNEVRKLASS 
+0 'RehabDy under eller lik 28 dager'
+1 'RehabDy over 28 dager/fire uker'.
+
+FREQUENCIES KvalindNEVRKLASS.
+* Nevner per sykehus.
+CTABLES
+  /VLABELS VARIABLES=Sykehus KvalindNEVRKLASS DISPLAY=LABEL
+  /TABLE Sykehus [C][COUNT F40.0, TOTALS[COUNT F40.0]] BY KvalindNEVRKLASS [C]
+  /CATEGORIES VARIABLES=Sykehus ORDER=A KEY=VALUE EMPTY=INCLUDE TOTAL=YES POSITION=AFTER
+  /CATEGORIES VARIABLES=KvalindNEVRKLASS ORDER=A KEY=VALUE EMPTY=INCLUDE.
+
+COMMENT: Så lager vi telleren.
+*Filter - bort med de med RehabDy under 28 dager. 
+USE ALL.
+COMPUTE filter_$=(KvalindNEVRKLASS = 1).
+VARIABLE LABELS filter_$ 'KvalindNEVRKLASS = 1 (FILTER)'.
+VALUE LABELS filter_$ 0 'Not Selected' 1 'Selected'.
+FORMATS filter_$ (f1.0).
+FILTER BY filter_$.
+EXECUTE.
+
+*Kun pasienter med registrert AIS både ved innkomst og utreise. 
+FREQUENCIES AAIS FAIS.
+
+RECODE AAIS  (-1 =0) (1 thru 9=1) into AAISdummy.
+FREQUENCIES AAISdummy.
+
+RECODE FAIS  (-1 =0) (1 thru 9=1) into FAISdummy.
+FREQUENCIES FAISdummy.
+
+COMPUTE KvalindNEVRKLASSteller =0.
+IF (KvalindNEVRKLASS = 1) and (AAISdummy=1 and FAISdummy=1) KvalindNEVRKLASSteller =1.
+EXECUTE.
+FREQUENCIES KvalindNEVRKLASSteller. 
+
+*Teller per sykehus.
+CTABLES
+  /VLABELS VARIABLES=Sykehus KvalindNEVRKLASSteller DISPLAY=LABEL
+  /TABLE Sykehus [C][COUNT F40.0, TOTALS[COUNT F40.0]] BY KvalindNEVRKLASSteller
+  /CATEGORIES VARIABLES=Sykehus ORDER=A KEY=VALUE EMPTY=INCLUDE TOTAL=YES POSITION=AFTER
+  /CATEGORIES VARIABLES=KvalindNEVRKLASSteller ORDER=A KEY=VALUE EMPTY=EXCLUDE.
+
+
+*******************************************************************************************************************************************
+Kvalitetsindikator - Utskrevet til.
+********************************************************************************************************************************************.
+FILTER OFF.
+USE ALL.
+EXECUTE.
+
+COMMENT: 1 Antall pasienter per sykehus i hovedskjema under eller lik 67 år. Dette er nevneren.
+RECODE PatientAge (0 thru 67=1) (68 thru 130=0) Into KvalindUTSKREVETnevner.
+EXECUTE.
+VALUE LABELS KvalindUTSKREVETnevner
+1 'Nevner kvalitetsindikator utskrevet til (0-67 år)'
+0 'Ekskluderes fra nevner kvalitetsindikator utskrevet til (68-130 år)'.
+
+FREQUENCIES KvalindUTSKREVETnevner.
+
+*Filtrerer på alder.
+USE ALL.
+COMPUTE filter_$=(KvalindUTSKREVETnevner = 1).
+VARIABLE LABELS filter_$ 'KvalindUTSKREVETnevner = 1 (FILTER)'.
+VALUE LABELS filter_$ 0 'Not Selected' 1 'Selected'.
+FORMATS filter_$ (f1.0).
+FILTER BY filter_$.
+EXECUTE.
+
+*Nevneren til kvalitetsindikator utskrevet til per sykehus.
+CTABLES
+  /VLABELS VARIABLES=Sykehus KvalindUTSKREVETnevner DISPLAY=LABEL
+  /TABLE Sykehus [C] BY KvalindUTSKREVETnevner [C][COUNT F40.0]
+  /CATEGORIES VARIABLES=Sykehus ORDER=A KEY=VALUE EMPTY=INCLUDE TOTAL=YES POSITION=AFTER
+  /CATEGORIES VARIABLES=KvalindUTSKREVETnevner ORDER=A KEY=VALUE EMPTY=INCLUDE.
+
+FREQUENCIES PlaceDis.
+
+COMPUTE KvalindUTSKREVETteller =0.
+IF (KvalindUTSKREVETnevner=1) and PlaceDis=3 KvalindUTSKREVETteller=1.
+Execute.
+
+*Telleren til kvalitetsindikator utskrevet til per sykehus. 
+CTABLES
+  /VLABELS VARIABLES=Sykehus KvalindUTSKREVETteller DISPLAY=LABEL
+  /TABLE Sykehus [C][COUNT F40.0, TOTALS[COUNT F40.0]] BY KvalindUTSKREVETteller
+  /CATEGORIES VARIABLES=Sykehus ORDER=A KEY=VALUE EMPTY=INCLUDE TOTAL=YES POSITION=AFTER
+  /CATEGORIES VARIABLES=KvalindUTSKREVETteller ORDER=A KEY=VALUE EMPTY=EXCLUDE.
+
+*******************************************************************************************************************************************
+Kvalitetsindikator 3 - blæretømming.
+********************************************************************************************************************************************.
+* Bruker skjema nedre urinveier.
+* Bruker de som har skjema nedre urinveier og F_papraplegi per sykehus. Dette er nevneren.
+
+****'Tetraplegi ved utskrivning*****.
+Compute F_Tetraplegi=0.
+If ((FSensLvlAreaL=1) OR (FSensLvlAreaR=1) OR (FMtrLvlAreaL=1) OR (FMtrLvlAreaR=1)) F_Tetraplegi=1.
+If ((FSensLvlAreaL=9) AND (FSensLvlAreaR=9) AND (FMtrLvlAreaL=9) AND (FMtrLvlAreaR=9)) F_Tetraplegi=9.
+If ((FSensLvlAreaL=-1) AND (FSensLvlAreaR=-1) AND (FMtrLvlAreaL=-1) AND (FMtrLvlAreaR=-1)) F_Tetraplegi=9.
+VALUE LABELS F_Tetraplegi
+0 'F_Paraplegi'
+1 'F_Tetraplegi'
+9 'F_Ukjent'.
+Execute.
+
+FREQUENCIES F_TETRAPLEGI.
+
+COMPUTE KvalindBLÆREnevner =0.
+IF F_Tetraplegi=0 KvalindBLÆREnevner =1.
+
+*Nevneren per sykehus.
+CTABLES
+  /VLABELS VARIABLES=Sykehus KvalindBLÆREnevner DISPLAY=LABEL
+  /TABLE Sykehus BY KvalindBLÆREnevner [COUNT F40.0]
+  /CATEGORIES VARIABLES=Sykehus ORDER=A KEY=VALUE EMPTY=INCLUDE TOTAL=YES POSITION=AFTER
+  /CATEGORIES VARIABLES=KvalindBLÆREnevner ORDER=A KEY=VALUE EMPTY=EXCLUDE.
+
+*Fjerner de som ikke har paraplegi.
+USE ALL.
+COMPUTE filter_$=(KvalindBLÆREnevner = 1).
+VARIABLE LABELS filter_$ 'KvalindBLÆREnevner = 1 (FILTER)'.
+VALUE LABELS filter_$ 0 'Not Selected' 1 'Selected'.
+FORMATS filter_$ (f1.0).
+FILTER BY filter_$.
+EXECUTE.
+
+COMPUTE KvalindBLÆREteller =0.
+If EmbladM1='SANN' KvalindBLÆREteller=1.
+If EmbladM6='SANN' KvalindBLÆREteller=1.
+Execute. 
+
+*Telleren per sykehus.
+CTABLES
+  /VLABELS VARIABLES=Sykehus KvalindBLÆREteller DISPLAY=LABEL
+  /TABLE Sykehus [C][COUNT F40.0] BY KvalindBLÆREteller
+  /CATEGORIES VARIABLES=Sykehus ORDER=A KEY=VALUE EMPTY=INCLUDE TOTAL=YES POSITION=AFTER
+  /CATEGORIES VARIABLES=KvalindBLÆREteller ORDER=A KEY=VALUE EMPTY=EXCLUDE.
+
+*************************************************************************************************************************************************
+***************************2015-tall - grunnlag til figurer ************************************************************************************
+*************************************************************************************************************************************************.
+
+**Her brukes data fra skjema Nedre urinveier. Inkluderer bare skjema for undersøkelser maks to uker før utskrivningsdato. Manuell gjennomgang. 
+*Følgende SkjemaGUID ble ekskludert fra grunnlagsmateriale på bakgrunn av denne regelen: c3ae4622-a5ba-4bb8-ab5b-a1ad6eed56b6; 588393d1-6768-4633-8119-b12114b9acf4; 01873e88-dbca-4d02-95cd-d4e0629d1e08.
+FREQUENCIES VARIABLES=EmbladM1 EmbladM2 EmbladM3 EmbladM4 EmbladM5 EmbladM6 EmbladM7 EmbladM8 
+    EmbladM9 EmbladM10 EmbladM11 EmbladM12
+  /ORDER=ANALYSIS.
+
+COMPUTE Vannlating_hovedmetode=0.
+IF( EmbladM1 ='SANN') Vannlating_hovedmetode = 1.
+IF (EmbladM2='SANN') Vannlating_hovedmetode = 2.
+IF (EmbladM3='SANN') Vannlating_hovedmetode = 3.
+IF (EmbladM4='SANN') Vannlating_hovedmetode = 4.
+IF (EmbladM5='SANN') Vannlating_hovedmetode = 5.
+IF (EmbladM6='SANN') Vannlating_hovedmetode = 6.
+IF (EmbladM7='SANN') Vannlating_hovedmetode = 7.
+IF (EmbladM8='SANN') Vannlating_hovedmetode = 8.
+IF (EmbladM9='SANN') Vannlating_hovedmetode = 9.
+IF (EmbladM10='SANN') Vannlating_hovedmetode = 10.
+IF (EmbladM11='SANN') Vannlating_hovedmetode = 11.
+IF (EmbladM12='SANN') Vannlating_hovedmetode = 12.
+IF (EmbladUN='SANN') Vannlating_hovedmetode = 13.
+EXECUTE.
+
+VALUE LABELS Vannlating_hovedmetode
+1 'Normal vannlating'
+2 'Trigge/utløse tømmerefleks - Viljestyrt (banking, kløing, anal tøying osv)'
+3 'Trigge/utløse tømmerefleks - Ufrivillig'
+4 'Blæretømming ved utvendig trykk/press - Pressing (bukpress, Valsalva-manøver)'
+5 'Blæretømming ved utvendig trykk/press - Ekstern kompresjon (Credes håndgrep)'
+6 'Intermitterende kateterisering - Selvkateterisering'
+7 'Intermitterende kateterisering - Kateterisering utført av medhjelper'
+8 'Permanent kateter - Transuteralt'
+9 'Permanent kateter - Suprapubisk'
+10 'Sakral nervestimulering'
+11 'Ikke-kontinent urinavledning/urostomi'
+12 'Annen metide, spesifiser'
+13 'Ukjent hovedmetode'.
+
+FREQUENCIES VARIABLES=Vannlating_hovedmetode.
+
+*Denne varianten ble ikke brukt likevel pga fordeling og argument om å følge ISCOS-oppsett.
+
+*COMPUTE Vannlating_hovedmetode_SekundærS6=0.
+*IF( EmbladM1 ='SANN') AND (EmbladS6='SANN') Vannlating_hovedmetode_SekundærS6 = 1.
+*IF( EmbladM1 ='SANN') AND (EmbladS6='USANN') Vannlating_hovedmetode_SekundærS6 = 2.
+*IF (EmbladM2='SANN') Vannlating_hovedmetode_SekundærS6 = 3.
+*IF (EmbladM3='SANN') Vannlating_hovedmetode_SekundærS6 = 4.
+*IF (EmbladM4='SANN') Vannlating_hovedmetode_SekundærS6 = 5.
+*IF (EmbladM5='SANN') Vannlating_hovedmetode_SekundærS6 = 6.
+*IF (EmbladM6='SANN') Vannlating_hovedmetode_SekundærS6 = 7.
+*IF (EmbladM7='SANN') Vannlating_hovedmetode_SekundærS6 = 8.
+*IF (EmbladM8='SANN') Vannlating_hovedmetode_SekundærS6 = 9.
+*IF (EmbladM9='SANN') Vannlating_hovedmetode_SekundærS6 = 10.
+*IF (EmbladM10='SANN') Vannlating_hovedmetode_SekundærS6 = 11.
+*IF (EmbladM11='SANN') Vannlating_hovedmetode_SekundærS6 = 12.
+*IF (EmbladM12='SANN') Vannlating_hovedmetode_SekundærS6 = 13.
+*IF (EmbladUN='SANN') Vannlating_hovedmetode_SekundærS6 = 14.
+*EXECUTE.
+
+*VALUE LABELS Vannlating_hovedmetode_SekundærS6
+1 'Normal vannlating - Intermitterende katetrisering som tilleggsmetode'
+2 'Normal vannlating - Ikke intermitterende katetrisering som tilleggsmetode'
+3 'Trigge/utløse tømmerefleks - Viljestyrt (banking, kløing, anal tøying osv)'
+4 'Trigge/utløse tømmerefleks - Ufrivillig'
+5 'Blæretømming ved utvendig trykk/press - Pressing (bukpress, Valsalva-manøver)'
+6 'Blæretømming ved utvendig trykk/press - Ekstern kompresjon (Credes håndgrep)'
+7 'Intermitterende kateterisering - Selvkateterisering'
+8 'Intermitterende kateterisering - Kateterisering utført av medhjelper'
+9 'Permanent kateter - Transuteralt'
+10 'Permanent kateter - Suprapubisk'
+11 'Sakral nervestimulering'
+12 'Ikke-kontinent urinavledning/urostomi'
+13 'Annen metode, spesifiser'
+14 'Ukjent hovedmetode'.
+
+*FREQUENCIES VARIABLES=Vannlating_hovedmetode_SekundærS6.
+*FREQUENCIES EmbladS6.
+
+*Filtrerer bort de som ikke har nevrologisk undersøkelse.
+*DATASET ACTIVATE NEdre_urinveier.
+*USE ALL.
+*COMPUTE filter_$=(ANeuExmDt ~= ' ').
+*VARIABLE LABELS filter_$ "ANeuExmDt ~= ' ' (FILTER)".
+*VALUE LABELS filter_$ 0 'Not Selected' 1 'Selected'.
+*FORMATS filter_$ (f1.0).
+*FILTER BY filter_$.
+*EXECUTE.
+
+
+* Custom Tables.
+*CTABLES
+  /VLABELS VARIABLES=Vannlating_hovedmetode_SekundærS6 Tetraplegi DISPLAY=LABEL
+  /TABLE Vannlating_hovedmetode_SekundærS6 [C][COUNT F40.0, UCOUNT F40.0, LAYERPCT.COUNT PCT40.1] BY 
+    Tetraplegi [C]
+  /CATEGORIES VARIABLES=Vannlating_hovedmetode_SekundærS6 ORDER=A KEY=VALUE EMPTY=INCLUDE TOTAL=YES 
+    POSITION=AFTER
+  /CATEGORIES VARIABLES=Tetraplegi ORDER=A KEY=VALUE EMPTY=INCLUDE.
+
+***********************************************************************************************************************************************.
+Aais og Fais - ASIA Impairmentscale ved innleggelse ut utskrivelse.
+***********************************************************************************************************************************************.
+FREQUENCIES Aais.
+
+VALUE LABELS Aais
+-1 'Velg verdi'
+1 'A Komplett skade'
+2 'B Inkomplett'
+3 'C Inkomplett'
+4 'D Inkomplett'
+5 'E Normal'
+9 'Ukjent eller ikke anvendbar'.
+
+FREQUENCIES Aais.
+
+FREQUENCIES Fais.
+
+VALUE LABELS Fais
+-1 'Velg verdi'
+1 'A Komplett skade'
+2 'B Inkomplett'
+3 'C Inkomplett'
+4 'D Inkomplett'
+5 'E Normal'
+9 'Ukjent eller ikke anvendbar'.
+
+FREQUENCIES Fais.
+***********************************************************************************************************************************************.
+****************************************No control reason**********************************************************************************.
+
+FREQUENCIES NoControl NoControlReason.
+
+VALUE LABELS NoControlReason
+-1 'Velg verdi'
+1 'Pasienten er død'
+2 'Pasienten er ikke interessert i videre oppfølging'
+3 'Pasienten ønsker å utsette kontroll'
+4 'Avdelingen har ikke kapasitet'
+5 'Det har ikke vært kontakt mellom ryggmargsskadeavdelingen og pasient/primærhelsetjeneste'
+6 'Ukjent'
+7 'Annet'.
+
+**********************************************************************************************************************************************************************************************
+***********************Figurer og informasjon om Skadeårsak for kvinner og menn.*****************************************
+**********************************************************************************************************************************************************************************************.
+COMPUTE Skadearsak=Scietiol.
+EXECUTE.
+FREQUENCIES Skadearsak.
+
+VALUE LABELS Skadearsak
+	1 'Idrett'
+	2 'Vold'
+	3 'Transport'
+	4 'Fall'
+	5 'Andre traumer'
+	6 'Ikke-traumatisk' 
+	9 'Uspesifisert'.
+
+CTABLES
+  /VLABELS VARIABLES=Skadearsak PatientGender DISPLAY=LABEL
+  /TABLE Skadearsak [C][COUNT F40.0] BY PatientGender [C]
+  /CATEGORIES VARIABLES=Skadearsak ORDER=A KEY=VALUE EMPTY=INCLUDE TOTAL=YES POSITION=AFTER
+  /CATEGORIES VARIABLES=PatientGender ORDER=A KEY=VALUE EMPTY=EXCLUDE TOTAL=YES POSITION=AFTER.
+
+**********************************************************************************************************************************************************************************************
+***********************Figurer og informasjon om Utskrevet til per sykehus.*****************************************
+**********************************************************************************************************************************************************************************************.
+FREQUENCIES PlaceDis.
+
+COMPUTE UtskrevetTil = PlaceDis.
+EXECUTE.
+
+VALUE LABELS UtskrevetTil
+1 'Hjem'
+2 'Sykehus'
+3 'Pleiehjem'
+4 'Omsorgsbolig'
+5 'Bofellesskap'
+6 'Kriminalomsorg'
+7 'Hotell eller motell'
+8 'Bostedsløs'
+9 'Avdød'
+10 'Annet, uspesifisert'
+99 'Ukjent'.
+
+FREQUENCIES UtskrevetTil.
+
+
+* Custom Tables.
+CTABLES
+  /VLABELS VARIABLES=UtskrevetTil Sykehus DISPLAY=LABEL
+  /TABLE UtskrevetTil [C][COUNT F40.0] BY Sykehus [C]
+  /CATEGORIES VARIABLES=UtskrevetTil ORDER=A KEY=VALUE EMPTY=INCLUDE TOTAL=YES POSITION=AFTER
+  /CATEGORIES VARIABLES=Sykehus ORDER=A KEY=VALUE EMPTY=INCLUDE.
+
+
+
+**********************************************************************************************************************************************************************************************
+***********************Antall døgn innlagt på sykehus/etter skadeårsak.*****************************************
+**********************************************************************************************************************************************************************************************.
+FREQUENCIES VARIABLES=HosptlDy
+  /STATISTICS=STDDEV MINIMUM MAXIMUM MEAN MEDIAN
+  /ORDER=ANALYSIS.
+
+RECODE HosptlDy (0 thru 30=1) (31 thru 60=2) (61 thru 90=3) (91 thru 120=4) (121 thru 150=5) (151 thru 180=6) (181 thru 210=7) (211 thru 240=8) (241 thru 1000=9)  Into LOSgruppe.
+VALUE LABELS LOSgruppe
+1 '0-30'
+2 '31-60'
+3 '61-90'
+4 '91-120'
+5 '121-150' 
+6 '151-180'
+7 '181-210'
+8 '211-240'
+9 '241+'.
+VARIABLE LABELS LOSgruppe 'Antall døgn innlagt på sykehus'.
+
+*Fordeling totalt.
+FREQUENCIES VARIABLES=HosptlDy
+  /STATISTICS=STDDEV MINIMUM MAXIMUM MEAN MEDIAN
+  /ORDER=ANALYSIS.
+
+*Fordeling etter skadeårsak.
+CTABLES
+  /VLABELS VARIABLES=LOSgruppe TRAUME DISPLAY=LABEL
+  /TABLE LOSgruppe [COUNT F40.0] BY TRAUME
+  /CATEGORIES VARIABLES=LOSgruppe ORDER=A KEY=VALUE EMPTY=INCLUDE TOTAL=YES POSITION=AFTER
+  /CATEGORIES VARIABLES=TRAUME ORDER=A KEY=VALUE EMPTY=INCLUDE.
+
+
+
+***************For kobling av skjema.
+***Hovedskjema.
+SORT CASES BY SkjemaGUID(A).
+rename variables SkjemaGUID = nokkel_skjema.
+
+***Kontrollskjema.
+SORT CASES BY HovedskjemaGUID(A).
+rename variables HovedskjemaGUID = nokkel_skjema.
+
+
+
+******************LIVSKVALITET*********************.
+USE ALL.
+*Gjør livskvalitetsdato.
+STRING d_livskvalitet(A2).
+STRING m_livskvalitet (A2).
+STRING y_livskvalitet (A4).
+
+COMPUTE d_livskvalitet=CHAR.SUBSTR(QolDt, 1,2).
+COMPUTE m_livskvalitet=CHAR.SUBSTR(QolDt, 4,2).
+COMPUTE y_livskvalitet=CHAR.SUBSTR(QolDt, 7,4).
+
+COMPUTE dn=numeric(d_livskvalitet, f4.0).
+COMPUTE mn=numeric(m_livskvalitet, f4.0).
+COMPUTE yn=numeric(y_livskvalitet, f4.0).
+
+COMPUTE livskvalitet_dato=DATE.DMY(dn,mn,yn).
+FORMATS livskvalitet_dato (date11).
+EXECUTE.
+
+DELETE VARIABLES dn mn yn y_livskvalitet m_livskvalitet d_livskvalitet.
+
+*Gjør tilsvarende for utskrivningsdato.
+STRING d_utskrivning(A2).
+STRING m_utskrivning (A2).
+STRING y_utskrivning (A4).
+
+COMPUTE d_utskrivning=CHAR.SUBSTR(DischgDt, 1,2).
+COMPUTE m_utskrivning=CHAR.SUBSTR(DischgDt, 4,2).
+COMPUTE y_utskrivning=CHAR.SUBSTR(DischgDt, 7,4).
+
+COMPUTE dn=numeric(d_utskrivning, f4.0).
+COMPUTE mn=numeric(m_utskrivning, f4.0).
+COMPUTE yn=numeric(y_utskrivning, f4.0).
+
+COMPUTE utskrivning_dato=DATE.DMY(dn,mn,yn).
+FORMATS utskrivning_dato (date11).
+EXECUTE.
+
+DELETE VARIABLES dn mn yn y_utskrivning m_utskrivning d_utskrivning.
+
+NUMERIC PrimSkjema (F1).
+COMPUTE PrimSkjema=0.
+IF (livskvalitet_dato <= utskrivning_dato) PrimSkjema=1.
+EXECUTE.
+VALUE LABELS PrimSkjema
+0 'Ikke aktuelt livskvalitetsskjema'
+1 'Primært livskvalitetsskjema'.
+
+*Filtrere bort de som har "Livskvalitetsskjema utenfor primæropphold".
+USE ALL.
+COMPUTE filter_$=(PrimSkjema = 1).
+VARIABLE LABELS filter_$ 'PrimSkjema = 1 (FILTER)'.
+VALUE LABELS filter_$ 0 'Not Selected' 1 'Livskvalitetskjema under primæropphold'.
+FORMATS filter_$ (f1.0).
+FILTER BY filter_$.
+EXECUTE.
+
+MEANS TABLES=SatGenrl SatPhys SatPsych BY Sykehus
+  /CELLS=MEAN COUNT.
+
+MEANS TABLES=SatGenrl SatPhys SatPsych BY Aldersgruppe3
+  /CELLS=MEAN COUNT.
+
+MEANS TABLES=SatGenrl SatPhys SatPsych BY PatientGender
+  /CELLS=MEAN COUNT.
+
+MEANS TABLES=SatGenrl SatPhys SatPsych BY Tetraplegi
+  /CELLS=MEAN COUNT.
+
+MEANS TABLES=SatGenrl SatPhys SatPsych BY ATRAUMATISK
+  /CELLS=MEAN COUNT.
+
+************Antyde gjennomsnitt****************.
+****************************************************.
+* "Antyde gjennomsnitt".
+CTABLES
+  /VLABELS VARIABLES=Sykehus ATRAUMATISK RehabDy DISPLAY=LABEL
+  /TABLE Sykehus [C] BY ATRAUMATISK [C] > RehabDy [S][COUNT F40.0,MEAN, TOTALN F40.0, MEDIAN, 
+    RANGE, MINIMUM, MAXIMUM]
+  /CATEGORIES VARIABLES=Sykehus ATRAUMATISK ORDER=A KEY=VALUE EMPTY=INCLUDE.
+
+
+***************************************
+***********test tidsvariabler*********.
+
+
+*Gjør AdmitRehDt.
+STRING d_AdmitRehDt(A2).
+STRING m_AdmitRehDt (A2).
+STRING y_AdmitRehDt (A4).
+
+COMPUTE d_AdmitRehDt=CHAR.SUBSTR(AdmitRehDt, 1,2).
+COMPUTE m_AdmitRehDt=CHAR.SUBSTR(AdmitRehDt, 4,2).
+COMPUTE y_AdmitRehDt=CHAR.SUBSTR(AdmitRehDt, 7,4).
+
+COMPUTE dn=numeric(d_AdmitRehDt, f4.0).
+COMPUTE mn=numeric(m_AdmitRehDt, f4.0).
+COMPUTE yn=numeric(y_AdmitRehDt, f4.0).
+
+COMPUTE AdmitRehDt_dato=DATE.DMY(dn,mn,yn).
+FORMATS AdmitRehDt_dato (date11).
+EXECUTE.
+
+DELETE VARIABLES dn mn yn y_AdmitRehDt m_AdmitRehDt d_AdmitRehDt.
+
+*Gjør tilsvarende for akuttinnleggelse.
+STRING d_AdmitDt(A2).
+STRING m_AdmitDt (A2).
+STRING y_AdmitDt (A4).
+
+COMPUTE d_AdmitDt=CHAR.SUBSTR(AdmitDt, 1,2).
+COMPUTE m_AdmitDt=CHAR.SUBSTR(AdmitDt, 4,2).
+COMPUTE y_AdmitDt=CHAR.SUBSTR(AdmitDt, 7,4).
+
+COMPUTE dn=numeric(d_AdmitDt, f4.0).
+COMPUTE mn=numeric(m_AdmitDt, f4.0).
+COMPUTE yn=numeric(y_AdmitDt, f4.0).
+
+COMPUTE AdmitDt_dato=DATE.DMY(dn,mn,yn).
+FORMATS AdmitDt_dato (date11).
+EXECUTE.
+
+DELETE VARIABLES dn mn yn y_AdmitDt m_AdmitDt d_AdmitDt.
+
+Compute BeforeRehDyTest = DATEDIFF ( AdmitRehDt_dato,AdmitDt_dato, 'days').
+Execute.
+
+****DischgDt.
+
+STRING d_DischgDt (A2).
+STRING m_DischgDt (A2).
+STRING y_DischgDt (A4).
+
+COMPUTE d_DischgDt=CHAR.SUBSTR(DischgDt, 1,2).
+COMPUTE m_DischgDt=CHAR.SUBSTR(DischgDt, 4,2).
+COMPUTE y_DischgDt=CHAR.SUBSTR(DischgDt, 7,4).
+
+COMPUTE dn=numeric(d_DischgDt, f4.0).
+COMPUTE mn=numeric(m_DischgDt, f4.0).
+COMPUTE yn=numeric(y_DischgDt, f4.0).
+
+COMPUTE DischgDt_dato=DATE.DMY(dn,mn,yn).
+FORMATS DischgDt_dato (date11).
+EXECUTE.
+
+DELETE VARIABLES dn mn yn y_DischgDt m_DischgDt d_DischgDt.
+
+Compute HosptlDyTest = DATEDIFF ( DischgDt_dato,AdmitDt_dato, 'days').
+Execute.
+
+Compute HosptlDyTestEksPerm = HosptlDyTest-OutOfRehabDy-OutOfHosptlDy2.
+Execute.
+
+
+
+
+
+
+
+

@@ -2,7 +2,7 @@
 % Please edit documentation in R/NSRegDataSQL.R
 \name{NSRegDataSQL}
 \alias{NSRegDataSQL}
-\title{Provide global dataframe for NorScir}
+\title{Henter data for NordicScir fra  staging}
 \usage{
 NSRegDataSQL()
 }
@@ -10,5 +10,15 @@ NSRegDataSQL()
 RegData data frame
 }
 \description{
-Provides NorScir data from staging
+Spørring som henter og kobler sammen data fra ulike skjema i NordicScir
+}
+\details{
+Aktuelle skjema: 
+ActivityAndParticipationPerformanceFormDataContract: Aktivitetsfunksjon
+ActivityAndParticipationSatisfactionFormDataContract: Aktivitetsfornøydhet
+BowelFunctionFormDataContract: Tarmfunksjon (?)
+ControlFormDataContract: Kontroll. Noen variable er oppfølging av målinger i hovedskjema
+LifeQualityFormDataContract: Livskvalitet
+MainFormDataContract: HOVEDSKJEMA
+UrinaryTractFunctionFormDataContract: Urinfunksjon
 }

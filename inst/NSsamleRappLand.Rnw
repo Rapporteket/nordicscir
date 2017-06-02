@@ -184,8 +184,7 @@ utvalg <- switch(hvem,
 	BehDager <- NSdata$OpphTot[utvalg]
 	RehabDager <- NSdata$DagerRehab[utvalg]
 	Ventetid <- NSdata$DagerTilRehab[utvalg]
-	Permisjon <- NSdata$Permisjon[intersect(utvalg,which(NSdata$Permisjon>0))]
-
+	
 #if (sum(RehabDager>0, na.rm=T)>0 ) {
 
 	VerdiOmr <- rbind('Alder' = c(round(c(median(Alder), mean(Alder), sd(Alder))),
@@ -201,11 +200,7 @@ utvalg <- switch(hvem,
 		'Dager til rehabilitering' = c(round(c(mean(Ventetid, na.rm=T), median(Ventetid, na.rm=T),
 			sd(Ventetid, na.rm=T))),
 			paste('[',min(Ventetid, na.rm=T), ', ' ,max(Ventetid, na.rm=T), ']', sep=''),
-			sum(Ventetid>=0, na.rm=T)),
-		'Dager i permisjon (>0)' = c(round(c(mean(Permisjon, na.rm=T), median(Permisjon, na.rm=T),
-			sd(Permisjon, na.rm=T))),
-			paste('[',min(Permisjon, na.rm=T), ', ' ,max(Permisjon, na.rm=T), ']', sep=''),
-			sum(Permisjon>0, na.rm=T))
+			sum(Ventetid>=0, na.rm=T))
 		)
 
 #	} else {
@@ -312,9 +307,9 @@ av data til figurene.
 	(figurene \ref{fig:DagerTilRehab} og \ref{fig:DagerRehab} )
 	avvike fra total liggetid (figur \ref{fig:OpphTot}).
 
-	\item [Middelverdier] Figurene \ref{fig:AlderGjsn} - \ref{fig:DagerTilRehabMed}
+	\item [Middelverdier] Figurene \ref{fig:Aldergjsn} - \ref{fig:DagerTilRehabMed}
 	viser median/middelverdi m/konfidensintervall
-	for variablene: Alder, dager rehab, tid innleggelse-rehab, permisjon (for permisjon $>0$) og liggedøgn.
+	for variablene: Alder, dager rehab, tid innleggelse-rehab og liggedøgn.
 	Her vises resultat for alle tre sykehus sammenlignet med totalen for hele landet.
 \end{itemize}
 
@@ -330,14 +325,12 @@ dum <- NSFigAndeler(NSdata, preprosess=0, valgtVar='DagerTilRehab', outfile='Fig
 		datoFra=datoFra, datoTil=datoTil, traume=traume, enhetsUtvalg=0, reshID=reshID, hentData=0)
 dum <- NSFigAndeler(NSdata, preprosess=0, valgtVar='DagerRehab', outfile='FigDagerRehab.pdf',
 		datoFra=datoFra, datoTil=datoTil, traume=traume, enhetsUtvalg=0, reshID=reshID, hentData=0)
-dum <- NSFigAndeler(NSdata, preprosess=0, valgtVar='Permisjon', outfile='FigPermisjon.pdf',
-		datoFra=datoFra, datoTil=datoTil, traume=traume, enhetsUtvalg=0, reshID=reshID, hentData=0)
 dum <- NSFigAndeler(NSdata, preprosess=0, valgtVar='UtTil', outfile='FigUtTil.pdf',
 		datoFra=datoFra, datoTil=datoTil, traume=traume, enhetsUtvalg=0, reshID=reshID, hentData=0)
 dum <- NSFigAndeler(NSdata, preprosess=0, valgtVar='SkadeArsak', outfile='FigSkadeArsak.pdf',
 		datoFra=datoFra, datoTil=datoTil, traume=traume, enhetsUtvalg=0, reshID=reshID, hentData=0)
-dum <- NSFigAndeler(NSdata, preprosess=0, valgtVar='Pustehjelp', outfile='FigPustehjelp.pdf',
-		datoFra=datoFra, datoTil=datoTil, traume=traume, enhetsUtvalg=0, reshID=reshID, hentData=0)
+#dum <- NSFigAndeler(NSdata, preprosess=0, valgtVar='Pustehjelp', outfile='FigPustehjelp.pdf',
+#		datoFra=datoFra, datoTil=datoTil, traume=traume, enhetsUtvalg=0, reshID=reshID, hentData=0)
 dum <- NSFigAndeler(NSdata, preprosess=0, valgtVar='AAis', outfile='FigAISinn.pdf',
 		datoFra=datoFra, datoTil=datoTil, traume=traume, enhetsUtvalg=0, reshID=reshID, hentData=0)
 dum <- 	NSFigAndeler(NSdata, preprosess=0, valgtVar='FAis', outfile='FigAISut.pdf',
@@ -371,11 +364,6 @@ dum <- 	NSFigAndeler(NSdata, preprosess=0, valgtVar='FAis', outfile='FigAISut.pd
 \end{figure}
 
 \begin{figure}[ht]
- \centerline{ \scalebox{\Sexpr{s1}}{\includegraphics{FigPermisjon.pdf}}  }
- \caption{\label{fig:Permisjon} Antall døgn ute av sykehus.}
-\end{figure}
-
-\begin{figure}[ht]
  \centerline{ \scalebox{\Sexpr{s1}}{\includegraphics{FigUtTil.pdf}}  }
  \caption{\label{fig:UtTil} Til hvor pasientene skrives ut.}
 \end{figure}
@@ -385,10 +373,10 @@ dum <- 	NSFigAndeler(NSdata, preprosess=0, valgtVar='FAis', outfile='FigAISut.pd
  \caption{\label{fig:SkadeArsak} Skadeårsak.}
 \end{figure}
 
-\begin{figure}[ht]
- \centerline{ \scalebox{\Sexpr{s1}}{\includegraphics{FigPustehjelp.pdf}}  }
- \caption{\label{fig:Pustehjelp} Ventilasjonsstøtte.}
-\end{figure}
+%\begin{figure}[ht]
+% \centerline{ \scalebox{\Sexpr{s1}}{\includegraphics{FigPustehjelp.pdf}}  }
+% \caption{\label{fig:Pustehjelp} Ventilasjonsstøtte.}
+%\end{figure}
 
 \begin{figure}[ht]
  \centerline{ \scalebox{\Sexpr{s1}}{\includegraphics{FigAISinn.pdf}}  }
@@ -406,33 +394,29 @@ dum <- 	NSFigAndeler(NSdata, preprosess=0, valgtVar='FAis', outfile='FigAISut.pd
 
 
 <<Figurer2, echo=FALSE, message=FALSE>>=
-dum <- 	NSFigGjsnGrVar(NSdata, preprosess=0, valgtVar='Alder', outfile='FigAlderGjsn.pdf',
-		datoFra=datoFra, datoTil=datoTil, valgtMaal='', erMann=erMann, traume=traume, hentData=0)
+dum <- 	NSFigGjsnGrVar(NSdata, preprosess=0, valgtVar='Alder', outfile='FigAldergjsn.pdf',
+		datoFra=datoFra, datoTil=datoTil, valgtMaal='gjsn', erMann=erMann, traume=traume, hentData=0)
 dum <- 	NSFigGjsnGrVar(NSdata, preprosess=0, valgtVar='Alder', outfile='FigAlderMed.pdf',
-		datoFra=datoFra, datoTil=datoTil, valgtMaal='Med', erMann=erMann, traume=traume, hentData=0)
-dum <- NSFigGjsnGrVar(NSdata, preprosess=0, valgtVar='DagerRehab', outfile='FigDagerRehabGjsn.pdf',
-		datoFra=datoFra, datoTil=datoTil, valgtMaal='', erMann=erMann, traume=traume, hentData=0)
+		datoFra=datoFra, datoTil=datoTil, valgtMaal='med', erMann=erMann, traume=traume, hentData=0)
+dum <- NSFigGjsnGrVar(NSdata, preprosess=0, valgtVar='DagerRehab', outfile='FigDagerRehabgjsn.pdf',
+		datoFra=datoFra, datoTil=datoTil, valgtMaal='gjsn', erMann=erMann, traume=traume, hentData=0)
 dum <- NSFigGjsnGrVar(NSdata, preprosess=0, valgtVar='DagerRehab', outfile='FigDagerRehabMed.pdf',
-		datoFra=datoFra, datoTil=datoTil, valgtMaal='Med', erMann=erMann, traume=traume, hentData=0)
-dum <- NSFigGjsnGrVar(NSdata, preprosess=0, valgtVar='DagerTilRehab', outfile='FigDagerTilRehabGjsn.pdf',
-		datoFra=datoFra, datoTil=datoTil, valgtMaal='', erMann=erMann, traume=traume, hentData=0)
+		datoFra=datoFra, datoTil=datoTil, valgtMaal='med', erMann=erMann, traume=traume, hentData=0)
+dum <- NSFigGjsnGrVar(NSdata, preprosess=0, valgtVar='DagerTilRehab', outfile='FigDagerTilRehabgjsn.pdf',
+		datoFra=datoFra, datoTil=datoTil, valgtMaal='gjsn', erMann=erMann, traume=traume, hentData=0)
 dum <- NSFigGjsnGrVar(NSdata, preprosess=0, valgtVar='DagerTilRehab', outfile='FigDagerTilRehabMed.pdf',
-		datoFra=datoFra, datoTil=datoTil, valgtMaal='Med', erMann=erMann, traume=traume, hentData=0)
-dum <- NSFigGjsnGrVar(NSdata, preprosess=0, valgtVar='Permisjon', outfile='FigPermisjonGjSn.pdf',
-		datoFra=datoFra, datoTil=datoTil, valgtMaal='', erMann=erMann, traume=traume, hentData=0)
-dum <- NSFigGjsnGrVar(NSdata, preprosess=0, valgtVar='Permisjon', outfile='FigPermisjonMed.pdf',
-		datoFra=datoFra, datoTil=datoTil, valgtMaal='Med', erMann=erMann, traume=traume, hentData=0)
-dum <- NSFigGjsnGrVar(NSdata, preprosess=0, valgtVar='OpphTot', outfile='FigOpphTotGjsn.pdf',
-		datoFra=datoFra, datoTil=datoTil, valgtMaal='', erMann=erMann, traume=traume, hentData=0)
+		datoFra=datoFra, datoTil=datoTil, valgtMaal='med', erMann=erMann, traume=traume, hentData=0)
+dum <- NSFigGjsnGrVar(NSdata, preprosess=0, valgtVar='OpphTot', outfile='FigOpphTotgjsn.pdf',
+		datoFra=datoFra, datoTil=datoTil, valgtMaal='gjsn', erMann=erMann, traume=traume, hentData=0)
 dum <- NSFigGjsnGrVar(NSdata, preprosess=0, valgtVar='OpphTot', outfile='FigOpphTotMed.pdf',
-		datoFra=datoFra, datoTil=datoTil, valgtMaal='Med', erMann=erMann, traume=traume, hentData=0)
+		datoFra=datoFra, datoTil=datoTil, valgtMaal='med', erMann=erMann, traume=traume, hentData=0)
 
 @
 
 
 \begin{figure}[ht]
- \centerline{ \scalebox{\Sexpr{s1}}{\includegraphics{FigAlderGjsn.pdf}}  }
- \caption{\label{fig:AlderGjsn} Gjennomsnittlig alder, totalt og ved hvert sykehus.}
+ \centerline{ \scalebox{\Sexpr{s1}}{\includegraphics{FigAldergjsn.pdf}}  }
+ \caption{\label{fig:Aldergjsn} Gjennomsnittlig alder, totalt og ved hvert sykehus.}
 \end{figure}
 
 \begin{figure}[ht]
@@ -441,8 +425,8 @@ dum <- NSFigGjsnGrVar(NSdata, preprosess=0, valgtVar='OpphTot', outfile='FigOpph
 \end{figure}
 
 \begin{figure}[ht]
- \centerline{ \scalebox{\Sexpr{s1}}{\includegraphics{FigDagerRehabGjsn.pdf}}  }
- \caption{\label{fig:DagerRehabGjsn} Gjennomsnittlig antall dager med rehabilitering, totalt og ved hvert sykehus.}
+ \centerline{ \scalebox{\Sexpr{s1}}{\includegraphics{FigDagerRehabgjsn.pdf}}  }
+ \caption{\label{fig:DagerRehabgjsn} Gjennomsnittlig antall dager med rehabilitering, totalt og ved hvert sykehus.}
 \end{figure}
 
 \begin{figure}[ht]
@@ -451,8 +435,8 @@ dum <- NSFigGjsnGrVar(NSdata, preprosess=0, valgtVar='OpphTot', outfile='FigOpph
 \end{figure}
 
 \begin{figure}[ht]
- \centerline{ \scalebox{\Sexpr{s1}}{\includegraphics{FigDagerTilRehabGjsn.pdf}}  }
- \caption{\label{fig:DagerTilRehabGjsn} Gjennomsnittlig antall dager før rehabilitering, totalt og ved hvert sykehus.}
+ \centerline{ \scalebox{\Sexpr{s1}}{\includegraphics{FigDagerTilRehabgjsn.pdf}}  }
+ \caption{\label{fig:DagerTilRehabgjsn} Gjennomsnittlig antall dager før rehabilitering, totalt og ved hvert sykehus.}
 \end{figure}
 
 \begin{figure}[ht]
@@ -461,18 +445,8 @@ dum <- NSFigGjsnGrVar(NSdata, preprosess=0, valgtVar='OpphTot', outfile='FigOpph
 \end{figure}
 
 \begin{figure}[ht]
- \centerline{ \scalebox{\Sexpr{s1}}{\includegraphics{FigPermisjonGjSn.pdf}}  }
- \caption{\label{fig:PermisjonGjsn} Gjennomsnittlig antall døgn ute av sykehus, totalt og ved hvert sykehus.}
-\end{figure}
-
-\begin{figure}[ht]
- \centerline{ \scalebox{\Sexpr{s1}}{\includegraphics{FigPermisjonMed.pdf}}  }
- \caption{\label{fig:PermisjonMed} Median antall døgn ute av sykehus, totalt og ved hvert sykehus.}
-\end{figure}
-
-\begin{figure}[ht]
- \centerline{ \scalebox{\Sexpr{s1}}{\includegraphics{FigOpphTotGjsn.pdf}}  }
- \caption{\label{fig:OpphTotGjsn} Gjennomsnittlig antall dager i behandling, totalt og ved hvert sykehus.}
+ \centerline{ \scalebox{\Sexpr{s1}}{\includegraphics{FigOpphTotgjsn.pdf}}  }
+ \caption{\label{fig:OpphTotgjsn} Gjennomsnittlig antall dager i behandling, totalt og ved hvert sykehus.}
 \end{figure}
 
 \begin{figure}[ht]

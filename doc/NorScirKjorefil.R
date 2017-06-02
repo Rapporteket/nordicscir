@@ -17,45 +17,10 @@ NorScirEksData$AlderAar <- NorScirEksData$AlderAar[sample(N,N)]
 save(NorScirEksData, file='E:/Registre/NordicScir/data/NorScirEksData.Rdata')
 #write.table(NorScirEksData, file='E:/Registre/NordicScir/data/NorScirEksData.csv', sep=';')
 
-#------------------------Teste data-------------------------------------
-HovedSkjema <- read.table('C:/Registre/NordicScir/data/MainFormDataContract2017-02-13.csv', sep=';', header=T)
-Livskvalitet <- read.table('C:/Registre/NordicScir/data/LifeQualityFormDataContract2017-02-13.csv', sep=';', header=T)
-Kontroll <- read.table('C:/Registre/NordicScir/data/ControlFormDataContract2017-02-13.csv', sep=';', header=T)
-Bowel <- read.table('C:/Registre/NordicScir/data/BowelFunctionFormDataContract2017-02-13.csv', sep=';', header=T)
-Fornoyd <- read.table('C:/Registre/NordicScir/data/ActivityAndParticipationSatisfactionFormDataContract2017-02-13.csv', sep=';', header=T)
-Performance <- read.table('C:/Registre/NordicScir/data/ActivityAndParticipationPerformanceFormDataContract2017-02-13.csv', sep=';', header=T)
-
-#Sjekk for hvilke variabelnavn som finnes i begge datasett
-varBegge <- intersect(names(Livskvalitet),names(HovedSkjema))
-Livskvalitet <- Livskvalitet[ ,c("HovedskjemaGUID", names(Livskvalitet)[!(names(Livskvalitet) %in% varBegge)])]  #"SkjemaGUID",
-
-HovedSkjema$SkjemaGUID <- tolower(HovedSkjema$SkjemaGUID)
-
-NSdata <- merge(HovedSkjema, Livskvalitet, suffixes = c('','XX'),
-                   by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = F, all.y=F)
-
-#---Oppsummering/test av andel som har fått oppfølging---
-test <- HovedSkjema$SkjemaGUID %in% Livskvalitet$HovedskjemaGUID
-
-tabVar <- c('HealthUnitName','Aar')
-Hskjema <- HovedSkjema[c('SkjemaGUID','HealthUnitName','AdmitDt')][order(HovedSkjema$SkjemaGUID),]
-RaaTab <- cbind(Hskjema,
-      Aar = as.POSIXlt(Hskjema$AdmitDt, format="%Y-%m-%d")$year +1900,
-      MedLivskval = match(Hskjema$SkjemaGUID, sort(Livskvalitet$HovedskjemaGUID)),
-      MedKtr = match(HovedSkjema$SkjemaGUID, sort(Kontroll$HovedskjemaGUID))
-)
-#RaaTab <- RaaTab1[which(as.Date(Hskjema$AdmitDt)> '2014-12-31'),]
-Tot <- table(is.na(RaaTab$MedLivskval))/dim(RaaTab)[1]*100  #'MedKtr'
-AndelLivskval <- round(100*ftable(RaaTab[!is.na(RaaTab$MedLivskval),tabVar])/ftable(RaaTab[,tabVar]),1)
-AndelKtr <- round(100*ftable(RaaTab[!is.na(RaaTab$MedKtr),tabVar])/ftable(RaaTab[,tabVar]),1)
-
-
-
-
 #--------------------------------------SAMLERAPPORT-----------------------------------
 rm(list=ls())
 library(knitr)
-NSdata <- read.table('C:/Registre/NordicScir/data/MainFormDataContract2016-06-08.csv', sep=';', header=T)
+NSdata <- HovedSkjema
 setwd("C:/ResultattjenesteGIT/nordicscir/inst")
 reshID <- 107627	#0 - alle	#105593-Haukeland, 106896-Sunnaas, 107627-St.Olavs
 
@@ -64,95 +29,143 @@ knit('NSsamleRappLand.Rnw')
 texi2pdf('NSsamleRappLand.tex')
 knit('NSsamleRapp.Rnw')
 texi2pdf('NSsamleRapp.tex')
- 
 
-NSurin <- read.table('C:/Registre/NordicScir/data/UrinaryTractFunctionFormDataContract2016-09-21.csv', sep=';', header=T)
 
-#------------------------------ Fordelinger --------------------------
+#------------------------ LASTE DATA -------------------------------------
+
 rm(list=ls())
-NSdata <- read.table('C:/Registre/NordicScir/data/MainFormDataContract2016-06-08.csv', sep=';', header=T)
-RegData <- NSdata
+dato <- 'FormDataContract2017-05-24'
+HovedSkjema <- read.table(paste0('C:/Registre/NordicScir/data/Main',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
+Livskvalitet <- read.table(paste0('C:/Registre/NordicScir/data/LifeQuality',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
+Kontroll <- read.table(paste0('C:/Registre/NordicScir/data/Control',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
+Urin <- read.table(paste0('C:/Registre/NordicScir/data/UrinaryTractFunction',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
+Tarm <- read.table(paste0('C:/Registre/NordicScir/data/BowelFunction',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
+Satisfact <- read.table(paste0('C:/Registre/NordicScir/data/ActivityAndParticipationSatisfaction',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
+Performance <- read.table(paste0('C:/Registre/NordicScir/data/ActivityAndParticipationPerformance',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
 
-setwd("C:/ResultattjenesteGIT/nordicscir/")
-reshID <- 107627             ##105593-Haukeland, 106896-Sunnaas, 107627-St.Olavs, standard i funksj: 0 dvs. 'Alle'. Standard i rapporten skal v?re at man f?r opp eget sykehus.
-enhetsUtvalg <- 1
-minald <- 0
-maxald <- 130
-traume <- ''    #'ja','nei', standard: ikke valgt
-AIS <- '' # as.character(c(1,4))	#c('A','B','U')		#AISgrad ved innleggelse alle(''), velge en eller flere fra A,B,C,D,E,U
-#<defaultValueExpression><![CDATA["all"]]></defaultValueExpression>
-#      </parameter>
-datoFra <- '2011-01-01'             #Standard: b?r v?re minste registrerte verdi ? min og max dato i utvalget vises alltid i figuren.
-datoTil <- '2016-12-31'
-erMann <- 1                      #1-menn, 0-kvinner, Standard: '', dvs. begge
-valgtVar <- 'AAis'	#M? velge... AAis, FAis, Alder, DagerRehab, DagerTilRehab, 
-							#OpphTot[HosptlDy], Permisjon[OutOfHosptlDy], UtTil[PlaceDis], SkadeArsak[Scietiol]  
-							#Pustehjelp[VentAssi]
-outfile <- paste(valgtVar, '.png', sep='')	#Navn angis av Jasper
+HovedSkjema$SkjemaGUID <- tolower(HovedSkjema$SkjemaGUID)
+Performance$SkjemaGUID <- tolower(Performance$SkjemaGUID)
+Kontroll$SkjemaGUID <- tolower(Kontroll$SkjemaGUID)
 
-NSFigAndeler(RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
-		AIS=AIS, minald=minald, maxald=maxald, erMann=erMann, traume=traume, reshID=reshID, 
-      		enhetsUtvalg=enhetsUtvalg, hentData=0)    #, preprosess=1
-	
 
-for (valgtVar in c('AAis', 'FAis', 'Alder', 'DagerRehab', 'DagerTilRehab', 
-				'OpphTot', 'UtTil', 'SkadeArsak', 'Pustehjelp')) {
-	outfile <- paste0(valgtVar, '.png')
-	NSFigAndeler(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
-	             AIS=AIS, minald=minald, maxald=maxald, erMann=erMann, traume=traume, reshID=reshID, 
-	             enhetsUtvalg=enhetsUtvalg, hentData=0)
+KobleMedHoved <- function(HovedSkjema,Skjema2) {
+      varBegge <- intersect(names(Skjema2),names(HovedSkjema)) ##Variabelnavn som finnes i begge datasett
+      Skjema2 <- Skjema2[ ,c("HovedskjemaGUID", names(Skjema2)[!(names(Skjema2) %in% varBegge)])]  #"SkjemaGUID",
+      NSdata <- merge(HovedSkjema, Skjema2, suffixes = c('','XX'),
+                      by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = F, all.y=F)
+return(NSdata)
 }
 
-I_ABC <- which(RegData$AAis %in% c('A','B','C'))
+RegData <- KobleMedHoved(HovedSkjema,Tarm)
 
-#------------------------------ Sentralm?l --------------------------
+#------------------------ TESTE DATA -------------------------------------
+
+#---Oppsummering/test av andel som har fått oppfølging---
+paste0('Ant. Livskvalitet m/hovedskjema: ',sum(HovedSkjema$SkjemaGUID %in% Livskvalitet$HovedskjemaGUID))
+paste0('Ant. Performance m/hovedskjema: ', sum(HovedSkjema$SkjemaGUID %in% Performance$HovedskjemaGUID))
+paste0('Ant. Satisfaction m/Performance: ', sum(Satisfact$HovedskjemaGUID %in% Performance$SkjemaGUID))
+sum(test)
+
+tabVar <- c('HealthUnitName','Aar')
+Hskjema <- HovedSkjema[c('SkjemaGUID','HealthUnitName','AdmitDt')][order(HovedSkjema$SkjemaGUID),]
+RaaTab <- cbind(Hskjema,
+      Aar = as.POSIXlt(Hskjema$AdmitDt, format="%Y-%m-%d")$year +1900,
+      MedLivskval = match(Hskjema$SkjemaGUID, sort(Livskvalitet$HovedskjemaGUID)),
+      MedKtr = match(HovedSkjema$SkjemaGUID, sort(Kontroll$HovedskjemaGUID)),
+      MedSatisfact = match(HovedSkjema$SkjemaGUID, sort(Satisfact$HovedskjemaGUID)),
+      MedPerform = match(HovedSkjema$SkjemaGUID, sort(Performance$HovedskjemaGUID))
+)
+#RaaTab <- RaaTab1[which(as.Date(Hskjema$AdmitDt)> '2014-12-31'),]
+Tot <- table(is.na(RaaTab$MedLivskval))/dim(RaaTab)[1]*100  #'MedKtr'
+AntLivskval <- ftable(RaaTab[!is.na(RaaTab$MedLivskval),tabVar])
+AndelLivskval <- round(100*AntLivskval/ftable(RaaTab[,tabVar]),1)
+AndelKtr <- round(100*ftable(RaaTab[!is.na(RaaTab$MedKtr),tabVar])/ftable(RaaTab[,tabVar]),1)
+AntSatisfact <- ftable(RaaTab[!is.na(RaaTab$MedSatisfact),tabVar])
+AndelSatisfact <- round(100*ftable(RaaTab[!is.na(RaaTab$MedSatisfact),tabVar])/ftable(RaaTab[,tabVar]),1)
+AndelPerform <- round(100*ftable(RaaTab[!is.na(RaaTab$MedPerform),tabVar])/ftable(RaaTab[,tabVar]),1)
+
+
+#------------------------------ Parametre --------------------------
 rm(list=ls())
-#load('C:/Registre/NordicScir/data/NSdata.Rdata')
-NSdata <- read.table('C:/Registre/NordicScir/data/MainFormDataContract2016-06-08.csv', sep=';', header=T)
-RegData <- NSdata
-#RegData <- NSdata
-# Inndata til funksjon:
-#egenReshID <- #105593-Haukeland, 106896-Sunnaas sykehus, 107627-St.Olavs #M? sendes med til funksjon
-
-##105593-Haukeland, 106896-Sunnaas, 107627-St.Olavs
+library(nordicscir)
+setwd("C:/ResultattjenesteGIT/nordicscir/")
+reshID <- 105593             ##105593-Haukeland, 106896-Sunnaas, 107627-St.Olavs, standard i funksj: 0 dvs. 'Alle'. Standard i rapporten skal v?re at man f?r opp eget sykehus.
+enhetsUtvalg <- 0
 minald <- 0
 maxald <- 130
+erMann <- 9                      #1-menn, 0-kvinner, Standard: '', dvs. begge
 traume <- ''    #'ja','nei', standard: ikke valgt
-datoFra <- '2010-01-01'             #Standard: b?r v?re minste registrerte verdi ? min og max dato i utvalget vises alltid i figuren.
-datoTil <- '2017-05-25'
-erMann <- ''                   #1-menn, 0-kvinner, Standard: '', dvs. begge
-valgtVar <- 'Alder'	#M? velge... Alder, DagerRehab, DagerTilRehab, OpphTot[HosptlDy], 
-							#Permisjon[OutOfHosptlDy],
-valgtMaal=''	#'Med'-median, ellers gjennomsnitt
-setwd("C:/ResultattjenesteGIT/nordicscir/")
+AIS <- 99 # as.character(c(1,4))	#AISgrad ved innleggelse alle(''), velge en eller flere fra 1:5
+paratetra <- 99
+datoFra <- '2016-01-01'             #Standard: b?r v?re minste registrerte verdi ? min og max dato i utvalget vises alltid i figuren.
+datoTil <- '2016-12-31'
+valgtMaal='gjsn'	#'Med'-median, 'Gjsn' gjennomsnitt
+grVar <- 'ShNavn'
+
+#------------------------------ Fordelinger --------------------------
+RegData <- HovedSkjema
+valgtVar <- 'Alder'	#M? velge... AAis, FAis, Alder, DagerRehab, DagerTilRehab, NivaaInn
+							#OpphTot[HosptlDy], Permisjon[OutOfHosptlDy], UtTil[PlaceDis], SkadeArsak[Scietiol]  
+							#Pustehjelp[VentAssi]
+#UrinSkjema: 
+RegData <- KobleMedHoved(HovedSkjema,Urin)
+valgtVar <- 'UrinLegemidler'   #'UrinInkontinens', 'UrinLegemidler','UrinLegemidlerHvilke', 'UrinKirInngr', 
+                                    #'UrinTomBlareHoved', 'UrinTomBlareTillegg'
+#TarmSkjema: 
+RegData <- KobleMedHoved(HovedSkjema,Tarm)
+valgtVar <- 'TarmAvfHoved'   #'TarmAvfHoved','TarmAvfTillegg', TarmAvfmiddel, TarmAvfmiddelHvilke
+                              #TarmInkontinens, TarmKirInngrep, TarmKirInngrepHvilke
+
+#Livskvalitet
+RegData <- KobleMedHoved(HovedSkjema,Livskvalitet)
+valgtVar <- 'LivsGen'                #LivsGen, LivsFys, LivsPsyk
+
+outfile <- '' #paste0(valgtVar, '.png')	#Navn angis av Jasper
+
+NSFigAndeler(RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
+		AIS=AIS, minald=minald, maxald=maxald, erMann=erMann, traume=traume, paratetra=paratetra,
+		reshID=reshID, enhetsUtvalg=enhetsUtvalg, hentData=0)    #, preprosess=1
+#Aktuelt å legge til en parameter som sier hvilket skjema variabelen tilhører. Dette for å koble
+#sammen riktig skjema til hovedskjema.
+
+#Hoved
+variable <- c('AAis', 'FAis', 'Alder', 'DagerRehab', 'DagerTilRehab', 'NivaaInn', 'NivaaUt',
+              'OpphTot', 'UtTil', 'SkadeArsak')
+#Urin
+variable <- c('UrinInkontinens', 'UrinLegemidler','UrinLegemidlerHvilke', 'UrinKirInngr', 
+                  'UrinTomBlareHoved', 'UrinTomBlareTillegg')
+#Tarm
+variable <- c('TarmAvfHoved','TarmAvfTillegg', 'TarmAvfmiddel', 'TarmAvfmiddelHvilke',
+                  'TarmInkontinens', 'TarmKirInngrep', 'TarmKirInngrepHvilke')
+#Livs
+variable  <- c('LivsGen', 'LivsFys', 'LivsPsyk')
+
+for (valgtVar in variable) {
+	outfile <- paste0(valgtVar, '.png')
+	NSFigAndeler(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
+	             AIS=AIS, minald=minald, maxald=maxald, erMann=erMann, traume=traume, paratetra=paratetra,
+	             reshID=reshID, enhetsUtvalg=enhetsUtvalg, hentData=0)
+}
+
+#------------------------------ Sentralmål --------------------------
 outfile <- '' #paste(valgtVar, '.png', sep='')	#Navn angis av Jasper
+valgtVar <- 'DagerRehab'   #'Alder', 'DagerRehab', 'DagerTilRehab', 'OpphTot', 'LivsGen', 'LivsFys', 'LivsPsyk'
+NSFigGjsnGrVar(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
+		valgtMaal=valgtMaal, AIS=AIS, minald=minald, maxald=maxald, erMann=erMann, traume=traume)
 
-NSFigGjsnGrVar(RegData=NSdata, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
-		valgtMaal=valgtMaal, minald=minald, maxald=maxald, erMann=erMann, traume=traume)
-
-for (valgtVar in c('Alder', 'DagerRehab', 'DagerTilRehab', 'OpphTot', 'Permisjon')) {
-	outfile <- paste(valgtVar, '.png', sep='')
-	NSFigGjsnGrVar(RegData=NSdata, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
-	               valgtMaal=valgtMaal, minald=minald, maxald=maxald, erMann=erMann, traume=traume)
+variable <- c('Alder', 'DagerRehab', 'DagerTilRehab', 'OpphTot') 
+variable <- c('LivsGen', 'LivsFys', 'LivsPsyk') #Koble på livskvalitetsdata
+for (valgtVar in variable) {
+	outfile <- paste0('M_',valgtVar, '.png')
+	NSFigGjsnGrVar(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
+	               valgtMaal=valgtMaal, minald=minald, maxald=maxald, erMann=erMann, traume=traume,
+	               AIS=AIS, paratetra = paratetra)
 }
 #------------------------------ Nevrologisk kategori --------------------------
 rm(list=ls())
-#load('C:/Registre/NordicScir/data/NSdata.Rdata')
-NSdata <- read.table('C:/Registre/NordicScir/data/NordicScir2014-09-30.csv', sep=';', header=T)
-RegData <- NSdata
-# Inndata til funksjon:
 
-reshID <- 107627	##105593-Haukeland, 106896-Sunnaas sykehus, 107627-St.Olavs
-#egenavd <- 1 #1:eget sykehus, 0:hele landet (standard) Kun for valgtVar=='NevrNivaaInnUt'
-erMann <- 0 #kj?nn, 1-menn, 0-kvinner, standard: '' (alt annet enn 0 og 1), dvs. begge
-minald <- 0 #alder, fra og med
-maxald <- 130 #alder, til og med
-traume <- 'ja' #'ja','nei', standard: ikke valgt
-datoFra <- '2010-01-01'    # min og max dato i utvalget vises alltid i figuren.
-datoTil <- '2015-05-25'
-enhetsUtvalg <- 0 #1:eget sykehus mot resten(standard), 0:hele landet, 2: eget 
 valgtVar <- 'NevrNivaaInn'	#M? velge... NevrNivaaInnUt, NevrNivaaInn, NevrNivaaUt, 
-outfile <- paste(valgtVar, '.png', sep='') #navn p? fil figuren skrives ned til
+outfile <- paste0(valgtVar, '.png') #navn p? fil figuren skrives ned til
 setwd("C:/ResultattjenesteGIT/nordicscir/")
 
 NSFigAndelStabel(RegData=NSdata, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, 
