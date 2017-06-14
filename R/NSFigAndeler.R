@@ -152,7 +152,7 @@ NSFigAndeler <- function(RegData, outfile='', valgtVar,
 #-----------Figur---------------------------------------
        
       #-----Hvis få registreringer: ---------------------
-      Ngrense <- 1      ## ENDRE TIL 5 FØR LEGGES PÅ RAPPORTEKET
+      Ngrense <- 5      #
       if (sum(N$Hoved) < Ngrense | (medSml ==1 & sum(N$Rest)< Ngrense)) {
             FigTypUt <- rapbase::figtype(outfile)
             farger <- FigTypUt$farger
