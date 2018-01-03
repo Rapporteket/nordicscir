@@ -115,7 +115,6 @@ NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='gjsn', grVar='ShNavn',
   Ngr <- Ngr[sortInd] #list(Hoved=Ngr[sortInd], Rest=0)
   GrNavnSort <- paste0(names(Ngr), Ngrtxt[sortInd])
   soyletxt <- sprintf('%.1f', Midt) #sprintf(paste0('%.', AntDes,'f'), Midt) 
-  #soyletxt <- c(sprintf(paste0('%.', AntDes,'f'), Midt[1:AntGr]), rep('',length(Ngr)-AntGr))
   indUT <- which(is.na(Midt))  #Rydd slik at bare benytter indGrUt
   soyletxt[indUT] <- ''
   KIned[indUT] <- NA
@@ -123,7 +122,7 @@ NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='gjsn', grVar='ShNavn',
   AggVerdier <- list(Hoved=Midt, Rest=0, KIned=KIned, KIopp=KIopp, KIHele=KIHele)
   
   
-  AntGr <- length(which(Midt>0))
+  #indGrOK <- which(Midt>0)
   xmax <-  min(1.1*max(c(Midt, KIned, KIopp), na.rm=T), 1.5*max(Midt, na.rm = T))
   xlabt <- switch(valgtVar, Alder='alder (år)',
                   DagerRehab='dager',
@@ -170,7 +169,7 @@ NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='gjsn', grVar='ShNavn',
           rapbase::figtype(outfile)
           plot.new()
           if (dim(RegData)[1]>0) {
-                tekst <- paste('Færre enn ', Ngrense, ' registreringer ved hvert av sykehusene', sep='')
+                tekst <- paste0('Færre enn ', Ngrense, ' registreringer ved hvert av sykehusene')
                 title(main=tittel, cex=0.95)
                 legend('topleft',utvalgTxt, bty='n', cex=0.9)
           } else {
@@ -190,10 +189,10 @@ NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='gjsn', grVar='ShNavn',
     vmarg <- max(0, strwidth(GrNavnSort, units='figure', cex=cexgr)*0.9)
     par('fig'=c(vmarg, 1, 0, 1-0.02*(NutvTxt-1)))	#Har alltid datoutvalg med
 
-    #plot.new()
-    pos <- barplot(as.numeric(Midt), horiz=T, border=NA, col=farger[3], axes = FALSE,
-                   xlim=c(0,xmax), ylim=c(0.3,4.1), xlab='', las=1) 	#xlim=c(0,ymax),
-    posKI <- pos[1:AntGr]
+    #Må def. pos først for å få strek for hele gruppa bak søylene
+    ### reverserer for å slippe å gjøre det på konf.int
+    pos <- rev(barplot(rev(as.numeric(Midt)), horiz=T, border=NA, col=farger[3], axes = FALSE,
+                   xlim=c(0,xmax), ylim=c(0.3,4.1), xlab='', las=1) )	#xlim=c(0,ymax),
     ybunn <- 0.1
     ytopp <- 3.7	#c(0, max(posKI) + min(posKI))
     polygon( c(rep(KIHele[1],2), rep(KIHele[2],2)), c(ybunn, ytopp, ytopp, ybunn),
@@ -206,21 +205,19 @@ NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='gjsn', grVar='ShNavn',
            c(paste0('Alle sykehus: ', sprintf('%.1f', MidtHele), ', N=', N), 
              paste0('95% konf.int., alle (',
                    sprintf('%.1f', KIHele[1]), '-', sprintf('%.1f', KIHele[2]), ')')))
-    barplot(as.numeric(Midt), horiz=T, border=NA, col=farger[3], xlim=c(0, xmax), add=TRUE,
+    barplot(rev(as.numeric(Midt)), horiz=T, border=NA, col=farger[3], xlim=c(0, xmax), add=TRUE,
             xlab=xlabt, cex.lab=cexleg+0.1, cex.sub=cexleg+0.1, cex.axis=cexleg, las=1)
     title(tittel, line=1.1, font.main=1, cex.main=1.5)
     title('med 95% konfidensintervall', font.main=1, line=0)
 
-    #text(x=0.005*xmax, y=pos, las=1, cex=cexleg, adj=0, col=farger[1],
-    #     c(sprintf('%.1f', Midt[1:AntGr]), rep('',length(Ngr)-AntGr)))
     soyleXpos <- 1.3*xmax*max(strwidth(soyletxt, units='figure', cex = cexgr)) # cex=cexgr
     text(x=soyleXpos, y=pos+0.1, soyletxt, las=1, cex=cexgr, adj=1, col=farger[1])	#AggVerdier, hvert sykehus
     
     mtext(at=pos+0.15, GrNavnSort, side=2, las=1, cex=cexgr+0.1, adj=1, line=0.25)	#Hvis vil legge på navn som eget steg
     options(warn = -1)	#Unngå melding om KI med lengde 0. Fungerer av en eller annen grunn ikke i pdf.
-    arrows(x0=Midt*0.999, y0=posKI, x1=KIopp, y1=posKI,
+    arrows(x0=Midt*0.999, y0=pos, x1=KIopp, y1=pos,
            length=0.5/max(pos), code=2, angle=90, lwd=2, col=farger[1])
-    arrows(x0=Midt*1.001, y0=posKI, x1=KIned, y1=posKI,
+    arrows(x0=Midt*1.001, y0=pos, x1=KIned, y1=pos,
            length=0.5/max(pos), code=2, angle=90, lwd=2, col=farger[1])
 
     #Tekst som angir hvilket utvalg som er gjort

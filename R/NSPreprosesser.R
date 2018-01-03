@@ -49,7 +49,7 @@ NSPreprosesser <- function(RegData)
       #RegData$Region <- RegData$RHF
       
       names(RegData)[which(names(RegData) == 'UnitId')] <- 'ReshId'
-      names(RegData)[which(names(RegData) == 'HealthUnitName')] <- 'ShNavn'
+      names(RegData)[which(names(RegData) == 'HealthUnitShortName')] <- 'ShNavn'
       names(RegData)[which(names(RegData) == 'PatientAge')] <- 'Alder'
       names(RegData)[which(names(RegData) == 'PlaceDis')] <- 'UtTil' 
       names(RegData)[which(names(RegData) == 'Scietiol')] <- 'SkadeArsak' 

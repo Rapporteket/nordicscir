@@ -48,7 +48,7 @@ varHoved <- paste0("
       h.FNeuNoMeasure,
       h.FSensLvlAreaL,
       h.FSensLvlAreaR,
-      h.HealthUnitName,
+      h.HealthUnitShortName,
       h.HosptlDy,
       h.InjuryDateUnknown,
       h.InjuryDt,
