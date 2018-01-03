@@ -65,7 +65,6 @@ RegData <- KobleMedHoved(HovedSkjema,Tarm)
 paste0('Ant. Livskvalitet m/hovedskjema: ',sum(HovedSkjema$SkjemaGUID %in% Livskvalitet$HovedskjemaGUID))
 paste0('Ant. Performance m/hovedskjema: ', sum(HovedSkjema$SkjemaGUID %in% Performance$HovedskjemaGUID))
 paste0('Ant. Satisfaction m/Performance: ', sum(Satisfact$HovedskjemaGUID %in% Performance$SkjemaGUID))
-sum(test)
 
 tabVar <- c('HealthUnitName','Aar')
 Hskjema <- HovedSkjema[c('SkjemaGUID','HealthUnitName','AdmitDt')][order(HovedSkjema$SkjemaGUID),]
@@ -98,8 +97,8 @@ erMann <- 9                      #1-menn, 0-kvinner, Standard: '', dvs. begge
 traume <- ''    #'ja','nei', standard: ikke valgt
 AIS <- 99 # as.character(c(1,4))	#AISgrad ved innleggelse alle(''), velge en eller flere fra 1:5
 paratetra <- 99
-datoFra <- '2016-01-01'             #Standard: b?r v?re minste registrerte verdi ? min og max dato i utvalget vises alltid i figuren.
-datoTil <- '2016-12-31'
+datoFra <- '2017-01-01'             #Standard: b?r v?re minste registrerte verdi ? min og max dato i utvalget vises alltid i figuren.
+datoTil <- '2017-12-31'
 valgtMaal='gjsn'	#'Med'-median, 'Gjsn' gjennomsnitt
 grVar <- 'ShNavn'
 
@@ -110,7 +109,7 @@ valgtVar <- 'Alder'	#M? velge... AAis, FAis, Alder, DagerRehab, DagerTilRehab, N
 							#Pustehjelp[VentAssi]
 #UrinSkjema: 
 RegData <- KobleMedHoved(HovedSkjema,Urin)
-valgtVar <- 'UrinLegemidler'   #'UrinInkontinens', 'UrinLegemidler','UrinLegemidlerHvilke', 'UrinKirInngr', 
+valgtVar <- 'UrinTomBlareHoved'   #'UrinInkontinens', 'UrinLegemidler','UrinLegemidlerHvilke', 'UrinKirInngr', 
                                     #'UrinTomBlareHoved', 'UrinTomBlareTillegg'
 #TarmSkjema: 
 RegData <- KobleMedHoved(HovedSkjema,Tarm)
@@ -125,7 +124,7 @@ outfile <- '' #paste0(valgtVar, '.png')	#Navn angis av Jasper
 
 NSFigAndeler(RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
 		AIS=AIS, minald=minald, maxald=maxald, erMann=erMann, traume=traume, paratetra=paratetra,
-		reshID=reshID, enhetsUtvalg=enhetsUtvalg, hentData=0)    #, preprosess=1
+		reshID=reshID, enhetsUtvalg=1, hentData=0)    #, preprosess=1
 #Aktuelt å legge til en parameter som sier hvilket skjema variabelen tilhører. Dette for å koble
 #sammen riktig skjema til hovedskjema.
 
