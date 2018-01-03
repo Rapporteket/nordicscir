@@ -34,14 +34,15 @@ texi2pdf('NSsamleRapp.tex')
 #------------------------ LASTE DATA -------------------------------------
 
 rm(list=ls())
-dato <- 'FormDataContract2017-05-24'
-HovedSkjema <- read.table(paste0('C:/Registre/NordicScir/data/Main',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
-Livskvalitet <- read.table(paste0('C:/Registre/NordicScir/data/LifeQuality',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
-Kontroll <- read.table(paste0('C:/Registre/NordicScir/data/Control',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
-Urin <- read.table(paste0('C:/Registre/NordicScir/data/UrinaryTractFunction',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
-Tarm <- read.table(paste0('C:/Registre/NordicScir/data/BowelFunction',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
-Satisfact <- read.table(paste0('C:/Registre/NordicScir/data/ActivityAndParticipationSatisfaction',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
-Performance <- read.table(paste0('C:/Registre/NordicScir/data/ActivityAndParticipationPerformance',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
+dato <- 'FormDataContract2018-01-02' #2017-05-24
+sti <- 'A:/NordicScir/'
+HovedSkjema <- read.table(paste0(sti, 'Main',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
+Livskvalitet <- read.table(paste0(sti, 'LifeQuality',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
+Kontroll <- read.table(paste0(sti, 'Control', dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
+Urin <- read.table(paste0(sti, 'UrinaryTractFunction', dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
+Tarm <- read.table(paste0(sti, 'BowelFunction',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
+Satisfact <- read.table(paste0(sti, 'ActivityAndParticipationSatisfaction',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
+Performance <- read.table(paste0(sti, 'ActivityAndParticipationPerformance',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
 
 HovedSkjema$SkjemaGUID <- tolower(HovedSkjema$SkjemaGUID)
 Performance$SkjemaGUID <- tolower(Performance$SkjemaGUID)
