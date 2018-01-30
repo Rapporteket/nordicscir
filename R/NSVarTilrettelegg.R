@@ -73,6 +73,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar=''){
             grtxt <- c('0-14','15-29','30-44','45-59','60-74','75+')
             cexgr <- 0.9
             xAkseTxt <- 'Aldersgrupper (år)'
+            sortAvtagende <- FALSE
       }
      # if (valgtVar=='alder') {	#NIR: Fordeling, gjsnGrVar
       #      RegData <- RegData[which(RegData$Alder>=0), ]    #Tar bort alder<0
