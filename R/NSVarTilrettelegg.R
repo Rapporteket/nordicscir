@@ -137,7 +137,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar=''){
             cexgr <- 0.9
             txtretn <- 2
             xAkseTxt <- 'Antall døgn'
-            DagerTilRehab <- FALSE
+            sortAvtagende <- FALSE
       }	#Variable med antall dager
       
 #      if (valgtVar=='Permisjon') {
