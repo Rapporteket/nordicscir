@@ -42,6 +42,7 @@ varHoved <- paste0("
       h.BeforeRehDy,
       h.DischgDt,
       h.FAis,
+      h.FirstTimeClosed,
       h.FMtrLvlAreaL,
       h.FMtrLvlAreaR,
       h.FNeuExmDt,

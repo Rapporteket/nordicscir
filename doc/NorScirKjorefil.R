@@ -150,7 +150,7 @@ for (valgtVar in variable) {
 
 #------------------------------ Sentralmål --------------------------
 outfile <- '' #paste(valgtVar, '.png', sep='')	#Navn angis av Jasper
-valgtVar <- 'Alder'   #'Alder', 'DagerRehab', 'DagerTilRehab', 'OpphTot', 'LivsGen', 'LivsFys', 'LivsPsyk'
+valgtVar <- 'RegForsinkelse'   #'Alder', 'DagerRehab', 'DagerTilRehab', 'OpphTot', 'LivsGen', 'LivsFys', 'LivsPsyk'
 NSFigGjsnGrVar(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
 		valgtMaal=valgtMaal, AIS=AIS, minald=minald, maxald=maxald, erMann=erMann, traume=traume)
 
