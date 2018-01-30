@@ -24,7 +24,7 @@
 #' @export
 #'
 
-NSVarTilrettelegg  <- function(RegData, valgtVar, grVar=''){
+NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler'){
       
       
       "%i%" <- intersect
@@ -72,24 +72,12 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar=''){
             RegData$VariabelGr <- cut(RegData$Alder, breaks=gr, include.lowest=TRUE, right=FALSE)
             grtxt <- c('0-14','15-29','30-44','45-59','60-74','75+')
             cexgr <- 0.9
-            xAkseTxt <- 'Aldersgrupper (år)'
+            xAkseTxt <- switch(figurtype,
+                               andeler= 'Aldersgrupper (år)',
+                               gjsnGrVar = 'alder (år)')
             sortAvtagende <- FALSE
       }
-     # if (valgtVar=='alder') {	#NIR: Fordeling, gjsnGrVar
-      #      RegData <- RegData[which(RegData$Alder>=0), ]    #Tar bort alder<0
-       #     RegData$Variabel<-RegData$Alder  	#gjsnTid, gjsnGrVar
-       #     xAkseTxt <- 'alder (år)'	
-       #     tittel <- 'Alder ved innleggelse'
-       #     if (grVar == '') {	#Fordelingsfigur
-       #           gr <- c(seq(0, 100, 10),150)		
-       #           RegData$VariabelGr <- cut(RegData$Alder, breaks=gr, include.lowest=TRUE, right=FALSE)	
-       #           grtxt <- c('0-9','10-19','20-29','30-39','40-49','50-59','60-69','70-79','80-89','90-99','100+')
-       #           xAkseTxt <- 'Aldersgrupper (år)'
-       #           }
-       #     sortAvtagende <- FALSE
-      #}
-#gjsnGrVar: 'Alder', 'DagerRehab', 'DagerTilRehab', 'OpphTot'
-            
+
       if (valgtVar %in% c('AAis', 'FAis')) {
             retn <- 'H'
             #-1: Velg verdi, 1:A Komplett skade, 2:B Inkomplett, 3:C Inkomplett, 4:D Inkomplett, 5:E Normal, 
@@ -137,7 +125,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar=''){
                              OpphTot = 'Total tid innlagt på sykehus')
             cexgr <- 0.9
             txtretn <- 2
-            xAkseTxt <- 'Antall døgn'
+            xAkseTxt <- 'Antall dager'
             sortAvtagende <- FALSE
       }	#Variable med antall dager
       
@@ -199,6 +187,27 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar=''){
             xAkseTxt <- 'Utskrevet til'
             RegData$VariabelGr <- factor(as.numeric(RegData$PPlacedis), levels=1:5, labels = grtxt)
             retn <- 'H'
+      }
+      if (valgtVar == 'RegForsinkelse') {  #Andeler, GjsnGrVar
+            #Verdier: 0-3402
+            RegData$Diff <- as.numeric(as.Date(as.POSIXct(RegData$FirstTimeClosed, format="%Y-%m-%d")) - 
+                                             as.Date(as.POSIXct(RegData$DischgDt, format="%Y-%m-%d"))) #difftime(RegData$InnDato, RegData$Leveringsdato) #
+#RegData[,c('InnDato', "FirstTimeClosed", "DischgDt", 'Diff')]
+ #           RegData$InnDato <- as.POSIXlt(RegData$AdmitDt, format="%Y-%m-%d") #as.POSIXlt(RegData$AdmitDt, format="%Y-%m-%d")
+  #          RegData$Test <- as.POSIXlt(RegData$FirstTimeClosed, format="%Y-%m-%d")
+            RegData <- RegData[which(RegData$Diff > -1), ]
+            tittel <- switch(figurtype,
+                             andeler='Tid fra utskriving til ferdigstilt registrering',
+                             andelGrVar = 'Mer enn 2 uker fra utskriving til ferdig registrering')
+            #RegData$Variabel[RegData$Diff > 2*7] <- 1
+            RegData$Variabel <- RegData$Diff
+            subtxt <- 'døgn'
+            gr <- c(0,1,7,14,30,90,365,5000) #gr <- c(seq(0, 90, 10), 1000)
+            RegData$VariabelGr <- cut(RegData$Diff, breaks = gr, include.lowest = TRUE, right = TRUE)
+            grtxt <- c('1', '(1-7]', '(7-14]', '(14-30]', '(30-90]', '(90-365]', '>365')
+            cexgr <- 0.9
+            xAkseTxt <- 'dager'
+            sortAvtagende <- FALSE
       }
       
 #----------------URIN-skjema (start 01.01.2015):

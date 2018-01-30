@@ -4,7 +4,7 @@
 \alias{NSRegDataSQL}
 \title{Henter data for NordicScir fra  staging}
 \usage{
-NSRegDataSQL()
+NSRegDataSQL(valgtVar = "Alder")
 }
 \value{
 RegData data frame

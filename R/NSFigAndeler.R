@@ -49,6 +49,7 @@
 #' @param hentData Gjør spørring mot database hvis data ikke er levert fra andre kilder.
 #'                 0: Nei, RegData gis som input til funksjonen (Standard)
 #'                 1: Ja
+#' @param figurtype angir hvilken figurtype som skal lages: andeler, gjsnGrVar
 #' 
 #' @export
 
@@ -66,7 +67,7 @@ NSFigAndeler <- function(RegData, outfile='', valgtVar,
     
       #--------------- Tilrettelegge variable og gjøre utvalg ------------------------------
       
-      NSVarSpes <- NSVarTilrettelegg(RegData=RegData, valgtVar=valgtVar)
+      NSVarSpes <- NSVarTilrettelegg(RegData=RegData, valgtVar=valgtVar, figurtype='andeler')
 	  RegData <- NSVarSpes$RegData
       
       

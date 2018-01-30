@@ -98,16 +98,16 @@ erMann <- 9                      #1-menn, 0-kvinner, Standard: '', dvs. begge
 traume <- ''    #'ja','nei', standard: ikke valgt
 AIS <- 99 # as.character(c(1,4))	#AISgrad ved innleggelse alle(''), velge en eller flere fra 1:5
 paratetra <- 99
-datoFra <- '2017-01-01'             #Standard: b?r v?re minste registrerte verdi ? min og max dato i utvalget vises alltid i figuren.
+datoFra <- '2015-01-01'             #Standard: b?r v?re minste registrerte verdi ? min og max dato i utvalget vises alltid i figuren.
 datoTil <- '2017-12-31'
 valgtMaal='gjsn'	#'Med'-median, 'Gjsn' gjennomsnitt
 grVar <- 'ShNavn'
 
 #------------------------------ Fordelinger --------------------------
 RegData <- HovedSkjema
-valgtVar <- 'PPlaceDis'	#M? velge... AAis, FAis, Alder, DagerRehab, DagerTilRehab, NivaaInn
+valgtVar <- 'RegForsinkelse'	#M? velge... AAis, FAis, Alder, DagerRehab, DagerTilRehab, NivaaInn
 							#OpphTot[HosptlDy], Permisjon[OutOfHosptlDy], UtTil[PlaceDis], SkadeArsak[Scietiol]  
-							#Pustehjelp[VentAssi], PPlaceDis
+							#Pustehjelp[VentAssi], PPlaceDis, RegForsinkelse
 #UrinSkjema: 
 RegData <- KobleMedHoved(HovedSkjema,Urin)
 valgtVar <- 'UrinTomBlareHoved'   #'UrinInkontinens', 'UrinLegemidler','UrinLegemidlerHvilke', 'UrinKirInngr', 
@@ -125,7 +125,7 @@ outfile <- '' #paste0(valgtVar, '.png')	#Navn angis av Jasper
 
 NSFigAndeler(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
 		AIS=AIS, minald=minald, maxald=maxald, erMann=erMann, traume=traume, paratetra=paratetra,
-		reshID=reshID, enhetsUtvalg=1, hentData=0)    #, preprosess=1
+		reshID=reshID, enhetsUtvalg=0)    #, preprosess=1
 #Aktuelt å legge til en parameter som sier hvilket skjema variabelen tilhører. Dette for å koble
 #sammen riktig skjema til hovedskjema.
 
@@ -150,11 +150,11 @@ for (valgtVar in variable) {
 
 #------------------------------ Sentralmål --------------------------
 outfile <- '' #paste(valgtVar, '.png', sep='')	#Navn angis av Jasper
-valgtVar <- 'DagerRehab'   #'Alder', 'DagerRehab', 'DagerTilRehab', 'OpphTot', 'LivsGen', 'LivsFys', 'LivsPsyk'
+valgtVar <- 'Alder'   #'Alder', 'DagerRehab', 'DagerTilRehab', 'OpphTot', 'LivsGen', 'LivsFys', 'LivsPsyk'
 NSFigGjsnGrVar(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
 		valgtMaal=valgtMaal, AIS=AIS, minald=minald, maxald=maxald, erMann=erMann, traume=traume)
 
-variable <- c('Alder', 'DagerRehab', 'DagerTilRehab', 'OpphTot') 
+variable <- c('Alder', 'DagerRehab', 'DagerTilRehab', 'OpphTot', 'RegForsinkelse') 
 variable <- c('LivsGen', 'LivsFys', 'LivsPsyk') #Koble på livskvalitetsdata
 for (valgtVar in variable) {
 	outfile <- paste0('M_',valgtVar, '.png')
