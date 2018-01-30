@@ -59,6 +59,7 @@ varHoved <- paste0("
       h.PatientAge,
       h.PatientGender,
       h.PlaceDis,
+      h.PPlacedis,
       h.RehabDy,
       h.UnitId AS ReshId,
       h.Scietiol,

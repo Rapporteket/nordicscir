@@ -34,7 +34,7 @@ texi2pdf('NSsamleRapp.tex')
 #------------------------ LASTE DATA -------------------------------------
 
 rm(list=ls())
-dato <- 'FormDataContract2018-01-02' #2017-05-24
+dato <- 'FormDataContract2018-01-30' #2017-05-24
 sti <- 'A:/NordicScir/'
 HovedSkjema <- read.table(paste0(sti, 'Main',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
 Livskvalitet <- read.table(paste0(sti, 'LifeQuality',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
@@ -58,6 +58,7 @@ return(NSdata)
 }
 
 RegData <- KobleMedHoved(HovedSkjema,Tarm)
+RegData <- HovedSkjema
 
 #------------------------ TESTE DATA -------------------------------------
 
@@ -104,9 +105,9 @@ grVar <- 'ShNavn'
 
 #------------------------------ Fordelinger --------------------------
 RegData <- HovedSkjema
-valgtVar <- 'Alder'	#M? velge... AAis, FAis, Alder, DagerRehab, DagerTilRehab, NivaaInn
+valgtVar <- 'PPlaceDis'	#M? velge... AAis, FAis, Alder, DagerRehab, DagerTilRehab, NivaaInn
 							#OpphTot[HosptlDy], Permisjon[OutOfHosptlDy], UtTil[PlaceDis], SkadeArsak[Scietiol]  
-							#Pustehjelp[VentAssi]
+							#Pustehjelp[VentAssi], PPlaceDis
 #UrinSkjema: 
 RegData <- KobleMedHoved(HovedSkjema,Urin)
 valgtVar <- 'UrinTomBlareHoved'   #'UrinInkontinens', 'UrinLegemidler','UrinLegemidlerHvilke', 'UrinKirInngr', 
@@ -122,7 +123,7 @@ valgtVar <- 'LivsGen'                #LivsGen, LivsFys, LivsPsyk
 
 outfile <- '' #paste0(valgtVar, '.png')	#Navn angis av Jasper
 
-NSFigAndeler(RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
+NSFigAndeler(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
 		AIS=AIS, minald=minald, maxald=maxald, erMann=erMann, traume=traume, paratetra=paratetra,
 		reshID=reshID, enhetsUtvalg=1, hentData=0)    #, preprosess=1
 #Aktuelt å legge til en parameter som sier hvilket skjema variabelen tilhører. Dette for å koble
