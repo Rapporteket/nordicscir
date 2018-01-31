@@ -98,14 +98,14 @@ erMann <- 9                      #1-menn, 0-kvinner, Standard: '', dvs. begge
 traume <- ''    #'ja','nei', standard: ikke valgt
 AIS <- 99 # as.character(c(1,4))	#AISgrad ved innleggelse alle(''), velge en eller flere fra 1:5
 paratetra <- 99
-datoFra <- '2011-01-01'             #Standard: b?r v?re minste registrerte verdi ? min og max dato i utvalget vises alltid i figuren.
+datoFra <- '2017-01-01'             #Standard: b?r v?re minste registrerte verdi ? min og max dato i utvalget vises alltid i figuren.
 datoTil <- '2018-12-31'
 valgtMaal='gjsn'	#'Med'-median, 'Gjsn' gjennomsnitt
 grVar <- 'ShNavn'
 
 #------------------------------ Fordelinger --------------------------
 RegData <- HovedSkjema
-valgtVar <- 'Ntsci'	#AAis, FAis, Alder, DagerRehab, DagerTilRehab, NivaaInn, Ntsci,
+valgtVar <- 'UtTil'	#AAis, FAis, Alder, DagerRehab, DagerTilRehab, NivaaInn, Ntsci,
 					#OpphTot[HosptlDy], Permisjon[OutOfHosptlDy], UtTil[PlaceDis], 
                              	#Pustehjelp[VentAssi], PPlaceDis, RegForsinkelse,  #SkadeArsak[Scietiol]  
 #UrinSkjema: 

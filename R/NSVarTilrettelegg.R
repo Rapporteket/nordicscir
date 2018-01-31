@@ -181,8 +181,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
             #gr <- (1:10,99) - Kodene som registereres
             RegData$UtTil[which(RegData$UtTil==99)] <- 12
             RegData <- RegData[RegData$UtTil %in% 1:12, ]
-            grtxtAlle <- c('Hjem', 'Sykehus', 'Pleiehjem', 'Omsorgsbolig', 'Bofellesskap','Kriminalomsorg', 
-                           'Hotell', 'Bostedsløs', 'Avdød', 'Annet', 'Planlagt hjem', 'Ukjent')
+            grtxtAlle <- c('Hjem', 'Sykehus', 'Pleiehjem', 'Omsorgsbolig', 'Bofellesskap','Kriminalomsorg', 'Hotell', 'Bostedsløs', 'Avdød', 'Annet', 'Planlagt hjem', 'Ukjent')
             grtxt <- grtxtAlle
             xAkseTxt <- 'Utskrevet til'
             RegData$VariabelGr <- factor(as.numeric(RegData$UtTil), levels=1:12, labels = grtxtAlle)
