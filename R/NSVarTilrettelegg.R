@@ -157,7 +157,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
             tittel <- 'Ikke-traumatisk skadeårsak (NTSCI)'
             #gr <- (1:6, 8:9) - Kodene som registereres
             RegData <- RegData[which(RegData$Ntsci %in% 1:9) %i% 
-                                     which(RegData$InnDato >= as.POSIXlt('2017-01-01')), ] 
+                                     which(RegData$InnDato >= as.POSIXlt('2018-01-01')), ] 
             grtxt <- c('Medfødt/genetisk etiologi', 'Degenerativ etiologi', 'Tumor, godartet', 
                        'Tumor, ondartet', 'Vaskulær etiologi', 'Infeksjon', 
                        'Annen ryggmargsdysfunksjon', 'Ikke spesifisert/ukjent')
