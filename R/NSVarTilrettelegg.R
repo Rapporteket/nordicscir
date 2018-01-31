@@ -45,7 +45,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
       verdier <- ''	#AggVerdier, gjennomsnitt, ...
       verdiTxt <- '' 	#pstTxt, ...
       strIfig <- ''		#cex
-      sortAvtagende <- TRUE  #Sortering av resultater
+      sortAvtagende <- FALSE  #Sortering av resultater
       KImaal <- NA
  
 #Fra NordicScir
@@ -75,7 +75,6 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
             xAkseTxt <- switch(figurtype,
                                andeler= 'Aldersgrupper (år)',
                                gjsnGrVar = 'alder (år)')
-            sortAvtagende <- FALSE
       }
 
       if (valgtVar %in% c('AAis', 'FAis')) {
@@ -126,7 +125,6 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
             cexgr <- 0.9
             txtretn <- 2
             xAkseTxt <- 'Antall dager'
-            sortAvtagende <- FALSE
       }	#Variable med antall dager
       
 #      if (valgtVar=='Permisjon') {
@@ -153,6 +151,20 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
             #xAkseTxt <- ''
             RegData$VariabelGr <- factor(as.numeric(RegData$TetraplegiUt), levels=c(0:1,9), labels = grtxt)
       }
+      
+      if (valgtVar == 'Ntsci') {
+            #NB: Skal filtrere på 2018!!!!!!!!!!!!!!!!!!
+            tittel <- 'Ikke-traumatisk skadeårsak (NTSCI)'
+            #gr <- (1:6, 8:9) - Kodene som registereres
+            RegData <- RegData[which(RegData$Ntsci %in% 1:9) %i% 
+                                     which(RegData$InnDato >= as.POSIXlt('2017-01-01')), ] 
+            grtxt <- c('Medfødt/genetisk etiologi', 'Degenerativ etiologi', 'Tumor, godartet', 
+                       'Tumor, ondartet', 'Vaskulær etiologi', 'Infeksjon', 
+                       'Annen ryggmargsdysfunksjon', 'Ikke spesifisert/ukjent')
+            #xAkseTxt <- ''
+            RegData$VariabelGr <- factor(as.numeric(RegData$Ntsci), levels=c(1:6,8:9), labels = grtxt)
+            retn <- 'H'
+      }
       if (valgtVar == 'SkadeArsak') {
             tittel <- 'Skadeårsaker'
             #gr <- (1:6,9) - Kodene som registereres
@@ -168,7 +180,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
             tittel <- 'Utskrevet til'
             #gr <- (1:10,99) - Kodene som registereres
             RegData$UtTil[which(RegData$UtTil==99)] <- 12
-            RegData <- RegData[RegData$PPlacedis %in% 1:12, ]
+            RegData <- RegData[RegData$UtTil %in% 1:12, ]
             grtxtAlle <- c('Hjem', 'Sykehus', 'Pleiehjem', 'Omsorgsbolig', 'Bofellesskap','Kriminalomsorg', 
                            'Hotell', 'Bostedsløs', 'Avdød', 'Annet', 'Planlagt hjem', 'Ukjent')
             grtxt <- grtxtAlle
@@ -180,8 +192,9 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
       }
       if (valgtVar == 'PPlaceDis') {
             tittel <- 'Planlagt midlertidig utskrevet til '
-            RegData$PPlacedis[which(RegData$PPlacedis==8)] <- 5
-            RegData <- RegData[RegData$PPlacedis %in% 1:5, ]
+            RegData$PPlacedis[RegData$PPlacedis==8] <- 5
+            RegData <- RegData[which(RegData$PPlacedis %in% 1:5) %i% 
+                                     which(RegData$InnDato >= as.POSIXlt('2018-01-01')), ]
             grtxt <- c('Pleiehjem/ \n avlastningsplass', 'Insitusjon \n m/trening', 
                            'Sykehus', 'Familie/slekt \n /venner', 'Annet')
             xAkseTxt <- 'Utskrevet til'
@@ -223,7 +236,8 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
             indDato <- which(RegData$InnDato >= as.POSIXlt('2015-01-01')) #Ikke filtrer på startdato
             indTidspkt <- which(RegData$QolDt <= RegData$DischgDt)
             RegData <- RegData[indTidspkt, ]
-            }
+            xAkseTxt <- 'Skåring: 1-10. Høyest er best.'
+      }
       
       if (valgtVar == 'LivsGen') {
             tittel <- 'Fornøydhet med livet'
@@ -231,7 +245,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
             grtxt <- 0:10
             RegData$VariabelGr <- factor(as.numeric(RegData$SatGenrl), levels=0:10, labels = grtxt)
             RegData$Variabel <- as.numeric(RegData$SatGenrl)
-            sortAvtagende <- FALSE
+            sortAvtagende <- TRUE
       }
       if (valgtVar == 'LivsFys') {
             tittel <- 'Fornøydhet med fysisk helse'
@@ -239,7 +253,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
             grtxt <- 0:10
             RegData$VariabelGr <- factor(as.numeric(RegData$SatPhys), levels=0:10, labels = grtxt)
             RegData$Variabel <- as.numeric(RegData$SatPhys)
-            sortAvtagende <- FALSE
+            sortAvtagende <- TRUE
       }
 
       if (valgtVar == 'LivsPsyk') {
@@ -248,7 +262,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
             grtxt <- 0:10
             RegData$VariabelGr <- factor(as.numeric(RegData$SatPsych), levels=0:10, labels = grtxt)
             RegData$Variabel <- as.numeric(RegData$SatPsych)
-            sortAvtagende <- FALSE
+            sortAvtagende <- TRUE
       }
       
 #----------------URIN-skjema (start 01.01.2015):

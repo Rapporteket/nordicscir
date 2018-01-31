@@ -98,16 +98,16 @@ erMann <- 9                      #1-menn, 0-kvinner, Standard: '', dvs. begge
 traume <- ''    #'ja','nei', standard: ikke valgt
 AIS <- 99 # as.character(c(1,4))	#AISgrad ved innleggelse alle(''), velge en eller flere fra 1:5
 paratetra <- 99
-datoFra <- '2015-01-01'             #Standard: b?r v?re minste registrerte verdi ? min og max dato i utvalget vises alltid i figuren.
-datoTil <- '2017-12-31'
+datoFra <- '2011-01-01'             #Standard: b?r v?re minste registrerte verdi ? min og max dato i utvalget vises alltid i figuren.
+datoTil <- '2018-12-31'
 valgtMaal='gjsn'	#'Med'-median, 'Gjsn' gjennomsnitt
 grVar <- 'ShNavn'
 
 #------------------------------ Fordelinger --------------------------
 RegData <- HovedSkjema
-valgtVar <- 'RegForsinkelse'	#M? velge... AAis, FAis, Alder, DagerRehab, DagerTilRehab, NivaaInn
-							#OpphTot[HosptlDy], Permisjon[OutOfHosptlDy], UtTil[PlaceDis], SkadeArsak[Scietiol]  
-							#Pustehjelp[VentAssi], PPlaceDis, RegForsinkelse
+valgtVar <- 'Ntsci'	#AAis, FAis, Alder, DagerRehab, DagerTilRehab, NivaaInn, Ntsci,
+					#OpphTot[HosptlDy], Permisjon[OutOfHosptlDy], UtTil[PlaceDis], 
+                             	#Pustehjelp[VentAssi], PPlaceDis, RegForsinkelse,  #SkadeArsak[Scietiol]  
 #UrinSkjema: 
 RegData <- KobleMedHoved(HovedSkjema,Urin)
 valgtVar <- 'UrinTomBlareHoved'   #'UrinInkontinens', 'UrinLegemidler','UrinLegemidlerHvilke', 'UrinKirInngr', 
@@ -131,7 +131,7 @@ NSFigAndeler(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFr
 
 #Hoved
 variable <- c('AAis', 'FAis', 'Alder', 'DagerRehab', 'DagerTilRehab', 'NivaaInn', 'NivaaUt',
-              'OpphTot', 'UtTil', 'SkadeArsak')
+              'Ntsci', 'OpphTot', 'UtTil', 'SkadeArsak')
 #Urin
 variable <- c('UrinInkontinens', 'UrinLegemidler','UrinLegemidlerHvilke', 'UrinKirInngr', 
                   'UrinTomBlareHoved', 'UrinTomBlareTillegg')
@@ -149,8 +149,8 @@ for (valgtVar in variable) {
 }
 
 #------------------------------ Sentralmål --------------------------
-outfile <- '' #paste(valgtVar, '.png', sep='')	#Navn angis av Jasper
-valgtVar <- 'RegForsinkelse'   #'Alder', 'DagerRehab', 'DagerTilRehab', 'OpphTot', 'LivsGen', 'LivsFys', 'LivsPsyk'
+outfile <- '' #paste(valgtVar, '_Sh.png')	#Navn angis av Jasper
+valgtVar <- 'LivsGen'   #'Alder', 'DagerRehab', 'DagerTilRehab', 'OpphTot', 'LivsGen', 'LivsFys', 'LivsPsyk'
 NSFigGjsnGrVar(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
 		valgtMaal=valgtMaal, AIS=AIS, minald=minald, maxald=maxald, erMann=erMann, traume=traume)
 
