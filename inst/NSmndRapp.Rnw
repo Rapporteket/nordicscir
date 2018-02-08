@@ -1,0 +1,148 @@
+\documentclass[presentation,xcolor=pdftex,dvipsnames,table]{beamer}
+\usetheme{Hannover}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english, norsk]{babel}
+\usepackage{xspace}
+\usepackage{booktabs}
+\usepackage{rotating}
+\usepackage{graphicx}
+
+
+<<'initOpts',include=FALSE>>=
+knitr::opts_chunk$set(warnings=FALSE,echo=FALSE)
+knitr::opts_knit$set(root.dir = './')
+@
+
+<<'getData', include=FALSE>>=
+datoTil <- Sys.Date()
+dato <- as.POSIXlt(datoTil)
+datoFra <- as.Date(paste0(1900+dato$year-1,'-', dato$mon+1, '-', '01'))
+aarFra <- paste0(1900+dato$year-5, '-01-01')
+      
+if (!exists('RegData')){
+      RegData <- NSRegDataSQL() #datoFra = datoFra, datoTil = datoTil)
+}
+
+#RegData <- NSRegDataSQL(datoFra=datoFra, datoTil=datoTil)
+RegData <- NSPreprosesser(RegData=RegData)
+RegData <- RegData[which(RegData$InnDato > as.POSIXlt(aarFra)), ]
+@
+
+
+<<'SetteParametreOgLageFigurer', include=FALSE>>=
+enhetsUtvalg <- 1
+#tidsenhet <- 'Mnd'
+preprosess <- 0
+hentData <- 0
+
+shtxt <- switch(as.character(enhetsUtvalg),
+                     '0' = 'Hele landet',
+                     '1' = as.character(RegData$ShNavn[match(reshID, RegData$ReshId)]),
+                     '2' = as.character(RegData$ShNavn[match(reshID, RegData$ReshId)]))
+
+variable <- c('SkadeArsak', 'Ntsci', 'AAis', 'FAis')
+for (valgtVar in variable) {
+	outfile <- paste0(valgtVar, '.pdf')
+	NSFigAndeler(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra,
+                datoTil=datoTil, outfile=outfile, reshID=reshID, enhetsUtvalg=enhetsUtvalg,
+                hentData=0, preprosess=preprosess)
+}
+
+@
+
+\title[NorScir\\\Sexpr{shtxt}]{\textit{Norsk Spinnalskaderegister} \\
+MÅNEDSRAPPORT, \\
+\Sexpr{shtxt}}
+\date{}
+
+
+
+\begin{document}
+\begin{tiny}
+
+\maketitle
+
+\section{Registreringsoversikter}
+
+\begin{frame}[fragile]
+Infoside med hva dokumentet inneholder. Datautvalg e.l.?
+Gi evt. tilbakemelding på tekst
+\end{frame}
+
+\begin{frame}[fragile]
+<<'Registreringer',include=FALSE>>=
+tabAvdN <- addmargins(as.table(ftable(RegData[c('ShNavn','Aar')])))
+rownames(tabAvdN)[dim(tabAvdN)[1] ]<- 'TOTALT, alle avdelinger:'
+colnames(tabAvdN)[dim(tabAvdN)[2] ]<- 'Alle år'
+
+#TabRegAarAvd <- 
+ xtable::xtable(tabAvdN, digits=0, align=c('l', rep('r', ncol(tabAvdN))),
+		caption='Antall innregistreringsskjema per år og avdeling, siste 5 år.',
+		label="tab:AntReg")
+
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+Tabell: Andel registreringsskjema med oppfølging
+\end{frame}
+
+\begin{frame}[fragile]
+Tabell: Andel kontrollskjema med oppfølging
+\end{frame}
+
+
+
+\section{Pasientkarakteristika}
+
+\begin{frame}[fragile]
+\begin{figure}[ht]
+\centering
+\includegraphics[scale=0.35]{SkadeArsak.pdf}
+\caption{Prosentvis fordeling av skadeårsaker}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{figure}[ht]
+\centering
+\includegraphics[scale=0.35]{Ntsci.pdf}
+\caption{Prosentvis fordeling av ikke-traumatiske skadeårsaker}
+\end{figure}
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{figure}[ht]
+\centering
+\includegraphics[scale=0.35]{AAis.pdf}
+\caption{Prosentvis fordeling av AIS ved innleggelse}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\begin{figure}[ht]
+\centering
+\includegraphics[scale=0.35]{FAis.pdf}
+\caption{Prosentvis fordeling av AIS ved utskriving}
+\end{figure}
+\end{frame}
+
+
+\section{Nevrologisk klassifikasjon}
+
+\begin{frame}[fragile]
+Tabell: Nevrologisk klassifikasjon på sykehusnivå
+\end{frame}
+
+\begin{frame}[fragile]
+Tabell: Nevrologisk klassifikasjon på sykehusnivå/kval.ind., 28 dager
+\end{frame}
+
+
+\end{tiny}
+\end{document}

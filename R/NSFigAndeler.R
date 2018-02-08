@@ -127,7 +127,6 @@ NSFigAndeler <- function(RegData, outfile='', valgtVar,
       
       
       
-      #grtxt <- paste0(rev(NSVarSpes$grtxt), ' (', rev(sprintf('%.1f',AggVerdier$Hoved)), '%)') 
       grtxt <- NSVarSpes$grtxt
       grtxt2 <- paste0('(', sprintf('%.1f',AggVerdier$Hoved), '%)')
       cexgr <- NSVarSpes$cexgr
@@ -172,7 +171,7 @@ NSFigAndeler <- function(RegData, outfile='', valgtVar,
             FigTypUt <- rapbase::figtype(outfile, fargepalett=Utvalg$fargepalett)
             #Tilpasse marger for å kunne skrive utvalgsteksten
             NutvTxt <- length(utvalgTxt)
-            grtxtpst <- paste0(rev(grtxt), ' (', rev(sprintf('%.1f',AggVerdier$Hoved)), '%)')
+            grtxtpst <- paste0(grtxt, ' (', sprintf('%.1f',AggVerdier$Hoved), '%)')
             vmarg <- switch(NSVarSpes$retn, V=0, H=max(0, strwidth(grtxtpst, units='figure', cex=cexgr)*0.8))
             par('fig'=c(vmarg, 1, 0, 1-0.02*(NutvTxt-1)))	#Har alltid datoutvalg med
             
@@ -208,11 +207,11 @@ NSFigAndeler <- function(RegData, outfile='', valgtVar,
                   ymax <- antGr*1.4
                   xmax <- min(max(c(AggVerdier$Hoved, AggVerdier$Rest),na.rm=T)*1.25, 100)
                   #par('fig'=c(0.1, 1, 0, 0.9))
-                  pos <- barplot(rev(as.numeric(AggVerdier$Hoved)), horiz=TRUE, beside=TRUE, las=1, xlab="Andel pasienter (%)", #main=tittel,
+                  pos <- barplot(as.numeric(AggVerdier$Hoved), horiz=TRUE, beside=TRUE, las=1, xlab="Andel pasienter (%)", #main=tittel,
                                  cex.lab=cexleg,col=fargeHoved, border='white', font.main=1, xlim=c(0, xmax), ylim=c(0,ymax))	#
-                  mtext(at=pos+0.1, text=grtxtpst, side=2, las=1, cex=cexgr, adj=1, line=0.25)	#text=rev(grtxt)
+                  mtext(at=pos+0.1, text=grtxtpst, side=2, las=1, cex=cexgr, adj=1, line=0.25)	
                   if (medSml == 1) {
-                        points(as.numeric(rev(AggVerdier$Rest)), pos, col=fargeRest,  cex=2, pch=18) #c("p","b","o"),
+                        points(as.numeric(AggVerdier$Rest), pos, col=fargeRest,  cex=2, pch=18) #c("p","b","o"),
                         legend('topleft', c(paste0(hovedgrTxt, ' (N=', Nfig$Hoved,')'), paste0('Landet forøvrig (N=', Nfig$Rest,')')),
                                border=c(fargeHoved,NA), col=c(fargeHoved,fargeRest), bty='n', pch=c(15,18), pt.cex=2, lty=NA,
                                lwd=lwdRest, ncol=2, cex=cexleg)

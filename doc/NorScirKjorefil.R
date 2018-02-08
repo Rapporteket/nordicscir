@@ -1,4 +1,5 @@
-#Lage eksempeldatasett
+
+#-----------------------Lage eksempeldatasett
 rm(list=ls())
 NorScirEksData <- read.table('E:/Registre/NorScir/data/NorScirEksempeldata.csv', header=T, sep=';')
 #perm.sammen:
@@ -20,16 +21,26 @@ save(NorScirEksData, file='E:/Registre/NordicScir/data/NorScirEksData.Rdata')
 #--------------------------------------SAMLERAPPORT-----------------------------------
 rm(list=ls())
 library(knitr)
+library(tools)	#texi2pdf
 NSdata <- HovedSkjema
+RegData <- HovedSkjema
 setwd("C:/ResultattjenesteGIT/nordicscir/inst")
 reshID <- 107627	#0 - alle	#105593-Haukeland, 106896-Sunnaas, 107627-St.Olavs
 
-library(tools)	#texi2pdf
+
+knit('NSmndRapp.Rnw')
+texi2pdf('NSmndRapp.tex')
+
 knit('NSsamleRappLand.Rnw')
 texi2pdf('NSsamleRappLand.tex')
 knit('NSsamleRapp.Rnw')
 texi2pdf('NSsamleRapp.tex')
 
+filtype <- c('.toc','.log', '.lof','.lot','.out', '.aux', '.vrb','.snm')
+removeFiles <- c(paste0('NSmndRapp',filtype), 
+                 paste0('NSsamleRapp', filtype), 
+                 paste0('NSsamleRappLand', filtype))
+file.remove(file=removeFiles)
 
 #------------------------ LASTE DATA -------------------------------------
 
@@ -41,8 +52,8 @@ Livskvalitet <- read.table(paste0(sti, 'LifeQuality',dato,'.csv'), stringsAsFact
 Kontroll <- read.table(paste0(sti, 'Control', dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
 Urin <- read.table(paste0(sti, 'UrinaryTractFunction', dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
 Tarm <- read.table(paste0(sti, 'BowelFunction',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
-Satisfact <- read.table(paste0(sti, 'ActivityAndParticipationSatisfaction',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
 Performance <- read.table(paste0(sti, 'ActivityAndParticipationPerformance',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
+Satisfact <- read.table(paste0(sti, 'ActivityAndParticipationSatisfaction',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
 
 HovedSkjema$SkjemaGUID <- tolower(HovedSkjema$SkjemaGUID)
 Performance$SkjemaGUID <- tolower(Performance$SkjemaGUID)
@@ -89,8 +100,8 @@ AndelPerform <- round(100*ftable(RaaTab[!is.na(RaaTab$MedPerform),tabVar])/ftabl
 #------------------------------ Parametre --------------------------
 rm(list=ls())
 library(nordicscir)
-setwd("C:/ResultattjenesteGIT/nordicscir/")
-reshID <- 105593             ##105593-Haukeland, 106896-Sunnaas, 107627-St.Olavs, standard i funksj: 0 dvs. 'Alle'. Standard i rapporten skal v?re at man f?r opp eget sykehus.
+setwd("C:/Registerinfo og historie/NordicScir/Figurer/")
+reshID <- 107627             ##105593-Haukeland, 106896-Sunnaas, 107627-St.Olavs, standard i funksj: 0 dvs. 'Alle'. Standard i rapporten skal v?re at man f?r opp eget sykehus.
 enhetsUtvalg <- 0
 minald <- 0
 maxald <- 130
@@ -98,7 +109,7 @@ erMann <- 9                      #1-menn, 0-kvinner, Standard: '', dvs. begge
 traume <- ''    #'ja','nei', standard: ikke valgt
 AIS <- 99 # as.character(c(1,4))	#AISgrad ved innleggelse alle(''), velge en eller flere fra 1:5
 paratetra <- 99
-datoFra <- '2017-01-01'             #Standard: b?r v?re minste registrerte verdi ? min og max dato i utvalget vises alltid i figuren.
+datoFra <- '2016-01-01'             #Standard: bør være minste registrerte verdi ? min og max dato i utvalget vises alltid i figuren.
 datoTil <- '2018-12-31'
 valgtMaal='gjsn'	#'Med'-median, 'Gjsn' gjennomsnitt
 grVar <- 'ShNavn'
@@ -118,14 +129,23 @@ valgtVar <- 'TarmAvfHoved'   #'TarmAvfHoved','TarmAvfTillegg', TarmAvfmiddel, Ta
                               #TarmInkontinens, TarmKirInngrep, TarmKirInngrepHvilke
 
 #Livskvalitet
-RegData <- KobleMedHoved(HovedSkjema,Livskvalitet)
+RegData <- KobleMedHoved(RegData,Livskvalitet)
 valgtVar <- 'LivsGen'                #LivsGen, LivsFys, LivsPsyk
+
+#Funksjon (Aktivitet og deltagelse)
+RegData <- KobleMedHoved(HovedSkjema,Performance)
+valgtVar <- 'FunkSpis'               #FunkDo, FunkKler, FunkMob, FunkSpis
+
+#Tilfredshet. NB: Kobles til A&D
+RegData <- KobleMedHoved(Performance,Satisfact)
+RegData <- KobleMedHoved(HovedSkjema,RegData)
+valgtVar <- 'TilfSpis'               #TilfDo, TilfKler, TilfMob, TilfSpis
 
 outfile <- '' #paste0(valgtVar, '.png')	#Navn angis av Jasper
 
 NSFigAndeler(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
 		AIS=AIS, minald=minald, maxald=maxald, erMann=erMann, traume=traume, paratetra=paratetra,
-		reshID=reshID, enhetsUtvalg=0)    #, preprosess=1
+		reshID=reshID, enhetsUtvalg=1)    #, preprosess=1
 #Aktuelt å legge til en parameter som sier hvilket skjema variabelen tilhører. Dette for å koble
 #sammen riktig skjema til hovedskjema.
 
@@ -141,11 +161,18 @@ variable <- c('TarmAvfHoved','TarmAvfTillegg', 'TarmAvfmiddel', 'TarmAvfmiddelHv
 #Livs
 variable  <- c('LivsGen', 'LivsFys', 'LivsPsyk')
 
+#Funk
+variable  <- c('FunkDo', 'FunkKler', 'FunkMob', 'FunkSpis')
+
+#Tilf
+variable  <- c('TilfDo', 'TilfKler', 'TilfMob', 'TilfSpis')
+
+setwd("C:/Registerinfo og historie/NordicScir/Figurer/")
 for (valgtVar in variable) {
 	outfile <- paste0(valgtVar, '.png')
 	NSFigAndeler(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
 	             AIS=AIS, minald=minald, maxald=maxald, erMann=erMann, traume=traume, paratetra=paratetra,
-	             reshID=reshID, enhetsUtvalg=enhetsUtvalg, hentData=0)
+	             reshID=reshID, enhetsUtvalg=1, hentData=0)
 }
 
 #------------------------------ Sentralmål --------------------------
