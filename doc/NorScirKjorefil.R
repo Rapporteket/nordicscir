@@ -1,5 +1,5 @@
 
-#-----------------------Lage eksempeldatasett
+#-----------------------Lage eksempeldatasett-----------------------
 rm(list=ls())
 NorScirEksData <- read.table('E:/Registre/NorScir/data/NorScirEksempeldata.csv', header=T, sep=';')
 #perm.sammen:
@@ -22,11 +22,10 @@ save(NorScirEksData, file='E:/Registre/NordicScir/data/NorScirEksData.Rdata')
 rm(list=ls())
 library(knitr)
 library(tools)	#texi2pdf
-NSdata <- HovedSkjema
-RegData <- HovedSkjema
 setwd("C:/ResultattjenesteGIT/nordicscir/inst")
+#NSdata <- HovedSkjema
 reshID <- 107627	#0 - alle	#105593-Haukeland, 106896-Sunnaas, 107627-St.Olavs
-
+RegData <- HovedSkjema
 
 knit('NSmndRapp.Rnw')
 texi2pdf('NSmndRapp.tex')
@@ -36,11 +35,18 @@ texi2pdf('NSsamleRappLand.tex')
 knit('NSsamleRapp.Rnw')
 texi2pdf('NSsamleRapp.tex')
 
-filtype <- c('.toc','.log', '.lof','.lot','.out', '.aux', '.vrb','.snm')
+filtype <- c('.toc','.log', '.lof','.lot','.out', '.aux', '.vrb','.snm','.nav')
 removeFiles <- c(paste0('NSmndRapp',filtype), 
                  paste0('NSsamleRapp', filtype), 
                  paste0('NSsamleRappLand', filtype))
 file.remove(file=removeFiles)
+
+rm(list=ls())
+dato <- 'FormDataContract2018-01-30' #2017-05-24
+sti <- 'A:/NordicScir/'
+HovedSkjema <- read.table(paste0(sti, 'Main',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
+reshID <- 107627	#0 - alle	#105593-Haukeland, 106896-Sunnaas, 107627-St.Olavs
+RegData <- HovedSkjema
 
 #------------------------ LASTE DATA -------------------------------------
 
@@ -56,8 +62,12 @@ Performance <- read.table(paste0(sti, 'ActivityAndParticipationPerformance',dato
 Satisfact <- read.table(paste0(sti, 'ActivityAndParticipationSatisfaction',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
 
 HovedSkjema$SkjemaGUID <- tolower(HovedSkjema$SkjemaGUID)
-Performance$SkjemaGUID <- tolower(Performance$SkjemaGUID)
+Livskvalitet$SkjemaGUID <- tolower(Livskvalitet$SkjemaGUID)
 Kontroll$SkjemaGUID <- tolower(Kontroll$SkjemaGUID)
+Urin$SkjemaGUID <- tolower(Urin$SkjemaGUID)
+Tarm$SkjemaGUID <- tolower(Tarm$SkjemaGUID)
+Performance$SkjemaGUID <- tolower(Performance$SkjemaGUID)
+Satisfact$SkjemaGUID <- tolower(Satisfact$SkjemaGUID)
 
 
 KobleMedHoved <- function(HovedSkjema,Skjema2) {
@@ -74,18 +84,21 @@ RegData <- HovedSkjema
 #------------------------ TESTE DATA -------------------------------------
 
 #---Oppsummering/test av andel som har fått oppfølging---
-paste0('Ant. Livskvalitet m/hovedskjema: ',sum(HovedSkjema$SkjemaGUID %in% Livskvalitet$HovedskjemaGUID))
-paste0('Ant. Performance m/hovedskjema: ', sum(HovedSkjema$SkjemaGUID %in% Performance$HovedskjemaGUID))
-paste0('Ant. Satisfaction m/Performance: ', sum(Satisfact$HovedskjemaGUID %in% Performance$SkjemaGUID))
+paste0('Ant. hovedskjema m/Livskvalitet: ',sum(HovedSkjema$SkjemaGUID %in% Livskvalitet$HovedskjemaGUID))
+paste0('Ant. hovedskjema m/Performance: ', sum(HovedSkjema$SkjemaGUID %in% Performance$HovedskjemaGUID))
+paste0('Ant. Satisfaction m/Performance: ', sum(Performance$SkjemaGUID %in% Satisfact$HovedskjemaGUID))
 
 tabVar <- c('HealthUnitName','Aar')
 Hskjema <- HovedSkjema[c('SkjemaGUID','HealthUnitName','AdmitDt')][order(HovedSkjema$SkjemaGUID),]
 RaaTab <- cbind(Hskjema,
-      Aar = as.POSIXlt(Hskjema$AdmitDt, format="%Y-%m-%d")$year +1900,
-      MedLivskval = match(Hskjema$SkjemaGUID, sort(Livskvalitet$HovedskjemaGUID)),
-      MedKtr = match(HovedSkjema$SkjemaGUID, sort(Kontroll$HovedskjemaGUID)),
-      MedSatisfact = match(HovedSkjema$SkjemaGUID, sort(Satisfact$HovedskjemaGUID)),
-      MedPerform = match(HovedSkjema$SkjemaGUID, sort(Performance$HovedskjemaGUID))
+                #Aar = as.POSIXlt(Hskjema$AdmitDt, format="%Y-%m-%d")$year +1900,
+                MedLivskval = match(Hskjema$SkjemaGUID, sort(Livskvalitet$HovedskjemaGUID)),
+                MedKtr = match(HovedSkjema$SkjemaGUID, sort(Kontroll$HovedskjemaGUID)),
+                MedUrin = match(HovedSkjema$SkjemaGUID, sort(Urin$HovedskjemaGUID)),
+                MedTarm = match(HovedSkjema$SkjemaGUID, sort(Tarm$HovedskjemaGUID)),
+                MedPerform = match(HovedSkjema$SkjemaGUID, sort(Performance$HovedskjemaGUID)),
+                MedSatisfact = match(HovedSkjema$SkjemaGUID,
+                                     sort(Hskjema$SkjemaGUID[match(Performance$SkjemaGUID, sort(Satisfact$HovedskjemaGUID))]))
 )
 #RaaTab <- RaaTab1[which(as.Date(Hskjema$AdmitDt)> '2014-12-31'),]
 Tot <- table(is.na(RaaTab$MedLivskval))/dim(RaaTab)[1]*100  #'MedKtr'

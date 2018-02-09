@@ -10,6 +10,7 @@
 \usepackage{graphicx}
 
 
+
 <<'initOpts',include=FALSE>>=
 knitr::opts_chunk$set(warnings=FALSE,echo=FALSE)
 knitr::opts_knit$set(root.dir = './')
@@ -22,21 +23,20 @@ datoFra <- as.Date(paste0(1900+dato$year-1,'-', dato$mon+1, '-', '01'))
 aarFra <- paste0(1900+dato$year-5, '-01-01')
       
 if (!exists('RegData')){
+      #RegData inneholder kun hovedtabell
       RegData <- NSRegDataSQL() #datoFra = datoFra, datoTil = datoTil)
 }
 
 #RegData <- NSRegDataSQL(datoFra=datoFra, datoTil=datoTil)
 RegData <- NSPreprosesser(RegData=RegData)
+RegData$SkjemaGUID <- tolower(RegData$SkjemaGUID)
 RegData <- RegData[which(RegData$InnDato > as.POSIXlt(aarFra)), ]
+HovedSkjema <- RegData[which(RegData$InnDato > as.POSIXlt(datoFra)), ]
 @
 
 
 <<'SetteParametreOgLageFigurer', include=FALSE>>=
 enhetsUtvalg <- 1
-#tidsenhet <- 'Mnd'
-preprosess <- 0
-hentData <- 0
-
 shtxt <- switch(as.character(enhetsUtvalg),
                      '0' = 'Hele landet',
                      '1' = as.character(RegData$ShNavn[match(reshID, RegData$ReshId)]),
@@ -47,14 +47,19 @@ for (valgtVar in variable) {
 	outfile <- paste0(valgtVar, '.pdf')
 	NSFigAndeler(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra,
                 datoTil=datoTil, outfile=outfile, reshID=reshID, enhetsUtvalg=enhetsUtvalg,
-                hentData=0, preprosess=preprosess)
+                hentData=0, preprosess=0)
 }
 
+valgtVar <- 'RegForsinkelse'
+outfile <- paste0(valgtVar, '_Sh.pdf')
+NSFigGjsnGrVar(RegData=RegData, hentData=0, preprosess = 0, outfile=outfile, valgtVar=valgtVar, 
+               datoFra=datoFra, datoTil=datoTil)
+RegData$HealthUnitName[match(reshID, RegData$ReshId)]
 @
 
-\title[NorScir\\\Sexpr{shtxt}]{\textit{Norsk Spinnalskaderegister} \\
+\title[NorSCIR\\\Sexpr{shtxt}]{\textit{Norsk ryggmargsskaderegister} \\
 MÅNEDSRAPPORT, \\
-\Sexpr{shtxt}}
+\Sexpr{RegData$HealthUnitName[match(reshID, RegData$ReshId)]}
 \date{}
 
 
@@ -72,27 +77,143 @@ Gi evt. tilbakemelding på tekst
 \end{frame}
 
 \begin{frame}[fragile]
-<<'Registreringer',include=FALSE>>=
-tabAvdN <- addmargins(as.table(ftable(RegData[c('ShNavn','Aar')])))
+<<'Registreringer', results='asis'>>=
+#tabAvdN <- addmargins(as.table(ftable(RegData[c('ShNavn','Aar')])))
+tabAvdN <- addmargins(table(RegData[c('ShNavn','Aar')]))
 rownames(tabAvdN)[dim(tabAvdN)[1] ]<- 'TOTALT, alle avdelinger:'
 colnames(tabAvdN)[dim(tabAvdN)[2] ]<- 'Alle år'
 
-#TabRegAarAvd <- 
- xtable::xtable(tabAvdN, digits=0, align=c('l', rep('r', ncol(tabAvdN))),
-		caption='Antall innregistreringsskjema per år og avdeling, siste 5 år.',
-		label="tab:AntReg")
+
+#xtable::print.xtable(
+#    x = xtable::xtable(
+#        x = addmargins(xtabs(formula = ~ Month + Hastegrad ,data = AP)) ,
+#        caption = "Antall registrerte prosedyrer etter hastegrad og måned" ,
+#        digits = 0) , booktabs = TRUE )
+xtable::xtable(tabAvdN, digits=0, align=c('l', rep('r', ncol(tabAvdN))),
+		caption='Antall innregistreringsskjema per år og avdeling, siste 5 år.')
 
 @
-
 \end{frame}
+
+
+
+
+
 
 \begin{frame}[fragile]
-Tabell: Andel registreringsskjema med oppfølging
+<<'AndelOppfolg', results='asis'>>=
+#Tabell: Andel registreringsskjema med oppfølging siste 12 mnd
+dato <- 'FormDataContract2018-01-30' #2017-05-24
+sti <- 'A:/NordicScir/'
+Livskvalitet <- read.table(paste0(sti, 'LifeQuality',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
+Kontroll <- read.table(paste0(sti, 'Control', dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
+Urin <- read.table(paste0(sti, 'UrinaryTractFunction', dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
+Tarm <- read.table(paste0(sti, 'BowelFunction',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
+Performance <- read.table(paste0(sti, 'ActivityAndParticipationPerformance',dato,'.csv'), 
+                          stringsAsFactors=FALSE, sep=';', header=T)
+Satisfact <- read.table(paste0(sti, 'ActivityAndParticipationSatisfaction',dato,'.csv'), 
+                        stringsAsFactors=FALSE, sep=';', header=T)
+
+HovedSkjema$SkjemaGUID <- tolower(HovedSkjema$SkjemaGUID)
+Livskvalitet$SkjemaGUID <- tolower(Livskvalitet$SkjemaGUID)
+Kontroll$SkjemaGUID <- tolower(Kontroll$SkjemaGUID)
+Urin$SkjemaGUID <- tolower(Urin$SkjemaGUID)
+Tarm$SkjemaGUID <- tolower(Tarm$SkjemaGUID)
+Performance$SkjemaGUID <- tolower(Performance$SkjemaGUID)
+Satisfact$SkjemaGUID <- tolower(Satisfact$SkjemaGUID)
+
+#Hskjema <- HovedSkjema[c('SkjemaGUID','ShNavn')][order(HovedSkjema$SkjemaGUID),]
+
+RaaTab <- data.frame(Sykehus = HovedSkjema$ShNavn,
+      #Aar = as.POSIXlt(Hskjema$AdmitDt, format="%Y-%m-%d")$year +1900,
+      Livskvalitet = HovedSkjema$SkjemaGUID %in% Livskvalitet$HovedskjemaGUID,
+      Kontroll = HovedSkjema$SkjemaGUID %in% Kontroll$HovedskjemaGUID,
+      Urin = HovedSkjema$SkjemaGUID %in% Urin$HovedskjemaGUID,
+      Tarm = HovedSkjema$SkjemaGUID %in% Tarm$HovedskjemaGUID,
+      Funksjon = HovedSkjema$SkjemaGUID %in% Performance$HovedskjemaGUID,
+      Tilfredshet = HovedSkjema$SkjemaGUID %in% 
+            Performance$HovedskjemaGUID[Performance$SkjemaGUID %in% Satisfact$HovedskjemaGUID]
+)
+
+AntReg <- table(HovedSkjema$ShNavn)
+#AntOppf <- apply(RaaTab[ ,-1], MARGIN=2, 
+ #                      FUN=function(x) table(x,RaaTab$Sykehus)['TRUE',])
+AntOppf <- apply(RaaTab[ ,-1], MARGIN=2, 
+                       FUN=function(x) tapply(x,INDEX=RaaTab$Sykehus, sum))
+AndelOppf <- 100*AntOppf / as.vector(AntReg)
+#AndelOppf <- 100*apply(RaaTab[ ,-1], MARGIN=2, 
+#                       FUN=function(x) prop.table(tapply(x, RaaTab$Sykehus, sum),margin=2)['TRUE',])
+
+xtable::xtable(cbind(Reg=AntReg,AntOppf), digits=0, align=c('l', rep('r', ncol(AntOppf)+1)),
+		caption=paste0('Antall registreringsskjema og antall av disse som har tilknyttet de ulike typer oppfølgingsskjema. Innleggelser fra og med ', datoFra, '.'))
+
+xtable::xtable(AndelOppf, digits=1, align=c('l', rep('r', ncol(AndelOppf))),
+		caption=paste0('Andel (prosent) av registreringsskjemaene som har oppfølgingsskjema.'))
+@
 \end{frame}
 
+
+
+
+
 \begin{frame}[fragile]
-Tabell: Andel kontrollskjema med oppfølging
+\title Denne skal gjøres usynlig i endelig versjon(?)
+<<'AndelKtrMOppfolg', results='asis'>>=
+#Tabell: Andel kontrollskjema med oppfølging
+RaaTabKtr <- data.frame(Sykehus = Kontroll$HealthUnitShortName,
+      #Aar = as.POSIXlt(Hskjema$AdmitDt, format="%Y-%m-%d")$year +1900,
+      Livskvalitet = Kontroll$SkjemaGUID %in% Livskvalitet$HovedskjemaGUID,
+      Urin = Kontroll$SkjemaGUID %in% Urin$HovedskjemaGUID,
+      Tarm = Kontroll$SkjemaGUID %in% Tarm$HovedskjemaGUID,
+      Funksjon = Kontroll$SkjemaGUID %in% Performance$HovedskjemaGUID,
+      Tilfredshet = Kontroll$SkjemaGUID %in% 
+            Performance$SkjemaGUID[Performance$SkjemaGUID %in% Satisfact$HovedskjemaGUID]
+)
+
+AntRegKtr <- table(Kontroll$HealthUnitShortName)
+#AntOppf <- apply(RaaTab[ ,-1], MARGIN=2, 
+ #                      FUN=function(x) table(x,RaaTab$Sykehus)['TRUE',])
+AntOppfKtr <- apply(RaaTabKtr[ ,-1], MARGIN=2, 
+                       FUN=function(x) tapply(x,INDEX=RaaTabKtr$Sykehus, sum))
+AndelOppfKtr <- 100*AntOppfKtr / as.vector(AntRegKtr)
+#AndelOppf <- 100*apply(RaaTab[ ,-1], MARGIN=2, 
+#                       FUN=function(x) prop.table(tapply(x, RaaTab$Sykehus, sum),margin=2)['TRUE',])
+
+xtable::xtable(cbind(Kontroll=AntRegKtr,AntOppfKtr), digits=0, align=c('l', rep('r', ncol(AntOppfKtr)+1)),
+		caption=paste0('Antall kontrollskjema og antall av disse som har tilknyttet de ulike typer oppfølgingsskjema. Innleggelser fra og med registreringsstart.'))
+
+xtable::xtable(AndelOppfKtr, digits=1, align=c('l', rep('r', ncol(AndelOppfKtr))),
+		caption=paste0('Hvor stor andel (prosent) av kontrollskjemaene som har de ulike typer oppfølgingsskjema.'))
+@
 \end{frame}
+
+
+\begin{frame}[fragile]
+
+Denne viser andel av Registreringsskjema som ikke har kontroll. År er ut fra AdmitDt. 
+Vi kan evt. snu tabellen og ta med alle år (fom. 2011)
+
+Dette skal kanskje bli en kvalitetsindikator? Da ville jeg heller vist andel som får kontroll. Kanskje vi skal gjøre det?
+
+<<'AndelUOppf', results='asis'>>=
+#Andel uten kontroll per sykehus og år
+
+indIkkeOppf <- which(!(RegData$SkjemaGUID %in% Kontroll$HovedskjemaGUID))
+
+RegShAar <- addmargins(table(RegData$ShNavn, RegData$Aar))
+RegShAarIkkeKtr <- addmargins(table(RegData$ShNavn[indIkkeOppf], RegData$Aar[indIkkeOppf]))
+AndelUKtr <- 100*RegShAarIkkeKtr/RegShAar
+rownames(AndelUKtr)[dim(AndelUKtr)[1] ]<- 'Hele landet'
+colnames(AndelUKtr)[dim(AndelUKtr)[2] ]<- 'Alle år'
+
+xtable::xtable(AndelUKtr, digits=1, align=c('l', rep('r', ncol(AndelUKtr))),
+		caption='Andel som til nå ikke har hatt kontroll per (siste 5) innleggelsesår og avdeling.')
+@
+\end{frame}
+
+
+
+
 
 
 
@@ -132,6 +253,13 @@ Tabell: Andel kontrollskjema med oppfølging
 \end{figure}
 \end{frame}
 
+\begin{frame}[fragile]
+\begin{figure}[ht]
+\centering
+\includegraphics[scale=0.35]{RegForsinkelse_Sh.pdf}
+\caption{Registreringsforsinkelse}
+\end{figure}
+\end{frame}
 
 \section{Nevrologisk klassifikasjon}
 
