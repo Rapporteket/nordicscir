@@ -257,8 +257,15 @@ valgtSkjema <- substr(valgtVar,1,4)
 variable <- ''
 qSkjema <- ''
 if (valgtSkjema %in% c('Livs', 'Urin', 'Tarm', 'Tilf', 'Funk', 'Kont')) { 
-      
-      variable <- paste0('var', valgtSkjema,'')
+      variable <- switch(valgtSkjema,
+                         Livs = varLivs,
+                         Urin = varUrin, 
+                         Tarm = varTarm,
+                         Sati = varSati,
+                         Perf = varPerf,
+                         Tilf = varSati,
+                         Funk = varPerf,
+                         Kont = varKont)
       qSkjema <- paste0(switch(valgtSkjema, #Dette vil bare fungere hvis konsekvent med navngiving i valgtVar
            Livs = 'INNER JOIN LifeQualityFormDataContract Livs ',
            Urin = 'INNER JOIN UrinaryTractFunctionFormDataContract Urin ',
