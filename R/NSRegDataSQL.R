@@ -80,6 +80,27 @@ varLivs <- c('
 ,l.SkjemaGUID
 ')
 
+varFunk <- c('
+,funk.DataClDt	
+,funk.Dreslbdy	
+,funk.Feeding	
+,funk.FirstTimeClosed
+,funk.HovedskjemaGUID
+,funk.Mobilmod	
+,funk.SkjemaGUID	
+,funk.Toiletin	
+')
+
+varTilf <- c('
+,tilf.DataClDt	
+,tilf.DreslbdyS	
+,tilf.FeedingS	
+,tilf.FirstTimeClosed
+,tilf.HovedskjemaGUID
+,tilf.MobilmodS	
+,tilf.SkjemaGUID	
+,tilf.ToiletinS	
+')
 varUrin <- c("
 ,u.Antiprop
 ,u.Antiuti
@@ -232,14 +253,14 @@ varTarm <- c('
 
 
 valgtSkjema <- substr(valgtVar,1,4)
-variable <- ifelse (valgtSkjema %in% c('Livs', 'Urin', 'Tarm', 'Sati', 'Perf', 'Kont'), paste0('var',valgtSkjema),'')
+variable <- ifelse (valgtSkjema %in% c('Livs', 'Urin', 'Tarm', 'Tilf', 'Funk', 'Kont'), paste0('var',valgtSkjema),'')
 
 variable <- switch(valgtSkjema,
                   Livs = varLivs,
                   Urin = varUrin, 
                   Tarm = varTarm,
-                  Sati = varSati,
-                  Perf = varPerf,
+                  Tilf = varSati,
+                  Funk = varPerf,
                   Kont = varKont)
 
 
@@ -250,8 +271,8 @@ qSkjema <- switch(valgtSkjema, #Dette vil bare fungere hvis konsekvent med navng
                         ON UPPER(h.SkjemaGUID) = UPPER(u.HovedskjemaGUID) ',
            Tarm = 'INNER JOIN BowelFunctionFormDataContract t
                        ON UPPER(h.SkjemaGUID) = UPPER(t.HovedskjemaGUID) ',
-           Sati = 'INNER JOIN ActivityAndParticipationSatisfactionFormDataContract s ',
-           Perf = 'INNER JOIN ActivityAndParticipationPerformanceFormDataContract p ',
+           Tilf = 'INNER JOIN ActivityAndParticipationSatisfactionFormDataContract tilf ',
+           Funk = 'INNER JOIN ActivityAndParticipationPerformanceFormDataContract funk ',
            Kont = 'INNER JOIN ControlFormDataContract k '
            )
 #qSkjema er NULL hvis ingen treff
