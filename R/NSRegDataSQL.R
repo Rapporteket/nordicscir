@@ -254,10 +254,10 @@ varTarm <- c('
 
 valgtSkjema <- substr(valgtVar,1,4)
 
-variable <- ifelse (valgtSkjema %in% c('Livs', 'Urin', 'Tarm', 'Tilf', 'Funk', 'Kont'), 
-                    paste0('var',valgtSkjema),'')
-
-qSkjema <- paste0(switch(valgtSkjema, #Dette vil bare fungere hvis konsekvent med navngiving i valgtVar
+if (valgtSkjema %in% c('Livs', 'Urin', 'Tarm', 'Tilf', 'Funk', 'Kont')) { 
+      
+      variable <- paste0('var', valgtSkjema,'')
+      qSkjema <- paste0(switch(valgtSkjema, #Dette vil bare fungere hvis konsekvent med navngiving i valgtVar
            Livs = 'INNER JOIN LifeQualityFormDataContract Livs ',
            Urin = 'INNER JOIN UrinaryTractFunctionFormDataContract Urin',
            Tarm = 'INNER JOIN BowelFunctionFormDataContract Tarm',
@@ -266,8 +266,8 @@ qSkjema <- paste0(switch(valgtSkjema, #Dette vil bare fungere hvis konsekvent me
            Kont = 'INNER JOIN ControlFormDataContract k '
            ),
            'ON UPPER(h.SkjemaGUID) = UPPER(',valgtSkjema , '.HovedskjemaGUID) ')
-#qSkjema er NULL hvis ingen treff
-
+      #qSkjema er NULL hvis ingen treff 
+      } 
 query <- paste0('SELECT ',
                varHoved,
                variable,
