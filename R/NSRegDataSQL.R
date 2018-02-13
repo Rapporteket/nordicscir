@@ -261,11 +261,10 @@ if (valgtSkjema %in% c('Livs', 'Urin', 'Tarm', 'Tilf', 'Funk', 'Kont')) {
                          Livs = varLivs,
                          Urin = varUrin, 
                          Tarm = varTarm,
-                         Sati = varSati,
-                         Perf = varPerf,
-                         Tilf = varSati,
-                         Funk = varPerf,
+                         Funk = varFunk,
+                         Tilf = varTilf,
                          Kont = varKont)
+      
       qSkjema <- paste0(switch(valgtSkjema, #Dette vil bare fungere hvis konsekvent med navngiving i valgtVar
            Livs = 'INNER JOIN LifeQualityFormDataContract Livs ',
            Urin = 'INNER JOIN UrinaryTractFunctionFormDataContract Urin ',
