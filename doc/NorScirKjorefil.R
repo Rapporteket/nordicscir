@@ -23,9 +23,8 @@ rm(list=ls())
 library(knitr)
 library(tools)	#texi2pdf
 setwd("C:/ResultattjenesteGIT/nordicscir/inst")
-#NSdata <- HovedSkjema
+#HENT DATA
 reshID <- 107627	#0 - alle	#105593-Haukeland, 106896-Sunnaas, 107627-St.Olavs
-RegData <- HovedSkjema
 
 knit('NSmndRapp.Rnw')
 texi2pdf('NSmndRapp.tex')
@@ -41,17 +40,10 @@ removeFiles <- c(paste0('NSmndRapp',filtype),
                  paste0('NSsamleRappLand', filtype))
 file.remove(file=removeFiles)
 
-rm(list=ls())
-dato <- 'FormDataContract2018-01-30' #2017-05-24
-sti <- 'A:/NordicScir/'
-HovedSkjema <- read.table(paste0(sti, 'Main',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
-reshID <- 107627	#0 - alle	#105593-Haukeland, 106896-Sunnaas, 107627-St.Olavs
-RegData <- HovedSkjema
-
 #------------------------ LASTE DATA -------------------------------------
 
 rm(list=ls())
-dato <- 'FormDataContract2018-01-30' #2017-05-24
+dato <- 'FormDataContract2018-02-13' #2017-05-24
 sti <- 'A:/NordicScir/'
 HovedSkjema <- read.table(paste0(sti, 'Main',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
 Livskvalitet <- read.table(paste0(sti, 'LifeQuality',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
@@ -129,7 +121,7 @@ grVar <- 'ShNavn'
 
 #------------------------------ Fordelinger --------------------------
 RegData <- HovedSkjema
-valgtVar <- 'UtTil'	#AAis, FAis, Alder, DagerRehab, DagerTilRehab, NivaaInn, Ntsci,
+valgtVar <- 'PPlaceDis'	#AAis, FAis, Alder, DagerRehab, DagerTilRehab, NivaaInn, Ntsci,
 					#OpphTot[HosptlDy], Permisjon[OutOfHosptlDy], UtTil[PlaceDis], 
                              	#Pustehjelp[VentAssi], PPlaceDis, RegForsinkelse,  #SkadeArsak[Scietiol]  
 #UrinSkjema: 
@@ -154,11 +146,11 @@ RegData <- KobleMedHoved(Performance,Satisfact)
 RegData <- KobleMedHoved(HovedSkjema,RegData)
 valgtVar <- 'TilfSpis'               #TilfDo, TilfKler, TilfMob, TilfSpis
 
-outfile <- '' #paste0(valgtVar, '.png')	#Navn angis av Jasper
+outfile <- paste0(valgtVar, '.png')	#Navn angis av Jasper
 
 NSFigAndeler(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
 		AIS=AIS, minald=minald, maxald=maxald, erMann=erMann, traume=traume, paratetra=paratetra,
-		reshID=reshID, enhetsUtvalg=1)    #, preprosess=1
+		reshID=reshID, enhetsUtvalg=0)    #, preprosess=1
 #Aktuelt å legge til en parameter som sier hvilket skjema variabelen tilhører. Dette for å koble
 #sammen riktig skjema til hovedskjema.
 

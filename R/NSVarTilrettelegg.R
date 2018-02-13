@@ -166,7 +166,6 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
       }
       
       if (valgtVar == 'Ntsci') {
-            #NB: Skal filtrere på 2018!!!!!!!!!!!!!!!!!!
             tittel <- 'Ikke-traumatisk skadeårsak (NTSCI)'
             #gr <- (1:6, 8:9) - Kodene som registereres
             RegData <- RegData[which(RegData$Ntsci %in% 1:9) %i% 
@@ -223,7 +222,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
             RegData <- RegData[which(RegData$Diff > -1), ]
             tittel <- switch(figurtype,
                              andeler='Tid fra utskriving til ferdigstilt registrering',
-                             andelGrVar = 'Mer enn 2 uker fra utskriving til ferdig registrering')
+                             andelGrVar = 'Mer enn 30 dager fra utskriving til ferdig registrering') #
             #RegData$Variabel[RegData$Diff > 2*7] <- 1
             RegData$Variabel <- RegData$Diff
             subtxt <- 'døgn'
