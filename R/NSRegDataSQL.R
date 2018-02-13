@@ -57,7 +57,7 @@ varHoved <- paste0("
       h.OutOfHosptlDy,
       h.OutOfHosptlDy2,
       h.OutOfRehabDy,
-      h.PasientGUID,
+      h.PatientGUID,
       h.PatientAge,
       h.PatientGender,
       h.PlaceDis,
@@ -70,213 +70,203 @@ varHoved <- paste0("
 ")
 
 varLivs <- c('
-,l.FormDate
-,l.HovedskjemaGUID
-,l.PasientGUID
-,l.QolDt
-,l.SatGenrl
-,l.SatPhys
-,l.SatPsych
-,l.SkjemaGUID
+,Livs.FormDate
+,Livs.HovedskjemaGUID
+,Livs.PasientGUID
+,Livs.QolDt
+,Livs.SatGenrl
+,Livs.SatPhys
+,Livs.SatPsych
+,Livs.SkjemaGUID
 ')
 
 varFunk <- c('
-,funk.DataClDt	
-,funk.Dreslbdy	
-,funk.Feeding	
-,funk.FirstTimeClosed
-,funk.HovedskjemaGUID
-,funk.Mobilmod	
-,funk.SkjemaGUID	
-,funk.Toiletin	
+,Funk.DataClDt	
+,Funk.Dreslbdy	
+,Funk.Feeding	
+,Funk.FirstTimeClosed
+,Funk.HovedskjemaGUID
+,Funk.Mobilmod	
+,Funk.SkjemaGUID	
+,Funk.Toiletin	
 ')
 
 varTilf <- c('
-,tilf.DataClDt	
-,tilf.DreslbdyS	
-,tilf.FeedingS	
-,tilf.FirstTimeClosed
-,tilf.HovedskjemaGUID
-,tilf.MobilmodS	
-,tilf.SkjemaGUID	
-,tilf.ToiletinS	
+,Tilf.DataClDtS	
+,Tilf.DreslbdyS	
+,Tilf.FeedingS	
+,Tilf.FirstTimeClosed
+,Tilf.HovedskjemaGUID
+,Tilf.MobilmodS	
+,Tilf.SkjemaGUID	
+,Tilf.ToiletinS	
 ')
 varUrin <- c("
-,u.Antiprop
-,u.Antiuti
-,u.AnyDrugs
-,u.Artsph
-,u.ArtsphDt
-,u.Avbladem
-,u.Awarblad
-,u.Bladag
-,u.BladagDt
-,u.Bladrelx
-,u.Botox
-,u.BotoxDt
-,u.Bstnrm
-,u.BstnrmDt
-,u.Ccathv
-,u.CcathvDt
-,u.Collect
-,u.Condcath
-,u.Diaperpd
-,u.DrugsAnti
-,u.EmbladM1
-,u.EmbladM10
-,u.EmbladM11
-,u.EmbladM12
-,u.EmbladM2
-,u.EmbladM3
-,u.EmbladM4
-,u.EmbladM5
-,u.EmbladM6
-,u.EmbladM7
-,u.EmbladM8
-,u.EmbladM9
-,u.EmbladS1
-,u.EmbladS10
-,u.EmbladS11
-,u.EmbladS12
-,u.EmbladS2
-,u.EmbladS3
-,u.EmbladS4
-,u.EmbladS5
-,u.EmbladS6
-,u.EmbladS7
-,u.EmbladS8
-,u.EmbladS9
-,u.EmbladUn
-,u.FormDate
-,u.HealthUnitId
-,u.HealthUnitName
-,u.HovedskjemaGUID
-,u.Ilurts
-,u.IlurtsDt
-,u.Ilvscs
-,u.IlvscsDt
-,u.Incontnc
-,u.LastUpdate
-,u.LutfxnDt
-,u.MajorVersion
-,u.MinorVersion
-,u.Ostmybag
-,u.Othcolap
-,u.Othdrg
-,u.Othsrg
-,u.OthsrgDt
-,u.PasientGUID
-,u.Sarstm
-,u.SarstmDt
-,u.SkjemaGUID
-,u.Spcath
-,u.SpcathDt
-,u.Spncrelx
-,u.Surgicalpr
-,u.UnitId
-,u.Ursxchly
-,u.Ustent
-,u.UstentDt
-,u.Ustnrm
-,u.UstnrmDt
-,u.Utimprun
+,Urin.Antiprop
+,Urin.Antiuti
+,Urin.AnyDrugs
+,Urin.Artsph
+,Urin.ArtsphDt
+,Urin.Avbladem
+,Urin.Awarblad
+,Urin.Bladag
+,Urin.BladagDt
+,Urin.Bladrelx
+,Urin.Botox
+,Urin.BotoxDt
+,Urin.Bstnrm
+,Urin.BstnrmDt
+,Urin.Ccathv
+,Urin.CcathvDt
+,Urin.Collect
+,Urin.Condcath
+,Urin.Diaperpd
+,Urin.DrugsAnti
+,Urin.EmbladM1
+,Urin.EmbladM10
+,Urin.EmbladM11
+,Urin.EmbladM12
+,Urin.EmbladM2
+,Urin.EmbladM3
+,Urin.EmbladM4
+,Urin.EmbladM5
+,Urin.EmbladM6
+,Urin.EmbladM7
+,Urin.EmbladM8
+,Urin.EmbladM9
+,Urin.EmbladS1
+,Urin.EmbladS10
+,Urin.EmbladS11
+,Urin.EmbladS12
+,Urin.EmbladS2
+,Urin.EmbladS3
+,Urin.EmbladS4
+,Urin.EmbladS5
+,Urin.EmbladS6
+,Urin.EmbladS7
+,Urin.EmbladS8
+,Urin.EmbladS9
+,Urin.EmbladUn
+,Urin.FormDate
+,Urin.HealthUnitId
+,Urin.HealthUnitName
+,Urin.HovedskjemaGUID
+,Urin.Ilurts
+,Urin.IlurtsDt
+,Urin.Ilvscs
+,Urin.IlvscsDt
+,Urin.Incontnc
+,Urin.LastUpdate
+,Urin.LutfxnDt
+,Urin.MajorVersion
+,Urin.MinorVersion
+,Urin.Ostmybag
+,Urin.Othcolap
+,Urin.Othdrg
+,Urin.Othsrg
+,Urin.OthsrgDt
+,Urin.PasientGUID
+,Urin.Sarstm
+,Urin.SarstmDt
+,Urin.SkjemaGUID
+,Urin.Spcath
+,Urin.SpcathDt
+,Urin.Spncrelx
+,Urin.Surgicalpr
+,Urin.UnitId
+,Urin.Ursxchly
+,Urin.Ustent
+,Urin.UstentDt
+,Urin.Ustnrm
+,Urin.UstnrmDt
+,Urin.Utimprun
 ")
 
 varTarm <- c('
-,t.Antichol
-,t.Apndec
- ,t.ApndecDt
- ,t.ApndecDtUnknown
- ,t.Avdeftm
- ,t.BfxnbaDt
- ,t.Chcyec
- ,t.ChcyecDt
- ,t.ChcyecDtUnknown
- ,t.Colost
- ,t.ColostDt
- ,t.ColostDtUnknown
- ,t.Defawrns
- ,t.DefcmthM1
- ,t.DefcmthM10
- ,t.DefcmthM2
- ,t.DefcmthM3
- ,t.DefcmthM4
- ,t.DefcmthM5
- ,t.DefcmthM6
- ,t.DefcmthM7
- ,t.DefcmthM8
- ,t.DefcmthM9
- ,t.DefcmthUn
- ,t.Deffrq
- ,t.DrugUse
- ,t.Fcincfrq
- ,t.Fissures
- ,t.FormDate
- ,t.FormTypeId
- ,t.Gifxnun
- ,t.Hemrhoid
- ,t.HovedskjemaGUID
- ,t.Ileost
- ,t.IleostDt
- ,t.IleostDtUnknown
- ,t.Irrtdrp
- ,t.Irrttab
- ,t.Narcotic
- ,t.OralLaxatives
- ,t.Osmodrp
- ,t.Osmotab
- ,t.Otgisurg
- ,t.OtgisurgDt
- ,t.OtgisurgDtUnknown
- ,t.Othbfmed
- ,t.OthdefS1
- ,t.OthdefS10
- ,t.OthdefS2
- ,t.OthdefS3
- ,t.OthdefS4
- ,t.OthdefS5
- ,t.OthdefS6
- ,t.OthdefS7
- ,t.OthdefS8
- ,t.OthdefS9
- ,t.Othorlax
- ,t.Panloth
- ,t.Panlsore
- ,t.PasientGUID
- ,t.PerianalProblems
- ,t.Prokinet
- ,t.Recprlps
- ,t.SkjemaGUID
- ,t.SurgicalIntervention
- ,t.Wrpadplg
+,Tarm.Antichol
+,Tarm.Apndec
+ ,Tarm.ApndecDt
+ ,Tarm.ApndecDtUnknown
+ ,Tarm.Avdeftm
+ ,Tarm.BfxnbaDt
+ ,Tarm.Chcyec
+ ,Tarm.ChcyecDt
+ ,Tarm.ChcyecDtUnknown
+ ,Tarm.Colost
+ ,Tarm.ColostDt
+ ,Tarm.ColostDtUnknown
+ ,Tarm.Defawrns
+ ,Tarm.DefcmthM1
+ ,Tarm.DefcmthM10
+ ,Tarm.DefcmthM2
+ ,Tarm.DefcmthM3
+ ,Tarm.DefcmthM4
+ ,Tarm.DefcmthM5
+ ,Tarm.DefcmthM6
+ ,Tarm.DefcmthM7
+ ,Tarm.DefcmthM8
+ ,Tarm.DefcmthM9
+ ,Tarm.DefcmthUn
+ ,Tarm.Deffrq
+ ,Tarm.DrugUse
+ ,Tarm.Fcincfrq
+ ,Tarm.Fissures
+ ,Tarm.FormDate
+ ,Tarm.FormTypeId
+ ,Tarm.Gifxnun
+ ,Tarm.Hemrhoid
+ ,Tarm.HovedskjemaGUID
+ ,Tarm.Ileost
+ ,Tarm.IleostDt
+ ,Tarm.IleostDtUnknown
+ ,Tarm.Irrtdrp
+ ,Tarm.Irrttab
+ ,Tarm.Narcotic
+ ,Tarm.OralLaxatives
+ ,Tarm.Osmodrp
+ ,Tarm.Osmotab
+ ,Tarm.Otgisurg
+ ,Tarm.OtgisurgDt
+ ,Tarm.OtgisurgDtUnknown
+ ,Tarm.Othbfmed
+ ,Tarm.OthdefS1
+ ,Tarm.OthdefS10
+ ,Tarm.OthdefS2
+ ,Tarm.OthdefS3
+ ,Tarm.OthdefS4
+ ,Tarm.OthdefS5
+ ,Tarm.OthdefS6
+ ,Tarm.OthdefS7
+ ,Tarm.OthdefS8
+ ,Tarm.OthdefS9
+ ,Tarm.Othorlax
+ ,Tarm.Panloth
+ ,Tarm.Panlsore
+ ,Tarm.PasientGUID
+ ,Tarm.PerianalProblems
+ ,Tarm.Prokinet
+ ,Tarm.Recprlps
+ ,Tarm.SkjemaGUID
+ ,Tarm.SurgicalIntervention
+ ,Tarm.Wrpadplg
  ')
 
 
 valgtSkjema <- substr(valgtVar,1,4)
-variable <- ifelse (valgtSkjema %in% c('Livs', 'Urin', 'Tarm', 'Tilf', 'Funk', 'Kont'), paste0('var',valgtSkjema),'')
 
-variable <- switch(valgtSkjema,
-                  Livs = varLivs,
-                  Urin = varUrin, 
-                  Tarm = varTarm,
-                  Tilf = varSati,
-                  Funk = varPerf,
-                  Kont = varKont)
+variable <- ifelse (valgtSkjema %in% c('Livs', 'Urin', 'Tarm', 'Tilf', 'Funk', 'Kont'), 
+                    paste0('var',valgtSkjema),'')
 
-
-qSkjema <- switch(valgtSkjema, #Dette vil bare fungere hvis konsekvent med navngiving i valgtVar
-           Livs = 'INNER JOIN LifeQualityFormDataContract l 
-                        ON UPPER(h.SkjemaGUID) = UPPER(l.HovedskjemaGUID) ',
-           Urin = 'INNER JOIN UrinaryTractFunctionFormDataContract u 
-                        ON UPPER(h.SkjemaGUID) = UPPER(u.HovedskjemaGUID) ',
-           Tarm = 'INNER JOIN BowelFunctionFormDataContract t
-                       ON UPPER(h.SkjemaGUID) = UPPER(t.HovedskjemaGUID) ',
-           Tilf = 'INNER JOIN ActivityAndParticipationSatisfactionFormDataContract tilf ',
-           Funk = 'INNER JOIN ActivityAndParticipationPerformanceFormDataContract funk ',
+qSkjema <- paste0(switch(valgtSkjema, #Dette vil bare fungere hvis konsekvent med navngiving i valgtVar
+           Livs = 'INNER JOIN LifeQualityFormDataContract Livs ',
+           Urin = 'INNER JOIN UrinaryTractFunctionFormDataContract Urin',
+           Tarm = 'INNER JOIN BowelFunctionFormDataContract Tarm',
+           Tilf = 'INNER JOIN ActivityAndParticipationSatisfactionFormDataContract Tilf ',
+           Funk = 'INNER JOIN ActivityAndParticipationPerformanceFormDataContract Funk ',
            Kont = 'INNER JOIN ControlFormDataContract k '
-           )
+           ),
+           'ON UPPER(h.SkjemaGUID) = UPPER(',valgtSkjema , '.HovedskjemaGUID) ')
 #qSkjema er NULL hvis ingen treff
-
 
 query <- paste0('SELECT ',
                varHoved,
