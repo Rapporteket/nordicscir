@@ -57,7 +57,7 @@ varHoved <- paste0("
       h.OutOfHosptlDy,
       h.OutOfHosptlDy2,
       h.OutOfRehabDy,
-      h.PatientGUID,
+      h.PasientGUID,
       h.PatientAge,
       h.PatientGender,
       h.PlaceDis,
