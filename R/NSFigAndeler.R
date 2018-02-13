@@ -207,11 +207,11 @@ NSFigAndeler <- function(RegData, outfile='', valgtVar,
                   ymax <- antGr*1.4
                   xmax <- min(max(c(AggVerdier$Hoved, AggVerdier$Rest),na.rm=T)*1.25, 100)
                   #par('fig'=c(0.1, 1, 0, 0.9))
-                  pos <- barplot(as.numeric(AggVerdier$Hoved), horiz=TRUE, beside=TRUE, las=1, xlab="Andel pasienter (%)", #main=tittel,
+                  pos <- barplot(rev(as.numeric(AggVerdier$Hoved)), horiz=TRUE, beside=TRUE, las=1, xlab="Andel pasienter (%)", #main=tittel,
                                  cex.lab=cexleg,col=fargeHoved, border='white', font.main=1, xlim=c(0, xmax), ylim=c(0,ymax))	#
-                  mtext(at=pos+0.1, text=grtxtpst, side=2, las=1, cex=cexgr, adj=1, line=0.25)	
+                  mtext(at=pos+0.1, text=rev(grtxtpst), side=2, las=1, cex=cexgr, adj=1, line=0.25)	
                   if (medSml == 1) {
-                        points(as.numeric(AggVerdier$Rest), pos, col=fargeRest,  cex=2, pch=18) #c("p","b","o"),
+                        points(rev(as.numeric(AggVerdier$Rest)), pos, col=fargeRest,  cex=2, pch=18) #c("p","b","o"),
                         legend('topleft', c(paste0(hovedgrTxt, ' (N=', Nfig$Hoved,')'), paste0('Landet forøvrig (N=', Nfig$Rest,')')),
                                border=c(fargeHoved,NA), col=c(fargeHoved,fargeRest), bty='n', pch=c(15,18), pt.cex=2, lty=NA,
                                lwd=lwdRest, ncol=2, cex=cexleg)

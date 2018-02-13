@@ -75,7 +75,8 @@ MÅNEDSRAPPORT, \\
 \section{Registreringsoversikter}
 
 \begin{frame}[fragile] {Innhold}
-Dette er en sammenstilling av resultater  fra NorSCIR. Alle registreringer er basert på registreringer i registeret per rapportdato. Tidsutvalg for rapportene er spesifisert til hver enkelt figur. Rapporten viser følgende:
+Dette er en sammenstilling av resultater  fra NorSCIR. Alle registreringer er basert på ferdigstilte registreringer i registeret per rapportdato. Alle data er ikke nødvendigvis kvalitetssikret enda. Tidsutvalg for rapportene er spesifisert for hver enkelt figur. Datoer/årstall er basert på innleggelsesdato akuttsykehus (AdmitDt). 
+Rapporten viser følgende:
 \begin{itemize}
 \item	Registreringsoversikt med antall Registreringsskjema (hovedskjema) og tilknyttede skjema.  
 \item	Andeler av hovedskjema som har et tilknyttet skjema
@@ -184,7 +185,7 @@ xtable::xtable(AndelOppfKtr, digits=1, align=c('l', rep('r', ncol(AndelOppfKtr))
 \end{frame}
 
 
-\begin{frame}[fragile]
+\begin{frame}[fragile]{Tas ut til koblingsnøkkel for kontrollskjema er riktig.}
 
 
 <<'AndelUOppf', results='asis'>>=
@@ -269,6 +270,9 @@ for (valgtVar in variable) {
 \includegraphics[scale=0.35]{RegForsinkelse.pdf}
 \caption{Registreringsforsinkelse. Kvalitetsmålet er registrering innen 30 dager. Målet ble innført 2018-01-01.}
 \end{figure}
+
+Variabelen ble innført i desember og alle hovedskjema ferdigstilt (lukket første gang) etter desember 2017 vil derfor kunne inngå i figuren siden datoutvalget er basert på dato for innleggelse på akuttsykehus.
+
 \end{frame}
 
 
@@ -319,9 +323,9 @@ NevrKlass28 <- rbind(
 'Utført og klassifiserbar, utreise: ' = 
       addmargins(table(HovedSkjema28$ShNavn[HovedSkjema28$FAis %in% 1:5])), 
 'Ikke utført ved innkomst:' = 
-      addmargins(table(HovedSkjema12mnd$ShNavn[HovedSkjema28$ANeuNoMeasure == TRUE & HovedSkjema28$AAis == -1])),
+      addmargins(table(HovedSkjema28$ShNavn[HovedSkjema28$ANeuNoMeasure == TRUE & HovedSkjema28$AAis == -1])),
 'Ikke utført ved utreise:' =
-      addmargins(table(HovedSkjema12mnd$ShNavn[HovedSkjema28$FNeuNoMeasure == TRUE & HovedSkjema28$FAis == -1])),
+      addmargins(table(HovedSkjema28$ShNavn[HovedSkjema28$FNeuNoMeasure == TRUE & HovedSkjema28$FAis == -1])),
 'Utført, men ikke klassifiserbar, innkomst: ' = 
       addmargins(table(HovedSkjema28$ShNavn[HovedSkjema28$AAis==9])),
 'Utført, men ikke klassifiserbar, utreise: ' = 
