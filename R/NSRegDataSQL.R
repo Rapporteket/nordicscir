@@ -261,10 +261,11 @@ if (valgtSkjema %in% c('Livs', 'Urin', 'Tarm', 'Tilf', 'Funk', 'Kont')) {
       variable <- paste0('var', valgtSkjema,'')
       qSkjema <- paste0(switch(valgtSkjema, #Dette vil bare fungere hvis konsekvent med navngiving i valgtVar
            Livs = 'INNER JOIN LifeQualityFormDataContract Livs ',
-           Urin = 'INNER JOIN UrinaryTractFunctionFormDataContract Urin',
-           Tarm = 'INNER JOIN BowelFunctionFormDataContract Tarm',
-           Tilf = 'INNER JOIN ActivityAndParticipationSatisfactionFormDataContract Tilf ',
+           Urin = 'INNER JOIN UrinaryTractFunctionFormDataContract Urin ',
+           Tarm = 'INNER JOIN BowelFunctionFormDataContract Tarm ',
            Funk = 'INNER JOIN ActivityAndParticipationPerformanceFormDataContract Funk ',
+           Tilf = 'INNER JOIN ActivityAndParticipationSatisfactionFormDataContract Funk ', #Må i tillegg koble med Tilf
+           #Tilf = 'INNER JOIN ActivityAndParticipationSatisfactionFormDataContract Tilf ',
            Kont = 'INNER JOIN ControlFormDataContract k '
            ),
            'ON UPPER(h.SkjemaGUID) = UPPER(',valgtSkjema , '.HovedskjemaGUID) ')

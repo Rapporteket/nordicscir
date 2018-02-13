@@ -27,22 +27,22 @@ if (!exists('HovedSkjema')){
       HovedSkjema <- NSRegDataSQL() #datoFra = datoFra, datoTil = datoTil)
 
       registryName <- "nordicscir"
-dbType <- "mysql"
+      dbType <- "mysql"
 
-qLivs <- paste0('SELECT  UPPER(HovedskjemaGUID), UPPER(SkjemaGUID) FROM LifeQualityFormDataContract')
-qKontr <- paste0('SELECT  UPPER(HovedskjemaGUID), UPPER(SkjemaGUID) FROM ControlFormDataContract')
-qUrin <- paste0('SELECT  UPPER(HovedskjemaGUID), UPPER(SkjemaGUID) FROM UrinaryTractFunctionFormDataContract')
-qTarm <- paste0('SELECT  UPPER(HovedskjemaGUID), UPPER(SkjemaGUID) FROM BowelFunctionFormDataContract')
-qFunk <- paste0('SELECT  UPPER(HovedskjemaGUID), UPPER(SkjemaGUID) FROM ActivityAndParticipationPerformanceFormDataContract')
-qTilf <- paste0('SELECT  UPPER(HovedskjemaGUID), UPPER(SkjemaGUID) FROM ActivityAndParticipationSatisfactionFormDataContract')
-
-Livskvalitet <- rapbase::LoadRegData(registryName, qLivs, dbType)
-Kontroll <- rapbase::LoadRegData(registryName, qKontr, dbType)
-Urin <- rapbase::LoadRegData(registryName, qUrin, dbType)
-Tarm <- rapbase::LoadRegData(registryName, qTarm, dbType)
-Performance <- rapbase::LoadRegData(registryName, qFunk, dbType)
-Satisfact <- rapbase::LoadRegData(registryName, qTilf, dbType)
-}
+      qLivs <- paste0('SELECT  UPPER(HovedskjemaGUID), UPPER(SkjemaGUID) FROM LifeQualityFormDataContract')
+      qKontr <- paste0('SELECT  UPPER(HovedskjemaGUID), UPPER(SkjemaGUID) FROM ControlFormDataContract')
+      qUrin <- paste0('SELECT  UPPER(HovedskjemaGUID), UPPER(SkjemaGUID) FROM UrinaryTractFunctionFormDataContract')
+      qTarm <- paste0('SELECT  UPPER(HovedskjemaGUID), UPPER(SkjemaGUID) FROM BowelFunctionFormDataContract')
+      qFunk <- paste0('SELECT  UPPER(HovedskjemaGUID), UPPER(SkjemaGUID) FROM ActivityAndParticipationPerformanceFormDataContract')
+      qTilf <- paste0('SELECT  UPPER(HovedskjemaGUID), UPPER(SkjemaGUID) FROM ActivityAndParticipationSatisfactionFormDataContract')
+      
+      Livskvalitet <- rapbase::LoadRegData(registryName, qLivs, dbType)
+      Kontroll <- rapbase::LoadRegData(registryName, qKontr, dbType)
+      Urin <- rapbase::LoadRegData(registryName, qUrin, dbType)
+      Tarm <- rapbase::LoadRegData(registryName, qTarm, dbType)
+      Performance <- rapbase::LoadRegData(registryName, qFunk, dbType)
+      Satisfact <- rapbase::LoadRegData(registryName, qTilf, dbType)
+      }
 
 #RegData <- NSRegDataSQL(datoFra=datoFra, datoTil=datoTil)
 HovedSkjema <- NSPreprosesser(RegData=HovedSkjema[which(HovedSkjema$AdmitDt > as.POSIXlt('2011-01-01')), ])
