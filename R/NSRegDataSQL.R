@@ -254,6 +254,8 @@ varTarm <- c('
 
 valgtSkjema <- substr(valgtVar,1,4)
 
+variable <- ''
+qSkjema <- ''
 if (valgtSkjema %in% c('Livs', 'Urin', 'Tarm', 'Tilf', 'Funk', 'Kont')) { 
       
       variable <- paste0('var', valgtSkjema,'')
