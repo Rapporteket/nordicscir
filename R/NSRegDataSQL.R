@@ -57,7 +57,6 @@ varHoved <- paste0("
       h.OutOfHosptlDy,
       h.OutOfHosptlDy2,
       h.OutOfRehabDy,
-      h.PasientGUID,
       h.PatientAge,
       h.PatientGender,
       h.PlaceDis,
@@ -68,17 +67,18 @@ varHoved <- paste0("
       h.SkjemaGUID,
       h.VentAssi
 ")
+#h.PasientGUID,
 
 varLivs <- c('
 ,Livs.FormDate
 ,Livs.HovedskjemaGUID
-,Livs.PasientGUID
 ,Livs.QolDt
 ,Livs.SatGenrl
 ,Livs.SatPhys
 ,Livs.SatPsych
 ,Livs.SkjemaGUID
 ')
+#,Livs.PasientGUID
 
 varFunk <- c('
 ,Funk.DataClDt	
@@ -165,7 +165,6 @@ varUrin <- c("
 ,Urin.Othdrg
 ,Urin.Othsrg
 ,Urin.OthsrgDt
-,Urin.PasientGUID
 ,Urin.Sarstm
 ,Urin.SarstmDt
 ,Urin.SkjemaGUID
@@ -181,6 +180,7 @@ varUrin <- c("
 ,Urin.UstnrmDt
 ,Urin.Utimprun
 ")
+#,Urin.PasientGUID
 
 varTarm <- c('
 ,Tarm.Antichol
@@ -242,7 +242,6 @@ varTarm <- c('
  ,Tarm.Othorlax
  ,Tarm.Panloth
  ,Tarm.Panlsore
- ,Tarm.PasientGUID
  ,Tarm.PerianalProblems
  ,Tarm.Prokinet
  ,Tarm.Recprlps
@@ -250,6 +249,7 @@ varTarm <- c('
  ,Tarm.SurgicalIntervention
  ,Tarm.Wrpadplg
  ')
+# ,Tarm.PasientGUID
 
 
 valgtSkjema <- substr(valgtVar,1,4)
