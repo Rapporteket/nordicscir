@@ -29,12 +29,18 @@ if (!exists('HovedSkjema')){
       registryName <- "nordicscir"
       dbType <- "mysql"
 
-      qLivs <- paste0('SELECT  UPPER(HovedskjemaGUID), UPPER(SkjemaGUID) FROM LifeQualityFormDataContract')
-      qKontr <- paste0('SELECT  UPPER(HovedskjemaGUID), UPPER(SkjemaGUID) FROM ControlFormDataContract')
-      qUrin <- paste0('SELECT  UPPER(HovedskjemaGUID), UPPER(SkjemaGUID) FROM UrinaryTractFunctionFormDataContract')
-      qTarm <- paste0('SELECT  UPPER(HovedskjemaGUID), UPPER(SkjemaGUID) FROM BowelFunctionFormDataContract')
-      qFunk <- paste0('SELECT  UPPER(HovedskjemaGUID), UPPER(SkjemaGUID) FROM ActivityAndParticipationPerformanceFormDataContract')
-      qTilf <- paste0('SELECT  UPPER(HovedskjemaGUID), UPPER(SkjemaGUID) FROM ActivityAndParticipationSatisfactionFormDataContract')
+      qLivs <- paste0('SELECT  UPPER(HovedskjemaGUID) AS HovedskjemaGUID, UPPER(SkjemaGUID) 
+                      FROM LifeQualityFormDataContract')
+      qKontr <- paste0('SELECT  UPPER(HovedskjemaGUID) AS HovedskjemaGUID, UPPER(SkjemaGUID) AS SkjemaGUID 
+                       FROM ControlFormDataContract')
+      qUrin <- paste0('SELECT  UPPER(HovedskjemaGUID) AS HovedskjemaGUID, UPPER(SkjemaGUID) AS SkjemaGUID 
+                      FROM UrinaryTractFunctionFormDataContract')
+      qTarm <- paste0('SELECT  UPPER(HovedskjemaGUID) AS HovedskjemaGUID, UPPER(SkjemaGUID) AS SkjemaGUID 
+                      FROM BowelFunctionFormDataContract')
+      qFunk <- paste0('SELECT  UPPER(HovedskjemaGUID) AS HovedskjemaGUID, UPPER(SkjemaGUID) AS SkjemaGUID 
+                      FROM ActivityAndParticipationPerformanceFormDataContract')
+      qTilf <- paste0('SELECT  UPPER(HovedskjemaGUID) AS HovedskjemaGUID, UPPER(SkjemaGUID) AS SkjemaGUID
+                      FROM ActivityAndParticipationSatisfactionFormDataContract')
       
       Livskvalitet <- rapbase::LoadRegData(registryName, qLivs, dbType)
       Kontroll <- rapbase::LoadRegData(registryName, qKontr, dbType)
@@ -50,7 +56,7 @@ Kontroll <- Kontroll[Kontroll$NoControl=='False', ]
 #RegData <- NSRegDataSQL(datoFra=datoFra, datoTil=datoTil)
 HovedSkjema <- NSPreprosesser(RegData=HovedSkjema[which(HovedSkjema$AdmitDt > as.POSIXlt('2011-01-01')), ])
 HovedSkjema$ShNavn <- factor(HovedSkjema$ShNavn)
-HovedSkjema$SkjemaGUID <- tolower(HovedSkjema$SkjemaGUID)
+HovedSkjema$SkjemaGUID <- toupper(HovedSkjema$SkjemaGUID)
 HovedSkjema5aar <- HovedSkjema[which(HovedSkjema$InnDato > as.POSIXlt(aarFra)), ]
 HovedSkjema12mnd <- HovedSkjema[which(HovedSkjema$InnDato > as.POSIXlt(datoFra)), ]
 HovedSkjema$Aar <- factor(HovedSkjema$Aar, levels = 2011:(1900+dato$year))

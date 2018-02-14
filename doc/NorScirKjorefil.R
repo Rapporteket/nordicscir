@@ -53,13 +53,19 @@ Tarm <- read.table(paste0(sti, 'BowelFunction',dato,'.csv'), stringsAsFactors=FA
 Performance <- read.table(paste0(sti, 'ActivityAndParticipationPerformance',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
 Satisfact <- read.table(paste0(sti, 'ActivityAndParticipationSatisfaction',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
 
-HovedSkjema$SkjemaGUID <- tolower(HovedSkjema$SkjemaGUID)
-Livskvalitet$SkjemaGUID <- tolower(Livskvalitet$SkjemaGUID)
-Kontroll$SkjemaGUID <- tolower(Kontroll$SkjemaGUID)
-Urin$SkjemaGUID <- tolower(Urin$SkjemaGUID)
-Tarm$SkjemaGUID <- tolower(Tarm$SkjemaGUID)
-Performance$SkjemaGUID <- tolower(Performance$SkjemaGUID)
-Satisfact$SkjemaGUID <- tolower(Satisfact$SkjemaGUID)
+#HovedSkjema$SkjemaGUID <- tolower(HovedSkjema$SkjemaGUID)
+#Livskvalitet$SkjemaGUID <- tolower(Livskvalitet$SkjemaGUID)
+#Kontroll$SkjemaGUID <- tolower(Kontroll$SkjemaGUID)
+#Urin$SkjemaGUID <- tolower(Urin$SkjemaGUID)
+#Tarm$SkjemaGUID <- tolower(Tarm$SkjemaGUID)
+#Performance$SkjemaGUID <- tolower(Performance$SkjemaGUID)
+#Satisfact$SkjemaGUID <- tolower(Satisfact$SkjemaGUID)
+Livskvalitet$HovedskjemaGUID <- toupper(Livskvalitet$HovedskjemaGUID)
+Kontroll$HovedskjemaGUID <- toupper(Kontroll$HovedskjemaGUID)
+Urin$HovedskjemaGUID <- toupper(Urin$HovedskjemaGUID)
+Tarm$HovedskjemaGUID <- toupper(Tarm$HovedskjemaGUID)
+Performance$HovedskjemaGUID <- toupper(Performance$HovedskjemaGUID)
+Satisfact$HovedskjemaGUID <- toupper(Satisfact$HovedskjemaGUID)
 
 
 KobleMedHoved <- function(HovedSkjema,Skjema2) {
@@ -146,7 +152,7 @@ RegData <- KobleMedHoved(Performance,Satisfact)
 RegData <- KobleMedHoved(HovedSkjema,RegData)
 valgtVar <- 'TilfSpis'               #TilfDo, TilfKler, TilfMob, TilfSpis
 
-outfile <- paste0(valgtVar, '.png')	#Navn angis av Jasper
+outfile <- '' #paste0(valgtVar, '.png')	#Navn angis av Jasper
 
 NSFigAndeler(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
 		AIS=AIS, minald=minald, maxald=maxald, erMann=erMann, traume=traume, paratetra=paratetra,

@@ -65,7 +65,7 @@ NSFigAndeler <- function(RegData, outfile='', valgtVar,
 if ( dim(RegData)[1] == 0 ) { 
             FigTypUt <- rapbase::figtype(outfile)
             plot.new()
-            text(0.5, 0.6, paste0('Ingen registreringer,'), cex=1.2)
+            text(0.5, 0.6, paste0('Ingen registreringer i Rapportdatabasen'), cex=1.2)
             if ( outfile != '') {dev.off()}
       } else {
       
