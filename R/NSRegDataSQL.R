@@ -270,13 +270,18 @@ if (valgtSkjema %in% c('Livs', 'Urin', 'Tarm', 'Tilf', 'Funk', 'Kont')) {
            Urin = 'INNER JOIN UrinaryTractFunctionFormDataContract Urin ',
            Tarm = 'INNER JOIN BowelFunctionFormDataContract Tarm ',
            Funk = 'INNER JOIN ActivityAndParticipationPerformanceFormDataContract Funk ',
-           Tilf = 'INNER JOIN ActivityAndParticipationSatisfactionFormDataContract Funk ', #Må i tillegg koble med Tilf
-           #Tilf = 'INNER JOIN ActivityAndParticipationSatisfactionFormDataContract Tilf ',
            Kont = 'INNER JOIN ControlFormDataContract k '
            ),
            'ON UPPER(h.SkjemaGUID) = UPPER(',valgtSkjema , '.HovedskjemaGUID) ')
       #qSkjema er NULL hvis ingen treff 
-      } 
+      if (valgtSkjema=='Tilf') {
+            qSkjema <- 'INNER JOIN ActivityAndParticipationPerformanceFormDataContract Funk 
+                        ON UPPER(h.SkjemaGUID) = UPPER(Funk.HovedskjemaGUID) 
+                        INNER JOIN ActivityAndParticipationSatisfactionFormDataContract Tilf
+                        ON UPPER(Funk.SkjemaGUID) = UPPER(Tilf.HovedskjemaGUID)'
+                  }
+      }
+
 query <- paste0('SELECT ',
                varHoved,
                variable,
@@ -287,12 +292,5 @@ query <- paste0('SELECT ',
 
 
 RegData <- rapbase::LoadRegData(registryName, query, dbType)
-
-
-#HovedSkjema <- rapbase::LoadRegData(registryName, qAkutt, dbType) #qAkuttskjema(datoFra = datoFra, datoTil = datoTil)   
-#OppfSkjema <- rapbase::LoadRegData(registryName, qOppf, dbType) #qOppfskjema(datoFra = datoFra, datoTil = datoTil) 
-#RegData <- merge(HovedSkjema, OppfSkjema, by.x='SkjemaGUID',by.y="HovedskjemaGUID", all.x = TRUE, all.y = FALSE)
-
-
-      return(RegData)
+return(RegData)
 }

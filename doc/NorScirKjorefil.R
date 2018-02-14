@@ -268,3 +268,6 @@ Pustehjelp <- length(which(RegData$VentAssi %in% 1:3))/length(which(RegData$Vent
 105593 - Haukeland, Nevrologisk avdeling "Nevro post 4 / spinalenheten"
 106896 - Sunnaas sykehus "Seksjon for Poliklinikk, Vurdering og Oppf?lging"
 107627 - St.Olavs hospital "Avdeling for spinalskader"
+
+
+table(Kontroll$HealthUnitShortName, Kontroll$CNum)
