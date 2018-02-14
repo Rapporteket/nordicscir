@@ -29,7 +29,7 @@ if (!exists('HovedSkjema')){
       registryName <- "nordicscir"
       dbType <- "mysql"
 
-      qLivs <- paste0('SELECT  UPPER(HovedskjemaGUID) AS HovedskjemaGUID, UPPER(SkjemaGUID) 
+      qLivs <- paste0('SELECT  UPPER(HovedskjemaGUID) AS HovedskjemaGUID, UPPER(SkjemaGUID) AS SkjemaGUID
                       FROM LifeQualityFormDataContract')
       qKontr <- paste0('SELECT  UPPER(HovedskjemaGUID) AS HovedskjemaGUID, UPPER(SkjemaGUID) AS SkjemaGUID 
                        FROM ControlFormDataContract')

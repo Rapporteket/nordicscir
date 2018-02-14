@@ -53,6 +53,13 @@ Tarm <- read.table(paste0(sti, 'BowelFunction',dato,'.csv'), stringsAsFactors=FA
 Performance <- read.table(paste0(sti, 'ActivityAndParticipationPerformance',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
 Satisfact <- read.table(paste0(sti, 'ActivityAndParticipationSatisfaction',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
 
+Livskvalitet$HovedskjemaGUID <- toupper(Livskvalitet$HovedskjemaGUID)
+Kontroll$HovedskjemaGUID <- toupper(Kontroll$HovedskjemaGUID)
+Urin$HovedskjemaGUID <- toupper(Urin$HovedskjemaGUID)
+Tarm$HovedskjemaGUID <- toupper(Tarm$HovedskjemaGUID)
+Performance$HovedskjemaGUID <- toupper(Performance$HovedskjemaGUID)
+Satisfact$HovedskjemaGUID <- toupper(Satisfact$HovedskjemaGUID)
+
 #HovedSkjema$SkjemaGUID <- tolower(HovedSkjema$SkjemaGUID)
 #Livskvalitet$SkjemaGUID <- tolower(Livskvalitet$SkjemaGUID)
 #Kontroll$SkjemaGUID <- tolower(Kontroll$SkjemaGUID)
@@ -60,12 +67,6 @@ Satisfact <- read.table(paste0(sti, 'ActivityAndParticipationSatisfaction',dato,
 #Tarm$SkjemaGUID <- tolower(Tarm$SkjemaGUID)
 #Performance$SkjemaGUID <- tolower(Performance$SkjemaGUID)
 #Satisfact$SkjemaGUID <- tolower(Satisfact$SkjemaGUID)
-Livskvalitet$HovedskjemaGUID <- toupper(Livskvalitet$HovedskjemaGUID)
-Kontroll$HovedskjemaGUID <- toupper(Kontroll$HovedskjemaGUID)
-Urin$HovedskjemaGUID <- toupper(Urin$HovedskjemaGUID)
-Tarm$HovedskjemaGUID <- toupper(Tarm$HovedskjemaGUID)
-Performance$HovedskjemaGUID <- toupper(Performance$HovedskjemaGUID)
-Satisfact$HovedskjemaGUID <- toupper(Satisfact$HovedskjemaGUID)
 
 
 KobleMedHoved <- function(HovedSkjema,Skjema2) {
