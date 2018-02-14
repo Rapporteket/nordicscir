@@ -61,6 +61,14 @@ NSFigAndeler <- function(RegData, outfile='', valgtVar,
       if (hentData == 1) {
             RegData <- NSRegDataSQL(valgtVar=valgtVar)
       }
+      
+if ( dim(RegData)[1] == 0 ) { 
+            FigTypUt <- rapbase::figtype(outfile)
+            plot.new()
+            text(0.5, 0.6, paste0('Ingen registreringer,'), cex=1.2)
+            if ( outfile != '') {dev.off()}
+      } else {
+      
       if (preprosess == 1) {
             RegData <- NSPreprosesser(RegData)
       }
@@ -148,7 +156,7 @@ NSFigAndeler <- function(RegData, outfile='', valgtVar,
                            medSml=medSml,
                            hovedgrTxt=hovedgrTxt,
                            smltxt=Utvalg$smltxt)
-   
+
 #-----------Figur---------------------------------------
        
       #-----Hvis få registreringer: ---------------------
@@ -230,4 +238,5 @@ NSFigAndeler <- function(RegData, outfile='', valgtVar,
             if ( outfile != '') {dev.off()}
             
       }
+   }
 }
