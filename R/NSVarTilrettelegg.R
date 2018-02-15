@@ -459,8 +459,8 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
             grtxt <- c('Totalt hjelpetrengende',
                        'Hjelp til enkelte oppgaver (tørker \n seg ikke selv)',
                        'Hjelp til enkelte oppgaver (tørker \n seg selv)',
-                       'Selvstendig med hjelpemidler/tilrettelegging',
-                       'Selvstendig i toalettbesøk',
+                       'Selvstendig med hjelpemidler/ \ntilrettelegging',
+                       'Selvstendig ved toalettbesøk',
                        'Ukjent')
             RegData <- RegData[RegData$Toiletin %in% gr, ]
             RegData$VariabelGr <- factor(as.numeric(RegData$Toiletin), levels=gr, labels = grtxt)
@@ -473,7 +473,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
                        'Hjelp til enkelte oppgaver ',
                        'Selvstendig med hjelpemidler/ \n tilrettelegging',
                        'Selvstendig, kun hjelp til knapper/ \nglidelås/lisser',
-                       'Selvstendig i av-/påkledning alle typer klær',
+                       'Selvstendig i av-/påkledning alle \ntyper klær',
                        'Ukjent')
             RegData <- RegData[RegData$Dreslbdy %in% gr, ]
             RegData$VariabelGr <- factor(as.numeric(RegData$Dreslbdy), levels=gr, labels = grtxt)
