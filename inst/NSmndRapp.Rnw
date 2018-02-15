@@ -92,7 +92,7 @@ Rapporten viser følgende:
 \begin{itemize}
 \item	Registreringsoversikt med antall Registreringsskjema (hovedskjema) og tilknyttede skjema.  
 \item	Andeler av hovedskjema som har et tilknyttet skjema
-\item	Andel som ikke har vært til kontrollopphold
+%\item	Andel som ikke har vært til kontrollopphold
 \item	Fordeling, skadeårsaker
 \item	Fordeling, ikke-traumatiske skadeårsaker (fra 01.01.2018)
 \item	Fordeling, AIS ved innleggelse
@@ -129,7 +129,7 @@ xtable::xtable(tabAvdN, digits=0, align=c('l', rep('r', ncol(tabAvdN))),
 
 
 
-\begin{frame}[fragile] {}
+\begin{frame}[fragile] 
 <<'AndelOppfolg', results='asis'>>=
 #Tabell: Andel registreringsskjema med oppfølging siste 12 mnd
 
@@ -166,9 +166,11 @@ xtable::xtable(t(AndelOppf), digits=1, align=c('l', rep('r', nrow(AndelOppf))),
 
 
 
-\begin{frame}[fragile] {Kontrollskjema er nå filtrert på NoControll=FALSE og CNum=1}
-Ikke vise i endelig versjon
-[exclude]
+\begin{frame}<0>[noframenumbering]
+%[fragile]
+%[exclude]{Kontrollskjema er nå filtrert på NoControll=FALSE og CNum=1}
+
+
 <<'AndelKtrMOppfolg', results='asis'>>=
 #Tabell: Andel kontrollskjema med oppfølging
 RaaTabKtr <- data.frame(Sykehus = Kontroll$HealthUnitShortName,
@@ -199,7 +201,8 @@ xtable::xtable(AndelOppfKtr, digits=1, align=c('l', rep('r', ncol(AndelOppfKtr))
 \end{frame}
 
 
-\begin{frame}[fragile]{Tas ut til koblingsnøkkel for kontrollskjema er riktig. Har filtrert kontrollskjema på NoControl=FALSE og CNum=1}
+\begin{frame} <handout:0 beamer:0>
+%[fragile]{Tas ut til koblingsnøkkel for kontrollskjema er riktig. Har filtrert kontrollskjema på NoControl=FALSE og CNum=1}
 
 
 <<'AndelUOppf', results='asis'>>=
