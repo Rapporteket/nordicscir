@@ -34,7 +34,7 @@ if (!exists('HovedSkjema')){
       qLivs <- paste0('SELECT  UPPER(HovedskjemaGUID) AS HovedskjemaGUID, UPPER(SkjemaGUID) AS SkjemaGUID
                       FROM LifeQualityFormDataContract')
       qKontr <- paste0('SELECT  UPPER(HovedskjemaGUID) AS HovedskjemaGUID, UPPER(SkjemaGUID) AS SkjemaGUID,
-                        HealthUnitShortName, NoControl
+                        HealthUnitShortName, NoControl, CNum
                        FROM ControlFormDataContract')
       qUrin <- paste0('SELECT  UPPER(HovedskjemaGUID) AS HovedskjemaGUID, UPPER(SkjemaGUID) AS SkjemaGUID 
                       FROM UrinaryTractFunctionFormDataContract')
@@ -54,7 +54,7 @@ if (!exists('HovedSkjema')){
       }
 
 #Bare gyldige kontrollskjema:
-Kontroll <- Kontroll[Kontroll$NoControl=='False', ]
+Kontroll <- Kontroll[Kontroll$NoControl=='False', ] # & Kontroll$CNum==1, ]
 
 #RegData <- NSRegDataSQL(datoFra=datoFra, datoTil=datoTil)
 HovedSkjema <- NSPreprosesser(RegData=HovedSkjema[which(HovedSkjema$AdmitDt > as.POSIXlt('2011-01-01')), ])
@@ -74,7 +74,7 @@ shtxt <- switch(as.character(enhetsUtvalg),
 
 
 \title[NorSCIR\\\Sexpr{shtxt}]{\textit{Norsk ryggmargsskaderegister} \\
-MÅNEDSRAPPORT, \\
+MÅNEDSRAPPORT \\
 \Sexpr{shtxt}}
 \date{}
 
@@ -137,7 +137,7 @@ xtable::xtable(tabAvdN, digits=0, align=c('l', rep('r', ncol(tabAvdN))),
 RaaTab <- data.frame(Sykehus = HovedSkjema12mnd$ShNavn,
       #Aar = as.POSIXlt(Hskjema$AdmitDt, format="%Y-%m-%d")$year +1900,
       Livskvalitet = HovedSkjema12mnd$SkjemaGUID %in% Livskvalitet$HovedskjemaGUID,
-      Kontroll = HovedSkjema12mnd$SkjemaGUID %in% Kontroll$HovedskjemaGUID,
+      #Kontroll = HovedSkjema12mnd$SkjemaGUID %in% Kontroll$HovedskjemaGUID,
       Urin = HovedSkjema12mnd$SkjemaGUID %in% Urin$HovedskjemaGUID,
       Tarm = HovedSkjema12mnd$SkjemaGUID %in% Tarm$HovedskjemaGUID,
       Funksjon = HovedSkjema12mnd$SkjemaGUID %in% Performance$HovedskjemaGUID,
@@ -166,7 +166,7 @@ xtable::xtable(t(AndelOppf), digits=1, align=c('l', rep('r', nrow(AndelOppf))),
 
 
 
-\begin{frame}[fragile] {Kontrollskjema er nå filtrert på NoControll=FALSE}
+\begin{frame}[fragile] {Kontrollskjema er nå filtrert på NoControll=FALSE og CNum=1}
 Ikke vise i endelig versjon
 [exclude]
 <<'AndelKtrMOppfolg', results='asis'>>=
@@ -199,7 +199,7 @@ xtable::xtable(AndelOppfKtr, digits=1, align=c('l', rep('r', ncol(AndelOppfKtr))
 \end{frame}
 
 
-\begin{frame}[fragile]{Tas ut til koblingsnøkkel for kontrollskjema er riktig. Har filtrert kontrollskjema på NoControl=FALSE}
+\begin{frame}[fragile]{Tas ut til koblingsnøkkel for kontrollskjema er riktig. Har filtrert kontrollskjema på NoControl=FALSE og CNum=1}
 
 
 <<'AndelUOppf', results='asis'>>=

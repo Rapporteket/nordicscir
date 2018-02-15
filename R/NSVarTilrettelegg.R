@@ -454,13 +454,13 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
       
       if (valgtVar=='FunkDo') {
             retn <- 'H'
-            tittel <- 'Hjelpebehov ved toalettbesøk'
+            tittel <- 'Toalettbesøk'
             gr <- c(0:4,99)
             grtxt <- c('Totalt hjelpetrengende',
-                       'Delvis assistanse \n tørking',
-                       'Delvis assistanse \n tørker selv',
-                       'Kun hjelpemidler',
-                       'Ingen',
+                       'Hjelp til enkelte oppgaver (tørker \n seg ikke selv)',
+                       'Hjelp til enkelte oppgaver (tørker \n seg selv)',
+                       'Selvstendig med hjelpemidler/tilrettelegging',
+                       'Selvstendig i toalettbesøk',
                        'Ukjent')
             RegData <- RegData[RegData$Toiletin %in% gr, ]
             RegData$VariabelGr <- factor(as.numeric(RegData$Toiletin), levels=gr, labels = grtxt)
@@ -470,10 +470,10 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
             tittel <- 'Av-/påkledning underkropp'
             gr <- c(0:4,99)
             grtxt <- c('Totalt hjelpetrengende',
-                       'Hjelp til enkelte oppgaver \n (kukgl)',
-                       'kukgl ok, hjelpemidler/ \n tilrettelegging (h/t)',
-                       'kukgl og h/t ok, hjelp el. \n h/t for kgl',
-                       'Ingen hjelpemidler',
+                       'Hjelp til enkelte oppgaver ',
+                       'Selvstendig med hjelpemidler/ \n tilrettelegging',
+                       'Selvstendig, kun hjelp til knapper/ \nglidelås/lisser',
+                       'Selvstendig i av-/påkledning alle typer klær',
                        'Ukjent')
             RegData <- RegData[RegData$Dreslbdy %in% gr, ]
             RegData$VariabelGr <- factor(as.numeric(RegData$Dreslbdy), levels=gr, labels = grtxt)
@@ -485,7 +485,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
             gr <- c(0:8,99)
             grtxt <- c('Totalt hjelpetrengende', 
                        'El. rullestol/hjelp til \n manuell rullestol',
-                       'Manuell rullestol',
+                       'Selvstendig i manuell \n rullestol',
                        'Går med tilsyn',
                        'Rullator/krykker',
                        'Krykker/to stokker',
@@ -499,12 +499,12 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
       }
       if (valgtVar=='FunkSpis') {
             retn <- 'H'
-            tittel <- 'Hjelpebehov ved spising'
+            tittel <- 'Spisesituasjon'
             gr <- c(0:3,99)
             grtxt <- c('Totalt hjelpetrengende',
-                       'Delvis assistanse',
-                       'Hjelpemidler/hjelp til \n oppdeling/emballasje',
-                       'Ingen',
+                       'Hjelp til enkelte oppgaver',
+                       'Selvstendig med hjelpemidler/ \n tilrettelegging',
+                       'Selvstendig i spisesituasjon',
                        'Ukjent')
             RegData <- RegData[RegData$Feeding %in% gr, ]
             RegData$VariabelGr <- factor(as.numeric(RegData$Feeding), levels=gr, labels = grtxt)
@@ -523,7 +523,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
       
       if (valgtVar=='TilfDo') {
             retn <- 'H'
-            tittel <- 'Hygienesituasjonen'
+            tittel <- 'Toalettbesøk'
             RegData <- RegData[RegData$ToiletinS %in% gr, ]
             RegData$VariabelGr <- factor(as.numeric(RegData$ToiletinS), levels=gr, labels = grtxt)
       }
@@ -543,7 +543,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
       }
       if (valgtVar=='TilfSpis') {
             retn <- 'H'
-            tittel <- 'Spising og drikking'
+            tittel <- 'Spisesituasjon'
             RegData <- RegData[RegData$FeedingS %in% gr, ]
             RegData$VariabelGr <- factor(as.numeric(RegData$FeedingS), levels=gr, labels = grtxt)
       }
