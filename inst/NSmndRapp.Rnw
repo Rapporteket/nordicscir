@@ -167,7 +167,8 @@ xtable::xtable(t(AndelOppf), digits=1, align=c('l', rep('r', nrow(AndelOppf))),
 
 
 \begin{frame}[fragile] {Kontrollskjema er nå filtrert på NoControll=FALSE}
-Ikke vise i endelig versjon} #[exclude]
+Ikke vise i endelig versjon
+[exclude]
 <<'AndelKtrMOppfolg', results='asis'>>=
 #Tabell: Andel kontrollskjema med oppfølging
 RaaTabKtr <- data.frame(Sykehus = Kontroll$HealthUnitShortName,
