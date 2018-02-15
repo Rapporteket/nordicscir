@@ -18,6 +18,8 @@ knitr::opts_knit$set(root.dir = './')
 
 <<'dataOgParam', include=FALSE>>=
 library(nordicscir)
+library(knitr)
+library(tools)
 datoTil <- Sys.Date()
 dato <- as.POSIXlt(datoTil)
 datoFra <- as.Date(paste0(1900+dato$year-1,'-', dato$mon+1, '-', '01'))
