@@ -90,6 +90,7 @@ MÅNEDSRAPPORT \\
 Dette er en sammenstilling av resultater  fra NorSCIR. Alle registreringer er basert på ferdigstilte registreringer i registeret per rapportdato. Alle data er ikke nødvendigvis kvalitetssikret enda. Tidsutvalg for rapportene er spesifisert for hver enkelt figur. Datoer/årstall er basert på innleggelsesdato akuttsykehus (AdmitDt). 
 Rapporten viser følgende:
 \begin{itemize}
+\item Antall hovedskjema per år og avdeling. 
 \item	Registreringsoversikt med antall Registreringsskjema (hovedskjema) og tilknyttede skjema.  
 \item	Andeler av hovedskjema som har et tilknyttet skjema
 %\item	Andel som ikke har vært til kontrollopphold
