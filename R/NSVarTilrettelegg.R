@@ -10,6 +10,19 @@
 #'    \itemize{
 #'     \item alder: Aldersfordeling, 10-årige grupper 
 #'    }
+#'    
+#' NB: valgtVar må komponeres slik at den henspeiler på hvilken 
+#' tabell variabelen kommer fra. Dette for å senere kunne hente og koble dataene riktig.
+#' valgtSkjema <- substr(valgtVar,1,4) 
+#' Prefixet til  \emph{valgtVar} skal være følgende:
+#'    \itemize{
+#'    \item Livs - LifeQuality, 
+#'    \item Urin - UrinaryTractFunction
+#'    \item Tarm - BowelFunction
+#'    \item Kont - Control
+#'    \item Funk - ActivityAndParticipationPerformance
+#'    \item Tilf - ActivityAndParticipationSatisfaction
+#'         }
 #' Argumentet \emph{enhetsUtvalg} har følgende valgmuligheter:
 #'    \itemize{
 #'     \item 0: Hele landet
@@ -20,11 +33,11 @@
 #' @inheritParams NSFigAndeler
 #'				
 #' @return Definisjon av valgt variabel.
-#'
+#' 
 #' @export
 #'
 
-NSVarTilrettelegg  <- function(RegData, valgtVar, grVar=''){
+NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler'){
       
       
       "%i%" <- intersect
@@ -45,7 +58,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar=''){
       verdier <- ''	#AggVerdier, gjennomsnitt, ...
       verdiTxt <- '' 	#pstTxt, ...
       strIfig <- ''		#cex
-      sortAvtagende <- TRUE  #Sortering av resultater
+      sortAvtagende <- FALSE  #Sortering av resultater
       KImaal <- NA
  
 #Fra NordicScir
@@ -72,23 +85,11 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar=''){
             RegData$VariabelGr <- cut(RegData$Alder, breaks=gr, include.lowest=TRUE, right=FALSE)
             grtxt <- c('0-14','15-29','30-44','45-59','60-74','75+')
             cexgr <- 0.9
-            xAkseTxt <- 'Aldersgrupper (år)'
+            xAkseTxt <- switch(figurtype,
+                               andeler= 'Aldersgrupper (år)',
+                               gjsnGrVar = 'alder (år)')
       }
-     # if (valgtVar=='alder') {	#NIR: Fordeling, gjsnGrVar
-      #      RegData <- RegData[which(RegData$Alder>=0), ]    #Tar bort alder<0
-       #     RegData$Variabel<-RegData$Alder  	#gjsnTid, gjsnGrVar
-       #     xAkseTxt <- 'alder (år)'	
-       #     tittel <- 'Alder ved innleggelse'
-       #     if (grVar == '') {	#Fordelingsfigur
-       #           gr <- c(seq(0, 100, 10),150)		
-       #           RegData$VariabelGr <- cut(RegData$Alder, breaks=gr, include.lowest=TRUE, right=FALSE)	
-       #           grtxt <- c('0-9','10-19','20-29','30-39','40-49','50-59','60-69','70-79','80-89','90-99','100+')
-       #           xAkseTxt <- 'Aldersgrupper (år)'
-       #           }
-       #     sortAvtagende <- FALSE
-      #}
-#gjsnGrVar: 'Alder', 'DagerRehab', 'DagerTilRehab', 'OpphTot'
-            
+
       if (valgtVar %in% c('AAis', 'FAis')) {
             retn <- 'H'
             #-1: Velg verdi, 1:A Komplett skade, 2:B Inkomplett, 3:C Inkomplett, 4:D Inkomplett, 5:E Normal, 
@@ -136,7 +137,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar=''){
                              OpphTot = 'Total tid innlagt på sykehus')
             cexgr <- 0.9
             txtretn <- 2
-            xAkseTxt <- 'Antall døgn'
+            xAkseTxt <- 'Antall dager'
       }	#Variable med antall dager
       
 #      if (valgtVar=='Permisjon') {
@@ -163,6 +164,19 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar=''){
             #xAkseTxt <- ''
             RegData$VariabelGr <- factor(as.numeric(RegData$TetraplegiUt), levels=c(0:1,9), labels = grtxt)
       }
+      
+      if (valgtVar == 'Ntsci') {
+            tittel <- 'Ikke-traumatisk skadeårsak (NTSCI)'
+            #gr <- (1:6, 8:9) - Kodene som registereres
+            RegData <- RegData[which(RegData$Ntsci %in% 1:9) %i% 
+                                     which(RegData$InnDato >= as.POSIXlt('2018-01-01')), ] 
+            grtxt <- c('Medfødt/genetisk etiologi', 'Degenerativ etiologi', 'Tumor, godartet', 
+                       'Tumor, ondartet', 'Vaskulær etiologi', 'Infeksjon', 
+                       'Annen ryggmargsdysfunksjon', 'Ikke spesifisert/ukjent')
+            #xAkseTxt <- ''
+            RegData$VariabelGr <- factor(as.numeric(RegData$Ntsci), levels=c(1:6,8:9), labels = grtxt)
+            retn <- 'H'
+      }
       if (valgtVar == 'SkadeArsak') {
             tittel <- 'Skadeårsaker'
             #gr <- (1:6,9) - Kodene som registereres
@@ -177,15 +191,47 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar=''){
       if (valgtVar == 'UtTil') {
             tittel <- 'Utskrevet til'
             #gr <- (1:10,99) - Kodene som registereres
-            RegData$UtTil[which(RegData$UtTil==99)] <- 11
-            grtxtAlle <- c('Hjem', 'Sykehus', 'Pleiehjem', 'Omsorgsbolig', 'Bofellesskap',
-                           'Kriminalomsorg', 'Hotell', 'Bostedsløs', 'Avdød', 'Annet', 'Ukjent')
+            RegData$UtTil[which(RegData$UtTil==99)] <- 12
+            RegData <- RegData[RegData$UtTil %in% 1:12, ]
+            grtxtAlle <- c('Hjem', 'Sykehus', 'Pleiehjem', 'Omsorgsbolig', 'Bofellesskap','Kriminalomsorg', 'Hotell', 'Bostedsløs', 'Avdød', 'Annet', 'Planlagt hjem', 'Ukjent')
             grtxt <- grtxtAlle
             xAkseTxt <- 'Utskrevet til'
-            RegData$VariabelGr <- factor(as.numeric(RegData$UtTil), levels=1:11, labels = grtxtAlle)
+            RegData$VariabelGr <- factor(as.numeric(RegData$UtTil), levels=1:12, labels = grtxtAlle)
             #Vurder om skal ta med bare de som er registrert
             #grtxt <- grtxtAlle[as.numeric(names(table(as.numeric(RegData$PlaceDis))))] #De som er reg.
             retn <- 'H'
+      }
+      if (valgtVar == 'PPlaceDis') {
+            tittel <- 'Planlagt midlertidig utskrevet til '
+            RegData$PPlacedis[RegData$PPlacedis==8] <- 5
+            RegData <- RegData[which(RegData$PPlacedis %in% 1:5) %i% 
+                                     which(RegData$InnDato >= as.POSIXlt('2018-01-01')), ]
+            grtxt <- c('Pleiehjem/ \n avlastningsplass', 'Insitusjon \n m/trening', 
+                           'Sykehus', 'Familie/slekt \n /venner', 'Annet')
+            xAkseTxt <- 'Utskrevet til'
+            RegData$VariabelGr <- factor(as.numeric(RegData$PPlacedis), levels=1:5, labels = grtxt)
+            retn <- 'H'
+      }
+      if (valgtVar == 'RegForsinkelse') {  #Andeler, GjsnGrVar
+            #Verdier: 0-3402
+            RegData$Diff <- as.numeric(as.Date(as.POSIXct(RegData$FirstTimeClosed, format="%Y-%m-%d")) - 
+                                             as.Date(as.POSIXct(RegData$DischgDt, format="%Y-%m-%d"))) #difftime(RegData$InnDato, RegData$Leveringsdato) #
+#RegData[,c('InnDato', "FirstTimeClosed", "DischgDt", 'Diff')]
+ #           RegData$InnDato <- as.POSIXlt(RegData$AdmitDt, format="%Y-%m-%d") #as.POSIXlt(RegData$AdmitDt, format="%Y-%m-%d")
+  #          RegData$Test <- as.POSIXlt(RegData$FirstTimeClosed, format="%Y-%m-%d")
+            RegData <- RegData[which(RegData$Diff > -1), ]
+            tittel <- switch(figurtype,
+                             andeler='Tid fra utskriving til ferdigstilt registrering',
+                             andelGrVar = 'Mer enn 30 dager fra utskriving til ferdig registrering') #
+            #RegData$Variabel[RegData$Diff > 2*7] <- 1
+            RegData$Variabel <- RegData$Diff
+            subtxt <- 'døgn'
+            gr <- c(0,1,7,14,30,90,365,5000) #gr <- c(seq(0, 90, 10), 1000)
+            RegData$VariabelGr <- cut(RegData$Diff, breaks = gr, include.lowest = TRUE, right = TRUE)
+            grtxt <- c('1', '(1-7]', '(7-14]', '(14-30]', '(30-90]', '(90-365]', '>365')
+            cexgr <- 0.9
+            xAkseTxt <- 'dager'
+            sortAvtagende <- FALSE
       }
       
 #----------------URIN-skjema (start 01.01.2015):
@@ -201,7 +247,8 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar=''){
             indDato <- which(RegData$InnDato >= as.POSIXlt('2015-01-01')) #Ikke filtrer på startdato
             indTidspkt <- which(RegData$QolDt <= RegData$DischgDt)
             RegData <- RegData[indTidspkt, ]
-            }
+            xAkseTxt <- 'Skåring: 1-10. Høyest er best.'
+      }
       
       if (valgtVar == 'LivsGen') {
             tittel <- 'Fornøydhet med livet'
@@ -209,7 +256,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar=''){
             grtxt <- 0:10
             RegData$VariabelGr <- factor(as.numeric(RegData$SatGenrl), levels=0:10, labels = grtxt)
             RegData$Variabel <- as.numeric(RegData$SatGenrl)
-            sortAvtagende <- FALSE
+            sortAvtagende <- TRUE
       }
       if (valgtVar == 'LivsFys') {
             tittel <- 'Fornøydhet med fysisk helse'
@@ -217,7 +264,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar=''){
             grtxt <- 0:10
             RegData$VariabelGr <- factor(as.numeric(RegData$SatPhys), levels=0:10, labels = grtxt)
             RegData$Variabel <- as.numeric(RegData$SatPhys)
-            sortAvtagende <- FALSE
+            sortAvtagende <- TRUE
       }
 
       if (valgtVar == 'LivsPsyk') {
@@ -226,9 +273,9 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar=''){
             grtxt <- 0:10
             RegData$VariabelGr <- factor(as.numeric(RegData$SatPsych), levels=0:10, labels = grtxt)
             RegData$Variabel <- as.numeric(RegData$SatPsych)
-            sortAvtagende <- FALSE
+            sortAvtagende <- TRUE
       }
-      
+   
 #----------------URIN-skjema (start 01.01.2015):
       if (substr(valgtVar,1,4)=='Urin') {
        RegData <- RegData[which(RegData$InnDato >= as.POSIXlt('2015-01-01') & 
@@ -317,7 +364,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar=''){
             RegData[ ,variable] <- 0
             RegData[ ,variable][ind1] <- 1
       }
-
+      
 #----------------TARM-skjema (start 01.01.2015):
       #BfxnbaDt	<= DischgDt
       if (substr(valgtVar,1,4)=='Tarm') {
@@ -397,10 +444,111 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar=''){
             RegData[ ,variable][ind1] <- 1
       }
       
-
+      #    \item Tilf - ActivityAndParticipationSatisfaction
+      
+      #---------------- ActivityAndParticipationPerformance  (start 01.01.2017):
+      if (substr(valgtVar,1,4)=='Funk') {
+            RegData <- RegData[which(RegData$InnDato >= as.POSIXlt('2017-01-01') &
+                                           RegData$DataClDt <= RegData$DischgDt), ]}
+      #Mobilitet «Mobilmod»,  Av/Påkledning, «Dreslbdy»,   Spising «Feeding», Toalettbesøk «Toiletin»
+      
+      if (valgtVar=='FunkDo') {
+            retn <- 'H'
+            tittel <- 'Toalettbesøk'
+            gr <- c(0:4,99)
+            grtxt <- c('Totalt hjelpetrengende',
+                       'Hjelp til enkelte oppgaver (tørker \n seg ikke selv)',
+                       'Hjelp til enkelte oppgaver (tørker \n seg selv)',
+                       'Selvstendig med hjelpemidler/ \ntilrettelegging',
+                       'Selvstendig ved toalettbesøk',
+                       'Ukjent')
+            RegData <- RegData[RegData$Toiletin %in% gr, ]
+            RegData$VariabelGr <- factor(as.numeric(RegData$Toiletin), levels=gr, labels = grtxt)
+      }
+      if (valgtVar=='FunkKler') {
+            retn <- 'H'
+            tittel <- 'Av-/påkledning underkropp'
+            gr <- c(0:4,99)
+            grtxt <- c('Totalt hjelpetrengende',
+                       'Hjelp til enkelte oppgaver ',
+                       'Selvstendig med hjelpemidler/ \n tilrettelegging',
+                       'Selvstendig, kun hjelp til knapper/ \nglidelås/lisser',
+                       'Selvstendig i av-/påkledning alle \ntyper klær',
+                       'Ukjent')
+            RegData <- RegData[RegData$Dreslbdy %in% gr, ]
+            RegData$VariabelGr <- factor(as.numeric(RegData$Dreslbdy), levels=gr, labels = grtxt)
+            
+      }
+      if (valgtVar=='FunkMob') {
+            retn <- 'H'
+            tittel <- 'Mobilitet over kortere avstander (10-100m.)'
+            gr <- c(0:8,99)
+            grtxt <- c('Totalt hjelpetrengende', 
+                       'El. rullestol/hjelp til \n manuell rullestol',
+                       'Selvstendig i manuell \n rullestol',
+                       'Går med tilsyn',
+                       'Rullator/krykker',
+                       'Krykker/to stokker',
+                       'En stokk',
+                       'Leggortose',
+                       'Går u/hjelpemiddel',
+                       'Ukjent')
+            RegData <- RegData[RegData$Mobilmod %in% gr, ]
+            RegData$VariabelGr <- factor(as.numeric(RegData$Mobilmod), levels=gr, labels = grtxt)
+            
+      }
+      if (valgtVar=='FunkSpis') {
+            retn <- 'H'
+            tittel <- 'Spisesituasjon'
+            gr <- c(0:3,99)
+            grtxt <- c('Totalt hjelpetrengende',
+                       'Hjelp til enkelte oppgaver',
+                       'Selvstendig med hjelpemidler/ \n tilrettelegging',
+                       'Selvstendig i spisesituasjon',
+                       'Ukjent')
+            RegData <- RegData[RegData$Feeding %in% gr, ]
+            RegData$VariabelGr <- factor(as.numeric(RegData$Feeding), levels=gr, labels = grtxt)
+      }
+      
+      
+      
+      #---------------- ActivityAndParticipationPerformance  (start 01.01.2017):
+      if (substr(valgtVar,1,4)=='Tilf') {
+            RegData <- RegData[which(RegData$InnDato >= as.POSIXlt('2017-01-01') &
+                                           RegData$DataClDtS <= RegData$DischgDt), ]
+            gr <- c(0:2,99)
+            grtxt <- c('Ikke tilfreds', 'Ganske tilfreds','Svært tilfreds','Ukjent')
+      }
+      #Mobilitet «Mobilmod»,  Av/Påkledning, «Dreslbdy»,   Spising «Feeding», Toalettbesøk «Toiletin»
+      
+      if (valgtVar=='TilfDo') {
+            retn <- 'H'
+            tittel <- 'Toalettbesøk'
+            RegData <- RegData[RegData$ToiletinS %in% gr, ]
+            RegData$VariabelGr <- factor(as.numeric(RegData$ToiletinS), levels=gr, labels = grtxt)
+      }
+      if (valgtVar=='TilfKler') {
+            retn <- 'H'
+            tittel <- 'Av-/påkledning underkropp'
+            RegData <- RegData[RegData$DreslbdyS %in% gr, ]
+            RegData$VariabelGr <- factor(as.numeric(RegData$DreslbdyS), levels=gr, labels = grtxt)
+            
+      }
+      if (valgtVar=='TilfMob') {
+            retn <- 'H'
+            tittel <- 'Mobilitet over kortere avstander (10-100m.)'
+            RegData <- RegData[RegData$MobilmodS %in% gr, ]
+            RegData$VariabelGr <- factor(as.numeric(RegData$MobilmodS), levels=gr, labels = grtxt)
+            
+      }
+      if (valgtVar=='TilfSpis') {
+            retn <- 'H'
+            tittel <- 'Spisesituasjon'
+            RegData <- RegData[RegData$FeedingS %in% gr, ]
+            RegData$VariabelGr <- factor(as.numeric(RegData$FeedingS), levels=gr, labels = grtxt)
+      }
       UtData <- list(RegData=RegData, grtxt=grtxt, xAkseTxt=xAkseTxt, cexgr=cexgr, KImaal=KImaal, retn=retn,
                      tittel=tittel, flerevar=flerevar, variable=variable, sortAvtagende=sortAvtagende)
-      #!!!!!!!!!!!!!RegData inneholder nå variablene 'Variabel' og 'VariabelGr'. Hm. her er bare VariabelGr... Sjekk med INTENSIV
       return(invisible(UtData)) 
       
 }

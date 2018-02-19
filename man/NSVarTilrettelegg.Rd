@@ -4,12 +4,14 @@
 \alias{NSVarTilrettelegg}
 \title{Funksjon for å tilrettelegge variable for beregning.}
 \usage{
-NSVarTilrettelegg(RegData, valgtVar, grVar = "")
+NSVarTilrettelegg(RegData, valgtVar, grVar = "", figurtype = "andeler")
 }
 \arguments{
 \item{RegData}{- ei dataramme med alle nødvendige variable fra registeret.}
 
 \item{valgtVar}{- variabelen det skal genereres resultat for}
+
+\item{figurtype}{angir hvilken figurtype som skal lages: andeler, gjsnGrVar}
 }
 \value{
 Definisjon av valgt variabel.

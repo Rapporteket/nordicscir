@@ -6,7 +6,7 @@
 \usage{
 NSUtvalg(RegData, datoFra = "2010-01-01", datoTil = "3000-05-25",
   minald = 0, maxald = 130, erMann = 99, traume = "", AIS = "",
-  fargepalett = "BlaaOff")
+  enhetsUtvalg = 0, paratetra = 99, reshID = 0, fargepalett = "BlaaOff")
 }
 \arguments{
 \item{RegData}{- ei dataramme med alle nødvendige variable fra registeret.}
@@ -24,6 +24,12 @@ NSUtvalg(RegData, datoFra = "2010-01-01", datoTil = "3000-05-25",
 \item{traume}{- 'ja','nei', standard: ikke valgt}
 
 \item{AIS}{- AISgrad ved innleggelse alle(''), velge en eller flere fra A,B,C,D,E,U}
+
+\item{enhetsUtvalg}{- 1:eget sykehus, 0:hele landet (standard)}
+
+\item{paratetra}{- Nivå ved utreise, flervalgs tetraplegi, paraplegi, ukjent}
+
+\item{reshID}{- avdelingsid for egen avdeling, standard: 0-hele landet.}
 }
 \description{
 Funksjon som gjør utvalg av dataene, returnerer det reduserte datasettet og

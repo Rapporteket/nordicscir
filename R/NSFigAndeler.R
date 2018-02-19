@@ -49,6 +49,7 @@
 #' @param hentData Gjør spørring mot database hvis data ikke er levert fra andre kilder.
 #'                 0: Nei, RegData gis som input til funksjonen (Standard)
 #'                 1: Ja
+#' @param figurtype angir hvilken figurtype som skal lages: andeler, gjsnGrVar
 #' 
 #' @export
 
@@ -60,13 +61,21 @@ NSFigAndeler <- function(RegData, outfile='', valgtVar,
       if (hentData == 1) {
             RegData <- NSRegDataSQL(valgtVar=valgtVar)
       }
+      
+if ( dim(RegData)[1] == 0 ) { 
+            FigTypUt <- rapbase::figtype(outfile)
+            plot.new()
+            text(0.5, 0.6, paste0('Ingen registreringer i Rapportdatabasen'), cex=1.2)
+            if ( outfile != '') {dev.off()}
+      } else {
+      
       if (preprosess == 1) {
             RegData <- NSPreprosesser(RegData)
       }
     
       #--------------- Tilrettelegge variable og gjøre utvalg ------------------------------
       
-      NSVarSpes <- NSVarTilrettelegg(RegData=RegData, valgtVar=valgtVar)
+      NSVarSpes <- NSVarTilrettelegg(RegData=RegData, valgtVar=valgtVar, figurtype='andeler')
 	  RegData <- NSVarSpes$RegData
       
       
@@ -126,7 +135,6 @@ NSFigAndeler <- function(RegData, outfile='', valgtVar,
       
       
       
-      #grtxt <- paste0(rev(NSVarSpes$grtxt), ' (', rev(sprintf('%.1f',AggVerdier$Hoved)), '%)') 
       grtxt <- NSVarSpes$grtxt
       grtxt2 <- paste0('(', sprintf('%.1f',AggVerdier$Hoved), '%)')
       cexgr <- NSVarSpes$cexgr
@@ -148,19 +156,19 @@ NSFigAndeler <- function(RegData, outfile='', valgtVar,
                            medSml=medSml,
                            hovedgrTxt=hovedgrTxt,
                            smltxt=Utvalg$smltxt)
-   
+
 #-----------Figur---------------------------------------
        
       #-----Hvis få registreringer: ---------------------
-      Ngrense <- 5      #
+      Ngrense <- 5      # 5
       if (sum(Nfig$Hoved) < Ngrense | (medSml ==1 & sum(Nfig$Rest)< Ngrense)) {
             FigTypUt <- rapbase::figtype(outfile)
             farger <- FigTypUt$farger
             plot.new()
             title(NSVarSpes$tittel)	#, line=-6)
             legend('topleft',utvalgTxt, bty='n', cex=0.9, text.col=farger[1])
-            text(0.5, 0.6, 'Færre enn 5 egne registreringer,', cex=1.2)
-            text(0.5, 0.5, 'eller færre enn 5 i sammenlikningsgruppa', cex=1.2)
+            text(0.5, 0.6, paste0('Færre enn ', Ngrense, ' egne registreringer,'), cex=1.2)
+            text(0.5, 0.5, paste0('eller færre enn, ', Ngrense, ' i sammenlikningsgruppa'), cex=1.2)
             if ( outfile != '') {dev.off()}
       } else {
             
@@ -171,7 +179,7 @@ NSFigAndeler <- function(RegData, outfile='', valgtVar,
             FigTypUt <- rapbase::figtype(outfile, fargepalett=Utvalg$fargepalett)
             #Tilpasse marger for å kunne skrive utvalgsteksten
             NutvTxt <- length(utvalgTxt)
-            grtxtpst <- paste0(rev(grtxt), ' (', rev(sprintf('%.1f',AggVerdier$Hoved)), '%)')
+            grtxtpst <- paste0(grtxt, ' (', sprintf('%.1f',AggVerdier$Hoved), '%)')
             vmarg <- switch(NSVarSpes$retn, V=0, H=max(0, strwidth(grtxtpst, units='figure', cex=cexgr)*0.8))
             par('fig'=c(vmarg, 1, 0, 1-0.02*(NutvTxt-1)))	#Har alltid datoutvalg med
             
@@ -209,9 +217,9 @@ NSFigAndeler <- function(RegData, outfile='', valgtVar,
                   #par('fig'=c(0.1, 1, 0, 0.9))
                   pos <- barplot(rev(as.numeric(AggVerdier$Hoved)), horiz=TRUE, beside=TRUE, las=1, xlab="Andel pasienter (%)", #main=tittel,
                                  cex.lab=cexleg,col=fargeHoved, border='white', font.main=1, xlim=c(0, xmax), ylim=c(0,ymax))	#
-                  mtext(at=pos+0.1, text=grtxtpst, side=2, las=1, cex=cexgr, adj=1, line=0.25)	#text=rev(grtxt)
+                  mtext(at=pos+0.1, text=rev(grtxtpst), side=2, las=1, cex=cexgr, adj=1, line=0.25)	
                   if (medSml == 1) {
-                        points(as.numeric(rev(AggVerdier$Rest)), pos, col=fargeRest,  cex=2, pch=18) #c("p","b","o"),
+                        points(rev(as.numeric(AggVerdier$Rest)), pos, col=fargeRest,  cex=2, pch=18) #c("p","b","o"),
                         legend('topleft', c(paste0(hovedgrTxt, ' (N=', Nfig$Hoved,')'), paste0('Landet forøvrig (N=', Nfig$Rest,')')),
                                border=c(fargeHoved,NA), col=c(fargeHoved,fargeRest), bty='n', pch=c(15,18), pt.cex=2, lty=NA,
                                lwd=lwdRest, ncol=2, cex=cexleg)
@@ -230,4 +238,5 @@ NSFigAndeler <- function(RegData, outfile='', valgtVar,
             if ( outfile != '') {dev.off()}
             
       }
+   }
 }

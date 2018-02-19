@@ -31,7 +31,7 @@ NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='gjsn', grVar='ShNavn',
       }
 
       #------- Tilrettelegge variable
-      NSVarSpes <- NSVarTilrettelegg(RegData=RegData, valgtVar=valgtVar)
+      NSVarSpes <- NSVarTilrettelegg(RegData=RegData, valgtVar=valgtVar, figurtype='gjsnGrVar')
       RegData <- NSVarSpes$RegData
       
       #------- Gjøre utvalg
@@ -60,6 +60,7 @@ NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='gjsn', grVar='ShNavn',
                DagerRehab='antall dager med rehabilitering',
                DagerTilRehab='antall dager før rehabilitering',
                OpphTot= 'totalt opphold',
+               RegForsinkelse= 'registreringsforsinkelse',
                LivsGen= 'fornøydhet med livet',
             LivsFys = 'fornøydhet, fysisk helse',
             LivsPsyk = 'fornøydhet, psykisk helse'
@@ -127,7 +128,8 @@ NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='gjsn', grVar='ShNavn',
   xlabt <- switch(valgtVar, Alder='alder (år)',
                   DagerRehab='dager',
                   DagerTilRehab='dager',
-                  OpphTot= 'dager')
+                  OpphTot= 'dager',
+                  RegForsinkelse = 'dager')
   
   #Se NSFigSoyler for forklaring av innhold i lista gjsnGrVarData
   GjsnGrVarData <- list(AggVerdier=AggVerdier, #Endres til Soyleverdi? Evt. AggVerdier
@@ -206,7 +208,7 @@ NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='gjsn', grVar='ShNavn',
              paste0('95% konf.int., alle (',
                    sprintf('%.1f', KIHele[1]), '-', sprintf('%.1f', KIHele[2]), ')')))
     barplot(rev(as.numeric(Midt)), horiz=T, border=NA, col=farger[3], xlim=c(0, xmax), add=TRUE,
-            xlab=xlabt, cex.lab=cexleg+0.1, cex.sub=cexleg+0.1, cex.axis=cexleg, las=1)
+            xlab=NSVarSpes$xAkseTxt, cex.lab=cexleg+0.1, cex.sub=cexleg+0.1, cex.axis=cexleg, las=1)
     title(tittel, line=1.1, font.main=1, cex.main=1.5)
     title('med 95% konfidensintervall', font.main=1, line=0)
 

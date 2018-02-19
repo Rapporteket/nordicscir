@@ -6,8 +6,8 @@
 \usage{
 NSFigAndeler(RegData, outfile = "", valgtVar, datoFra = "2010-01-01",
   datoTil = "2050-01-01", AIS = "", minald = 0, maxald = 130,
-  erMann = 99, traume = "", enhetsUtvalg = 1, reshID, hentData = 0,
-  preprosess = 1)
+  erMann = 99, traume = "", paratetra = 99, enhetsUtvalg = 1, reshID,
+  hentData = 0, preprosess = 1)
 }
 \arguments{
 \item{RegData}{- ei dataramme med alle nødvendige variable fra registeret.}
@@ -30,6 +30,8 @@ NSFigAndeler(RegData, outfile = "", valgtVar, datoFra = "2010-01-01",
 
 \item{traume}{- 'ja','nei', standard: ikke valgt}
 
+\item{paratetra}{- Nivå ved utreise, flervalgs tetraplegi, paraplegi, ukjent}
+
 \item{enhetsUtvalg}{- 1:eget sykehus, 0:hele landet (standard)}
 
 \item{reshID}{- avdelingsid for egen avdeling, standard: 0-hele landet.}
@@ -41,6 +43,8 @@ NSFigAndeler(RegData, outfile = "", valgtVar, datoFra = "2010-01-01",
 \item{preprosess}{Preprosesser data
 0: Nei
 1: Ja (Standard)}
+
+\item{figurtype}{angir hvilken figurtype som skal lages: andeler, gjsnGrVar}
 }
 \description{
 Argumentet \emph{valgtVar} har følgende valgmuligheter:
@@ -54,6 +58,22 @@ Argumentet \emph{valgtVar} har følgende valgmuligheter:
     \item Permisjon: Antall døgn ute av sykehus 
     \item UtTil: Hva pasienten skrives ut til. [PlaceDis]
     \item SkadeArsak: Årsak til skade [variabel: Scietiol]
-    \item Pustehjelp[VentAssi].
+    \item Pustehjelp[VentAssi]
+    \item LivsGen:  Fornøydhet med livet
+    \item LivsFys:  Fornøydhet med fysisk helse
+    \item LivsPsyk:  Fornøydhet med psykisk helse
+    \item UrinInkontinens: Ufrivillig urinlekkasje
+    \item UrinKirInngr: Kirurgiske inngrep i urinveiene
+    \item UrinLegemidler: Bruk av legemidler som påvirker urinveiene
+    \item UrinLegemidlerHvilke: Legemidler som påvirker urinveiene
+    \item UrinTomBlareHoved: Blæretømming, hovedmetode
+    \item UrinTomBlareTillegg: Blæretømming, tilleggsmetode
+    \item TarmAvfmiddel: Bruk av perorale avføringsmidler
+    \item TarmAvfmiddelHvilke: Perorale avføringsmidler
+    \item TarmInkontinens: Hyppighet av fekal inkontinens
+    \item TarmKirInngrep: Kirurgisk inngrep i mage/–tarm kanalen
+    \item TarmKirInngrepHvilke: Kirurgiske inngrep i mage/–tarm kanalen
+    \item TarmAvfHoved: Avføring, hovedmetode
+    \item TarmAvfTillegg: Avføring, tilleggsmetode
    }
 }

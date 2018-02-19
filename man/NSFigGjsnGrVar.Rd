@@ -4,17 +4,17 @@
 \alias{NSFigGjsnGrVar}
 \title{Funksjon som genererer en figur med gjennomsnitt/median}
 \usage{
-NSFigGjsnGrVar(RegData, valgtVar, valgtMaal = "Gjsn",
+NSFigGjsnGrVar(RegData, valgtVar, valgtMaal = "gjsn", grVar = "ShNavn",
   datoFra = "2010-01-01", datoTil = "2050-12-31", AIS = "", minald = 0,
-  maxald = 130, erMann = "", traume = "", preprosess = 1,
-  outfile = "", hentData = 0)
+  maxald = 130, erMann = "", traume = "", paratetra = 99,
+  preprosess = 1, outfile = "", hentData = 0)
 }
 \arguments{
 \item{RegData}{- ei dataramme med alle nødvendige variable fra registeret.}
 
 \item{valgtVar}{- variabelen det skal genereres resultat for}
 
-\item{valgtMaal}{- 'Med' = median. Alt annet gir gjennomsnitt}
+\item{valgtMaal}{- 'med' = median. Alt annet gir gjennomsnitt}
 
 \item{datoFra}{<- '2010-01-01'    # min og max dato i utvalget vises alltid i figuren.}
 
@@ -29,6 +29,8 @@ NSFigGjsnGrVar(RegData, valgtVar, valgtMaal = "Gjsn",
 \item{erMann}{- kjønn, 1-menn, 0-kvinner, standard: '' (alt annet enn 0 og 1), dvs. begge}
 
 \item{traume}{- 'ja','nei', standard: ikke valgt}
+
+\item{paratetra}{- Nivå ved utreise, flervalgs tetraplegi, paraplegi, ukjent}
 
 \item{preprosess}{Preprosesser data
 0: Nei
