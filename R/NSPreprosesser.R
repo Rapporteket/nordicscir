@@ -65,7 +65,6 @@ NSPreprosesser <- function(RegData)
       
       #Riktig format på datovariable:
       RegData$InnDato <- as.Date(RegData$AdmitDt, tz= 'UTC', format="%Y-%m-%d") #as.POSIXlt(RegData$AdmitDt, format="%Y-%m-%d")
-      as.Date(RegData$DateAdmittedIntensive, tz= 'UTC', format="%Y-%m-%d")
       RegData$Aar <- as.POSIXlt(RegData$AdmitDt, format="%Y-%m-%d")$year +1900
       
       #Konvertere boolske variable fra tekst til boolske variable...
