@@ -228,7 +228,6 @@ xtable::xtable(AndelMKtr, digits=1, align=c('l', rep('r', ncol(AndelMKtr))),
 
 
 
-\section{Pasientkarakteristika}
 
 <<'LageFigurer', include=FALSE>>=
 
@@ -245,6 +244,19 @@ for (valgtVar in variable) {
 #NSFigGjsnGrVar(RegData=HovedSkjema12mnd, hentData=0, preprosess = 0, outfile=outfile, valgtVar=valgtVar, 
 #               datoFra=datoFra, datoTil=datoTil)
 @
+
+\section{Pasientkarakteristika}
+
+\begin{frame}[fragile]
+\begin{figure}[ht]
+\centering
+\includegraphics[scale=0.35]{RegForsinkelse.pdf}
+\caption{Registreringsforsinkelse. Kvalitetsmålet er registrering innen 30 dager. Målet ble innført 2018-01-01.}
+\end{figure}
+
+Variabelen ble innført i desember og alle hovedskjema ferdigstilt (lukket første gang) etter desember 2017 vil derfor kunne inngå i figuren siden datoutvalget er basert på dato for innleggelse på akuttsykehus.
+
+\end{frame}
 
 
 \begin{frame}[fragile]
@@ -281,17 +293,6 @@ for (valgtVar in variable) {
 \end{figure}
 \end{frame}
 
-
-\begin{frame}[fragile]
-\begin{figure}[ht]
-\centering
-\includegraphics[scale=0.35]{RegForsinkelse.pdf}
-\caption{Registreringsforsinkelse. Kvalitetsmålet er registrering innen 30 dager. Målet ble innført 2018-01-01.}
-\end{figure}
-
-Variabelen ble innført i desember og alle hovedskjema ferdigstilt (lukket første gang) etter desember 2017 vil derfor kunne inngå i figuren siden datoutvalget er basert på dato for innleggelse på akuttsykehus.
-
-\end{frame}
 
 
 \section{Nevrologisk klassifikasjon}

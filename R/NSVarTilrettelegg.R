@@ -177,7 +177,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
             RegData$VariabelGr <- factor(as.numeric(RegData$Ntsci), levels=c(1:6,8:9), labels = grtxt)
             retn <- 'H'
       }
-      if (valgtVar == 'SkadeArsak') {
+      if (valgtVar == 'SkadeArsak') { #Andeler
             tittel <- 'Skadeårsaker'
             #gr <- (1:6,9) - Kodene som registereres
             RegData$SkadeArsak[which(RegData$SkadeArsak==9)] <- 7
@@ -193,7 +193,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
             #gr <- (1:10,99) - Kodene som registereres
             RegData$UtTil[which(RegData$UtTil==99)] <- 12
             RegData <- RegData[RegData$UtTil %in% 1:12, ]
-            grtxtAlle <- c('Hjem', 'Sykehus', 'Pleiehjem', 'Omsorgsbolig', 'Bofellesskap','Kriminalomsorg', 'Hotell', 'Bostedsløs', 'Avdød', 'Annet', 'Planlagt hjem', 'Ukjent')
+            grtxtAlle <- c('Hjem', 'Sykehus', 'Sykehjem', 'Omsorgsbolig', 'Bofellesskap','Kriminalomsorg', 'Hotell', 'Bostedsløs', 'Avdød', 'Annet', 'Planlagt hjem', 'Ukjent')
             grtxt <- grtxtAlle
             xAkseTxt <- 'Utskrevet til'
             RegData$VariabelGr <- factor(as.numeric(RegData$UtTil), levels=1:12, labels = grtxtAlle)
@@ -251,7 +251,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
       }
       
       if (valgtVar == 'LivsGen') {
-            tittel <- 'Fornøydhet med livet'
+            tittel <- 'Tilfredshet med livet'
             RegData <- RegData[RegData$SatGenrl %in% 0:10, ]
             grtxt <- 0:10
             RegData$VariabelGr <- factor(as.numeric(RegData$SatGenrl), levels=0:10, labels = grtxt)
@@ -259,7 +259,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
             sortAvtagende <- TRUE
       }
       if (valgtVar == 'LivsFys') {
-            tittel <- 'Fornøydhet med fysisk helse'
+            tittel <- 'Tilfredshet med fysisk helse'
             RegData <- RegData[RegData$SatPhys %in% 0:10, ]
             grtxt <- 0:10
             RegData$VariabelGr <- factor(as.numeric(RegData$SatPhys), levels=0:10, labels = grtxt)
@@ -268,7 +268,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
       }
 
       if (valgtVar == 'LivsPsyk') {
-            tittel <- 'Fornøydhet med psykisk helse'
+            tittel <- 'Tilfredshet med psykisk helse'
             RegData <- RegData[RegData$SatPsych %in% 0:10, ]
             grtxt <- 0:10
             RegData$VariabelGr <- factor(as.numeric(RegData$SatPsych), levels=0:10, labels = grtxt)
