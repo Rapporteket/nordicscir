@@ -100,7 +100,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
 		RegData <- RegData[RegData$InnDato >= as.POSIXlt('2015-01-01'), ]
             RegData$VariabelGr <- RegData[,valgtVar]
             if (valgtVar == 'AAis') {
-                  RegData$VariabelGr[which((RegData$AAis == 9) & which(RegData$ANeuNoMeasure == FALSE))] <- 6
+                  RegData$VariabelGr[which((RegData$AAis == 9) & (RegData$ANeuNoMeasure == FALSE))] <- 6
                   RegData$VariabelGr[which((RegData$AAis == -1) & (RegData$ANeuNoMeasure == TRUE))] <- 7
                   }
             if (valgtVar == 'FAis') {

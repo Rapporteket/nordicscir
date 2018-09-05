@@ -43,7 +43,7 @@ file.remove(file=removeFiles)
 #------------------------ LASTE DATA -------------------------------------
 
 rm(list=ls())
-dato <- 'FormDataContract2018-02-13' #2017-05-24
+dato <- 'FormDataContract2018-09-05' #2017-05-24
 sti <- 'A:/NordicScir/'
 HovedSkjema <- read.table(paste0(sti, 'Main',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
 Livskvalitet <- read.table(paste0(sti, 'LifeQuality',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
@@ -157,7 +157,7 @@ outfile <- '' #paste0(valgtVar, '.png')	#Navn angis av Jasper
 
 NSFigAndeler(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
 		AIS=AIS, minald=minald, maxald=maxald, erMann=erMann, traume=traume, paratetra=paratetra,
-		reshID=reshID, enhetsUtvalg=0)    #, preprosess=1
+		reshID=reshID, enhetsUtvalg=1)    #, preprosess=1
 #Aktuelt å legge til en parameter som sier hvilket skjema variabelen tilhører. Dette for å koble
 #sammen riktig skjema til hovedskjema.
 
