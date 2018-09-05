@@ -29,7 +29,7 @@ NSUtvalg <- function(RegData, datoFra='2010-01-01', datoTil='3000-05-25', minald
 	   #indSkjemaUt <- which(RegData$SkjemaID != 1)     #NB: Kan senere bli variabelspesifikk!!!
       indAldUt <- which(RegData$Alder < minald | RegData$Alder > maxald)
       indDatoUt <- setdiff(1:Ninn,
-                           which(RegData$InnDato > as.POSIXlt(datoFra) & RegData$InnDato < as.POSIXlt(datoTil))) #Får bort NA
+                           which(RegData$InnDato > datoFra & RegData$InnDato < datoTil)) #Får bort NA
       traumeValgBort <- switch(traume, ja = c(6,9) , nei = c(1:5,9), alle = NULL) #6 ikke-tr, 1:5 traumer, 9 ukjent
       indTrUt <-  which(RegData$SkadeArsak %in% traumeValgBort)
       indKjUt <- if (erMann %in% 0:1) {which(RegData$erMann != erMann)} else {indKjUt <- NULL}
