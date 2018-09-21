@@ -43,7 +43,7 @@ file.remove(file=removeFiles)
 #------------------------ LASTE DATA -------------------------------------
 
 rm(list=ls())
-dato <- 'FormDataContract2018-09-05' #2017-05-24
+dato <- 'FormDataContract2018-09-20' #2017-05-24
 sti <- 'A:/NordicScir/'
 HovedSkjema <- read.table(paste0(sti, 'Main',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
 Livskvalitet <- read.table(paste0(sti, 'LifeQuality',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
@@ -115,7 +115,7 @@ library(nordicscir)
 setwd("C:/Registerinfo og historie/NordicScir/Figurer/")
 reshID <- 107627             ##105593-Haukeland, 106896-Sunnaas, 107627-St.Olavs, standard i funksj: 0 dvs. 'Alle'. Standard i rapporten skal v?re at man f?r opp eget sykehus.
 enhetsUtvalg <- 0
-minald <- 0
+minald <- 16
 maxald <- 130
 erMann <- 9                      #1-menn, 0-kvinner, Standard: '', dvs. begge
 traume <- ''    #'ja','nei', standard: ikke valgt
@@ -142,7 +142,7 @@ valgtVar <- 'TarmAvfHoved'   #'TarmAvfHoved','TarmAvfTillegg', TarmAvfmiddel, Ta
 
 #Livskvalitet
 RegData <- KobleMedHoved(RegData,Livskvalitet)
-valgtVar <- 'LivsGen'                #LivsGen, LivsFys, LivsPsyk
+valgtVar <- 'LivsPsyk'                #LivsGen, LivsFys, LivsPsyk
 
 #Funksjon (Aktivitet og deltagelse)
 RegData <- KobleMedHoved(HovedSkjema,Performance)
@@ -153,7 +153,7 @@ RegData <- KobleMedHoved(Performance,Satisfact)
 RegData <- KobleMedHoved(HovedSkjema,RegData)
 valgtVar <- 'TilfSpis'               #TilfDo, TilfKler, TilfMob, TilfSpis
 
-outfile <- paste0(valgtVar, '.png')	#Navn angis av Jasper
+outfile <- '' #paste0(valgtVar, '.png')	#Navn angis av Jasper
 
 NSFigAndeler(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
 		AIS=AIS, minald=minald, maxald=maxald, erMann=erMann, traume=traume, paratetra=paratetra,

@@ -97,7 +97,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
 			#Fra 01.01.2015 
 			#Aais == 9 & ANeuNoMeasure = FALSE: Ukjent/Ikke klassifiserbar
             #Aais == -1 & ANeuNoMeasure = TRUE: Ikke utført. Tilsv. F
-		RegData <- RegData[RegData$InnDato >= as.POSIXlt('2015-01-01'), ]
+		RegData <- RegData[RegData$InnDato >= as.Date('2015-01-01'), ]
             RegData$VariabelGr <- RegData[,valgtVar]
             if (valgtVar == 'AAis') {
                   RegData$VariabelGr[which((RegData$AAis == 9) & (RegData$ANeuNoMeasure == FALSE))] <- 6
@@ -119,7 +119,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
                           DagerRehab = '2015-01-01',
                           DagerTilRehab = '2015-01-01',
                           OpphTot = '2011-01-01')
-            RegData <- RegData[RegData$InnDato >= as.POSIXlt(dato), ]
+            RegData <- RegData[RegData$InnDato >= as.Date(dato), ]
             grmax <- switch(valgtVar,
                             DagerRehab= '180+',
                             DagerTilRehab = '100+',
@@ -169,7 +169,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
             tittel <- 'Ikke-traumatisk skadeårsak (NTSCI)'
             #gr <- (1:6, 8:9) - Kodene som registereres
             RegData <- RegData[which(RegData$Ntsci %in% 1:9) %i% 
-                                     which(RegData$InnDato >= as.POSIXlt('2018-01-01')), ] 
+                                     which(RegData$InnDato >= as.Date('2018-01-01')), ] 
             grtxt <- c('Medfødt/genetisk etiologi', 'Degenerativ etiologi', 'Tumor, godartet', 
                        'Tumor, ondartet', 'Vaskulær etiologi', 'Infeksjon', 
                        'Annen ryggmargsdysfunksjon', 'Ikke spesifisert/ukjent')
@@ -205,7 +205,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
             tittel <- 'Planlagt midlertidig utskrevet til '
             RegData$PPlacedis[RegData$PPlacedis==8] <- 5
             RegData <- RegData[which(RegData$PPlacedis %in% 1:5) %i% 
-                                     which(RegData$InnDato >= as.POSIXlt('2018-01-01')), ]
+                                     which(RegData$InnDato >= as.Date('2018-01-01')), ]
             grtxt <- c('Pleiehjem/ \n avlastningsplass', 'Insitusjon \n m/trening', 
                            'Sykehus', 'Familie/slekt \n /venner', 'Annet')
             xAkseTxt <- 'Utskrevet til'
@@ -217,8 +217,8 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
             RegData$Diff <- as.numeric(as.Date(as.POSIXct(RegData$FirstTimeClosed, format="%Y-%m-%d")) - 
                                              as.Date(as.POSIXct(RegData$DischgDt, format="%Y-%m-%d"))) #difftime(RegData$InnDato, RegData$Leveringsdato) #
 #RegData[,c('InnDato', "FirstTimeClosed", "DischgDt", 'Diff')]
- #           RegData$InnDato <- as.POSIXlt(RegData$AdmitDt, format="%Y-%m-%d") #as.POSIXlt(RegData$AdmitDt, format="%Y-%m-%d")
-  #          RegData$Test <- as.POSIXlt(RegData$FirstTimeClosed, format="%Y-%m-%d")
+ #           RegData$InnDato <- as.Date(RegData$AdmitDt, format="%Y-%m-%d") #as.Date(RegData$AdmitDt, format="%Y-%m-%d")
+  #          RegData$Test <- as.Date(RegData$FirstTimeClosed, format="%Y-%m-%d")
             RegData <- RegData[which(RegData$Diff > -1), ]
             tittel <- switch(figurtype,
                              andeler='Tid fra utskriving til ferdigstilt registrering',
@@ -244,7 +244,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
       #Eller vi kan gjøre beregninga her og sende tilbake teller og nevner for den sammensatte variabelen
 
       if (substr(valgtVar,1,4)=='Livs') {
-            indDato <- which(RegData$InnDato >= as.POSIXlt('2015-01-01')) #Ikke filtrer på startdato
+            indDato <- which(RegData$InnDato >= as.Date('2015-01-01')) #Ikke filtrer på startdato
             indTidspkt <- which(RegData$QolDt <= RegData$DischgDt)
             RegData <- RegData[indTidspkt, ]
             xAkseTxt <- 'Skåring: 1-10. Høyest er best.'
@@ -278,7 +278,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
    
 #----------------URIN-skjema (start 01.01.2015):
       if (substr(valgtVar,1,4)=='Urin') {
-       RegData <- RegData[which(RegData$InnDato >= as.POSIXlt('2015-01-01') & 
+       RegData <- RegData[which(RegData$InnDato >= as.Date('2015-01-01') & 
                                    RegData$LutfxnDt <= RegData$DischgDt), ]}
  
       if (valgtVar=='UrinInkontinens') {
@@ -293,7 +293,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
             flerevar <- 1
             retn <- 'H'
             tittel <- 'Kirurgiske inngrep i urinveiene'
-            RegData <- RegData[which((RegData$Surgicalpr==1) & (RegData$InnDato >= as.POSIXlt('2015-01-01'))), ]
+            RegData <- RegData[which((RegData$Surgicalpr==1) & (RegData$InnDato >= as.Date('2015-01-01'))), ]
             #For Surgicalpr=='ja' Ta med egen kolonne for nei? Nei, for mange	
             variable <- c('Spcath', 'Bstnrm', 'Ustnrm', 'Bladag', 'Ustent', 'Botox', 'Artsph','Ilvscs', 
                           'Ilurts', 'Ccathv', 'Sarstm', 'Othsrg')
@@ -317,7 +317,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
             RegData[ ,variable][ind1] <- 1
       }
       if (valgtVar=='UrinLegemidler') {
-            RegData <- RegData[which(RegData$InnDato >= as.POSIXlt('2015-01-01')), ]
+            RegData <- RegData[which(RegData$InnDato >= as.Date('2015-01-01')), ]
             #0:1,9: Nei, Ja, Ukjent	
             tittel <- 'Bruk av legemidler som påvirker urinveiene'
             gr <- c(0:1,9)
@@ -329,7 +329,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
             flerevar <- 1
             retn <- 'H'
             tittel <- 'Legemidler som påvirker urinveiene'
-            RegData <- RegData[which((RegData$AnyDrugs==1) & (RegData$InnDato >= as.POSIXlt('2015-01-01'))), ]
+            RegData <- RegData[which((RegData$AnyDrugs==1) & (RegData$InnDato >= as.Date('2015-01-01'))), ]
             variable <- c('Bladrelx', 'Spncrelx', 'DrugsAnti', 'Antiuti', 'Antiprop', 'Othdrg')
             grtxt <- c('Blæreavslappende legemidler', 'Avslappende, sfinkter/blærehals', 'Antibiotika/antiseptika', 
                        '...behandling av UVI', '...forebyggende', 'Annet')
@@ -349,7 +349,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
             tittel <- switch(valgtVar,
                              UrinTomBlareHoved = 'Blæretømming, hovedmetode',
                              UrinTomBlareTillegg = 'Blæretømming, tilleggsmetode')
-            RegData <- RegData[RegData$InnDato >= as.POSIXlt('2015-01-01'), ]
+            RegData <- RegData[RegData$InnDato >= as.Date('2015-01-01'), ]
             variable <- switch(valgtVar,
                                UrinTomBlareHoved =  c('EmbladUn', 'EmbladM1', 'EmbladM2', 'EmbladM3', 'EmbladM4', 'EmbladM5', 'EmbladM6', 
                                                   'EmbladM7', 'EmbladM8', 'EmbladM9', 'EmbladM10', 'EmbladM11', 'EmbladM12'),
@@ -368,7 +368,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
 #----------------TARM-skjema (start 01.01.2015):
       #BfxnbaDt	<= DischgDt
       if (substr(valgtVar,1,4)=='Tarm') {
-            RegData <- RegData[which(RegData$InnDato >= as.POSIXlt('2016-01-01') & 
+            RegData <- RegData[which(RegData$InnDato >= as.Date('2016-01-01') & 
                                            RegData$BfxnbaDt <= RegData$DischgDt), ]}
                                
            
@@ -429,7 +429,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
             tittel <- switch(valgtVar,
                              TarmAvfHoved = 'Avføring, hovedmetode',
                              TarmAvfTillegg = 'Avføring, tilleggsmetode')
-            RegData <- RegData[RegData$InnDato >= as.POSIXlt('2016-01-01'), ]
+            RegData <- RegData[RegData$InnDato >= as.Date('2016-01-01'), ]
             variable <- switch(valgtVar,
                                TarmAvfHoved =  c('DefcmthUn', 'DefcmthM1', 'DefcmthM2', 'DefcmthM3', 'DefcmthM4', 'DefcmthM5',
                                                       'DefcmthM6', 'DefcmthM7', 'DefcmthM8', 'DefcmthM9', 'DefcmthM10'),
@@ -448,7 +448,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
       
       #---------------- ActivityAndParticipationPerformance  (start 01.01.2017):
       if (substr(valgtVar,1,4)=='Funk') {
-            RegData <- RegData[which(RegData$InnDato >= as.POSIXlt('2017-01-01') &
+            RegData <- RegData[which(RegData$InnDato >= as.Date('2017-01-01') &
                                            RegData$DataClDt <= RegData$DischgDt), ]}
       #Mobilitet «Mobilmod»,  Av/Påkledning, «Dreslbdy»,   Spising «Feeding», Toalettbesøk «Toiletin»
       
@@ -514,7 +514,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
       
       #---------------- ActivityAndParticipationPerformance  (start 01.01.2017):
       if (substr(valgtVar,1,4)=='Tilf') {
-            RegData <- RegData[which(RegData$InnDato >= as.POSIXlt('2017-01-01') &
+            RegData <- RegData[which(RegData$InnDato >= as.Date('2017-01-01') &
                                            RegData$DataClDtS <= RegData$DischgDt), ]
             gr <- c(0:2,99)
             grtxt <- c('Ikke tilfreds', 'Ganske tilfreds','Svært tilfreds','Ukjent')

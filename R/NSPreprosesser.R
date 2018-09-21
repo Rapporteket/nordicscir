@@ -73,9 +73,10 @@ NSPreprosesser <- function(RegData)
             verdiNY <- c(TRUE,FALSE)
             mapping <- data.frame(verdiGML,verdiNY)
             LogVar <- names(Skjema)[which(Skjema[1,] %in% verdiGML)]
-            for (k in 1:length(LogVar)) {
-                  Skjema[,LogVar[k]] <- mapping$verdiNY[match(Skjema[,LogVar[k]], mapping$verdiGML)]
-            }
+            if (length(LogVar)>0) {
+                  for (k in 1:length(LogVar)) {
+                        Skjema[,LogVar[k]] <- mapping$verdiNY[match(Skjema[,LogVar[k]], mapping$verdiGML)]
+                  }}
             return(Skjema)
       }
       
