@@ -514,7 +514,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
       
       #---------------- ActivityAndParticipationPerformance  (start 01.01.2017):
       if (substr(valgtVar,1,4)=='Tilf') {
-            RegData <- RegData[which(RegData$InnDato >= as.Date('2017-01-01') &
+            RegData <- RegData[which((RegData$InnDato >= as.Date('2017-01-01')) &
                                            RegData$DataClDtS <= RegData$DischgDt), ]
             gr <- c(0:2,99)
             grtxt <- c('Ikke tilfreds', 'Ganske tilfreds','Svært tilfreds','Ukjent')
