@@ -80,6 +80,10 @@ return(NSdata)
 RegData <- KobleMedHoved(HovedSkjema,Tarm)
 RegData <- HovedSkjema
 
+# Jeg har koblet i to steg i R etter følgende skisse:
+#       NyTab = Performance.SkjemaGUID <-> Satisfaction. HovedskjemaGUID  
+# Main.SkjemaGUID <-> NyTab. HovedskjemaGUID  
+
 #------------------------ TESTE DATA -------------------------------------
 
 #---Oppsummering/test av andel som har fått oppfølging---
@@ -133,7 +137,7 @@ valgtVar <- 'UtTil'	#AAis, FAis, Alder, DagerRehab, DagerTilRehab, NivaaInn, Nts
                              	#Pustehjelp[VentAssi], PPlaceDis, RegForsinkelse,  #SkadeArsak[Scietiol]  
 #UrinSkjema: 
 RegData <- KobleMedHoved(HovedSkjema,Urin)
-valgtVar <- 'UrinTomBlareHoved'   #'UrinInkontinens', 'UrinLegemidler','UrinLegemidlerHvilke', 'UrinKirInngr', 
+valgtVar <- 'UrinLegemidlerHvilke'   #'UrinInkontinens', 'UrinLegemidler','UrinLegemidlerHvilke', 'UrinKirInngr', 
                                     #'UrinTomBlareHoved', 'UrinTomBlareTillegg'
 #TarmSkjema: 
 RegData <- KobleMedHoved(HovedSkjema,Tarm)
