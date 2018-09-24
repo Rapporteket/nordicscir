@@ -19,9 +19,8 @@ NSPreprosesser <- function(RegData)
      #med bruk av ekstra pakker kan dette gjøres mer elegant 
       #NYE VARIABLE
       #Kjønn
-      RegData$erMann <- NULL
-      RegData$erMann[RegData$PatientGender == 'Female'] <- 0
-      RegData$erMann[RegData$PatientGender == 'Male'] <- 1
+      RegData$erMann <- RegData$PatientGender
+      RegData$erMann[RegData$PatientGender == 2] <- 0 #Ingen manglende verdier i variabelen
       
       #****'Tetraplegi*****.
       #      0: 'Paraplegi', 1: 'Tetraplegi', 9: 'Ukjent'.
