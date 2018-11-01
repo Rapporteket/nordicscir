@@ -307,10 +307,10 @@ NevrKlass <- rbind(
 'Utført og klassifiserbar, utreise: ' = 
       addmargins(table(HovedSkjema12mnd$ShNavn[HovedSkjema12mnd$FAis %in% 1:5])), 
 'Ikke utført  ved innkomst:' = 
-      addmargins(table(HovedSkjema12mnd$ShNavn[HovedSkjema12mnd$ANeuNoMeasure == -1 
+      addmargins(table(HovedSkjema12mnd$ShNavn[HovedSkjema12mnd$ANeuNoMeasure == TRUE #-1 
                                                & HovedSkjema12mnd$AAis == -1])),
 'Ikke utført ved utreise:' =
-      addmargins(table(HovedSkjema12mnd$ShNavn[HovedSkjema12mnd$FNeuNoMeasure == -1 
+      addmargins(table(HovedSkjema12mnd$ShNavn[HovedSkjema12mnd$FNeuNoMeasure == TRUE #-1 
                                           & HovedSkjema12mnd$FAis == -1])),
 'Utført, men ikke klassifiserbar, innkomst: ' = 
       addmargins(table(HovedSkjema12mnd$ShNavn[HovedSkjema12mnd$AAis==9])),
@@ -342,9 +342,10 @@ NevrKlass28 <- rbind(
 'Utført og klassifiserbar, utreise: ' = 
       addmargins(table(HovedSkjema28$ShNavn[HovedSkjema28$FAis %in% 1:5])), 
 'Ikke utført ved innkomst:' = 
-      addmargins(table(HovedSkjema28$ShNavn[HovedSkjema28$ANeuNoMeasure == -1 & HovedSkjema28$AAis == -1])),
+#      addmargins(table(HovedSkjema28$ShNavn[HovedSkjema28$ANeuNoMeasure == -1 & HovedSkjema28$AAis == -1])),
+      addmargins(table(HovedSkjema28$ShNavn[HovedSkjema28$ANeuNoMeasure == TRUE & HovedSkjema28$AAis == -1])),
 'Ikke utført ved utreise:' =
-      addmargins(table(HovedSkjema28$ShNavn[HovedSkjema28$FNeuNoMeasure == -1 & HovedSkjema28$FAis == -1])),
+      addmargins(table(HovedSkjema28$ShNavn[HovedSkjema28$FNeuNoMeasure == TRUE & HovedSkjema28$FAis == -1])),
 'Utført, men ikke klassifiserbar, innkomst: ' = 
       addmargins(table(HovedSkjema28$ShNavn[HovedSkjema28$AAis==9])),
 'Utført, men ikke klassifiserbar, utreise: ' = 

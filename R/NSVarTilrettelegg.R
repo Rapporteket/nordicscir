@@ -100,12 +100,16 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
 		RegData <- RegData[RegData$InnDato >= as.Date('2015-01-01'), ]
             RegData$VariabelGr <- RegData[,valgtVar]
             if (valgtVar == 'AAis') {
-                  RegData$VariabelGr[which((RegData$AAis == 9) & (RegData$ANeuNoMeasure == 0))] <- 6
-                  RegData$VariabelGr[which((RegData$AAis == -1) & (RegData$ANeuNoMeasure == -1))] <- 7
+                  RegData$VariabelGr[which((RegData$AAis == 9) & (RegData$ANeuNoMeasure == FALSE))] <- 6
+                  RegData$VariabelGr[which((RegData$AAis == -1) & (RegData$ANeuNoMeasure == TRUE))] <- 7
+                  #RegData$VariabelGr[which((RegData$AAis == 9) & (RegData$ANeuNoMeasure == 0))] <- 6
+                  #RegData$VariabelGr[which((RegData$AAis == -1) & (RegData$ANeuNoMeasure == -1))] <- 7
                   }
             if (valgtVar == 'FAis') {
-                  RegData$VariabelGr[which((RegData$FAis == 9) & (RegData$FNeuNoMeasure == 0))] <- 6
-                  RegData$VariabelGr[which((RegData$FAis == -1) & (RegData$FNeuNoMeasure == -1))] <- 7
+                  #RegData$VariabelGr[which((RegData$FAis == 9) & (RegData$FNeuNoMeasure == 0))] <- 6
+                  #RegData$VariabelGr[which((RegData$FAis == -1) & (RegData$FNeuNoMeasure == -1))] <- 7
+                  RegData$VariabelGr[which((RegData$FAis == 9) & (RegData$FNeuNoMeasure == FALSE))] <- 6
+                  RegData$VariabelGr[which((RegData$FAis == -1) & (RegData$FNeuNoMeasure == TRUE))] <- 7
             }
             tittel <- switch(valgtVar, AAis = 'AIS ved innleggelse', FAis = 'AIS ved utskriving') #paste('Fordeling av', )
             grtxt <- c('A: Komplett', 'B: Inkomplett', 'C: Inkomplett', 'D: Inkomplett', 'E: Normal', 
