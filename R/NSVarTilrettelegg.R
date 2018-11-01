@@ -31,6 +31,7 @@
 #'    	}							
 #'    				
 #' @inheritParams NSFigAndeler
+#' @inheritParams NSUtvalg
 #'				
 #' @return Definisjon av valgt variabel.
 #' 

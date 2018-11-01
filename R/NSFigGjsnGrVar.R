@@ -14,6 +14,7 @@
 #'    }
 #'    
 #' @inheritParams NSFigAndeler
+#' @inheritParams NSUtvalg
 #' @param valgtMaal - 'med' = median. Alt annet gir gjennomsnitt
 #'
 #' @export

@@ -3,11 +3,20 @@
 #' Funksjon som gjør utvalg av dataene, returnerer det reduserte datasettet og
 #' utvalgsteksten.
 #'
-#' @inheritParams NSFigAndeler
+#' @param datoFra <- '2010-01-01'    # min og max dato i utvalget vises alltid i figuren.
+#' @param datoTil <- '2013-05-25'
+#' @param erMann - kjønn, 1-menn, 0-kvinner, standard: '' (alt annet enn 0 og 1), dvs. begge
+#' @param minald - alder, fra og med
+#' @param maxald - alder, til og med
+#' @param traume - 'ja','nei', standard: ikke valgt
+#' @param AIS - AISgrad ved innleggelse alle(''), velge en eller flere fra A,B,C,D,E,U
+#' @param paratetra - Nivå ved utreise, flervalgs tetraplegi, paraplegi, ukjent
+#' @param enhetsUtvalg - 1:eget sykehus, 0:hele landet (standard) 
+
 #' @export
 
 
-NSUtvalg <- function(RegData, datoFra='2010-01-01', datoTil='3000-05-25', minald=0, maxald=130,
+NSUtvalg <- function(RegData, datoFra='2010-01-01', datoTil='3000-05-25', minald=0, maxald=110,
                      erMann=99, traume='', AIS='', enhetsUtvalg=0, paratetra=99,
                      reshID=0, fargepalett='BlaaOff') {
       
@@ -48,7 +57,7 @@ NSUtvalg <- function(RegData, datoFra='2010-01-01', datoTil='3000-05-25', minald
       utvalgTxt <- c(paste0('Innleggelsesperiode: ',
                            if (N>0) {min(RegData$InnDato, na.rm=T)} else {datoFra},
                            ' til ', if (N>0) {max(RegData$InnDato, na.rm=T)} else {datoTil}),
-                     if ((minald>0) | (maxald<130)) {paste0('Pasienter fra ', if (N>0) {min(RegData$Alder, na.rm=T)} else {minald},
+                     if ((minald>0) | (maxald<110)) {paste0('Pasienter fra ', if (N>0) {min(RegData$Alder, na.rm=T)} else {minald},
                                                            ' til ', if (N>0) {max(RegData$Alder, na.rm=T)} else {maxald}, ' år')},
                      if (traume %in% c('ja','nei')) {paste0('Traume:', traume)},
                      if (erMann %in% 0:1){paste0('Kjønn: ', c('kvinner', 'menn')[erMann+1])},

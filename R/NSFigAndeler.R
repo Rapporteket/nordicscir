@@ -34,15 +34,6 @@
 #' @param outfile - navn på fil figuren skrives ned til.
 #' @param reshID - avdelingsid for egen avdeling, standard: 0-hele landet.
 #' @param valgtVar - variabelen det skal genereres resultat for 
-#' @param datoFra <- '2010-01-01'    # min og max dato i utvalget vises alltid i figuren.
-#' @param datoTil <- '2013-05-25'
-#' @param erMann - kjønn, 1-menn, 0-kvinner, standard: '' (alt annet enn 0 og 1), dvs. begge
-#' @param minald - alder, fra og med
-#' @param maxald - alder, til og med
-#' @param traume - 'ja','nei', standard: ikke valgt
-#' @param AIS - AISgrad ved innleggelse alle(''), velge en eller flere fra A,B,C,D,E,U
-#' @param paratetra - Nivå ved utreise, flervalgs tetraplegi, paraplegi, ukjent
-#' @param enhetsUtvalg - 1:eget sykehus, 0:hele landet (standard) 
 #' @param preprosess Preprosesser data
 #'                 0: Nei
 #'                 1: Ja (Standard)
