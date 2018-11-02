@@ -16,24 +16,6 @@ NSFigAndeler(RegData, outfile = "", valgtVar, datoFra = "2010-01-01",
 
 \item{valgtVar}{- variabelen det skal genereres resultat for}
 
-\item{datoFra}{<- '2010-01-01'    # min og max dato i utvalget vises alltid i figuren.}
-
-\item{datoTil}{<- '2013-05-25'}
-
-\item{AIS}{- AISgrad ved innleggelse alle(''), velge en eller flere fra A,B,C,D,E,U}
-
-\item{minald}{- alder, fra og med}
-
-\item{maxald}{- alder, til og med}
-
-\item{erMann}{- kjønn, 1-menn, 0-kvinner, standard: '' (alt annet enn 0 og 1), dvs. begge}
-
-\item{traume}{- 'ja','nei', standard: ikke valgt}
-
-\item{paratetra}{- Nivå ved utreise, flervalgs tetraplegi, paraplegi, ukjent}
-
-\item{enhetsUtvalg}{- 1:eget sykehus, 0:hele landet (standard)}
-
 \item{reshID}{- avdelingsid for egen avdeling, standard: 0-hele landet.}
 
 \item{hentData}{Gjør spørring mot database hvis data ikke er levert fra andre kilder.

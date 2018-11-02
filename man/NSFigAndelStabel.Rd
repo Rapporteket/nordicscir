@@ -16,18 +16,6 @@ NSFigAndelStabel(RegData, outfile = "", valgtVar, datoFra = "2010-01-01",
 
 \item{valgtVar}{- variabelen det skal genereres resultat for}
 
-\item{datoFra}{<- '2010-01-01'    # min og max dato i utvalget vises alltid i figuren.}
-
-\item{datoTil}{<- '2013-05-25'}
-
-\item{minald}{- alder, fra og med}
-
-\item{maxald}{- alder, til og med}
-
-\item{erMann}{- kjønn, 1-menn, 0-kvinner, standard: '' (alt annet enn 0 og 1), dvs. begge}
-
-\item{traume}{- 'ja','nei', standard: ikke valgt}
-
 \item{preprosess}{Preprosesser data
 0: Nei
 1: Ja (Standard)}

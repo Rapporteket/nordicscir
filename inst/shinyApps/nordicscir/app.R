@@ -1,9 +1,19 @@
 #Resultattjeneste for NordicScir
+library(nordicscir)
 library(shiny)
 library(knitr)
 #ibrary(shinyBS) # Additional Bootstrap Controls
 
+context <- Sys.getenv("R_RAP_INSTANCE") #Blir tom hvis jobber lokalt
+if (context == "TEST" | context == "QA" | context == "PRODUCTION") {
+      RegData <- NSRegDataSQL() #datoFra = datoFra, datoTil = datoTil)
+
+} #hente data på server
+
+
 #Hente data og evt. parametre som er statistke i appen
+if (!exists('RegData')){
+      
 dato <- 'FormDataContract2018-11-01' #2017-05-24
 sti <- 'A:/NordicScir/'
 HovedSkjema <- read.table(paste0(sti, 'Main',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
@@ -22,16 +32,25 @@ Performance$HovedskjemaGUID <- toupper(Performance$HovedskjemaGUID)
 Satisfact$HovedskjemaGUID <- toupper(Satisfact$HovedskjemaGUID)
 
 
-KobleMedHoved <- function(HovedSkjema,Skjema2) {
+KobleMedHoved <- function(HovedSkjema,Skjema2,alleHovedskjema=T) {
       varBegge <- intersect(names(Skjema2),names(HovedSkjema)) ##Variabelnavn som finnes i begge datasett
       Skjema2 <- Skjema2[ ,c("HovedskjemaGUID", names(Skjema2)[!(names(Skjema2) %in% varBegge)])]  #"SkjemaGUID",
       NSdata <- merge(HovedSkjema, Skjema2, suffixes = c('','XX'),
-                      by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = F, all.y=F)
+                      by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = alleHovedskjema, all.y=F)
       return(NSdata)
 }
 
-#RegData <- KobleMedHoved(HovedSkjema,Tarm)
-RegData <- HovedSkjema
+RegData <- KobleMedHoved(HovedSkjema,Livskvalitet)
+RegData <- KobleMedHoved(RegData,Kontroll)
+RegData <- KobleMedHoved(RegData,Urin)
+RegData <- KobleMedHoved(RegData,Tarm)
+Aktivitet <- KobleMedHoved(Performance,Satisfact)
+RegData <- KobleMedHoved(RegData,Aktivitet)
+
+#RegData <- HovedSkjema
+}
+
+RegData <- NSPreprosesser(RegData)
 
 
 reshID <- 107627
@@ -44,20 +63,20 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
       tabPanel("Viktigste resultater/Oversiktsside",
                #fluidRow(
                #column(width=5,
+               h2("Her kan man evt. vise de variable/resultater som er viktigst å overvåke", align='center' ),
+               h2("Gi tilbakemelding på hva som skal være på sida", align='center' ),
+               br(),
                h2("Månedsrapport"), #),
                downloadButton(outputId = 'mndRapp.pdf', label='Månedsrapport-virker ikke på server', class = "butt"),
                tags$head(tags$style(".butt{background-color:#6baed6;} .butt{color: white;}")), # background color and font color
                br(),
-               h2("Her kan man evt. vise de variable/resultater som er viktigst å overvåke", align='center' ),
-               h2("Gi tilbakemelding på hva som skal være på sida", align='center' ),
-               br(),
                br(),
                tags$ul(tags$b('Andre ting å ta stilling til: '),
-                       tags$li("Foretrukket tittellayout på side - som på andeler eller gjennomsnitt?"), 
+                       tags$li("Navn på faner"), 
+                       tags$li("Layout på sider ?"), 
                        tags$li("Ønskes annen organisering av innhold?"), 
                        tags$li("Kun en figur på hver side, eller fint å vise to samtidig som under 'Andeler'? "),
                        tags$li("Hvilke utvalgs/filtreringsmuligheter skal vi ha i de ulike fanene"), 
-                       tags$li("Navn på faner"), 
                        tags$li("Innhold i tabeller som vises i tilknytning til figurer.")
                ),
                br(),
@@ -75,25 +94,26 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
       
                mainPanel(
                      tabsetPanel(id='ark',
-                                 tabPanel('Nøkkeltall',
-                                          h2("Nøkkeltall for NorScir"),
-                                          br()
-                                          #tableOutput('tabNokkeltall')
-                                 ),
-                                 tabPanel('Ant. opphold',
-                                          h2("Antal opphald per avdeling"),
+                                 tabPanel('Ant. registrerte ryggmargsskader per måned og sykehus',
+                                          h3(""),
                                           p(em("Velg tidsperiode ved å velge sluttdato i menyen til venstre"))
                                           #tableOutput("tabAntOpphShMnd12")
-                                 )
+                                 ),
+                                 tabPanel('Ant. registrerte skjema',
+                                          h3("Antall gyldige registreringsskjema per sykehus (+totalt), 
+                                             og andel av registreringsskjemaene som har hatt kontroll og/eller oppfølging"),
+                                          p(em("Velg tidsperiode ved å velge sluttdato i menyen til venstre"))
+                                          #tableOutput("tabAntOpphShMnd12")
+                                 ),
+                                 tabPanel('Ant. unike pasienter?')
                      ))
       ), #tab Registreringsoversikter
       
       tabPanel("Fordelinger",
-               sidebarPanel(width = 2,
+               sidebarPanel(width = 3,
                             selectInput(
                                   inputId = "valgtVar", label="Velg variabel",
                                   choices = c('Alder' = 'Alder', 
-                                              'Aldersfordeling, 15-årige grupper ' = 'Alder', 
                                               'Ais, innleggelse' = 'AAis' ,
                                               'Ais, kontroll' = 'FAis', 
                                               'Lengde på rehab.opphold' = 'DagerRehab', 
@@ -134,13 +154,27 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                                     "Hele landet"=0, 
                                                     "Egen enhet"=2)
                             ),
-                            #AIS-grad
-                            #Traume
-                            #Nivå, utreise
-                            selectInput(inputId = 'enhetsUtvalg', label='Egen enhet og/eller landet',
-                                        choices = c("Egen mot resten av landet"=1, 
-                                                    "Hele landet"=0, 
-                                                    "Egen enhet"=2)
+
+                            selectInput(inputId = 'AIS', label='AIS-grad',
+                                        multiple = T, #selected=0,
+                                        choices = c("Alle"=0,
+                                                    "A"=1, 
+                                                    "B"=2,
+                                                    "C"=3,
+                                                    "D"=4,
+                                                    "E"=5
+                                                    )
+                            ),
+                            selectInput(inputId = 'traume', label='Traume',
+                                        choices = c("Alle"='', #'ikke'
+                                                    "Traume"='ja', 
+                                                    "Ikke traume"='nei')
+                            ),
+                            selectInput(inputId = 'paratetra', label='Nivå ved utreise',
+                                        choices = c("Alle" = 99,
+                                                    "Paraplegi" = 0, 
+                                                    "Tetraplegi" = 1,
+                                                    "Ukjent" = 9)
                             )
                             #sliderInput(inputId="aar", label = "Årstall", min = 2012,  #min(RegData$Aar),
                             #           max = as.numeric(format(Sys.Date(), '%Y')), value = )
@@ -156,45 +190,64 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                  tableOutput('fordelingTab'))
                      )
                )
-      ) #tab Fordelinger
-)   
+      ), #tab Fordelinger
+      tabPanel("Sykehusvise resultater",
+               sidebarPanel(width = 3,
+                            selectInput(
+                                  inputId = "valgtVarGjsnGrVar", label="Velg variabel",
+                                  choices = c('Alder' = 'Alder', 
+                                              'Lengde på rehab.opphold' = 'DagerRehab', 
+                                              'Tid fra skade til oppstart rehab.' = 'DagerTilRehab', 
+                                              'Opphold, totalt antall dager' = 'OpphTot', 
+                                              'Registreringsforsinkelse' = 'RegForsinkelse',
+                                              'Livskval.: Fornøydhet med livet' = 'LivsGen',
+                                              'Livskval.: Fornøydhet med fysisk helse' = 'LivsFys',
+                                              'Livskval.: Fornøydhet med psykisk helse' = 'LivsPsyk'
+                                             )
+                            )
+               ),
+               mainPanel(
+                     tabsetPanel(
+                           tabPanel(
+                                 'Figur',
+                                 plotOutput('gjsnGrVar')),
+                           tabPanel(
+                                 'Tabell',
+                                 uiOutput("tittelgjsnGrVar"),
+                                 tableOutput('gjsnGrVarTab'))
+                     )
+               )
+               
+) #GjsnGrVar 
 
-# selectInput(
-#       inputId = "valgtVarGjsnGrVar", label="Velg variabel",
-#       choices = c('Alder' = 'Alder', 
-#                   'Ant. dager før rehabilitering' = 'DagerTilRehab',
-#                   'Antall dager med rehabilitering' = 'DagerRehab',
-#                   'Oppphold, totalt' = 'OpphTot',
-#                   'Registreringsforsinkelse' = 'RegForsinkelse',
-#                   'Livskval.: Fornøydhet med livet' = 'LivsGen',
-#                   'Livskval.: Fornøydhet med fysisk helse' = 'LivsFys',
-#                   'Livskval.: Fornøydhet med psykisk helse' = 'LivsPsyk'
-#       )
-# ),
-
-
-
+)
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
 
-      output$fordelinger <- renderPlot({
-            NSFigAndeler(RegData=RegData, preprosess = 0, valgtVar=input$valgtVar,
-                          datoFra=input$datovalg[1], datoTil=input$datovalg[2], 
-                          reshID = reshID, #AIS=AIS, 
-                          minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]), 
-                          erMann=as.numeric(input$erMann), #traume=traume, paratetra=paratetra,
-                          enhetsUtvalg=as.numeric(input$enhetsUtvalg))
-      }, height=800, width=800 #height = function() {session$clientData$output_fordelinger_width}
-      )
-      
-      observe({      
+      observe({   
+            if (context == "TEST" | context == "QA" | context == "PRODUCTION") {
+                  RegData <- NSRegDataSQL(valgtVar = input$valgtVar)
+            } #hente data på server
+            
+            output$fordelinger <- renderPlot({
+                  NSFigAndeler(RegData=RegData, valgtVar=input$valgtVar, 
+                               datoFra=input$datovalg[1], datoTil=input$datovalg[2], 
+                               reshID = reshID, 
+                               AIS=input$AIS, traume=as.numeric(input$traume), paratetra=as.numeric(input$paratetra),
+                               minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]), 
+                               erMann=as.numeric(input$erMann), 
+                               enhetsUtvalg=as.numeric(input$enhetsUtvalg))
+            }, height=800, width=800 #height = function() {session$clientData$output_fordelinger_width}
+            )
+            
             UtDataFord <- NSFigAndeler(RegData=RegData, preprosess = 0, valgtVar=input$valgtVar,
                                        datoFra=input$datovalg[1], datoTil=input$datovalg[2], 
-                                       reshID=reshID, #AIS=AIS, 
+                                       reshID = reshID, 
+                                       AIS=input$AIS, traume=as.numeric(input$traume), paratetra=as.numeric(input$paratetra),
                                        minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]), 
-                                       erMann=as.numeric(input$erMann), #traume=traume, paratetra=paratetra,
-                                        enhetsUtvalg=as.numeric(input$enhetsUtvalg))
+                                       erMann=as.numeric(input$erMann), 
+                                       enhetsUtvalg=as.numeric(input$enhetsUtvalg))
             #SJEKK !!!!!!!!!!:
             #tab <- lagTabavFig(UtDataFraFig = UtDataFord)
             
@@ -207,9 +260,15 @@ server <- function(input, output) {
                   tab, rownames = T)
       })
       
-      
-      }
-
+      output$gjsnGrVar <- renderPlot(
+            NSFigGjsnGrVar(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarGjsnGrVar
+                           # datoFra=input$datovalgGjsnGrVar[1], datoTil=input$datovalgGjsnGrVar[2], 
+                         # AIS=input$AISGjsnGrVar, traume=as.numeric(input$traumeGjsnGrVar), paratetra=as.numeric(input$paratetraGjsnGrVar),
+                         # minald=as.numeric(input$alderGjsnGrVar[1]), maxald=as.numeric(input$alderGjsnGrVar[2]), 
+                         # erMann=as.numeric(input$erMannGjsnGrVar)
+                         ),
+            width = 800, height = 600)
+      } #server
 # Run the application 
 shinyApp(ui = ui, server = server)
 

@@ -149,7 +149,7 @@ if ( dim(RegData)[1] == 0 ) {
                            smltxt=Utvalg$smltxt)
 
 #-----------Figur---------------------------------------
-       
+#FigurAndeler <- function(     ){
       #-----Hvis få registreringer: ---------------------
       Ngrense <- 5      # 5
       if (sum(Nfig$Hoved) < Ngrense | (medSml ==1 & sum(Nfig$Rest)< Ngrense)) {

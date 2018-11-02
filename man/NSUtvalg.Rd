@@ -5,12 +5,10 @@
 \title{Funksjon som gjør utvalg av data basert på brukervalg.}
 \usage{
 NSUtvalg(RegData, datoFra = "2010-01-01", datoTil = "3000-05-25",
-  minald = 0, maxald = 130, erMann = 99, traume = "", AIS = "",
+  minald = 0, maxald = 110, erMann = 99, traume = "", AIS = "",
   enhetsUtvalg = 0, paratetra = 99, reshID = 0, fargepalett = "BlaaOff")
 }
 \arguments{
-\item{RegData}{- ei dataramme med alle nødvendige variable fra registeret.}
-
 \item{datoFra}{<- '2010-01-01'    # min og max dato i utvalget vises alltid i figuren.}
 
 \item{datoTil}{<- '2013-05-25'}
@@ -28,8 +26,6 @@ NSUtvalg(RegData, datoFra = "2010-01-01", datoTil = "3000-05-25",
 \item{enhetsUtvalg}{- 1:eget sykehus, 0:hele landet (standard)}
 
 \item{paratetra}{- Nivå ved utreise, flervalgs tetraplegi, paraplegi, ukjent}
-
-\item{reshID}{- avdelingsid for egen avdeling, standard: 0-hele landet.}
 }
 \description{
 Funksjon som gjør utvalg av dataene, returnerer det reduserte datasettet og
