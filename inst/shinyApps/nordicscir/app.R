@@ -4,59 +4,6 @@ library(shiny)
 library(knitr)
 #ibrary(shinyBS) # Additional Bootstrap Controls
 
-context <- Sys.getenv("R_RAP_INSTANCE") #Blir tom hvis jobber lokalt
-if (context == "TEST" | context == "QA" | context == "PRODUCTION") {
-      RegData <- NSRegDataSQL() #datoFra = datoFra, datoTil = datoTil)
-
-} #hente data på server
-
-
-#Hente data og evt. parametre som er statistke i appen
-if (!exists('RegData')){
-      
-dato <- 'FormDataContract2018-11-01' #2017-05-24
-sti <- 'A:/NordicScir/'
-HovedSkjema <- read.table(paste0(sti, 'Main',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
-Livskvalitet <- read.table(paste0(sti, 'LifeQuality',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
-Kontroll <- read.table(paste0(sti, 'Control', dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
-Urin <- read.table(paste0(sti, 'UrinaryTractFunction', dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
-Tarm <- read.table(paste0(sti, 'BowelFunction',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
-Performance <- read.table(paste0(sti, 'ActivityAndParticipationPerformance',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
-Satisfact <- read.table(paste0(sti, 'ActivityAndParticipationSatisfaction',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
-
-Livskvalitet$HovedskjemaGUID <- toupper(Livskvalitet$HovedskjemaGUID)
-Kontroll$HovedskjemaGUID <- toupper(Kontroll$HovedskjemaGUID)
-Urin$HovedskjemaGUID <- toupper(Urin$HovedskjemaGUID)
-Tarm$HovedskjemaGUID <- toupper(Tarm$HovedskjemaGUID)
-Performance$HovedskjemaGUID <- toupper(Performance$HovedskjemaGUID)
-Satisfact$HovedskjemaGUID <- toupper(Satisfact$HovedskjemaGUID)
-
-
-KobleMedHoved <- function(HovedSkjema,Skjema2,alleHovedskjema=T) {
-      varBegge <- intersect(names(Skjema2),names(HovedSkjema)) ##Variabelnavn som finnes i begge datasett
-      Skjema2 <- Skjema2[ ,c("HovedskjemaGUID", names(Skjema2)[!(names(Skjema2) %in% varBegge)])]  #"SkjemaGUID",
-      NSdata <- merge(HovedSkjema, Skjema2, suffixes = c('','XX'),
-                      by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = alleHovedskjema, all.y=F)
-      return(NSdata)
-}
-
-RegData <- KobleMedHoved(HovedSkjema,Livskvalitet)
-RegData <- KobleMedHoved(RegData,Kontroll)
-RegData <- KobleMedHoved(RegData,Urin)
-RegData <- KobleMedHoved(RegData,Tarm)
-Aktivitet <- KobleMedHoved(Performance,Satisfact)
-RegData <- KobleMedHoved(RegData,Aktivitet)
-
-#RegData <- HovedSkjema
-}
-
-RegData <- NSPreprosesser(RegData)
-
-
-reshID <- 107627
-
-
-
 
 ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
       title = 'NORSK SPINNALSKADEREGISTER',
@@ -234,6 +181,59 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
 server <- function(input, output) {
 
       
+      context <- Sys.getenv("R_RAP_INSTANCE") #Blir tom hvis jobber lokalt
+      if (context == "TEST" | context == "QA" | context == "PRODUCTION") {
+            RegData <- NSRegDataSQL() #datoFra = datoFra, datoTil = datoTil)
+            
+      } #hente data på server
+      
+      
+      #Hente data og evt. parametre som er statistke i appen
+      if (!exists('RegData')){
+            
+            dato <- 'FormDataContract2018-11-01' #2017-05-24
+            sti <- 'A:/NordicScir/'
+            HovedSkjema <- read.table(paste0(sti, 'Main',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
+            Livskvalitet <- read.table(paste0(sti, 'LifeQuality',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
+            Kontroll <- read.table(paste0(sti, 'Control', dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
+            Urin <- read.table(paste0(sti, 'UrinaryTractFunction', dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
+            Tarm <- read.table(paste0(sti, 'BowelFunction',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
+            Performance <- read.table(paste0(sti, 'ActivityAndParticipationPerformance',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
+            Satisfact <- read.table(paste0(sti, 'ActivityAndParticipationSatisfaction',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
+            
+            Livskvalitet$HovedskjemaGUID <- toupper(Livskvalitet$HovedskjemaGUID)
+            Kontroll$HovedskjemaGUID <- toupper(Kontroll$HovedskjemaGUID)
+            Urin$HovedskjemaGUID <- toupper(Urin$HovedskjemaGUID)
+            Tarm$HovedskjemaGUID <- toupper(Tarm$HovedskjemaGUID)
+            Performance$HovedskjemaGUID <- toupper(Performance$HovedskjemaGUID)
+            Satisfact$HovedskjemaGUID <- toupper(Satisfact$HovedskjemaGUID)
+            
+            
+            KobleMedHoved <- function(HovedSkjema,Skjema2,alleHovedskjema=T) {
+                  varBegge <- intersect(names(Skjema2),names(HovedSkjema)) ##Variabelnavn som finnes i begge datasett
+                  Skjema2 <- Skjema2[ ,c("HovedskjemaGUID", names(Skjema2)[!(names(Skjema2) %in% varBegge)])]  #"SkjemaGUID",
+                  NSdata <- merge(HovedSkjema, Skjema2, suffixes = c('','XX'),
+                                  by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = alleHovedskjema, all.y=F)
+                  return(NSdata)
+            }
+            
+            RegData <- KobleMedHoved(HovedSkjema,Livskvalitet)
+            RegData <- KobleMedHoved(RegData,Kontroll)
+            RegData <- KobleMedHoved(RegData,Urin)
+            RegData <- KobleMedHoved(RegData,Tarm)
+            Aktivitet <- KobleMedHoved(Performance,Satisfact)
+            RegData <- KobleMedHoved(RegData,Aktivitet)
+            
+            #RegData <- HovedSkjema
+      }
+      
+      RegData <- NSPreprosesser(RegData)
+      
+      
+      reshID <- 107627
+      
+      
+      
       
       
       #out <- render('report.Rmd', pdf_document())
@@ -278,10 +278,11 @@ server <- function(input, output) {
       observe({   
             if (context == "TEST" | context == "QA" | context == "PRODUCTION") {
                   RegData <- NSRegDataSQL(valgtVar = input$valgtVar)
+                  print(dim(RegData)[1])
             } #hente data på server
             
             output$fordelinger <- renderPlot({
-                  NSFigAndeler(RegData=RegData, valgtVar=input$valgtVar, 
+                  NSFigAndeler(RegData=RegData, valgtVar=input$valgtVar, preprosess = 0,
                                datoFra=input$datovalg[1], datoTil=input$datovalg[2], 
                                reshID = reshID, 
                                AIS=input$AIS, traume=as.numeric(input$traume), paratetra=as.numeric(input$paratetra),
