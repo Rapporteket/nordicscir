@@ -63,12 +63,17 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
       tabPanel("Viktigste resultater/Oversiktsside",
                #fluidRow(
                #column(width=5,
-               h2("Her kan man evt. vise de variable/resultater som er viktigst å overvåke", align='center' ),
+               h2("Dæsjbord?  - evt. vise viktigstre variable/resultater", align='center' ),
                h2("Gi tilbakemelding på hva som skal være på sida", align='center' ),
                br(),
+               
                h2("Månedsrapport"), #),
-               downloadButton(outputId = 'mndRapp.pdf', label='Månedsrapport-virker ikke på server', class = "butt"),
+               
+               downloadButton('mndRapp'),
+               #downloadButton(outputId = 'mndRapp.pdf', label='Månedsrapport-virker ikke på server', 
+               #               class = "butt"),
                tags$head(tags$style(".butt{background-color:#6baed6;} .butt{color: white;}")), # background color and font color
+ 
                br(),
                br(),
                tags$ul(tags$b('Andre ting å ta stilling til: '),
@@ -108,7 +113,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                  tabPanel('Ant. unike pasienter?')
                      ))
       ), #tab Registreringsoversikter
-      
+
+#--------Fordelinger-----------            
       tabPanel("Fordelinger",
                sidebarPanel(width = 3,
                             selectInput(
@@ -191,6 +197,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                      )
                )
       ), #tab Fordelinger
+
+#------------Sykehusvise resultater------------
       tabPanel("Sykehusvise resultater",
                sidebarPanel(width = 3,
                             selectInput(
@@ -222,9 +230,51 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
 
 )
 
-# Define server logic required to draw a histogram
+#----- Define server logic required to draw a histogram-------
 server <- function(input, output) {
 
+      
+      
+      
+      #out <- render('report.Rmd', pdf_document())
+      #file.rename(out, file)
+
+      # output$downloadReport <- downloadHandler(
+      #       filename = 'my-report.pdf',
+      #       
+      #       content = function(file) {
+      #             src <- normalizePath('report.Rmd')
+      #             
+      #             # temporarily switch to the temp dir, in case you do not have write
+      #             # permission to the current working directory
+      #             owd <- setwd(tempdir())
+      #             on.exit(setwd(owd))
+      #             file.copy(src, 'report.Rmd', overwrite = TRUE)
+      #             
+      #             library(rmarkdown)
+      #             out <- render('report.Rmd', pdf_document())
+      #             file.rename(out, file)
+      #       })
+      
+
+     
+            output$mndRapp = downloadHandler(
+                  filename = 'NSmndRapp.pdf',
+                  content = function(file) {
+                        out = knit2pdf(system.file('NSmndRapp.Rnw', package = 'nordicscir'), clean = TRUE)
+                        file.rename(out, file) # move pdf to file for downloading
+                  },
+                  
+                  contentType = 'application/pdf'
+            )
+      
+      
+       
+      
+      
+      
+      
+      
       observe({   
             if (context == "TEST" | context == "QA" | context == "PRODUCTION") {
                   RegData <- NSRegDataSQL(valgtVar = input$valgtVar)
