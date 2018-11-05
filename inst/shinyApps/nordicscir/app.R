@@ -258,15 +258,15 @@ server <- function(input, output) {
       
 
      
-            output$mndRapp = downloadHandler(
-                  filename = 'NSmndRapp.pdf',
-                  content = function(file) {
-                        out = knit2pdf(system.file('NSmndRapp.Rnw', package = 'nordicscir'), clean = TRUE)
-                        file.rename(out, file) # move pdf to file for downloading
-                  },
-                  
-                  contentType = 'application/pdf'
-            )
+            # output$mndRapp = downloadHandler(
+            #       filename = 'NSmndRapp.pdf',
+            #       content = function(file) {
+            #             out = knit2pdf(system.file('NSmndRapp.Rnw', package = 'nordicscir'), clean = TRUE)
+            #             file.rename(out, file) # move pdf to file for downloading
+            #       },
+            #       
+            #       contentType = 'application/pdf'
+            # )
       
       
        
