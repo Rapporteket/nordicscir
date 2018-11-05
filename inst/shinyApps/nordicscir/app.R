@@ -16,10 +16,10 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                
                h2("Månedsrapport"), #),
                
-               downloadButton('mndRapp'),
+#               downloadButton('mndRapp'),
                #downloadButton(outputId = 'mndRapp.pdf', label='Månedsrapport-virker ikke på server', 
                #               class = "butt"),
-               tags$head(tags$style(".butt{background-color:#6baed6;} .butt{color: white;}")), # background color and font color
+#               tags$head(tags$style(".butt{background-color:#6baed6;} .butt{color: white;}")), # background color and font color
  
                br(),
                br(),
