@@ -28,17 +28,17 @@ NULL
 #' @export
 tabBelegg <- function(RegData, tidsenhet='Aar', datoTil, enhetsUtvalg=0, reshID=0) {
       datoFra <- switch(tidsenhet, 
-                        Mnd = floor_date(as.Date(datoTil)%m-% months(12, abbreviate = T), 'month'), #as.Date(paste0(as.numeric(substr(datoTil,1,4))-1, substr(datoTil,5,8), '01'), tz='UTC')
-                        Aar = paste0(year(as.Date(datoTil))-4, '-01-01')
+                        Mnd = lubridate::floor_date(as.Date(datoTil)%m-% months(12, abbreviate = T), 'month'), #as.Date(paste0(as.numeric(substr(datoTil,1,4))-1, substr(datoTil,5,8), '01'), tz='UTC')
+                        Aar = paste0(lubridate::year(as.Date(datoTil))-4, '-01-01')
       )
-      RegData <- NIRUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil = datoTil, 
+      RegData <- NSUtvalg(RegData=RegData, datoFra=datoFra, datoTil = datoTil, 
                              enhetsUtvalg = enhetsUtvalg, reshID = reshID)$RegData
       RegData <- SorterOgNavngiTidsEnhet(RegData, tidsenhet=tidsenhet)$RegData
       #RegData <- Mtid$RegData
-      tabBeleggAnt <- rbind('Ferdigstilte intensivopphald' = tapply(RegData$PasientID, RegData$TidsEnhet, FUN=length), #table(RegDataEget$TidsEnhet), #Neget,		
-                            'Registrerte pasientar' = tapply(RegData$PasientID, RegData$TidsEnhet, 
+      tabBeleggAnt <- rbind('Ferdigstilte rehab.opphold' = tapply(RegData$PasientID, RegData$TidsEnhet, FUN=length), #table(RegDataEget$TidsEnhet), #Neget,		
+                            'Registrerte pasienter' = tapply(RegData$PasientID, RegData$TidsEnhet, 
                                                              FUN=function(x) length(unique(x))),	
-                            'Antal intensivdøger' = round(as.numeric(tapply(RegData$liggetid, RegData$TidsEnhet, sum, na.rm=T)),0)	
+                            'Antal rehab.døgn' = round(as.numeric(tapply(RegData$liggetid, RegData$TidsEnhet, sum, na.rm=T)),0)	
       )
 
       antTidsenh <- ifelse(tidsenhet=='Aar', 4, 11)

@@ -16,10 +16,10 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                
                h2("Månedsrapport"), #),
                
-#               downloadButton('mndRapp'),
-               #downloadButton(outputId = 'mndRapp.pdf', label='Månedsrapport-virker ikke på server', 
-               #               class = "butt"),
-#               tags$head(tags$style(".butt{background-color:#6baed6;} .butt{color: white;}")), # background color and font color
+               #downloadButton('mndRapp'),
+               downloadButton(outputId = 'mndRapp', label='Månedsrapport-virker ikke på server', 
+                              class = "butt"),
+               tags$head(tags$style(".butt{background-color:#6baed6;} .butt{color: white;}")), # background color and font color
  
                br(),
                br(),
@@ -228,50 +228,23 @@ server <- function(input, output) {
       }
       
       RegData <- NSPreprosesser(RegData)
-      
-      
       reshID <- 107627
       
       
       
-      
-      
-      #out <- render('report.Rmd', pdf_document())
-      #file.rename(out, file)
+            output$mndRapp = downloadHandler(
+                  filename = 'NSmndRapp.pdf',
+                  content = function(file) {
+                        src <- normalizePath('NSmndRapp.pdf')
+                        owd <- setwd(tempdir())
+                        on.exit(setwd(owd))
+                        file.copy(src, 'NSmndRapp.pdf', overwrite = TRUE)
+                        out = knit2pdf(system.file('NSmndRapp.Rnw', package = 'nordicscir'), clean = TRUE)
+                        file.rename(out, file) # move pdf to file for downloading
+                  },
 
-      # output$downloadReport <- downloadHandler(
-      #       filename = 'my-report.pdf',
-      #       
-      #       content = function(file) {
-      #             src <- normalizePath('report.Rmd')
-      #             
-      #             # temporarily switch to the temp dir, in case you do not have write
-      #             # permission to the current working directory
-      #             owd <- setwd(tempdir())
-      #             on.exit(setwd(owd))
-      #             file.copy(src, 'report.Rmd', overwrite = TRUE)
-      #             
-      #             library(rmarkdown)
-      #             out <- render('report.Rmd', pdf_document())
-      #             file.rename(out, file)
-      #       })
-      
-
-     
-            # output$mndRapp = downloadHandler(
-            #       filename = 'NSmndRapp.pdf',
-            #       content = function(file) {
-            #             out = knit2pdf(system.file('NSmndRapp.Rnw', package = 'nordicscir'), clean = TRUE)
-            #             file.rename(out, file) # move pdf to file for downloading
-            #       },
-            #       
-            #       contentType = 'application/pdf'
-            # )
-      
-      
-       
-      
-      
+                  contentType = 'application/pdf'
+            )
       
       
       
