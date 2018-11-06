@@ -33,6 +33,12 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                ),
                br(),
                tags$ul(tags$b('Kommer: '),
+                       tags$li("Tabeller, registreringsoversikter"),
+                        tags$li("Hjelpefunksjoner; belegg, SorterOgNavngiTidsEnhet. Flere?"),
+                        tags$li("Tabeller fra figurene"),
+                        tags$li("Laste ned tabeller"),
+                        tags$li("Tulledata"),
+                        tags$li("Gj.sn. tid?"),
                        tags$li("Alle figurer vil få tilhørende tabell i fane ved siden av som for 'Andeler' ")
                )
       ), #tab

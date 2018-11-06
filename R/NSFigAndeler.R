@@ -228,6 +228,10 @@ if ( dim(RegData)[1] == 0 ) {
             par('fig'=c(0, 1, 0, 1))
             if ( outfile != '') {dev.off()}
             
-      }
-   }
+      } #Nok observasjoner    
+      }  #Figur
+      
+      
+      return(invisible(FigDataParam))
+      
 }

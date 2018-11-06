@@ -77,7 +77,7 @@ KobleMedHoved <- function(HovedSkjema,Skjema2) {
 return(NSdata)
 }
 
-RegData <- KobleMedHoved(HovedSkjema,Tarm)
+RegData <- KobleMedHoved(HovedSkjema,Livskvalitet)
 RegData <- HovedSkjema
 
 # Jeg har koblet i to steg i R etter følgende skisse:
@@ -159,9 +159,9 @@ valgtVar <- 'TilfSpis'               #TilfDo, TilfKler, TilfMob, TilfSpis
 
 outfile <- '' #paste0(valgtVar, '.png')	#Navn angis av Jasper
 
-NSFigAndeler(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
+data <- NSFigAndeler(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
 		AIS=AIS, minald=minald, maxald=maxald, erMann=erMann, traume=traume, paratetra=paratetra,
-		reshID=reshID, enhetsUtvalg=0)    #, preprosess=1
+		reshID=reshID, enhetsUtvalg=1)    #, preprosess=1
 #Aktuelt å legge til en parameter som sier hvilket skjema variabelen tilhører. Dette for å koble
 #sammen riktig skjema til hovedskjema.
 
