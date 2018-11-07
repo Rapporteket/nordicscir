@@ -79,7 +79,7 @@ return(NSdata)
 
 RegData <- KobleMedHoved(HovedSkjema,Livskvalitet)
 RegData <- HovedSkjema
-
+RegData <- NSPreprosesser(RegData)
 # Jeg har koblet i to steg i R etter følgende skisse:
 #       NyTab = Performance.SkjemaGUID <-> Satisfaction. HovedskjemaGUID  
 # Main.SkjemaGUID <-> NyTab. HovedskjemaGUID  

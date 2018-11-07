@@ -2,25 +2,20 @@
 % Please edit documentation in R/NStabeller.R
 \name{NordicScirtabeller}
 \alias{NordicScirtabeller}
-\alias{tabBelegg}
 \alias{tabAntOpphShMnd}
 \alias{tabAntOpphSh5Aar}
 \alias{tabAntOpphPasSh5Aar}
-\alias{finnDblReg}
+\alias{tabOppfShus}
 \alias{lagTabavFig}
 \title{Funksjoner for å lage tabeller Group of functions page title}
 \usage{
-tabBelegg(RegData, tidsenhet = "Aar", datoTil, enhetsUtvalg = 0,
-  reshID = 0)
-
-tabAntOpphShMnd(RegData, datoTil, antMnd = 6)
+tabAntOpphShMnd(RegData, datoTil = Sys.Date(), antMnd = 12)
 
 tabAntOpphSh5Aar(RegData, datoTil)
 
 tabAntOpphPasSh5Aar(RegData, gr = "opph", datoTil)
 
-finnDblReg(RegData, datoFra = "2017-01-01", datoTil = Sys.Date(),
-  reshID = 114240)
+tabOppfShus(HovedSkjema, datoTil)
 
 lagTabavFig(UtDataFraFig)
 }
@@ -48,25 +43,19 @@ RegData må inneholde InnDato.
 -tabAntOpphSh5Aar:Antall opphold per år og enhet siste 5 år (inkl. inneværende år) fram til datoTil. 
 RegData må inneholde Aar.
 }
-\section{Belegg (antall opphold, pasienter og intensivdøgn)}{
-NA
-}
-
 \section{tabAntOpphShMnd antall opphold siste X (antMnd) mnd}{
 NA
 }
 
 \section{Antall opphold siste 5 år}{
 NA
+
+NA
 }
 
 \section{Antall registreringer/pasienter siste 5 år}{
 
 Hmmm
-}
-
-\section{Finn eventuelle dobbeltregistreringer}{
-NA
 }
 
 \section{Vise figurdata som tabell}{

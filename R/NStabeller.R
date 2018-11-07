@@ -19,48 +19,39 @@
 #' @return Div tabeller
 #' @name NordicScirtabeller
 NULL
-#' @rdname NordicScirtabeller
 #' @export
 
 #' @section Belegg (antall opphold, pasienter og intensivdøgn)
 #' @rdname NordicScirtabeller
 #' Siste inntil 5 år eller siste inntil 12 måneder/kvartal/halvår
 #' @export
-tabBelegg <- function(RegData, tidsenhet='Aar', datoTil, enhetsUtvalg=0, reshID=0) {
+tabBelegg <- function(RegData, tidsenhet='Aar', datoTil=Sys.Date(), enhetsUtvalg=0, reshID=0) {
       datoFra <- switch(tidsenhet, 
                         Mnd = lubridate::floor_date(as.Date(datoTil)%m-% months(12, abbreviate = T), 'month'), #as.Date(paste0(as.numeric(substr(datoTil,1,4))-1, substr(datoTil,5,8), '01'), tz='UTC')
                         Aar = paste0(lubridate::year(as.Date(datoTil))-4, '-01-01')
       )
       RegData <- NSUtvalg(RegData=RegData, datoFra=datoFra, datoTil = datoTil, 
                              enhetsUtvalg = enhetsUtvalg, reshID = reshID)$RegData
+      #print(paste0('tidsenhet: ', tidsenhet))
+      #print(paste0('dim Regdata: ', dim(RegData)[1]))
       RegData <- SorterOgNavngiTidsEnhet(RegData, tidsenhet=tidsenhet)$RegData
       #RegData <- Mtid$RegData
-      tabBeleggAnt <- rbind('Ferdigstilte rehab.opphold' = tapply(RegData$PasientID, RegData$TidsEnhet, FUN=length), #table(RegDataEget$TidsEnhet), #Neget,		
-                            'Registrerte pasienter' = tapply(RegData$PasientID, RegData$TidsEnhet, 
-                                                             FUN=function(x) length(unique(x))),	
-                            'Antal rehab.døgn' = round(as.numeric(tapply(RegData$liggetid, RegData$TidsEnhet, sum, na.rm=T)),0)	
+      tabBeleggAnt <- rbind('Antall pasienter' = tapply(RegData$PasientID, RegData$TidsEnhet, 
+                                                             FUN=function(x) length(unique(x))),
+                            'Antall rehab.opphold' = tapply(RegData$SkjemaGUID, RegData$TidsEnhet, FUN=length), #table(RegDataEget$TidsEnhet), #Neget,		
+                            'Tot. ant. rehab. døgn' = round(as.numeric(tapply(RegData$DagerRehab, RegData$TidsEnhet, 
+                                                                              sum, na.rm=T)),0)	
       )
 
       antTidsenh <- ifelse(tidsenhet=='Aar', 4, 11)
 
       tabBeleggAnt <- tabBeleggAnt[, max(1, dim(tabBeleggAnt)[2]-antTidsenh) : dim(tabBeleggAnt)[2]] #Tar med 12 siste
-      #format(as.yearmon(as.Date('2017-09-02')),'%b%y')
-      #kol <- dimnames(tabBeleggAnt)[[2]]
-      #format(as.Date(kol, format= '%y.%m'),'%b%y')
-      
-      # overskr <- dimnames(tabAvdNEget)[[2]]
-      # aar <- substr(overskr, 1,2)
-      # mnd <- as.numeric(substr(overskr, 4,5))
-      # mndTxt <- c('jan', 'feb', 'mar', 'apr', 'mai', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'des') 
-      # colnames(tabAvdNEget) <- paste0(mndTxt[mnd], aar)
-      #tabBeleggAnt <- xtable::xtable(tabBeleggAnt, digits=0, align=c('l', rep('r', ncol(tabBeleggAnt))),
-       #      caption=paste0('Antal opphald og liggedøger, ', shtxt,'.'), label='tab:RegEget')
       return(tabBeleggAnt)
 }
 #' @section tabAntOpphShMnd antall opphold siste X (antMnd) mnd
 #' @rdname NordicScirtabeller
 #' @export
-tabAntOpphShMnd <- function(RegData, datoTil, antMnd=6){
+tabAntOpphShMnd <- function(RegData, datoTil=Sys.Date(), antMnd=12){
       #RegData må inneholde DateAdmittedIntensive, DateDischargedIntensive 
       datoFra <- lubridate::floor_date(as.Date(datoTil)%m-% months(antMnd, abbreviate = T), 'month') #as.Date(paste0(as.numeric(substr(datoTil,1,4))-1, substr(datoTil,5,8), '01'), tz='UTC')
       aggVar <-  c('ShNavn', 'InnDato')
@@ -125,36 +116,42 @@ tabAntOpphPasSh5Aar <- function(RegData, gr='opph', datoTil){
 #       return(tabPasAvdAarN)
 # }
 
-#' @section Finn eventuelle dobbeltregistreringer
+#Tabell: Andel registreringsskjema med oppfølging siste 12 mnd
+
+
+#' @section Antall opphold siste 5 år
 #' @rdname NordicScirtabeller
-#--------#' @export
-finnDblReg <- function(RegData, datoFra='2017-01-01', datoTil=Sys.Date(), reshID=114240){
-      #Registreringer kor same pasient har fått registrert to innleggingar med mindre enn 2 timars mellomrom.
-      #RegData må inneholde PasientID, Innleggelsestidspunkt og SkjemaGUID
-      #Evt. legge til utvalg på tidsrom
-      sortVar <- c('PasientID','Innleggelsestidspunkt', "SkjemaGUID")
-      RegData <- RegData[which(RegData$ReshId == reshID), sortVar]
-      RegDataSort <- RegData[order(RegData$PasientID, RegData$Innleggelsestidspunkt), ]
-      RegDataSort$OpphNr <- ave(RegDataSort[ ,'PasientID'], RegDataSort[ ,'PasientID'], FUN=seq_along)
-      indPasFlereOpph <- which(RegDataSort$OpphNr>1) 
-      RegDataSort$TidInn <- NA
-      RegDataSort$TidInn[indPasFlereOpph] <- 
-            difftime(RegDataSort$Innleggelsestidspunkt[indPasFlereOpph], 
-                     RegDataSort$Innleggelsestidspunkt[indPasFlereOpph-1], 
-                     units = 'hour')
-      
-      indDbl <- which(abs(RegDataSort$TidInn) <2 )
-      tabDbl <- RegDataSort[sort(c(indDbl, indDbl-1)), 
-                            c('PasientID','Innleggelsestidspunkt', "SkjemaGUID")]
-      if (dim(tabDbl)[1] == 0) {
-            tabDbl <- 'Ingen dobbeltregistreringar'
-      } else {tabDbl <- xtable::xtable(tabDbl)}
-      #print(paste('Dim RegDATA: ',  dim(RegData), min(RegData$InnDato)))
-      return(tabDbl)
+#' @export
+#' 
+tabOppfShus <- function(HovedSkjema, datoTil){
+      #RegData
+      RaaTab <- data.frame(Sykehus = HovedSkjema$ShNavn,
+                     #Aar = as.POSIXlt(Hskjema$AdmitDt, format="%Y-%m-%d")$year +1900,
+                     Livskvalitet = HovedSkjema$SkjemaGUID %in% Livskvalitet$HovedskjemaGUID,
+                     #Kontroll = HovedSkjema$SkjemaGUID %in% Kontroll$HovedskjemaGUID,
+                     Urin = HovedSkjema$SkjemaGUID %in% Urin$HovedskjemaGUID,
+                     Tarm = HovedSkjema$SkjemaGUID %in% Tarm$HovedskjemaGUID,
+                     Funksjon = HovedSkjema$SkjemaGUID %in% AktivFunksjon$HovedskjemaGUID,
+                     Tilfredshet = HovedSkjema$SkjemaGUID %in% 
+                           AktivFunksjon$HovedskjemaGUID[AktivFunksjon$SkjemaGUID %in% Satisfact$HovedskjemaGUID]
+)
+
+AntReg <- table(HovedSkjema$ShNavn)
+#AntOppf <- apply(RaaTab[ ,-1], MARGIN=2, 
+#                      FUN=function(x) table(x,RaaTab$Sykehus)['TRUE',])
+AntOppf <- apply(RaaTab[ ,-1], MARGIN=2, 
+                 FUN=function(x) tapply(x,INDEX=RaaTab$Sykehus, sum))
+AndelOppf <- 100*AntOppf / as.vector(AntReg)
+#AndelOppf <- 100*apply(RaaTab[ ,-1], MARGIN=2, 
+#                       FUN=function(x) prop.table(tapply(x, RaaTab$Sykehus, sum),margin=2)['TRUE',])
+
+xtable::xtable(rbind(Hoved=AntReg,t(AntOppf)), digits=0, align=c('l', rep('r', nrow(AntOppf))),
+               caption=paste0('Antall hovedskjema og antall av disse som har tilknyttede skjema. Innleggelser fra og med ', datoFra, '.'))
+
+xtable::xtable(t(AndelOppf), digits=1, align=c('l', rep('r', nrow(AndelOppf))),
+               caption=paste0('Andel (prosent) av registreringsskjemaene som har ulike typer oppfølgingsskjema.'))
+return(tab)
 }
-
-
-
 
 #' @section Vise figurdata som tabell
 #' @rdname NordicScirtabeller

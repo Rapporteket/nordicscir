@@ -2,6 +2,7 @@
 library(nordicscir)
 library(shiny)
 library(knitr)
+library(lubridate)
 #ibrary(shinyBS) # Additional Bootstrap Controls
 
 
@@ -52,10 +53,11 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
       
                mainPanel(
                      tabsetPanel(id='ark',
-                                 tabPanel('Ant. registrerte ryggmargsskader per måned og sykehus',
+                                 tabPanel('Ant. registrerte ryggmargsskader',
                                           h3(""),
-                                          p(em("Velg tidsperiode ved å velge sluttdato i menyen til venstre"))
-                                          #tableOutput("tabAntOpphShMnd12")
+                                          p(em("Velg tidsperiode ved å velge sluttdato i menyen til venstre")),
+                                          tableOutput("tabBelegg"),
+                                          tableOutput("antReg")
                                  ),
                                  tabPanel('Ant. registrerte skjema',
                                           h3("Antall gyldige registreringsskjema per sykehus (+totalt), 
@@ -189,13 +191,37 @@ server <- function(input, output) {
       
       context <- Sys.getenv("R_RAP_INSTANCE") #Blir tom hvis jobber lokalt
       if (context == "TEST" | context == "QA" | context == "PRODUCTION") {
-            RegData <- NSRegDataSQL() #datoFra = datoFra, datoTil = datoTil)
-            
-      } #hente data på server
+                  
+                  registryName <- "nordicscir"
+                  dbType <- "mysql"
+                  
+                  qLivs <- paste0('SELECT  UPPER(HovedskjemaGUID) AS HovedskjemaGUID, UPPER(SkjemaGUID) AS SkjemaGUID
+                      FROM LifeQualityFormDataContract')
+                  qKontr <- paste0('SELECT  UPPER(HovedskjemaGUID) AS HovedskjemaGUID, UPPER(SkjemaGUID) AS SkjemaGUID,
+                        HealthUnitShortName, NoControl, CNum
+                       FROM ControlFormDataContract')
+                  qUrin <- paste0('SELECT  UPPER(HovedskjemaGUID) AS HovedskjemaGUID, UPPER(SkjemaGUID) AS SkjemaGUID 
+                      FROM UrinaryTractFunctionFormDataContract')
+                  qTarm <- paste0('SELECT  UPPER(HovedskjemaGUID) AS HovedskjemaGUID, UPPER(SkjemaGUID) AS SkjemaGUID 
+                      FROM BowelFunctionFormDataContract')
+                  qFunk <- paste0('SELECT  UPPER(HovedskjemaGUID) AS HovedskjemaGUID, UPPER(SkjemaGUID) AS SkjemaGUID 
+                      FROM ActivityAndParticipationPerformanceFormDataContract')
+                  qTilf <- paste0('SELECT  UPPER(HovedskjemaGUID) AS HovedskjemaGUID, UPPER(SkjemaGUID) AS SkjemaGUID
+                      FROM ActivityAndParticipationSatisfactionFormDataContract')
+                  
+                  #RegData <- NSRegDataSQL(valgtVar = valgtVar) #datoFra = datoFra, datoTil = datoTil)
+                  HovedSkjema <- NSRegDataSQL() #datoFra = datoFra, datoTil = datoTil)
+                  Livskvalitet <- rapbase::LoadRegData(registryName, qLivs, dbType)
+                  Kontroll <- rapbase::LoadRegData(registryName, qKontr, dbType)
+                  Urin <- rapbase::LoadRegData(registryName, qUrin, dbType)
+                  Tarm <- rapbase::LoadRegData(registryName, qTarm, dbType)
+                  AktivFunksjon <- rapbase::LoadRegData(registryName, qFunk, dbType)
+                  AktivTilfredshet <- rapbase::LoadRegData(registryName, qTilf, dbType)
+                  } #hente data på server
       
       
       #Hente data og evt. parametre som er statistke i appen
-      if (!exists('RegData')){
+      if (!exists('HovedSkjema')){
             
             dato <- 'FormDataContract2018-11-01' #2017-05-24
             sti <- 'A:/NordicScir/'
@@ -204,15 +230,15 @@ server <- function(input, output) {
             Kontroll <- read.table(paste0(sti, 'Control', dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
             Urin <- read.table(paste0(sti, 'UrinaryTractFunction', dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
             Tarm <- read.table(paste0(sti, 'BowelFunction',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
-            Performance <- read.table(paste0(sti, 'ActivityAndParticipationPerformance',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
-            Satisfact <- read.table(paste0(sti, 'ActivityAndParticipationSatisfaction',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
+            AktivFunksjon <- read.table(paste0(sti, 'ActivityAndParticipationPerformance',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
+            AktivTilfredshet <- read.table(paste0(sti, 'ActivityAndParticipationSatisfaction',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
             
             Livskvalitet$HovedskjemaGUID <- toupper(Livskvalitet$HovedskjemaGUID)
             Kontroll$HovedskjemaGUID <- toupper(Kontroll$HovedskjemaGUID)
             Urin$HovedskjemaGUID <- toupper(Urin$HovedskjemaGUID)
             Tarm$HovedskjemaGUID <- toupper(Tarm$HovedskjemaGUID)
-            Performance$HovedskjemaGUID <- toupper(Performance$HovedskjemaGUID)
-            Satisfact$HovedskjemaGUID <- toupper(Satisfact$HovedskjemaGUID)
+            AktivFunksjon$HovedskjemaGUID <- toupper(AktivFunksjon$HovedskjemaGUID)
+            AktivTilfredshet$HovedskjemaGUID <- toupper(AktivTilfredshet$HovedskjemaGUID)
             
             
             KobleMedHoved <- function(HovedSkjema,Skjema2,alleHovedskjema=T) {
@@ -222,18 +248,19 @@ server <- function(input, output) {
                                   by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = alleHovedskjema, all.y=F)
                   return(NSdata)
             }
+            LivskvalitetHoved <- KobleMedHoved(HovedSkjema,Livskvalitet)
+            KontrollHoved <- KobleMedHoved(HovedSkjema,Kontroll)
+            UrinHoved <- KobleMedHoved(HovedSkjema,Urin)
+            TarmHoved <- KobleMedHoved(HovedSkjema,Tarm)
+            Aktivitet <- KobleMedHoved(AktivFunksjon,AktivTilfredshet)
+            AktivitetHoved <- KobleMedHoved(HovedSkjema,Aktivitet)
             
-            RegData <- KobleMedHoved(HovedSkjema,Livskvalitet)
-            RegData <- KobleMedHoved(RegData,Kontroll)
-            RegData <- KobleMedHoved(RegData,Urin)
-            RegData <- KobleMedHoved(RegData,Tarm)
-            Aktivitet <- KobleMedHoved(Performance,Satisfact)
-            RegData <- KobleMedHoved(RegData,Aktivitet)
             
-            #RegData <- HovedSkjema
       }
       
-      RegData <- NSPreprosesser(RegData)
+      HovedSkjema <- NSPreprosesser(HovedSkjema)
+      RegData <- KobleMe
+      AlleTab <- list(HovedSkjema, Livskvalitet, Kontroll, Urin, Tarm, AktivFunksjon, AktivTilfredshet)
       reshID <- 107627
       
       
@@ -252,7 +279,13 @@ server <- function(input, output) {
                   contentType = 'application/pdf'
             )
       
-      
+      output$tabBelegg <- renderTable({
+            tabBelegg(RegData = HovedSkjema, datoTil=Sys.Date(), tidsenhet='Mnd', enhetsUtvalg=0, reshID=reshID)
+            })
+            
+      output$antReg <- renderTable({
+            tabAntOpphShMnd(RegData = HovedSkjema, datoTil=Sys.Date(), antMnd=12)
+      })
       
       observe({   
             if (context == "TEST" | context == "QA" | context == "PRODUCTION") {

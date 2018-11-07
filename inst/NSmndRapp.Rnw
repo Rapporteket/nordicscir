@@ -49,8 +49,8 @@ if (!exists('HovedSkjema')){
       Kontroll <- rapbase::LoadRegData(registryName, qKontr, dbType)
       Urin <- rapbase::LoadRegData(registryName, qUrin, dbType)
       Tarm <- rapbase::LoadRegData(registryName, qTarm, dbType)
-      Performance <- rapbase::LoadRegData(registryName, qFunk, dbType)
-      Satisfact <- rapbase::LoadRegData(registryName, qTilf, dbType)
+      AktivFunksjon <- rapbase::LoadRegData(registryName, qFunk, dbType)
+      AktivTilfredshet <- rapbase::LoadRegData(registryName, qTilf, dbType)
       }
 
 #Bare gyldige kontrollskjema:
@@ -141,9 +141,9 @@ RaaTab <- data.frame(Sykehus = HovedSkjema12mnd$ShNavn,
       #Kontroll = HovedSkjema12mnd$SkjemaGUID %in% Kontroll$HovedskjemaGUID,
       Urin = HovedSkjema12mnd$SkjemaGUID %in% Urin$HovedskjemaGUID,
       Tarm = HovedSkjema12mnd$SkjemaGUID %in% Tarm$HovedskjemaGUID,
-      Funksjon = HovedSkjema12mnd$SkjemaGUID %in% Performance$HovedskjemaGUID,
+      Funksjon = HovedSkjema12mnd$SkjemaGUID %in% AktivFunksjon$HovedskjemaGUID,
       Tilfredshet = HovedSkjema12mnd$SkjemaGUID %in% 
-            Performance$HovedskjemaGUID[Performance$SkjemaGUID %in% Satisfact$HovedskjemaGUID]
+            AktivFunksjon$HovedskjemaGUID[AktivFunksjon$SkjemaGUID %in% AktivTilfredshet$HovedskjemaGUID]
 )
 
 AntReg <- table(HovedSkjema12mnd$ShNavn)
@@ -159,7 +159,7 @@ xtable::xtable(rbind(Hoved=AntReg,t(AntOppf)), digits=0, align=c('l', rep('r', n
 		caption=paste0('Antall hovedskjema og antall av disse som har tilknyttede skjema. Innleggelser fra og med ', datoFra, '.'))
 
 xtable::xtable(t(AndelOppf), digits=1, align=c('l', rep('r', nrow(AndelOppf))),
-		caption=paste0('Andel (prosent) av registreringsskjemaene som har oppfølgingsskjema.'))
+		caption=paste0('Andel (prosent) av registreringsskjemaene som har ulike typer oppfølgingsskjema.'))
 @
 \end{frame}
 
@@ -179,9 +179,9 @@ RaaTabKtr <- data.frame(Sykehus = Kontroll$HealthUnitShortName,
       Livskvalitet = Kontroll$SkjemaGUID %in% Livskvalitet$HovedskjemaGUID,
       Urin = Kontroll$SkjemaGUID %in% Urin$HovedskjemaGUID,
       Tarm = Kontroll$SkjemaGUID %in% Tarm$HovedskjemaGUID,
-      Funksjon = Kontroll$SkjemaGUID %in% Performance$HovedskjemaGUID,
+      Funksjon = Kontroll$SkjemaGUID %in% AktivFunksjon$HovedskjemaGUID,
       Tilfredshet = Kontroll$SkjemaGUID %in% 
-            Performance$SkjemaGUID[Performance$SkjemaGUID %in% Satisfact$HovedskjemaGUID]
+            AktivFunksjon$SkjemaGUID[AktivFunksjon$SkjemaGUID %in% AktivTilfredshet$HovedskjemaGUID]
 )
 
 AntRegKtr <- table(Kontroll$HealthUnitShortName)
