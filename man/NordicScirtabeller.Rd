@@ -2,20 +2,28 @@
 % Please edit documentation in R/NStabeller.R
 \name{NordicScirtabeller}
 \alias{NordicScirtabeller}
+\alias{tabBelegg}
 \alias{tabAntOpphShMnd}
 \alias{tabAntOpphSh5Aar}
 \alias{tabAntOpphPasSh5Aar}
-\alias{tabOppfShus}
+\alias{tabSkjemaTilknyttetH}
+\alias{tabAntSkjema}
 \alias{lagTabavFig}
 \title{Funksjoner for å lage tabeller Group of functions page title}
 \usage{
+tabBelegg(RegData, tidsenhet = "Aar", datoTil = Sys.Date(),
+  enhetsUtvalg = 0, reshID = 0)
+
 tabAntOpphShMnd(RegData, datoTil = Sys.Date(), antMnd = 12)
 
 tabAntOpphSh5Aar(RegData, datoTil)
 
 tabAntOpphPasSh5Aar(RegData, gr = "opph", datoTil)
 
-tabOppfShus(HovedSkjema, datoTil)
+tabSkjemaTilknyttetH(Data = AlleTab, datoFra = "2017-01-01",
+  datoTil = Sys.Date())
+
+tabAntSkjema(Data = AlleTab, datoFra = "2017-01-01", datoTil = Sys.Date())
 
 lagTabavFig(UtDataFraFig)
 }
@@ -24,7 +32,19 @@ lagTabavFig(UtDataFraFig)
 
 \item{datoTil}{sluttdato. Brukes i tabellene AntOpph per 12 mnd og Belegg}
 
+\item{Data}{Liste med alle datatabeller/skjema}
+
+\item{datoFra}{fra og med dato}
+
 \item{personIDvar}{Variabelen som angir pasientidentifikasjon}
+
+\item{datoTil}{til og med dato}
+
+\item{Data}{Liste med alle datatabeller/skjema}
+
+\item{datoFra}{fra og med dato}
+
+\item{datoTil}{til og med dato}
 }
 \value{
 Div tabeller
@@ -43,19 +63,27 @@ RegData må inneholde InnDato.
 -tabAntOpphSh5Aar:Antall opphold per år og enhet siste 5 år (inkl. inneværende år) fram til datoTil. 
 RegData må inneholde Aar.
 }
+\section{Belegg (antall opphold, pasienter og intensivdøgn). Siste inntil 5 år eller siste inntil 12 måneder/kvartal/halvår}{
+NA
+}
+
 \section{tabAntOpphShMnd antall opphold siste X (antMnd) mnd}{
 NA
 }
 
 \section{Antall opphold siste 5 år}{
 NA
-
-NA
 }
 
 \section{Antall registreringer/pasienter siste 5 år}{
 
 Hmmm
+}
+
+\section{Tabell}{
+ Antall og andel hovedskjema som har ulike typer registreringsskjema
+
+ Antall av ulike typer skjema
 }
 
 \section{Vise figurdata som tabell}{

@@ -188,12 +188,15 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
 #----- Define server logic required to draw a histogram-------
 server <- function(input, output) {
 
+ #NB: Skal bare forholde oss til oppfølgingsskjema som er tilknyttet et gyldig Hovedskjema
       
       context <- Sys.getenv("R_RAP_INSTANCE") #Blir tom hvis jobber lokalt
       if (context == "TEST" | context == "QA" | context == "PRODUCTION") {
                   
                   registryName <- "nordicscir"
                   dbType <- "mysql"
+ #IKKE klar. Må plukke ut datasett koblet til Hovedskjema. Finn hvilke variable fra hovedskjema som trenger å være
+#                  med for å gjøre alle filtreringer
                   
                   qLivs <- paste0('SELECT  UPPER(HovedskjemaGUID) AS HovedskjemaGUID, UPPER(SkjemaGUID) AS SkjemaGUID
                       FROM LifeQualityFormDataContract')
@@ -241,26 +244,31 @@ server <- function(input, output) {
             AktivTilfredshet$HovedskjemaGUID <- toupper(AktivTilfredshet$HovedskjemaGUID)
             
             
-            KobleMedHoved <- function(HovedSkjema,Skjema2,alleHovedskjema=T) {
-                  varBegge <- intersect(names(Skjema2),names(HovedSkjema)) ##Variabelnavn som finnes i begge datasett
-                  Skjema2 <- Skjema2[ ,c("HovedskjemaGUID", names(Skjema2)[!(names(Skjema2) %in% varBegge)])]  #"SkjemaGUID",
-                  NSdata <- merge(HovedSkjema, Skjema2, suffixes = c('','XX'),
-                                  by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = alleHovedskjema, all.y=F)
-                  return(NSdata)
-            }
-            LivskvalitetHoved <- KobleMedHoved(HovedSkjema,Livskvalitet)
-            KontrollHoved <- KobleMedHoved(HovedSkjema,Kontroll)
-            UrinHoved <- KobleMedHoved(HovedSkjema,Urin)
-            TarmHoved <- KobleMedHoved(HovedSkjema,Tarm)
-            Aktivitet <- KobleMedHoved(AktivFunksjon,AktivTilfredshet)
-            AktivitetHoved <- KobleMedHoved(HovedSkjema,Aktivitet)
-            
-            
+            # sum(Aktivitet$HovedskjemaGUID %in% HovedSkjema$SkjemaGUID)
+            # sum(AktivFunksjon$HovedskjemaGUID %in% HovedSkjema$SkjemaGUID)
+            # sum(AktivTilfredshet$HovedskjemaGUID %in% HovedSkjema$SkjemaGUID)
+            # sum(AktivTilfredshet$HovedskjemaGUID %in% AktivFunksjon$SkjemaGUID)
       }
       
       HovedSkjema <- NSPreprosesser(HovedSkjema)
-      RegData <- KobleMe
-      AlleTab <- list(HovedSkjema, Livskvalitet, Kontroll, Urin, Tarm, AktivFunksjon, AktivTilfredshet)
+      LivskvalitetH <- KobleMedHoved(HovedSkjema,Livskvalitet)
+      KontrollH <- KobleMedHoved(HovedSkjema,Kontroll)
+      UrinH <- KobleMedHoved(HovedSkjema,Urin)
+      TarmH <- KobleMedHoved(HovedSkjema,Tarm)
+      Aktivitet <- KobleMedHoved(AktivFunksjon, AktivTilfredshet) #[,-which(names(AktivFunksjon)=='HovedskjemaGUID')]
+      AktivitetH <- KobleMedHoved(HovedSkjema, Aktivitet)
+      FunksjonH <- KobleMedHoved(HovedSkjema, AktivFunksjon)
+      TilfredsH <- AktivitetH
+
+      #RegData <- KobleMedHoved(HovedSkjema,Livskvalitet, alleHovedskjema = T) #SKAL iKKE BRUKES
+      AlleTab <- list(HovedSkjema=HovedSkjema, 
+                      LivskvalitetH=LivskvalitetH, 
+                      KontrollH=KontrollH, 
+                      UrinH=UrinH, 
+                      TarmH=TarmH, 
+                      FunksjonH=FunksjonH, 
+                      TilfredsH = TilfredsH, 
+                      AktivitetH = AktivitetH)
       reshID <- 107627
       
       
@@ -279,20 +287,40 @@ server <- function(input, output) {
                   contentType = 'application/pdf'
             )
       
-      output$tabBelegg <- renderTable({
-            tabBelegg(RegData = HovedSkjema, datoTil=Sys.Date(), tidsenhet='Mnd', enhetsUtvalg=0, reshID=reshID)
-            })
+      output$tabBelegg <- renderTable(
+            tabBelegg(RegData = HovedSkjema, datoTil=Sys.Date(), tidsenhet='Aar', enhetsUtvalg=0, reshID=reshID),
+            rownames = T, digits=0, spacing="xs"
+            )
             
-      output$antReg <- renderTable({
-            tabAntOpphShMnd(RegData = HovedSkjema, datoTil=Sys.Date(), antMnd=12)
+      output$tabAntOpphShMnd12 <- renderTable({
+            switch(input$tidsenhetReg,
+                   Mnd=tabAntOpphShMnd(RegData=HovedSkjema, datoTil=input$sluttDatoReg, antMnd=12), #input$datovalgTab[2])  
+                   Aar=tabAntOpphSh5Aar(RegData=HovedSkjema, datoTil=input$sluttDatoReg))
+      }, rownames = T, digits=0, spacing="xs" 
+      )
+      
+      observe({
+            #Antall skjema av alle typer.
+            #Antall hovedskjema og antall av disse som har tilknyttede skjema. Innleggelser fra og med 2017-11-01.
+            tabTilknSkjema <- tabSkjemaTilknyttetH(Data=AlleTab, datoFra='2017-01-01', datoTil=Sys.Date())
+            
+            output$tabAntTilknyttedeSkjema <- renderTable(
+                  tabTilknSkjema$Antall
+                  ,rownames = T, digits=0, spacing="xs" )
+            
+            #Andel (prosent) av registreringsskjemaene som har oppfølgingsskjema.      
+            output$tabAndelTilknyttedeSkjema <- renderTable(
+                  tabTilknSkjema$Andeler
+                  ,rownames = T, digits=0, spacing="xs" )
       })
       
-      observe({   
-            if (context == "TEST" | context == "QA" | context == "PRODUCTION") {
-                  RegData <- NSRegDataSQL(valgtVar = input$valgtVar)
-                  print(dim(RegData)[1])
-            } #hente data på server
+      #Antall skjema av hver type
+      output$AntallSkjema <- 
+      tabAntSkjema(Data=AlleTab, datoFra='2017-01-01', datoTil=Sys.Date())
             
+      observe({   
+            RegData <- finnRegData(Data = AlleTab, valgtVar <- 'UrinKirInngr')
+            RegData <- finnRegData(valgtVar = input$valgtVar, Data = AlleTab)
             output$fordelinger <- renderPlot({
                   NSFigAndeler(RegData=RegData, valgtVar=input$valgtVar, preprosess = 0,
                                datoFra=input$datovalg[1], datoTil=input$datovalg[2], 
@@ -304,6 +332,7 @@ server <- function(input, output) {
             }, height=800, width=800 #height = function() {session$clientData$output_fordelinger_width}
             )
             
+            #RegData må hentes ut fra valgtVar
             UtDataFord <- NSFigAndeler(RegData=RegData, preprosess = 0, valgtVar=input$valgtVar,
                                        datoFra=input$datovalg[1], datoTil=input$datovalg[2], 
                                        reshID = reshID, 

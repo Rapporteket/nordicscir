@@ -305,18 +305,19 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
             grtxt <- c('Innsatt suprapubiskateter', 'Fjernet blærestein', 'Fjernet andre stein', 'Blæreforstørrelse', 
                        'Sfinkterotomi', 'Botulinumtoksininjeksjon', 'Kunstig sfinkter', 'Ilovesikostomi', 'Ileoureterostomi',
                        'Kateteriserbar urostomi', 'Sakralnervestimulator', 'Annet')
-            indDato <- cbind(Spcath = RegData$SpcathDt >= RegData$AdmitDt,
-                             Bstnrm = RegData$BstnrmDt>= RegData$AdmitDt,
-                             Ustnrm = RegData$UstnrmDt>= RegData$AdmitDt,
-                             Bladag = RegData$BladagDt>= RegData$AdmitDt,
-                             Ustent = RegData$UstentDt>= RegData$AdmitDt,
-                             Botox = RegData$BotoxDt>= RegData$AdmitDt,
-                             Artsph = RegData$ArtsphDt>= RegData$AdmitDt,
-                             Ilvscs = RegData$IlvscsDt>= RegData$AdmitDt,
-                             Ilurts = RegData$IlurtsDt>= RegData$AdmitDt,
-                             Ccathv = RegData$CcathvDt>= RegData$AdmitDt,
-                             Sarstm = RegData$SarstmDt>= RegData$AdmitDt,
-                             Othsrg = RegData$OthsrgDt>= RegData$AdmitDt)
+            #as.Date(RegData$SpcathDt, format="%Y-%m-%d") > '2017-06-01'
+            indDato <- cbind(Spcath = as.Date(RegData$SpcathDt, format="%Y-%m-%d") >= RegData$InnDato,
+                             Bstnrm = as.Date(RegData$BstnrmDt, format="%Y-%m-%d") >= RegData$InnDato,
+                             Ustnrm = as.Date(RegData$UstnrmDt, format="%Y-%m-%d") >= RegData$InnDato,
+                             Bladag = as.Date(RegData$BladagDt, format="%Y-%m-%d") >= RegData$InnDato,
+                             Ustent = as.Date(RegData$UstentDt, format="%Y-%m-%d") >= RegData$InnDato,
+                             Botox = as.Date(RegData$BotoxDt, format="%Y-%m-%d") >= RegData$InnDato,
+                             Artsph = as.Date(RegData$ArtsphDt, format="%Y-%m-%d") >= RegData$InnDato,
+                             Ilvscs = as.Date(RegData$IlvscsDt, format="%Y-%m-%d") >= RegData$InnDato,
+                             Ilurts = as.Date(RegData$IlurtsDt, format="%Y-%m-%d") >= RegData$InnDato,
+                             Ccathv = as.Date(RegData$CcathvDt, format="%Y-%m-%d") >= RegData$InnDato,
+                             Sarstm = as.Date(RegData$SarstmDt, format="%Y-%m-%d") >= RegData$InnDato,
+                             Othsrg = as.Date(RegData$OthsrgDt, format="%Y-%m-%d") >= RegData$InnDato)
             ind1 <- which(RegData[,variable]==TRUE & indDato==TRUE, arr.ind=T)
             RegData[ ,variable] <- 0
             RegData[ ,variable][ind1] <- 1

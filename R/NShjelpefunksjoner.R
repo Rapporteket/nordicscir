@@ -58,8 +58,6 @@ SorterOgNavngiTidsEnhet <- function(RegData, tidsenhet='Aar') {
       return(UtData)
 }
 #' @section Lage tulledata (simulerte data)
-#' Probably better if all sections come first, uless have one section per function. Makes it easier to
-#' see the information flow.
 #' @rdname hjelpeFunksjoner
 #' @export
 lageTulleData <- function(RegData, varBort='ShNavn', antSh=27) {
@@ -76,11 +74,6 @@ lageTulleData <- function(RegData, varBort='ShNavn', antSh=27) {
       RegData <- data.frame(RegDataSyn$syn) # FÅR feilmld...
 	  return(RegData)
 }
-
-#' @section Legge til indikator for intervensjon, pårørendeoppfølging
-#' @rdname hjelpeFunksjoner
-#' @export
-
 
 #' @section Automatisk linjebryting av lange tekstetiketter
 #' @param x En tekststreng eller vektor av tekststrenger
@@ -101,12 +94,32 @@ delTekst <- function(x, len) #x -tekststreng/vektor av tekststrenger, len - Leng
 #' de registreringer som har ei oppfølgning (FALSE).
 #' @rdname hjelpeFunksjoner
 #' @export
-KobleMedHoved <- function(HovedSkjema, Skjema2, alleHovedskjema=T) {
+KobleMedHoved <- function(HovedSkjema, Skjema2, alleHovedskjema=F, alleSkjema2=F) {
       varBegge <- intersect(names(Skjema2),names(HovedSkjema)) ##Variabelnavn som finnes i begge datasett
-      Skjema2 <- Skjema2[ ,c("HovedskjemaGUID", names(Skjema2)[!(names(Skjema2) %in% varBegge)])]  #"SkjemaGUID",
-      NSdata <- merge(HovedSkjema, Skjema2, suffixes = c('','XX'),
-                      by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = alleHovedskjema, all.y=F)
+      Skjema2 <- Skjema2[ , c("HovedskjemaGUID", names(Skjema2)[!(names(Skjema2) %in% varBegge)])]  #"SkjemaGUID",   
+      NSdata <- merge(HovedSkjema, Skjema2, suffixes = c('','_S2'),
+                      by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = alleHovedskjema, all.y=alleSkjema2)
       return(NSdata)
+}
+
+#' @section Hente data basert på valgtVar
+#' @param valgtVar Angir hvilke(n) variable det skal vises resultat for. 
+#' @param Data Liste med alle skjema/tabeller 
+#' @rdname hjelpeFunksjoner
+#' @export
+finnRegData <- function(valgtVar='Alder', Data = AlleTab){
+      valgtSkjema <- substr(valgtVar,1,4)
+      if (valgtSkjema %in% c('Livs', 'Urin', 'Tarm', 'Tilf', 'Funk', 'Kont', 'Akti')) {
+            RegData <- switch(valgtSkjema, 
+                              'Livs' = Data$LivskvalitetH,
+                              'Tarm' = Data$TarmH,
+                              'Urin' = Data$UrinH,
+                              'Kont' = Data$KontrollH,
+                              'Funk' = Data$FunksjonH,
+                              'Tilf' = Data$TilfredsH,
+                              'Akti' = Data$AktivitetH)} else {
+                                    RegData <- Data$HovedSkjema}
+      return(RegData)
 }
 
       

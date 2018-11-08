@@ -6,6 +6,7 @@
 \alias{lageTulleData}
 \alias{delTekst}
 \alias{KobleMedHoved}
+\alias{finnRegData}
 \title{Hjelpefunksjoner. Group of functions page title}
 \usage{
 SorterOgNavngiTidsEnhet(RegData, tidsenhet = "Aar")
@@ -14,7 +15,9 @@ lageTulleData(RegData, varBort = "ShNavn", antSh = 27)
 
 delTekst(x, len)
 
-KobleMedHoved(HovedSkjema, Skjema2, alleHovedskjema = T)
+KobleMedHoved(HovedSkjema, Skjema2, alleHovedskjema = F, alleSkjema2 = F)
+
+finnRegData(valgtVar = "Alder", Data = AlleTab)
 }
 \arguments{
 \item{RegData}{data}
@@ -30,6 +33,10 @@ Satisfaction kobles til Performance}
 
 \item{alleHovedskjema}{TRUE (FALSE) Om alle registreringer fra hovedskjemaet skal være med (TRUE), eller bare
 de registreringer som har ei oppfølgning (FALSE).}
+
+\item{valgtVar}{Angir hvilke(n) variable det skal vises resultat for.}
+
+\item{Data}{Liste med alle skjema/tabeller}
 
 \item{PasientID}{Variabelen som angir pasientidentifikasjon}
 }
@@ -55,7 +62,7 @@ Probably better if all sections come first, uless have one section per function.
 see the information flow.
 }
 
-\section{Legge til indikator for intervensjon, pårørendeoppfølging}{
+\section{Lage tulledata (simulerte data)}{
 NA
 }
 
@@ -64,6 +71,10 @@ NA
 }
 
 \section{Koble med aktuell hovedtabell}{
+NA
+}
+
+\section{Hente data basert på valgtVar}{
 NA
 }
 

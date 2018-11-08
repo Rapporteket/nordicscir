@@ -21,9 +21,8 @@
 NULL
 #' @export
 
-#' @section Belegg (antall opphold, pasienter og intensivdøgn)
+#' @section Belegg (antall opphold, pasienter og intensivdøgn). Siste inntil 5 år eller siste inntil 12 måneder/kvartal/halvår
 #' @rdname NordicScirtabeller
-#' Siste inntil 5 år eller siste inntil 12 måneder/kvartal/halvår
 #' @export
 tabBelegg <- function(RegData, tidsenhet='Aar', datoTil=Sys.Date(), enhetsUtvalg=0, reshID=0) {
       datoFra <- switch(tidsenhet, 
@@ -63,7 +62,7 @@ tabAntOpphShMnd <- function(RegData, datoTil=Sys.Date(), antMnd=12){
       tabAvdMnd1 <- addmargins((tabAvdMnd1))
       #tabAvdMnd1 <- RegDataDum %>% group_by(Maaned=floor_date(InnDato, "month"), ShNavn) %>%
       #      summarize(Antall=length(ShNavn))
-      tabAvdMnd1 <- xtable::xtable(tabAvdMnd1)
+      #tabAvdMnd1 <- xtable::xtable(tabAvdMnd1)
 	return(tabAvdMnd1)
 }
 
@@ -102,56 +101,72 @@ tabAntOpphPasSh5Aar <- function(RegData, gr='opph', datoTil){
       tabAvdAarN <- xtable::xtable(tabAvdAarN)
       return(tabAvdAarN)
 }
-# tabAntPasSh5Aar <- function(RegData, personIDvar='PasientID' , datoTil){
-#       AarNaa <- as.numeric(format.Date(datoTil, "%Y"))
-#       
-#       Data <- RegData[which(RegData$Aar %in% (AarNaa-4):AarNaa), c('ShNavn','Aar', personIDvar)]
-#       tabPasAvdAarN <- tapply(Data$PasientID, Data[ c('ShNavn','Aar')], FUN=function(x) length(unique(x)))
-#       tabPasAvdAarN[is.na(tabPasAvdAarN)] <- 0
-#       
-#       tabPasAvdAarN <- addmargins(tabPasAvdAarN) #, FUN = function(x) sum(x, na.rm=T))
-#       rownames(tabPasAvdAarN)[dim(tabPasAvdAarN)[1] ]<- 'TOTALT, alle enheter:'
-#       colnames(tabPasAvdAarN)[dim(tabPasAvdAarN)[2] ]<- 'TOTALT'
-#       tabPasAvdAarN <- xtable::xtable(tabPasAvdAarN)
-#       return(tabPasAvdAarN)
-# }
 
-#Tabell: Andel registreringsskjema med oppfølging siste 12 mnd
-
-
-#' @section Antall opphold siste 5 år
+#' @section Tabell: Antall og andel hovedskjema som har ulike typer registreringsskjema
+#' @param  Data Liste med alle datatabeller/skjema
+#' @param datoFra fra og med dato
+#' @param datoTil til og med dato
 #' @rdname NordicScirtabeller
 #' @export
 #' 
-tabOppfShus <- function(HovedSkjema, datoTil){
-      #RegData
-      RaaTab <- data.frame(Sykehus = HovedSkjema$ShNavn,
+tabSkjemaTilknyttetH <- function(Data=AlleTab, datoFra='2017-01-01', datoTil=Sys.Date()){
+      
+      Data$HovedSkjema <- NSUtvalg(Data$HovedSkjema, datoFra = datoFra, datoTil = datoTil)$RegData
+      
+      RaaTab <- data.frame(Sykehus = Data$HovedSkjema$ShNavn,
                      #Aar = as.POSIXlt(Hskjema$AdmitDt, format="%Y-%m-%d")$year +1900,
-                     Livskvalitet = HovedSkjema$SkjemaGUID %in% Livskvalitet$HovedskjemaGUID,
+                     Livskvalitet = Data$HovedSkjema$SkjemaGUID %in% Data$LivskvalitetH$HovedskjemaGUID,
                      #Kontroll = HovedSkjema$SkjemaGUID %in% Kontroll$HovedskjemaGUID,
-                     Urin = HovedSkjema$SkjemaGUID %in% Urin$HovedskjemaGUID,
-                     Tarm = HovedSkjema$SkjemaGUID %in% Tarm$HovedskjemaGUID,
-                     Funksjon = HovedSkjema$SkjemaGUID %in% AktivFunksjon$HovedskjemaGUID,
-                     Tilfredshet = HovedSkjema$SkjemaGUID %in% 
-                           AktivFunksjon$HovedskjemaGUID[AktivFunksjon$SkjemaGUID %in% Satisfact$HovedskjemaGUID]
+                     Urin = Data$HovedSkjema$SkjemaGUID %in% Data$UrinH$HovedskjemaGUID,
+                     Tarm = Data$HovedSkjema$SkjemaGUID %in% Data$TarmH$HovedskjemaGUID,
+                     Funksjon = Data$HovedSkjema$SkjemaGUID %in% Data$FunksjonH$HovedskjemaGUID,
+                     Tilfredshet = Data$HovedSkjema$SkjemaGUID %in% 
+                           Data$FunksjonH$HovedskjemaGUID[Data$FunksjonH$SkjemaGUID %in% Data$TilfredsH$HovedskjemaGUID]
 )
 
-AntReg <- table(HovedSkjema$ShNavn)
-#AntOppf <- apply(RaaTab[ ,-1], MARGIN=2, 
-#                      FUN=function(x) table(x,RaaTab$Sykehus)['TRUE',])
-AntOppf <- apply(RaaTab[ ,-1], MARGIN=2, 
-                 FUN=function(x) tapply(x,INDEX=RaaTab$Sykehus, sum))
-AndelOppf <- 100*AntOppf / as.vector(AntReg)
-#AndelOppf <- 100*apply(RaaTab[ ,-1], MARGIN=2, 
-#                       FUN=function(x) prop.table(tapply(x, RaaTab$Sykehus, sum),margin=2)['TRUE',])
+AntReg <- table(Data$HovedSkjema$ShNavn)
+AntOppf <- cbind(Hoved = AntReg, 
+                 apply(RaaTab[ ,-1], MARGIN=2, 
+                       FUN=function(x) tapply(x,INDEX=RaaTab$Sykehus, sum))
+                 )
+AndelOppf <- (100*AntOppf / as.vector(AntReg))[,-1]
 
-xtable::xtable(rbind(Hoved=AntReg,t(AntOppf)), digits=0, align=c('l', rep('r', nrow(AntOppf))),
-               caption=paste0('Antall hovedskjema og antall av disse som har tilknyttede skjema. Innleggelser fra og med ', datoFra, '.'))
-
-xtable::xtable(t(AndelOppf), digits=1, align=c('l', rep('r', nrow(AndelOppf))),
-               caption=paste0('Andel (prosent) av registreringsskjemaene som har ulike typer oppfølgingsskjema.'))
+tab = list(Antall = AntOppf,
+           Andeler = AndelOppf)
 return(tab)
 }
+
+#' @section Tabell: Antall av ulike typer skjema
+#' @param  Data Liste med alle datatabeller/skjema
+#' @param datoFra fra og med dato
+#' @param datoTil til og med dato
+#' @rdname NordicScirtabeller
+#' @export
+#' 
+tabAntSkjema <- function(Data=AlleTab, datoFra='2017-01-01', datoTil=Sys.Date()){
+      
+      Data$HovedSkjema <- NSUtvalg(Data$HovedSkjema, datoFra = datoFra, datoTil = datoTil)$RegData
+
+      # sum(Data$HovedSkjema$SkjemaGUID %in% Data$LivskvalitetH$HovedskjemaGUID)
+      # sum(Data$LivskvalitetH$HovedskjemaGUID %in% Data$HovedSkjema$SkjemaGUID)
+      # sum(table(Data$LivskvalitetH$ShNavn))
+      AntReg <- rbind(Livskvalitet = table(NSUtvalg(Data$LivskvalitetH, datoFra = datoFra, datoTil = datoTil)$RegData$ShNavn),
+                      #Kontroll = table(Data$LivskvalitetH$ShNavn),
+                      Urin = table(NSUtvalg(Data$UrinH, datoFra = datoFra, datoTil = datoTil)$RegData$ShNavn),
+                      Tarm = table(NSUtvalg(Data$TarmH, datoFra = datoFra, datoTil = datoTil)$RegData$ShNavn),
+                      Funksjon = table(NSUtvalg(Data$FunksjonH, datoFra = datoFra, datoTil = datoTil)$RegData$ShNavn),
+                      Tilfredshet = table(NSUtvalg(Data$TilfredsH, datoFra = datoFra, datoTil = datoTil)$RegData$ShNavn)
+      )
+      # AntReg <- rbind(Livskvalitet = table(Data$LivskvalitetH$ShNavn),
+      #                      #Kontroll = table(Data$LivskvalitetH$ShNavn),
+      #                      Urin = table(Data$UrinH$ShNavn),
+      #                      Tarm = table(Data$TarmH$ShNavn),
+      #                      Funksjon = table(Data$FunksjonH$ShNavn),
+      #                      Tilfredshet = table(Data$TilfredsH$ShNavn)
+      # )
+      return(AntReg)
+}
+
 
 #' @section Vise figurdata som tabell
 #' @rdname NordicScirtabeller

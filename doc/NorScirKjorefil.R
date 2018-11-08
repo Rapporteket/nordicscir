@@ -43,6 +43,8 @@ file.remove(file=removeFiles)
 #------------------------ LASTE DATA -------------------------------------
 
 rm(list=ls())
+library(nordicscir)
+
 dato <- 'FormDataContract2018-11-01' #2017-05-24
 sti <- 'A:/NordicScir/'
 HovedSkjema <- read.table(paste0(sti, 'Main',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
@@ -50,23 +52,23 @@ Livskvalitet <- read.table(paste0(sti, 'LifeQuality',dato,'.csv'), stringsAsFact
 Kontroll <- read.table(paste0(sti, 'Control', dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
 Urin <- read.table(paste0(sti, 'UrinaryTractFunction', dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
 Tarm <- read.table(paste0(sti, 'BowelFunction',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
-Performance <- read.table(paste0(sti, 'ActivityAndParticipationPerformance',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
-Satisfact <- read.table(paste0(sti, 'ActivityAndParticipationSatisfaction',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
+AktivFunksjon <- read.table(paste0(sti, 'ActivityAndParticipationPerformance',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
+AktivTilfredshet <- read.table(paste0(sti, 'ActivityAndParticipationSatisfaction',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
 
 Livskvalitet$HovedskjemaGUID <- toupper(Livskvalitet$HovedskjemaGUID)
 Kontroll$HovedskjemaGUID <- toupper(Kontroll$HovedskjemaGUID)
 Urin$HovedskjemaGUID <- toupper(Urin$HovedskjemaGUID)
 Tarm$HovedskjemaGUID <- toupper(Tarm$HovedskjemaGUID)
-Performance$HovedskjemaGUID <- toupper(Performance$HovedskjemaGUID)
-Satisfact$HovedskjemaGUID <- toupper(Satisfact$HovedskjemaGUID)
+AktivFunksjon$HovedskjemaGUID <- toupper(AktivFunksjon$HovedskjemaGUID)
+AktivTilfredshet$HovedskjemaGUID <- toupper(AktivTilfredshet$HovedskjemaGUID)
 
 #HovedSkjema$SkjemaGUID <- tolower(HovedSkjema$SkjemaGUID)
 #Livskvalitet$SkjemaGUID <- tolower(Livskvalitet$SkjemaGUID)
 #Kontroll$SkjemaGUID <- tolower(Kontroll$SkjemaGUID)
 #Urin$SkjemaGUID <- tolower(Urin$SkjemaGUID)
 #Tarm$SkjemaGUID <- tolower(Tarm$SkjemaGUID)
-#Performance$SkjemaGUID <- tolower(Performance$SkjemaGUID)
-#Satisfact$SkjemaGUID <- tolower(Satisfact$SkjemaGUID)
+#AktivFunksjon$SkjemaGUID <- tolower(AktivFunksjon$SkjemaGUID)
+#AktivTilfredshet$SkjemaGUID <- tolower(AktivTilfredshet$SkjemaGUID)
 
 
 KobleMedHoved <- function(HovedSkjema,Skjema2) {
@@ -81,15 +83,23 @@ RegData <- KobleMedHoved(HovedSkjema,Livskvalitet)
 RegData <- HovedSkjema
 RegData <- NSPreprosesser(RegData)
 # Jeg har koblet i to steg i R etter følgende skisse:
-#       NyTab = Performance.SkjemaGUID <-> Satisfaction. HovedskjemaGUID  
+#       NyTab = AktivFunksjon.SkjemaGUID <-> Satisfaction. HovedskjemaGUID  
 # Main.SkjemaGUID <-> NyTab. HovedskjemaGUID  
 
 #------------------------ TESTE DATA -------------------------------------
 
 #---Oppsummering/test av andel som har fått oppfølging---
 paste0('Ant. hovedskjema m/Livskvalitet: ',sum(HovedSkjema$SkjemaGUID %in% Livskvalitet$HovedskjemaGUID))
-paste0('Ant. hovedskjema m/Performance: ', sum(HovedSkjema$SkjemaGUID %in% Performance$HovedskjemaGUID))
-paste0('Ant. Satisfaction m/Performance: ', sum(Performance$SkjemaGUID %in% Satisfact$HovedskjemaGUID))
+paste0('Ant. hovedskjema m/AktivFunksjon: ', sum(HovedSkjema$SkjemaGUID %in% AktivFunksjon$HovedskjemaGUID))
+paste0('Ant. Satisfaction m/AktivFunksjon: ', sum(AktivFunksjon$SkjemaGUID %in% AktivTilfredshet$HovedskjemaGUID))
+
+length(unique(Livskvalitet$HovedskjemaGUID))
+sum(unique(Livskvalitet$HovedskjemaGUID) %in% HovedSkjema$SkjemaGUID)
+sum(Livskvalitet$HovedskjemaGUID %in% HovedSkjema$SkjemaGUID)
+
+table(table(Livskvalitet$HovedskjemaGUID))
+table(table(LivskvalitetHoved$SkjemaGUID))
+
 
 tabVar <- c('HealthUnitName','Aar')
 Hskjema <- HovedSkjema[c('SkjemaGUID','HealthUnitName','AdmitDt')][order(HovedSkjema$SkjemaGUID),]
@@ -99,9 +109,9 @@ RaaTab <- cbind(Hskjema,
                 MedKtr = match(HovedSkjema$SkjemaGUID, sort(Kontroll$HovedskjemaGUID)),
                 MedUrin = match(HovedSkjema$SkjemaGUID, sort(Urin$HovedskjemaGUID)),
                 MedTarm = match(HovedSkjema$SkjemaGUID, sort(Tarm$HovedskjemaGUID)),
-                MedPerform = match(HovedSkjema$SkjemaGUID, sort(Performance$HovedskjemaGUID)),
-                MedSatisfact = match(HovedSkjema$SkjemaGUID,
-                                     sort(Hskjema$SkjemaGUID[match(Performance$SkjemaGUID, sort(Satisfact$HovedskjemaGUID))]))
+                MedFunksjon = match(HovedSkjema$SkjemaGUID, sort(AktivFunksjon$HovedskjemaGUID)),
+                MedTilfreds = match(HovedSkjema$SkjemaGUID,
+                                     sort(Hskjema$SkjemaGUID[match(AktivFunksjon$SkjemaGUID, sort(AktivTilfredshet$HovedskjemaGUID))]))
 )
 #RaaTab <- RaaTab1[which(as.Date(Hskjema$AdmitDt)> '2014-12-31'),]
 Tot <- table(is.na(RaaTab$MedLivskval))/dim(RaaTab)[1]*100  #'MedKtr'
@@ -137,7 +147,7 @@ valgtVar <- 'UtTil'	#AAis, FAis, Alder, DagerRehab, DagerTilRehab, NivaaInn, Nts
                              	#Pustehjelp[VentAssi], PPlaceDis, RegForsinkelse,  #SkadeArsak[Scietiol]  
 #UrinSkjema: 
 RegData <- KobleMedHoved(HovedSkjema,Urin)
-valgtVar <- 'UrinLegemidlerHvilke'   #'UrinInkontinens', 'UrinLegemidler','UrinLegemidlerHvilke', 'UrinKirInngr', 
+valgtVar <- 'UrinTomBlareHoved'   #'UrinInkontinens', 'UrinLegemidler','UrinLegemidlerHvilke', 'UrinKirInngr', 
                                     #'UrinTomBlareHoved', 'UrinTomBlareTillegg'
 #TarmSkjema: 
 RegData <- KobleMedHoved(HovedSkjema,Tarm)
@@ -149,11 +159,11 @@ RegData <- KobleMedHoved(RegData,Livskvalitet)
 valgtVar <- 'LivsPsyk'                #LivsGen, LivsFys, LivsPsyk
 
 #Funksjon (Aktivitet og deltagelse)
-RegData <- KobleMedHoved(HovedSkjema,Performance)
+RegData <- KobleMedHoved(HovedSkjema,AktivFunksjon)
 valgtVar <- 'FunkSpis'               #FunkDo, FunkKler, FunkMob, FunkSpis
 
 #Tilfredshet. NB: Kobles til A&D
-RegData <- KobleMedHoved(Performance,Satisfact)
+RegData <- KobleMedHoved(AktivFunksjon,AktivTilfredshet)
 RegData <- KobleMedHoved(HovedSkjema,RegData)
 valgtVar <- 'TilfSpis'               #TilfDo, TilfKler, TilfMob, TilfSpis
 
