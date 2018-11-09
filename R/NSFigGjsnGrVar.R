@@ -133,6 +133,10 @@ NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='gjsn', grVar='ShNavn',
                   RegForsinkelse = 'dager')
   
   #Se NSFigSoyler for forklaring av innhold i lista gjsnGrVarData
+  SentralmaalTxt <- switch(valgtMaal,
+                     med = 'Median',
+                     gjsn = 'Gjennomsnitt')
+  
   GjsnGrVarData <- list(AggVerdier=AggVerdier, #Endres til Soyleverdi? Evt. AggVerdier
                         AggTot=MidtHele, #Til AggVerdiTot?
                         N=list(Hoved=N), 
@@ -144,6 +148,7 @@ NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='gjsn', grVar='ShNavn',
                         grtxt=GrNavnSort,
                         valgtMaal=valgtMaal,
                         tittel=tittel,    #NSVarSpes$tittel, 
+                        SentralmaalTxt = SentralmaalTxt,
                         #yAkseTxt=yAkseTxt, 
                         retn='H', 
                         xAkseTxt=NSVarSpes$xAkseTxt,
@@ -229,5 +234,6 @@ NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='gjsn', grVar='ShNavn',
     par('fig'=c(0, 1, 0, 1))
     if ( outfile != '') {dev.off()}
     #----------------------------------------------------------------------------------
-  }
+    }
+  return(invisible(GjsnGrVarData))
 }

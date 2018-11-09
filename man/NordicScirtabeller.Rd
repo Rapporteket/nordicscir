@@ -8,7 +8,8 @@
 \alias{tabAntOpphPasSh5Aar}
 \alias{tabSkjemaTilknyttetH}
 \alias{tabAntSkjema}
-\alias{lagTabavFig}
+\alias{lagTabavFigAndeler}
+\alias{lagTabavFigGjsnGrVar}
 \title{Funksjoner for å lage tabeller Group of functions page title}
 \usage{
 tabBelegg(RegData, tidsenhet = "Aar", datoTil = Sys.Date(),
@@ -25,7 +26,9 @@ tabSkjemaTilknyttetH(Data = AlleTab, datoFra = "2017-01-01",
 
 tabAntSkjema(Data = AlleTab, datoFra = "2017-01-01", datoTil = Sys.Date())
 
-lagTabavFig(UtDataFraFig)
+lagTabavFigAndeler(UtDataFraFig)
+
+lagTabavFigGjsnGrVar(UtDataFraFig)
 }
 \arguments{
 \item{RegData}{data}
@@ -86,7 +89,9 @@ Hmmm
  Antall av ulike typer skjema
 }
 
-\section{Vise figurdata som tabell}{
+\section{Vise figurdata som tabell, fordelingsfigur}{
+NA
+
 NA
 }
 

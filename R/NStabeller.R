@@ -24,7 +24,7 @@ NULL
 #' @section Belegg (antall opphold, pasienter og intensivdøgn). Siste inntil 5 år eller siste inntil 12 måneder/kvartal/halvår
 #' @rdname NordicScirtabeller
 #' @export
-tabBelegg <- function(RegData, tidsenhet='Aar', datoTil=Sys.Date(), enhetsUtvalg=0, reshID=0) {
+tabBelegg <- function(RegData, tidsenhet='Aar', datoTil=Sys.Date(), enhetsUtvalg=2, reshID=0) {
       datoFra <- switch(tidsenhet, 
                         Mnd = lubridate::floor_date(as.Date(datoTil)%m-% months(12, abbreviate = T), 'month'), #as.Date(paste0(as.numeric(substr(datoTil,1,4))-1, substr(datoTil,5,8), '01'), tz='UTC')
                         Aar = paste0(lubridate::year(as.Date(datoTil))-4, '-01-01')
@@ -59,11 +59,11 @@ tabAntOpphShMnd <- function(RegData, datoTil=Sys.Date(), antMnd=12){
       RegDataDum$Maaned1 <- floor_date(RegDataDum$InnDato, 'month')
       tabAvdMnd1 <- table(RegDataDum[ , c('ShNavn', 'Maaned1')])
       colnames(tabAvdMnd1) <- format(ymd(colnames(tabAvdMnd1)), '%b%y') #month(ymd(colnames(tabAvdMnd1)), label = T)
-      tabAvdMnd1 <- addmargins((tabAvdMnd1))
+      tabAvdMnd <- addmargins(tabAvdMnd1)
       #tabAvdMnd1 <- RegDataDum %>% group_by(Maaned=floor_date(InnDato, "month"), ShNavn) %>%
       #      summarize(Antall=length(ShNavn))
-      #tabAvdMnd1 <- xtable::xtable(tabAvdMnd1)
-	return(tabAvdMnd1)
+      tabAvdMnd <- xtable::xtable(tabAvdMnd)
+	return(tabAvdMnd)
 }
 
 #' @section Antall opphold siste 5 år
@@ -129,6 +129,7 @@ AntOppf <- cbind(Hoved = AntReg,
                  apply(RaaTab[ ,-1], MARGIN=2, 
                        FUN=function(x) tapply(x,INDEX=RaaTab$Sykehus, sum))
                  )
+addmargins(AntOppf, margin=1, FUN = list('Hele landet' = sum) )
 AndelOppf <- (100*AntOppf / as.vector(AntReg))[,-1]
 
 tab = list(Antall = AntOppf,
@@ -144,34 +145,26 @@ return(tab)
 #' @export
 #' 
 tabAntSkjema <- function(Data=AlleTab, datoFra='2017-01-01', datoTil=Sys.Date()){
-      
-      Data$HovedSkjema <- NSUtvalg(Data$HovedSkjema, datoFra = datoFra, datoTil = datoTil)$RegData
-
       # sum(Data$HovedSkjema$SkjemaGUID %in% Data$LivskvalitetH$HovedskjemaGUID)
       # sum(Data$LivskvalitetH$HovedskjemaGUID %in% Data$HovedSkjema$SkjemaGUID)
       # sum(table(Data$LivskvalitetH$ShNavn))
-      AntReg <- rbind(Livskvalitet = table(NSUtvalg(Data$LivskvalitetH, datoFra = datoFra, datoTil = datoTil)$RegData$ShNavn),
+      AntSkjema <- rbind(Hovedskjema = table(NSUtvalg(Data$HovedSkjema, datoFra = datoFra, datoTil = datoTil)$RegData$ShNavn),
+            Livskvalitet = table(NSUtvalg(Data$LivskvalitetH, datoFra = datoFra, datoTil = datoTil)$RegData$ShNavn),
                       #Kontroll = table(Data$LivskvalitetH$ShNavn),
                       Urin = table(NSUtvalg(Data$UrinH, datoFra = datoFra, datoTil = datoTil)$RegData$ShNavn),
                       Tarm = table(NSUtvalg(Data$TarmH, datoFra = datoFra, datoTil = datoTil)$RegData$ShNavn),
                       Funksjon = table(NSUtvalg(Data$FunksjonH, datoFra = datoFra, datoTil = datoTil)$RegData$ShNavn),
                       Tilfredshet = table(NSUtvalg(Data$TilfredsH, datoFra = datoFra, datoTil = datoTil)$RegData$ShNavn)
       )
-      # AntReg <- rbind(Livskvalitet = table(Data$LivskvalitetH$ShNavn),
-      #                      #Kontroll = table(Data$LivskvalitetH$ShNavn),
-      #                      Urin = table(Data$UrinH$ShNavn),
-      #                      Tarm = table(Data$TarmH$ShNavn),
-      #                      Funksjon = table(Data$FunksjonH$ShNavn),
-      #                      Tilfredshet = table(Data$TilfredsH$ShNavn)
-      # )
-      return(AntReg)
+      AntSkjema <- addmargins(AntSkjema, margin=1, FUN=list('Hele landet' = sum))
+      return(AntSkjema)
 }
 
 
-#' @section Vise figurdata som tabell
+#' @section Vise figurdata som tabell, fordelingsfigur
 #' @rdname NordicScirtabeller
 #' @export
-lagTabavFig <- function(UtDataFraFig){
+lagTabavFigAndeler <- function(UtDataFraFig){
       tab <-cbind(UtDataFraFig$Ngr$Hoved, 
             UtDataFraFig$AggVerdier$Hoved, 
             UtDataFraFig$Ngr$Rest,
@@ -183,4 +176,15 @@ colnames(tab) <- c(paste0(UtDataFraFig$hovedgrTxt,', N'),
                    if(!is.null(UtDataFraFig$Ngr$Rest)){paste0(UtDataFraFig$smltxt, ', Andel (%)')})
 
 return(tab)
-                   }
+}
+
+#' @section Vise figurdata som tabell, fordelingsfigur
+#' @rdname NordicScirtabeller
+#' @export
+lagTabavFigGjsnGrVar <- function(UtDataFraFig){
+      tab <-cbind(UtDataFraFig$Ngr, 
+                  UtDataFraFig$AggVerdier$Hoved
+      )
+      colnames(tab) <- c('Antall (N)', UtDataFraFig$SentralmaalTxt)
+      return(tab)
+}
