@@ -70,18 +70,18 @@ NSPreprosesser <- function(RegData)
       RegData$Halvaar <- ceiling(RegData$MndNum/6)
       RegData$Aar <- 1900 + RegData$AdmitDt$year #strptime(RegData$Innleggelsestidspunkt, format="%Y")$year
       
-      #Konvertere boolske variable fra tekst til boolske variable...
-      TilLogiskeVar <- function(Skjema){
-            verdiGML <- c('True','False')
-            verdiNY <- c(TRUE,FALSE)
-            mapping <- data.frame(verdiGML,verdiNY)
-            LogVar <- names(Skjema)[which(Skjema[1,] %in% verdiGML)]
-            if (length(LogVar)>0) {
-                  for (k in 1:length(LogVar)) {
-                        Skjema[,LogVar[k]] <- mapping$verdiNY[match(Skjema[,LogVar[k]], mapping$verdiGML)]
-                  }}
-            return(Skjema)
-      }
+      # #Konvertere boolske variable fra tekst til boolske variable...
+      # TilLogiskeVar <- function(Skjema){
+      #       verdiGML <- c('True','False')
+      #       verdiNY <- c(TRUE,FALSE)
+      #       mapping <- data.frame(verdiGML,verdiNY)
+      #       LogVar <- names(Skjema)[which(Skjema[1,] %in% verdiGML)]
+      #       if (length(LogVar)>0) {
+      #             for (k in 1:length(LogVar)) {
+      #                   Skjema[,LogVar[k]] <- mapping$verdiNY[match(Skjema[,LogVar[k]], mapping$verdiGML)]
+      #             }}
+      #       return(Skjema)
+      # }
       
       RegData <- TilLogiskeVar(RegData)
       

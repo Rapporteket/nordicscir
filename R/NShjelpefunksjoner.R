@@ -38,25 +38,33 @@ SorterOgNavngiTidsEnhet <- function(RegData, tidsenhet='Aar') {
                                       Halvaar = RegData$Halvaar-min(RegData$Halvaar[RegData$Aar==min(RegData$Aar)])+1+
                                             (RegData$Aar-min(RegData$Aar))*2
       )
+      
+     # format(seq.Date(lubridate::floor_date(ymd('2017-03-09'), 'month'), as.Date('2018-06-01'), by = "month"), 
+      #                format = "%b%y")
       #as.factor(format(RegData$InnDato, '%b%y')) #
       tidtxt <- switch(tidsenhet,
-                       #Mnd = paste(substr(RegData$Aar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)], 3,4),
-                        #           sprintf('%02.0f', RegData$Mnd[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)]), sep='.'),
-                       Mnd = RegData$MndAar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)],
-                       Kvartal = paste(substr(RegData$Aar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)], 3,4),
-                                       sprintf('%01.0f', RegData$Kvartal[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)]), sep='-'),
-                       Halvaar = paste(substr(RegData$Aar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)], 3,4),
-                                       sprintf('%01.0f', RegData$Halvaar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)]), sep='-'),
-                       Aar = as.character(RegData$Aar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)]))
+                       Mnd = format(seq.Date(as.Date(lubridate::floor_date(min(RegData$InnDato), 'month')), max(RegData$InnDato),
+                                             by = "month"), format = "%b%y"),
+                       Kvartal = lubridate::quarter(seq.Date(as.Date(lubridate::floor_date(min(RegData$InnDato), 'month')), 
+                                                             max(RegData$InnDato), 
+                                                 by = "quarter"), with_year = T),
+                       #Kvartal = lubridate::quarter(RegData$InnDato, with_year = T),
+                       Halvaar = lubridate::semester(RegData$InnDato, with_year = T),
+                       Aar = min(RegData$Aar):max(RegData$Aar) #lubridate::year(min(RegData$InnDato)):year(max(RegData$InnDato))
+      )
       
+      
+      RegData$TidsEnhet <- factor(RegData$TidsEnhetSort, ordered = TRUE, 
+                                  levels = min(RegData$TidsEnhetSort):max(RegData$TidsEnhetSort),
+                                  labels=tidtxt)
       RegData$TidsEnhetSort <- factor(RegData$TidsEnhetSort, levels=1:max(RegData$TidsEnhetSort))
-      RegData$TidsEnhet <- factor(RegData$TidsEnhetSort, ordered = TRUE, labels=tidtxt)
       
       #RegData$TidsEnhet <- RegData$TidsEnhetSort
       #levels(RegData$TidsEnhet) <- tidtxt
       UtData <- list('RegData'=RegData, 'tidtxt'=tidtxt)
       return(UtData)
 }
+
 #' @section Lage tulledata (simulerte data)
 #' @rdname hjelpeFunksjoner
 #' @export
@@ -122,4 +130,21 @@ finnRegData <- function(valgtVar='Alder', Data = AlleTab){
       return(RegData)
 }
 
-      
+#' @section Konvertere boolske variable fra tekst til boolske variable...
+#' @param valgtVar Angir hvilke(n) variable det skal vises resultat for. 
+#' @param Data Liste med alle skjema/tabeller 
+#' @rdname hjelpeFunksjoner
+#' @export
+TilLogiskeVar <- function(Skjema){
+      verdiGML <- c('True','False')
+      verdiNY <- c(TRUE,FALSE)
+      mapping <- data.frame(verdiGML,verdiNY)
+      LogVar <- names(Skjema)[which(Skjema[1,] %in% verdiGML)]
+      if (length(LogVar)>0) {
+            for (k in 1:length(LogVar)) {
+                  Skjema[,LogVar[k]] <- mapping$verdiNY[match(Skjema[,LogVar[k]], mapping$verdiGML)]
+            }}
+      return(Skjema)
+}
+
+

@@ -65,16 +65,19 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                             )
                ),
                
-               
                mainPanel(
                      tabsetPanel(id='ark',
                                  tabPanel('Belegg',
-                                          h3("Belegg på rehabiliteringsavdelinga"),
-                                          p(em("Velg tidsperiode ved å velge sluttdato i menyen til venstre")),
-                                          fluidRow( tableOutput("tabBelegg")),
+                                          #p('Tabellene viser siste 12 måneder eller siste 5 år'),
+                                          uiOutput("undertittelBelegg"),
+                                          p("Velg tidsperiode ved å velge sluttdato/tidsenhet i menyen til venstre"), #em(
                                           br(),
                                           h3('Antall registreringer'),
-                                          fluidRow(tableOutput("tabAntOpphShMnd12"))
+                                          fluidRow(tableOutput("tabAntOpphShMnd12")),
+                                          br(),
+                                          h3("Belegg på rehabiliteringsavdelinga"), 
+                                          #uiOutput("undertittelBelegg"),
+                                          fluidRow( tableOutput("tabBelegg"))
                                  ),
                                  tabPanel('Oppfølgingsskjema',
                                           h3("Antall registreringsskjema med ulike oppfølgingsskjema"),
@@ -104,9 +107,9 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                               'Utskrevet til' = 'UtTil',
                                               'Skadeårsak ' = 'SkadeArsak',
                                               #'Fjern? Pustehjelp' = 'Pustehjelp[VentAssi]',
-                                              'Livskval.: Fornøydhet med livet' = 'LivsGen',
-                                              'Livskval.: Fornøydhet med fysisk helse' = 'LivsFys',
-                                              'Livskval.: Fornøydhet med psykisk helse' = 'LivsPsyk',
+                                              'Livskval.: Tilfredshet med livet' = 'LivsGen',
+                                              'Livskval.: Tilfredshet med fysisk helse' = 'LivsFys',
+                                              'Livskval.: Tilfredshet med psykisk helse' = 'LivsPsyk',
                                               'Ufrivillig urinlekkasje' = 'UrinInkontinens', 
                                               'Urin: Kirurgiske inngrep' = 'UrinKirInngr',
                                               'Urin: Legemiddelbruk' = 'UrinLegemidler',
@@ -184,9 +187,9 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                               'Tid fra skade til oppstart rehab.' = 'DagerTilRehab', 
                                               'Opphold, totalt antall dager' = 'OpphTot', 
                                               'Registreringsforsinkelse' = 'RegForsinkelse',
-                                              'Livskval.: Fornøydhet med livet' = 'LivsGen',
-                                              'Livskval.: Fornøydhet med fysisk helse' = 'LivsFys',
-                                              'Livskval.: Fornøydhet med psykisk helse' = 'LivsPsyk'
+                                              'Livskval.: Tilfredshet med livet' = 'LivsGen',
+                                              'Livskval.: Tilfredshet med fysisk helse' = 'LivsFys',
+                                              'Livskval.: Tilfredshet med psykisk helse' = 'LivsPsyk'
                                              )
                             ),
                             dateRangeInput(inputId = 'datovalgGjsnGrVar', start = "2017-07-01", end = Sys.Date(),
@@ -342,13 +345,25 @@ server <- function(input, output) {
                   contentType = 'application/pdf'
             )
       
+            
             output$tabBelegg <- renderTable(
-                  #print(as.numeric(input$enhetsNivaa)),
             tabBelegg(RegData = HovedSkjema, datoTil=input$sluttDatoReg, tidsenhet=input$tidsenhetReg, 
                       enhetsUtvalg=as.numeric(input$enhetsNivaa), reshID=reshID)
             , rownames = T, digits=0, spacing="xs"
             )
+            # output$tittelFord <- renderUI({
+            #       tagList(
+            #             h3(UtDataFord$tittel),
+            #             h5(HTML(paste0(UtDataFord$utvalgTxt, '<br />')))
+            #       )}) #, align='center'
             
+            output$undertittelBelegg <- renderUI({
+                  print(input$tidsenhetReg)
+                  t1 <- 'Tabellene viser innleggelser '
+                  h4(HTML(undertittel <- switch(input$tidsenhetReg,
+                         Mnd = paste0(t1, 'siste 12 måneder før ', input$sluttDatoReg, '<br />'),
+                         Aar = paste0(t1, 'siste 5 år før ', input$sluttDatoReg, '<br />'))
+                  ))})
       output$tabAntOpphShMnd12 <- renderTable({
             switch(input$tidsenhetReg,
                    Mnd=tabAntOpphShMnd(RegData=HovedSkjema, datoTil=input$sluttDatoReg, antMnd=12), #input$datovalgTab[2])  
@@ -380,6 +395,7 @@ server <- function(input, output) {
       observe({   #Fordelingsfigurer og tabeller
             #RegData <- finnRegData(Data = AlleTab, valgtVar <- 'UrinKirInngr')
             RegData <- finnRegData(valgtVar = input$valgtVar, Data = AlleTab)
+            RegData <- TilLogiskeVar(RegData)
             output$fordelinger <- renderPlot({
                   NSFigAndeler(RegData=RegData, valgtVar=input$valgtVar, preprosess = 0,
                                datoFra=input$datovalg[1], datoTil=input$datovalg[2], 
@@ -400,7 +416,6 @@ server <- function(input, output) {
                                        erMann=as.numeric(input$erMann), 
                                        enhetsUtvalg=as.numeric(input$enhetsUtvalg))
             tabFord <- lagTabavFigAndeler(UtDataFraFig = UtDataFord)
-            
             output$tittelFord <- renderUI({
                   tagList(
                         h3(UtDataFord$tittel),
@@ -411,13 +426,13 @@ server <- function(input, output) {
       })
       
       observe({ #Sykehusvise gjennomsnitt, figur og tabell
-            RegData <- finnRegData(valgtVar = input$valgtVar, Data = AlleTab)
+            RegData <- finnRegData(valgtVar = input$valgtVarGjsnGrVar, Data = AlleTab)
             output$gjsnGrVar <- renderPlot(
                   NSFigGjsnGrVar(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarGjsnGrVar,
                                  datoFra=input$datovalgGjsnGrVar[1], datoTil=input$datovalgGjsnGrVar[2], 
                                  AIS=input$AISGjsnGrVar, traume=input$traumeGjsnGrVar, paratetra=as.numeric(input$paratetraGjsnGrVar),
                                  minald=as.numeric(input$alderGjsnGrVar[1]), maxald=as.numeric(input$alderGjsnGrVar[2]), 
-                                 erMann=as.numeric(input$erMannGjsnGrVar, valgtMaal = input$sentralmaal)
+                                 erMann=as.numeric(input$erMannGjsnGrVar), valgtMaal = input$sentralmaal
                   ),
                   width = 800, height = 600)
             UtDataGjsnGrVar <- NSFigGjsnGrVar(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarGjsnGrVar,

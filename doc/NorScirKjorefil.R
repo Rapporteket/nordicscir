@@ -71,13 +71,13 @@ AktivTilfredshet$HovedskjemaGUID <- toupper(AktivTilfredshet$HovedskjemaGUID)
 #AktivTilfredshet$SkjemaGUID <- tolower(AktivTilfredshet$SkjemaGUID)
 
 
-KobleMedHoved <- function(HovedSkjema,Skjema2) {
-      varBegge <- intersect(names(Skjema2),names(HovedSkjema)) ##Variabelnavn som finnes i begge datasett
-      Skjema2 <- Skjema2[ ,c("HovedskjemaGUID", names(Skjema2)[!(names(Skjema2) %in% varBegge)])]  #"SkjemaGUID",
-      NSdata <- merge(HovedSkjema, Skjema2, suffixes = c('','XX'),
-                      by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = F, all.y=F)
-return(NSdata)
-}
+# KobleMedHoved <- function(HovedSkjema,Skjema2) {
+#       varBegge <- intersect(names(Skjema2),names(HovedSkjema)) ##Variabelnavn som finnes i begge datasett
+#       Skjema2 <- Skjema2[ ,c("HovedskjemaGUID", names(Skjema2)[!(names(Skjema2) %in% varBegge)])]  #"SkjemaGUID",
+#       NSdata <- merge(HovedSkjema, Skjema2, suffixes = c('','XX'),
+#                       by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = F, all.y=F)
+# return(NSdata)
+# }
 
 RegData <- KobleMedHoved(HovedSkjema,Livskvalitet)
 RegData <- HovedSkjema
@@ -129,7 +129,7 @@ library(nordicscir)
 setwd("C:/Registerinfo og historie/NordicScir/Figurer/")
 reshID <- 107627             ##105593-Haukeland, 106896-Sunnaas, 107627-St.Olavs, standard i funksj: 0 dvs. 'Alle'. Standard i rapporten skal v?re at man f?r opp eget sykehus.
 enhetsUtvalg <- 0
-minald <- 16
+minald <- 0
 maxald <- 130
 erMann <- 9                      #1-menn, 0-kvinner, Standard: '', dvs. begge
 traume <- ''    #'ja','nei', standard: ikke valgt
@@ -204,8 +204,9 @@ for (valgtVar in variable) {
 #------------------------------ Sentralmål --------------------------
 outfile <- '' #paste(valgtVar, '_Sh.png')	#Navn angis av Jasper
 valgtVar <- 'LivsGen'   #'Alder', 'DagerRehab', 'DagerTilRehab', 'OpphTot', 'LivsGen', 'LivsFys', 'LivsPsyk'
+datoFra <- '2017-07-01'
 Data <- NSFigGjsnGrVar(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
-		valgtMaal=valgtMaal, AIS=AIS, minald=minald, maxald=maxald, erMann=erMann, traume=traume)
+		valgtMaal='med', AIS=AIS, minald=minald, maxald=maxald, erMann=erMann, traume=traume)
 
 variable <- c('Alder', 'DagerRehab', 'DagerTilRehab', 'OpphTot', 'RegForsinkelse') 
 variable <- c('LivsGen', 'LivsFys', 'LivsPsyk') #Koble på livskvalitetsdata

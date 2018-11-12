@@ -24,7 +24,7 @@ NULL
 #' @section Belegg (antall opphold, pasienter og intensivdøgn). Siste inntil 5 år eller siste inntil 12 måneder/kvartal/halvår
 #' @rdname NordicScirtabeller
 #' @export
-tabBelegg <- function(RegData, tidsenhet='Aar', datoTil=Sys.Date(), enhetsUtvalg=2, reshID=0) {
+tabBelegg <- function(RegData, tidsenhet='Mnd', datoTil=Sys.Date(), enhetsUtvalg=0, reshID=0) {
       datoFra <- switch(tidsenhet, 
                         Mnd = lubridate::floor_date(as.Date(datoTil)%m-% months(12, abbreviate = T), 'month'), #as.Date(paste0(as.numeric(substr(datoTil,1,4))-1, substr(datoTil,5,8), '01'), tz='UTC')
                         Aar = paste0(lubridate::year(as.Date(datoTil))-4, '-01-01')
@@ -156,7 +156,7 @@ tabAntSkjema <- function(Data=AlleTab, datoFra='2017-01-01', datoTil=Sys.Date())
                       Funksjon = table(NSUtvalg(Data$FunksjonH, datoFra = datoFra, datoTil = datoTil)$RegData$ShNavn),
                       Tilfredshet = table(NSUtvalg(Data$TilfredsH, datoFra = datoFra, datoTil = datoTil)$RegData$ShNavn)
       )
-      AntSkjema <- addmargins(AntSkjema, margin=1, FUN=list('Hele landet' = sum))
+      AntSkjema <- addmargins(AntSkjema, margin=2, FUN=list('Hele landet' = sum))
       return(AntSkjema)
 }
 

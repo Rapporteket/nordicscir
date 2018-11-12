@@ -7,6 +7,7 @@
 \alias{delTekst}
 \alias{KobleMedHoved}
 \alias{finnRegData}
+\alias{TilLogiskeVar}
 \title{Hjelpefunksjoner. Group of functions page title}
 \usage{
 SorterOgNavngiTidsEnhet(RegData, tidsenhet = "Aar")
@@ -18,6 +19,8 @@ delTekst(x, len)
 KobleMedHoved(HovedSkjema, Skjema2, alleHovedskjema = F, alleSkjema2 = F)
 
 finnRegData(valgtVar = "Alder", Data = AlleTab)
+
+TilLogiskeVar(Skjema)
 }
 \arguments{
 \item{RegData}{data}
@@ -39,6 +42,10 @@ de registreringer som har ei oppfølgning (FALSE).}
 \item{Data}{Liste med alle skjema/tabeller}
 
 \item{PasientID}{Variabelen som angir pasientidentifikasjon}
+
+\item{valgtVar}{Angir hvilke(n) variable det skal vises resultat for.}
+
+\item{Data}{Liste med alle skjema/tabeller}
 }
 \value{
 Div hjelpefunksjoner
@@ -75,6 +82,10 @@ NA
 }
 
 \section{Hente data basert på valgtVar}{
+NA
+}
+
+\section{Konvertere boolske variable fra tekst til boolske variable...}{
 NA
 }
 
