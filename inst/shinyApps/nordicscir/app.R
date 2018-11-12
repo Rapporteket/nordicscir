@@ -358,7 +358,6 @@ server <- function(input, output) {
             #       )}) #, align='center'
             
             output$undertittelBelegg <- renderUI({
-                  print(input$tidsenhetReg)
                   t1 <- 'Tabellene viser innleggelser '
                   h4(HTML(undertittel <- switch(input$tidsenhetReg,
                          Mnd = paste0(t1, 'siste 12 måneder før ', input$sluttDatoReg, '<br />'),

@@ -1,21 +1,25 @@
 
 #-----------------------Lage eksempeldatasett-----------------------
 rm(list=ls())
-NorScirEksData <- read.table('E:/Registre/NorScir/data/NorScirEksempeldata.csv', header=T, sep=';')
-#perm.sammen:
-permA <- c('InjuryDt', 'AdmitDt', 'DischgDt', 'ANeuExmDt', 'FNeuExmDt', 'QolDt', 
-		'AdmitRehDt', 'CNeuExmDt', 'InjuryDateUnknown')
+# NorScirEksData <- read.table('E:/Registre/NorScir/data/NorScirEksempeldata.csv', header=T, sep=';')
+# #perm.sammen:
+# permA <- c('InjuryDt', 'AdmitDt', 'DischgDt', 'ANeuExmDt', 'FNeuExmDt', 'QolDt', 
+# 		'AdmitRehDt', 'CNeuExmDt', 'InjuryDateUnknown')
+# 
+# permB <- c('ReshId', 'ShNavn')
+# N <- dim(NorScirEksData)[1]
+# 
+# NorScirEksData[ ,permA] <- NorScirEksData[sample(N, N),permA]
+# NorScirEksData[ ,permB] <- NorScirEksData[sample(N, N),permB]
+# NorScirEksData$PasientId <- NorScirEksData$PasientId[sample(N,N)]
+# NorScirEksData$isMale <- NorScirEksData$isMale[sample(N,N)]
+# NorScirEksData$AlderAar <- NorScirEksData$AlderAar[sample(N,N)]
 
-permB <- c('ReshId', 'ShNavn')
-N <- dim(NorScirEksData)[1]
-
-NorScirEksData[ ,permA] <- NorScirEksData[sample(N, N),permA]
-NorScirEksData[ ,permB] <- NorScirEksData[sample(N, N),permB]
-NorScirEksData$PasientId <- NorScirEksData$PasientId[sample(N,N)]
-NorScirEksData$isMale <- NorScirEksData$isMale[sample(N,N)]
-NorScirEksData$AlderAar <- NorScirEksData$AlderAar[sample(N,N)]
-
-save(NorScirEksData, file='E:/Registre/NordicScir/data/NorScirEksData.Rdata')
+varBort <- c('ShNavn', 'RHF', 'HF', 'MunicipalNumber', 'Municipal', 'PostalCode', 'HealthUnitName', 'Hospital', 'HealthUnitId')
+RegTull <- lageTulleData(HovedSkjema, varBort=varBort, antSh=3) 
+HovedSkjema <- RegTull
+#RegData$AdmitDt <- as.Date(RegData$AdmitDt)
+save(HovedSkjema, file='A:/NordicScir/HovedSkjema.RData')
 #write.table(NorScirEksData, file='E:/Registre/NordicScir/data/NorScirEksData.csv', sep=';')
 
 #--------------------------------------SAMLERAPPORT-----------------------------------
@@ -81,7 +85,10 @@ AktivTilfredshet$HovedskjemaGUID <- toupper(AktivTilfredshet$HovedskjemaGUID)
 
 RegData <- KobleMedHoved(HovedSkjema,Livskvalitet)
 RegData <- HovedSkjema
-RegData <- NSPreprosesser(RegData)
+HovedSkjema <- NSPreprosesser(HovedSkjema)
+
+save(AktivTilfredshet, file='AktivTilfredshet.RData')
+
 # Jeg har koblet i to steg i R etter følgende skisse:
 #       NyTab = AktivFunksjon.SkjemaGUID <-> Satisfaction. HovedskjemaGUID  
 # Main.SkjemaGUID <-> NyTab. HovedskjemaGUID  

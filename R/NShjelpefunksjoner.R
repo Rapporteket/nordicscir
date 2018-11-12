@@ -65,7 +65,7 @@ SorterOgNavngiTidsEnhet <- function(RegData, tidsenhet='Aar') {
       return(UtData)
 }
 
-#' @section Lage tulledata (simulerte data)
+#' @section Lage tulledata (simulerte data). Takler ikke posixlt- type data.
 #' @rdname hjelpeFunksjoner
 #' @export
 lageTulleData <- function(RegData, varBort='ShNavn', antSh=27) {
@@ -78,10 +78,11 @@ lageTulleData <- function(RegData, varBort='ShNavn', antSh=27) {
       sykehus <- paste('Sykehus', LETTERS[1:antSh])
       fordelingPasienter <- sample(1:antSh,antSh)
       RegData$SykehusNavn <- sample(sykehus, prob=fordelingPasienter/sum(fordelingPasienter), size=dim(RegData)[1], replace=T)
-      RegDataSyn <- synthpop::syn(RegData, method = "sample", seed = 500) #Trekker med tilbakelegging
+      RegDataSyn <- synthpop::syn(RegData, method = "sample") #, seed = 500) #Trekker med tilbakelegging
       RegData <- data.frame(RegDataSyn$syn) # FÅR feilmld...
 	  return(RegData)
-}
+
+      }
 
 #' @section Automatisk linjebryting av lange tekstetiketter
 #' @param x En tekststreng eller vektor av tekststrenger
