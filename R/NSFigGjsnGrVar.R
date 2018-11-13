@@ -61,9 +61,9 @@ NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='gjsn', grVar='ShNavn',
                DagerTilRehab='antall dager før rehabilitering',
                OpphTot= 'totalt opphold',
                RegForsinkelse= 'registreringsforsinkelse',
-               LivsGen= 'fornøydhet med livet',
-            LivsFys = 'fornøydhet, fysisk helse',
-            LivsPsyk = 'fornøydhet, psykisk helse'
+               LivsGen= 'tilfredshet med livet',
+            LivsFys = 'tilfredshet, fysisk helse',
+            LivsPsyk = 'tilfredshet, psykisk helse'
                )
   
   

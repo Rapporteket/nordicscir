@@ -19,9 +19,8 @@ NSPreprosesser <- function(RegData)
      #med bruk av ekstra pakker kan dette gjøres mer elegant 
       #NYE VARIABLE
       #Kjønn
-      RegData$erMann <- NULL
-      RegData$erMann[RegData$PatientGender == 'Female'] <- 0
-      RegData$erMann[RegData$PatientGender == 'Male'] <- 1
+      RegData$erMann <- RegData$PatientGender
+      RegData$erMann[RegData$PatientGender == 2] <- 0 #Ingen manglende verdier i variabelen
       
       #****'Tetraplegi*****.
       #      0: 'Paraplegi', 1: 'Tetraplegi', 9: 'Ukjent'.
@@ -64,7 +63,7 @@ NSPreprosesser <- function(RegData)
       #	RegData$alder <- as.numeric(RegData$decimalAge)	#
       
       #Riktig format på datovariable:
-      RegData$InnDato <- as.POSIXlt(RegData$AdmitDt, format="%Y-%m-%d") #as.POSIXlt(RegData$AdmitDt, format="%Y-%m-%d")
+      RegData$InnDato <- as.Date(RegData$AdmitDt, tz= 'UTC', format="%Y-%m-%d") #as.POSIXlt(RegData$AdmitDt, format="%Y-%m-%d")
       RegData$Aar <- as.POSIXlt(RegData$AdmitDt, format="%Y-%m-%d")$year +1900
       
       #Konvertere boolske variable fra tekst til boolske variable...
@@ -73,9 +72,10 @@ NSPreprosesser <- function(RegData)
             verdiNY <- c(TRUE,FALSE)
             mapping <- data.frame(verdiGML,verdiNY)
             LogVar <- names(Skjema)[which(Skjema[1,] %in% verdiGML)]
-            for (k in 1:length(LogVar)) {
-                  Skjema[,LogVar[k]] <- mapping$verdiNY[match(Skjema[,LogVar[k]], mapping$verdiGML)]
-            }
+            if (length(LogVar)>0) {
+                  for (k in 1:length(LogVar)) {
+                        Skjema[,LogVar[k]] <- mapping$verdiNY[match(Skjema[,LogVar[k]], mapping$verdiGML)]
+                  }}
             return(Skjema)
       }
       

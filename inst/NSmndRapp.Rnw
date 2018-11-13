@@ -21,7 +21,7 @@ library(nordicscir)
 library(knitr)
 library(tools)
 datoTil <- Sys.Date()
-dato <- as.POSIXlt(datoTil)
+dato <- as.POSIXlt(datoTil, tz='UTC')
 datoFra <- as.Date(paste0(1900+dato$year-1,'-', dato$mon+1, '-', '01'))
 aarFra <- paste0(1900+dato$year-5, '-01-01')
       
@@ -57,11 +57,11 @@ if (!exists('HovedSkjema')){
 Kontroll <- Kontroll[Kontroll$NoControl=='False', ] # & Kontroll$CNum==1, ]
 
 #RegData <- NSRegDataSQL(datoFra=datoFra, datoTil=datoTil)
-HovedSkjema <- NSPreprosesser(RegData=HovedSkjema[which(HovedSkjema$AdmitDt > as.POSIXlt('2011-01-01')), ])
+HovedSkjema <- NSPreprosesser(RegData=HovedSkjema[which(HovedSkjema$AdmitDt > as.Date('2011-01-01')), ])
 HovedSkjema$ShNavn <- factor(HovedSkjema$ShNavn)
 HovedSkjema$SkjemaGUID <- toupper(HovedSkjema$SkjemaGUID)
-HovedSkjema5aar <- HovedSkjema[which(HovedSkjema$InnDato > as.POSIXlt(aarFra)), ]
-HovedSkjema12mnd <- HovedSkjema[which(HovedSkjema$InnDato > as.POSIXlt(datoFra)), ]
+HovedSkjema5aar <- HovedSkjema[which(HovedSkjema$InnDato > as.Date(aarFra)), ]
+HovedSkjema12mnd <- HovedSkjema[which(HovedSkjema$InnDato > as.Date(datoFra)), ]
 HovedSkjema$Aar <- factor(HovedSkjema$Aar, levels = 2011:(1900+dato$year))
 HovedSkjema5aar$Aar <- factor(HovedSkjema5aar$Aar, levels = (1900+dato$year-4):(1900+dato$year))
 
@@ -228,7 +228,6 @@ xtable::xtable(AndelMKtr, digits=1, align=c('l', rep('r', ncol(AndelMKtr))),
 
 
 
-\section{Pasientkarakteristika}
 
 <<'LageFigurer', include=FALSE>>=
 
@@ -245,6 +244,19 @@ for (valgtVar in variable) {
 #NSFigGjsnGrVar(RegData=HovedSkjema12mnd, hentData=0, preprosess = 0, outfile=outfile, valgtVar=valgtVar, 
 #               datoFra=datoFra, datoTil=datoTil)
 @
+
+\section{Pasientkarakteristika}
+
+\begin{frame}[fragile]
+\begin{figure}[ht]
+\centering
+\includegraphics[scale=0.35]{RegForsinkelse.pdf}
+\caption{Registreringsforsinkelse. Kvalitetsmålet er registrering innen 30 dager. Målet ble innført 2018-01-01.}
+\end{figure}
+
+Variabelen ble innført i desember og alle hovedskjema ferdigstilt (lukket første gang) etter desember 2017 vil derfor kunne inngå i figuren siden datoutvalget er basert på dato for innleggelse på akuttsykehus.
+
+\end{frame}
 
 
 \begin{frame}[fragile]
@@ -282,17 +294,6 @@ for (valgtVar in variable) {
 \end{frame}
 
 
-\begin{frame}[fragile]
-\begin{figure}[ht]
-\centering
-\includegraphics[scale=0.35]{RegForsinkelse.pdf}
-\caption{Registreringsforsinkelse. Kvalitetsmålet er registrering innen 30 dager. Målet ble innført 2018-01-01.}
-\end{figure}
-
-Variabelen ble innført i desember og alle hovedskjema ferdigstilt (lukket første gang) etter desember 2017 vil derfor kunne inngå i figuren siden datoutvalget er basert på dato for innleggelse på akuttsykehus.
-
-\end{frame}
-
 
 \section{Nevrologisk klassifikasjon}
 
@@ -306,10 +307,10 @@ NevrKlass <- rbind(
 'Utført og klassifiserbar, utreise: ' = 
       addmargins(table(HovedSkjema12mnd$ShNavn[HovedSkjema12mnd$FAis %in% 1:5])), 
 'Ikke utført  ved innkomst:' = 
-      addmargins(table(HovedSkjema12mnd$ShNavn[HovedSkjema12mnd$ANeuNoMeasure == TRUE 
+      addmargins(table(HovedSkjema12mnd$ShNavn[HovedSkjema12mnd$ANeuNoMeasure == TRUE #-1 
                                                & HovedSkjema12mnd$AAis == -1])),
 'Ikke utført ved utreise:' =
-      addmargins(table(HovedSkjema12mnd$ShNavn[HovedSkjema12mnd$FNeuNoMeasure == TRUE 
+      addmargins(table(HovedSkjema12mnd$ShNavn[HovedSkjema12mnd$FNeuNoMeasure == TRUE #-1 
                                           & HovedSkjema12mnd$FAis == -1])),
 'Utført, men ikke klassifiserbar, innkomst: ' = 
       addmargins(table(HovedSkjema12mnd$ShNavn[HovedSkjema12mnd$AAis==9])),
@@ -341,6 +342,7 @@ NevrKlass28 <- rbind(
 'Utført og klassifiserbar, utreise: ' = 
       addmargins(table(HovedSkjema28$ShNavn[HovedSkjema28$FAis %in% 1:5])), 
 'Ikke utført ved innkomst:' = 
+#      addmargins(table(HovedSkjema28$ShNavn[HovedSkjema28$ANeuNoMeasure == -1 & HovedSkjema28$AAis == -1])),
       addmargins(table(HovedSkjema28$ShNavn[HovedSkjema28$ANeuNoMeasure == TRUE & HovedSkjema28$AAis == -1])),
 'Ikke utført ved utreise:' =
       addmargins(table(HovedSkjema28$ShNavn[HovedSkjema28$FNeuNoMeasure == TRUE & HovedSkjema28$FAis == -1])),

@@ -43,7 +43,7 @@ file.remove(file=removeFiles)
 #------------------------ LASTE DATA -------------------------------------
 
 rm(list=ls())
-dato <- 'FormDataContract2018-02-13' #2017-05-24
+dato <- 'FormDataContract2018-09-20' #2017-05-24
 sti <- 'A:/NordicScir/'
 HovedSkjema <- read.table(paste0(sti, 'Main',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
 Livskvalitet <- read.table(paste0(sti, 'LifeQuality',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
@@ -80,6 +80,10 @@ return(NSdata)
 RegData <- KobleMedHoved(HovedSkjema,Tarm)
 RegData <- HovedSkjema
 
+# Jeg har koblet i to steg i R etter følgende skisse:
+#       NyTab = Performance.SkjemaGUID <-> Satisfaction. HovedskjemaGUID  
+# Main.SkjemaGUID <-> NyTab. HovedskjemaGUID  
+
 #------------------------ TESTE DATA -------------------------------------
 
 #---Oppsummering/test av andel som har fått oppfølging---
@@ -115,25 +119,25 @@ library(nordicscir)
 setwd("C:/Registerinfo og historie/NordicScir/Figurer/")
 reshID <- 107627             ##105593-Haukeland, 106896-Sunnaas, 107627-St.Olavs, standard i funksj: 0 dvs. 'Alle'. Standard i rapporten skal v?re at man f?r opp eget sykehus.
 enhetsUtvalg <- 0
-minald <- 0
+minald <- 16
 maxald <- 130
 erMann <- 9                      #1-menn, 0-kvinner, Standard: '', dvs. begge
 traume <- ''    #'ja','nei', standard: ikke valgt
 AIS <- 99 # as.character(c(1,4))	#AISgrad ved innleggelse alle(''), velge en eller flere fra 1:5
 paratetra <- 99
-datoFra <- '2016-01-01'             #Standard: bør være minste registrerte verdi ? min og max dato i utvalget vises alltid i figuren.
-datoTil <- '2018-12-31'
+datoFra <- '2017-01-01'             #Standard: bør være minste registrerte verdi ? min og max dato i utvalget vises alltid i figuren.
+datoTil <- '2018-06-28'
 valgtMaal='gjsn'	#'Med'-median, 'Gjsn' gjennomsnitt
 grVar <- 'ShNavn'
 
 #------------------------------ Fordelinger --------------------------
 RegData <- HovedSkjema
-valgtVar <- 'AAis'	#AAis, FAis, Alder, DagerRehab, DagerTilRehab, NivaaInn, Ntsci,
+valgtVar <- 'UtTil'	#AAis, FAis, Alder, DagerRehab, DagerTilRehab, NivaaInn, Ntsci,
 					#OpphTot[HosptlDy], Permisjon[OutOfHosptlDy], UtTil[PlaceDis], 
                              	#Pustehjelp[VentAssi], PPlaceDis, RegForsinkelse,  #SkadeArsak[Scietiol]  
 #UrinSkjema: 
 RegData <- KobleMedHoved(HovedSkjema,Urin)
-valgtVar <- 'UrinTomBlareHoved'   #'UrinInkontinens', 'UrinLegemidler','UrinLegemidlerHvilke', 'UrinKirInngr', 
+valgtVar <- 'UrinLegemidlerHvilke'   #'UrinInkontinens', 'UrinLegemidler','UrinLegemidlerHvilke', 'UrinKirInngr', 
                                     #'UrinTomBlareHoved', 'UrinTomBlareTillegg'
 #TarmSkjema: 
 RegData <- KobleMedHoved(HovedSkjema,Tarm)
@@ -142,7 +146,7 @@ valgtVar <- 'TarmAvfHoved'   #'TarmAvfHoved','TarmAvfTillegg', TarmAvfmiddel, Ta
 
 #Livskvalitet
 RegData <- KobleMedHoved(RegData,Livskvalitet)
-valgtVar <- 'LivsGen'                #LivsGen, LivsFys, LivsPsyk
+valgtVar <- 'LivsPsyk'                #LivsGen, LivsFys, LivsPsyk
 
 #Funksjon (Aktivitet og deltagelse)
 RegData <- KobleMedHoved(HovedSkjema,Performance)

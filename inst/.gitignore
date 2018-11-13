@@ -2,3 +2,6 @@
 *.dvi
 *.out
 *.pdf
+*.nav
+*.snm
+*.vrb
