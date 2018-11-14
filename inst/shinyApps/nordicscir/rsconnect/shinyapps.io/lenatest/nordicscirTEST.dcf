@@ -1,0 +1,12 @@
+name: nordicscirTEST
+title: nordicscirTEST
+username:
+account: lenatest
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 570439
+bundleId: 1700432
+url: https://lenatest.shinyapps.io/nordicscirTEST/
+when: 1542202433.72702
+asMultiple: FALSE
+asStatic: FALSE
