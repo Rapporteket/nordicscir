@@ -1,0 +1,12 @@
+name: nordicscirFIKTIVE_DATA
+title: nordicscirFIKTIVE_DATA
+username:
+account: lenatest
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 570243
+bundleId: 1700192
+url: https://lenatest.shinyapps.io/nordicscirFIKTIVE_DATA/
+when: 1542191826.60313
+asMultiple: FALSE
+asStatic: FALSE

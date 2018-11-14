@@ -24,7 +24,8 @@ tabAntOpphPasSh5Aar(RegData, gr = "opph", datoTil)
 tabSkjemaTilknyttetH(Data = AlleTab, datoFra = "2017-01-01",
   datoTil = Sys.Date())
 
-tabAntSkjema(Data = AlleTab, datoFra = "2017-01-01", datoTil = Sys.Date())
+tabAntSkjema(Data = AlleTab, datoFra = "2017-01-01",
+  datoTil = Sys.Date())
 
 lagTabavFigAndeler(UtDataFraFig)
 

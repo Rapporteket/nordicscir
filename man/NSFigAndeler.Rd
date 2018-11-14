@@ -6,8 +6,8 @@
 \usage{
 NSFigAndeler(RegData, outfile = "", valgtVar, datoFra = "2010-01-01",
   datoTil = "2050-01-01", AIS = "", minald = 0, maxald = 130,
-  erMann = 99, traume = "", paratetra = 99, enhetsUtvalg = 1, reshID,
-  hentData = 0, preprosess = 1)
+  erMann = 99, traume = "", paratetra = 99, enhetsUtvalg = 1,
+  reshID, hentData = 0, preprosess = 1)
 }
 \arguments{
 \item{RegData}{- ei dataramme med alle nødvendige variable fra registeret.}
