@@ -28,16 +28,13 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                        tags$li("Navn på faner"), 
                        tags$li("Layout på sider ?"), 
                        tags$li("Ønskes annen organisering av innhold?"), 
-                       tags$li("Kun en figur på hver side, eller fint å vise to samtidig som under 'Andeler'? "),
                        tags$li("Hvilke utvalgs/filtreringsmuligheter skal vi ha i de ulike fanene"), 
                        tags$li("Innhold i tabeller som vises i tilknytning til figurer.")
                ),
                br(),
                tags$ul(tags$b('Kommer: '),
-                        tags$li("Tabeller fra figurene"),
-                        tags$li("Laste ned tabeller"),
-                        tags$li("Tulledata"),
-                        tags$li("Gj.sn. tid?")
+                       tags$li("Riktig antall desimaler i tabeller"),
+                        tags$li("Mulighet for å laste ned tabeller")
                )
       ), #tab
       
@@ -75,7 +72,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                           h3('Antall registreringer'),
                                           fluidRow(tableOutput("tabAntOpphShMnd12")),
                                           br(),
-                                          h3("Belegg på rehabiliteringsavdelinga"), 
+                                          h3("Belegg på rehabiliteringsavdelinga - ønskes flere/andre variable?"), 
                                           #uiOutput("undertittelBelegg"),
                                           fluidRow( tableOutput("tabBelegg"))
                                  ),
@@ -279,20 +276,29 @@ server <- function(input, output) {
                   AktivFunksjon <- rapbase::LoadRegData(registryName, qFunk, dbType)
                   AktivTilfredshet <- rapbase::LoadRegData(registryName, qTilf, dbType)
                   } #hente data på server
-      
-      
+
       #Hente data og evt. parametre som er statistke i appen
       if (!exists('HovedSkjema')){
+            #Tulledata:
+            data('HovedSkjemaTull', package = 'nordicscir')
+            data('LivskvalitetTull', package = 'nordicscir')
+            data('KontrollTull', package = 'nordicscir')
+            data('UrinTull', package = 'nordicscir')
+            data('TarmTull', package = 'nordicscir')
+            data('AktivFunksjonTull', package = 'nordicscir')
+            data('AktivTilfredshetTull', package = 'nordicscir')
             
-            dato <- 'FormDataContract2018-11-01' #2017-05-24
-            sti <- 'A:/NordicScir/'
-            HovedSkjema <- read.table(paste0(sti, 'Main',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
-            Livskvalitet <- read.table(paste0(sti, 'LifeQuality',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
-            Kontroll <- read.table(paste0(sti, 'Control', dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
-            Urin <- read.table(paste0(sti, 'UrinaryTractFunction', dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
-            Tarm <- read.table(paste0(sti, 'BowelFunction',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
-            AktivFunksjon <- read.table(paste0(sti, 'ActivityAndParticipationPerformance',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
-            AktivTilfredshet <- read.table(paste0(sti, 'ActivityAndParticipationSatisfaction',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
+            
+            #Laste ekte data lokalt
+            # dato <- 'FormDataContract2018-11-01' #2017-05-24
+            # sti <- 'A:/NordicScir/'
+            # HovedSkjema <- read.table(paste0(sti, 'Main',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
+            # Livskvalitet <- read.table(paste0(sti, 'LifeQuality',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
+            # Kontroll <- read.table(paste0(sti, 'Control', dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
+            # Urin <- read.table(paste0(sti, 'UrinaryTractFunction', dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
+            # Tarm <- read.table(paste0(sti, 'BowelFunction',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
+            # AktivFunksjon <- read.table(paste0(sti, 'ActivityAndParticipationPerformance',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
+            # AktivTilfredshet <- read.table(paste0(sti, 'ActivityAndParticipationSatisfaction',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
             
             Livskvalitet$HovedskjemaGUID <- toupper(Livskvalitet$HovedskjemaGUID)
             Kontroll$HovedskjemaGUID <- toupper(Kontroll$HovedskjemaGUID)

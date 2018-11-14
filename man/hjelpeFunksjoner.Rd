@@ -69,7 +69,7 @@ Probably better if all sections come first, uless have one section per function.
 see the information flow.
 }
 
-\section{Lage tulledata (simulerte data)}{
+\section{Lage tulledata (simulerte data). Takler ikke posixlt- type data.}{
 NA
 }
 

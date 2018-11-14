@@ -16,10 +16,31 @@ rm(list=ls())
 # NorScirEksData$AlderAar <- NorScirEksData$AlderAar[sample(N,N)]
 
 varBort <- c('ShNavn', 'RHF', 'HF', 'MunicipalNumber', 'Municipal', 'PostalCode', 'HealthUnitName', 'Hospital', 'HealthUnitId')
-RegTull <- lageTulleData(HovedSkjema, varBort=varBort, antSh=3) 
-HovedSkjema <- RegTull
-#RegData$AdmitDt <- as.Date(RegData$AdmitDt)
-save(HovedSkjema, file='A:/NordicScir/HovedSkjema.RData')
+HovedSkjema <- lageTulleData(HovedSkjema, varBort=varBort, antSh=3) 
+save(HovedSkjema, file='A:/NordicScir/HovedSkjemaTull.RData')
+
+Livskvalitet <- lageTulleData(Livskvalitet, varBort=varBort, antSh=3) 
+save(Livskvalitet, file='A:/NordicScir/LivskvalitetTull.RData')
+
+Kontroll <- lageTulleData(Kontroll, varBort=varBort, antSh=3) 
+save(Kontroll, file='A:/NordicScir/KontrollTull.RData')
+
+Urin <- lageTulleData(Urin, varBort=varBort, antSh=3) 
+save(Urin, file='A:/NordicScir/UrinTull.RData')
+
+Tarm <- lageTulleData(Tarm, varBort=varBort, antSh=3) 
+save(Tarm, file='A:/NordicScir/TarmTull.RData')
+
+AktivFunksjon <- lageTulleData(AktivFunksjon, varBort=varBort, antSh=3) 
+save(AktivFunksjon, file='A:/NordicScir/AktivFunksjonTull.RData')
+
+AktivTilfredshet <- lageTulleData(AktivTilfredshet, varBort=varBort, antSh=3) 
+save(AktivTilfredshet, file='A:/NordicScir/AktivTilfredshetTull.RData')
+
+
+
+
+
 #write.table(NorScirEksData, file='E:/Registre/NordicScir/data/NorScirEksData.csv', sep=';')
 
 #--------------------------------------SAMLERAPPORT-----------------------------------
