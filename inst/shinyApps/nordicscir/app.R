@@ -300,7 +300,7 @@ server <- function(input, output) {
             # Tarm <- read.table(paste0(sti, 'BowelFunction',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
             # AktivFunksjon <- read.table(paste0(sti, 'ActivityAndParticipationPerformance',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
             # AktivTilfredshet <- read.table(paste0(sti, 'ActivityAndParticipationSatisfaction',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
-            
+      }  
             Livskvalitet$HovedskjemaGUID <- toupper(Livskvalitet$HovedskjemaGUID)
             Kontroll$HovedskjemaGUID <- toupper(Kontroll$HovedskjemaGUID)
             Urin$HovedskjemaGUID <- toupper(Urin$HovedskjemaGUID)
@@ -313,7 +313,7 @@ server <- function(input, output) {
             # sum(AktivFunksjon$HovedskjemaGUID %in% HovedSkjema$SkjemaGUID)
             # sum(AktivTilfredshet$HovedskjemaGUID %in% HovedSkjema$SkjemaGUID)
             # sum(AktivTilfredshet$HovedskjemaGUID %in% AktivFunksjon$SkjemaGUID)
-      }
+      #}
       
       HovedSkjema <- NSPreprosesser(HovedSkjema)
       LivskvalitetH <- KobleMedHoved(HovedSkjema,Livskvalitet)
