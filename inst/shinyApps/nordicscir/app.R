@@ -7,7 +7,7 @@ library(lubridate)
 
 
 ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
-      title = 'NORSK SPINNALSKADEREGISTER',
+      title = 'NORSK SPINNALSKADEREGISTER med FIKTIVE data',
       tabPanel("Viktigste resultater/Oversiktsside",
                #fluidRow(
                #column(width=5,
