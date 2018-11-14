@@ -6,8 +6,7 @@
 \usage{
 NSUtvalg(RegData, datoFra = "2010-01-01", datoTil = "3000-05-25",
   minald = 0, maxald = 110, erMann = 99, traume = "", AIS = "",
-  enhetsUtvalg = 0, paratetra = 99, reshID = 0,
-  fargepalett = "BlaaOff")
+  enhetsUtvalg = 0, paratetra = 99, reshID = 0, fargepalett = "BlaaOff")
 }
 \arguments{
 \item{datoFra}{<- '2010-01-01'    # min og max dato i utvalget vises alltid i figuren.}

@@ -16,8 +16,7 @@ lageTulleData(RegData, varBort = "ShNavn", antSh = 27)
 
 delTekst(x, len)
 
-KobleMedHoved(HovedSkjema, Skjema2, alleHovedskjema = F,
-  alleSkjema2 = F)
+KobleMedHoved(HovedSkjema, Skjema2, alleHovedskjema = F, alleSkjema2 = F)
 
 finnRegData(valgtVar = "Alder", Data = AlleTab)
 

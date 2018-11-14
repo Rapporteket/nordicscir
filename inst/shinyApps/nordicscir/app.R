@@ -280,13 +280,14 @@ server <- function(input, output) {
       #Hente data og evt. parametre som er statistke i appen
       if (!exists('HovedSkjema')){
             #Tulledata:
-            data('HovedSkjemaTull', package = 'nordicscir')
-            data('LivskvalitetTull', package = 'nordicscir')
-            data('KontrollTull', package = 'nordicscir')
-            data('UrinTull', package = 'nordicscir')
-            data('TarmTull', package = 'nordicscir')
-            data('AktivFunksjonTull', package = 'nordicscir')
-            data('AktivTilfredshetTull', package = 'nordicscir')
+            data('NordicScirFIKTIVEdata', package = 'nordicscir')
+            # data('HovedSkjemaTull', package = 'nordicscir')
+            # data('LivskvalitetTull', package = 'nordicscir')
+            # data('KontrollTull', package = 'nordicscir')
+            # data('UrinTull', package = 'nordicscir')
+            # data('TarmTull', package = 'nordicscir')
+            # data('AktivFunksjonTull', package = 'nordicscir')
+            # data('AktivTilfredshetTull', package = 'nordicscir')
             
             
             #Laste ekte data lokalt

@@ -37,7 +37,8 @@ save(AktivFunksjon, file='A:/NordicScir/AktivFunksjonTull.RData')
 AktivTilfredshet <- lageTulleData(AktivTilfredshet, varBort=varBort, antSh=3) 
 save(AktivTilfredshet, file='A:/NordicScir/AktivTilfredshetTull.RData')
 
-
+objekter <- c('HovedSkjema', 'Livskvalitet', 'Kontroll', 'Urin', 'Tarm', 'AktivFunksjon', 'AktivTilfredshet')
+save(list = objekter, file='A:/NordicScir/NordicScirFIKTIVEdata.RData')
 
 
 
