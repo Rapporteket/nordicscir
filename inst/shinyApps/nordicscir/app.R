@@ -24,6 +24,12 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
  
                br(),
                br(),
+               h5('Tabell med Nevrologisk klassi kasjon for ferdigstilte innleggelser fra og
+med 2017-11-01. Pasienter med liggetid over 28 dager i
+                  ryggmargsskadeavdeling'),
+               h5('Registreringsforsinkelse fordeling, se årsrapp. s.32 om målnivå innen 1 mnd'),
+               h5('Liggetid tot. Liggetid rehab. Liggetid før rehab: min/max, gjsn, median'),
+               h5('Velge traumatisk/ikke'),
                tags$ul(tags$b('Andre ting å ta stilling til: '),
                        tags$li("Navn på faner"), 
                        tags$li("Layout på sider ?"), 
@@ -69,10 +75,10 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                           uiOutput("undertittelBelegg"),
                                           p("Velg tidsperiode ved å velge sluttdato/tidsenhet i menyen til venstre"), #em(
                                           br(),
-                                          h3('Antall registreringer'),
+                                          h3('Antall nyskadede LEGG TIL UTVALG TRAUMATISK/ikke'),
                                           fluidRow(tableOutput("tabAntOpphShMnd12")),
                                           br(),
-                                          h3("Belegg på rehabiliteringsavdelinga - ønskes flere/andre variable?"), 
+                                          h3("Belegg FJERNES! på rehabiliteringsavdelinga - ønskes flere/andre variable?"), 
                                           #uiOutput("undertittelBelegg"),
                                           fluidRow( tableOutput("tabBelegg"))
                                  ),
@@ -102,6 +108,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                               'Opphold, totalt antall dager' = 'OpphTot', 
                                               #'Fjern? Permisjon (ant. døgn ute av sykehus) ' = 'Permisjon',
                                               'Utskrevet til' = 'UtTil',
+                                              'Registreringsforsinkelse' = 'RegForsinkelse',
                                               'Skadeårsak ' = 'SkadeArsak',
                                               #'Fjern? Pustehjelp' = 'Pustehjelp[VentAssi]',
                                               'Livskval.: Tilfredshet med livet' = 'LivsGen',
@@ -278,7 +285,7 @@ server <- function(input, output) {
                   } #hente data på server
 
       #Hente data og evt. parametre som er statistke i appen
-      if (!exists('HovedSkjema')){
+     if (!exists('HovedSkjema')){
             #Tulledata:
             data('NordicScirFIKTIVEdata', package = 'nordicscir')
             # data('HovedSkjemaTull', package = 'nordicscir')
@@ -291,12 +298,12 @@ server <- function(input, output) {
             
             
             #Laste ekte data lokalt
-            # dato <- 'FormDataContract2018-11-01' #2017-05-24
+            # dato <- 'FormDataContract2018-01-30' #2017-05-24
             # sti <- 'A:/NordicScir/'
             # HovedSkjema <- read.table(paste0(sti, 'Main',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
             # Livskvalitet <- read.table(paste0(sti, 'LifeQuality',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
             # Kontroll <- read.table(paste0(sti, 'Control', dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
-            # Urin <- read.table(paste0(sti, 'UrinaryTractFunction', dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
+            # #Urin <- read.table(paste0(sti, 'UrinaryTractFunction', dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
             # Tarm <- read.table(paste0(sti, 'BowelFunction',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
             # AktivFunksjon <- read.table(paste0(sti, 'ActivityAndParticipationPerformance',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
             # AktivTilfredshet <- read.table(paste0(sti, 'ActivityAndParticipationSatisfaction',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
