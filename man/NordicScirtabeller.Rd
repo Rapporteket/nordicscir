@@ -15,7 +15,7 @@
 tabBelegg(RegData, tidsenhet = "Mnd", datoTil = Sys.Date(),
   enhetsUtvalg = 0, reshID = 0)
 
-tabAntOpphShMnd(RegData, datoTil = Sys.Date(), antMnd = 12)
+tabAntOpphShMnd(RegData, datoTil = Sys.Date(), traume = "", antMnd = 12)
 
 tabAntOpphSh5Aar(RegData, datoTil)
 

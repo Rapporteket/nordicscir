@@ -197,8 +197,10 @@ RegData <- KobleMedHoved(HovedSkjema,RegData)
 valgtVar <- 'TilfSpis'               #TilfDo, TilfKler, TilfMob, TilfSpis
 
 outfile <- '' #paste0(valgtVar, '.png')	#Navn angis av Jasper
+RegData <- TilfredsH
+preprosess <- 0
 
-UtDataFord <- NSFigAndeler(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
+UtDataFord <- NSFigAndeler(RegData=RegData, preprosess=preprosess, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
 		AIS=AIS, minald=minald, maxald=maxald, erMann=erMann, traume=traume, paratetra=paratetra,
 		reshID=reshID, enhetsUtvalg=1)    #, preprosess=1
 #Aktuelt å legge til en parameter som sier hvilket skjema variabelen tilhører. Dette for å koble

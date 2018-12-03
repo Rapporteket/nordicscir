@@ -5,9 +5,12 @@ library(knitr)
 library(lubridate)
 #ibrary(shinyBS) # Additional Bootstrap Controls
 
+startDatoStandard <- '2017-01-01'
+
+
 
 ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
-      title = 'NORSK SPINNALSKADEREGISTER med FIKTIVE data',
+      title = 'NORSK SPINALSKADEREGISTER med FIKTIVE data',
       tabPanel("Viktigste resultater/Oversiktsside",
                #fluidRow(
                #column(width=5,
@@ -24,12 +27,6 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
  
                br(),
                br(),
-               h5('Tabell med Nevrologisk klassi kasjon for ferdigstilte innleggelser fra og
-med 2017-11-01. Pasienter med liggetid over 28 dager i
-                  ryggmargsskadeavdeling'),
-               h5('Registreringsforsinkelse fordeling, se årsrapp. s.32 om målnivå innen 1 mnd'),
-               h5('Liggetid tot. Liggetid rehab. Liggetid før rehab: min/max, gjsn, median'),
-               h5('Velge traumatisk/ikke'),
                tags$ul(tags$b('Andre ting å ta stilling til: '),
                        tags$li("Navn på faner"), 
                        tags$li("Layout på sider ?"), 
@@ -40,7 +37,11 @@ med 2017-11-01. Pasienter med liggetid over 28 dager i
                br(),
                tags$ul(tags$b('Kommer: '),
                        tags$li("Riktig antall desimaler i tabeller"),
-                        tags$li("Mulighet for å laste ned tabeller")
+                       tags$li("Mulighet for å laste ned tabeller"),
+                       tags$li('Tabell med Nevrologisk klassifikasjon for ferdigstilte innleggelser fra og
+med 2017-11-01. Pasienter med liggetid over 28 dager i ryggmargsskadeavdeling'),
+                       tags$li('Registreringsforsinkelse fordeling, se årsrapp. s.32 om målnivå innen 1 mnd'),
+                       tags$li('Tabell med: Liggetid tot., Liggetid rehab., Liggetid før rehab: min/max, gjsn, median')
                )
       ), #tab
       
@@ -48,39 +49,45 @@ med 2017-11-01. Pasienter med liggetid over 28 dager i
       tabPanel("Registreringsoversikter",
                sidebarPanel(width=3,
                             h3('Utvalg'),
-                            conditionalPanel(condition = "input.ark == 'Belegg'",
+                            conditionalPanel(condition = "input.ark == 'Antall registreringer'",
                                              dateInput(inputId = 'sluttDatoReg', label = 'Velg sluttdato', language="nb",
                                                        value = Sys.Date(), max = Sys.Date() )
                             ),
-                           conditionalPanel(
-                                  condition = "input.ark == 'Belegg'",
+                            conditionalPanel(
+                                  condition = "input.ark == 'Antall registreringer'",
                                   selectInput(inputId = "tidsenhetReg", label="Velg tidsenhet",
                                               choices = rev(c('År'= 'Aar', 'Måned'='Mnd')))),
+                            # conditionalPanel(
+                            #       condition = "input.ark == 'Antall registreringer'",
+                            #       selectInput(inputId = 'enhetsNivaa', label='Enhetsnivå',
+                            #                   choices = c("Hele landet" = 0, "Egen enhet" = 2))
+                            # ),
                             conditionalPanel(
-                                  condition = "input.ark == 'Belegg'",
-                                  selectInput(inputId = 'enhetsNivaa', label='Enhetsnivå',
-                                              choices = c("Hele landet" = 0, "Egen enhet" = 2))
-                                  ),
-                           conditionalPanel(
+                                  condition = "input.ark == 'Antall registreringer'",
+                                  selectInput(inputId = 'traumeReg', label='Traume',
+                                              choices = c("Alle"=' ', #'ikke'
+                                                          "Traume"='ja', 
+                                                          "Ikke traume"='nei'))
+                            ),
+                            conditionalPanel(
                                   condition = "input.ark == 'Oppfølgingsskjema'",
-                                  dateRangeInput(inputId = 'datovalgReg', start = "2017-07-01", end = Sys.Date(),
+                                  dateRangeInput(inputId = 'datovalgReg', start = startDatoStandard, end = Sys.Date(),
                                                  label = "Tidsperiode", separator="t.o.m.", language="nb")
                             )
                ),
                
                mainPanel(
                      tabsetPanel(id='ark',
-                                 tabPanel('Belegg',
+                                 tabPanel('Antall registreringer',
                                           #p('Tabellene viser siste 12 måneder eller siste 5 år'),
-                                          uiOutput("undertittelBelegg"),
+                                          uiOutput("undertittelReg"),
                                           p("Velg tidsperiode ved å velge sluttdato/tidsenhet i menyen til venstre"), #em(
                                           br(),
-                                          h3('Antall nyskadede LEGG TIL UTVALG TRAUMATISK/ikke'),
-                                          fluidRow(tableOutput("tabAntOpphShMnd12")),
-                                          br(),
-                                          h3("Belegg FJERNES! på rehabiliteringsavdelinga - ønskes flere/andre variable?"), 
-                                          #uiOutput("undertittelBelegg"),
-                                          fluidRow( tableOutput("tabBelegg"))
+                                          fluidRow(tableOutput("tabAntOpphShMnd12"))
+#                                          br(),
+                                          # h3("Belegg FJERNES! på rehabiliteringsavdelinga - ønskes flere/andre variable?"), 
+                                          # #uiOutput("undertittelBelegg"),
+                                          # fluidRow( tableOutput("tabBelegg"))
                                  ),
                                  tabPanel('Oppfølgingsskjema',
                                           h3("Antall registreringsskjema med ulike oppfølgingsskjema"),
@@ -94,7 +101,8 @@ med 2017-11-01. Pasienter med liggetid over 28 dager i
                                  )
                      ))
       ), #tab Registreringsoversikter
-
+      
+      
 #--------Fordelinger-----------            
       tabPanel("Fordelinger",
                sidebarPanel(width = 3,
@@ -104,17 +112,28 @@ med 2017-11-01. Pasienter med liggetid over 28 dager i
                                               'Ais, innleggelse' = 'AAis' ,
                                               'Ais, kontroll' = 'FAis', 
                                               'Lengde på rehab.opphold' = 'DagerRehab', 
+                                              'Planlagt utskrevet til' = 'PPlaceDis',
                                               'Tid fra skade til oppstart rehab.' = 'DagerTilRehab', 
+                                              'Tid med rehabilitering' = 'DagerRehab',
                                               'Opphold, totalt antall dager' = 'OpphTot', 
                                               #'Fjern? Permisjon (ant. døgn ute av sykehus) ' = 'Permisjon',
                                               'Utskrevet til' = 'UtTil',
                                               'Registreringsforsinkelse' = 'RegForsinkelse',
                                               'Skadeårsak ' = 'SkadeArsak',
+                                              'Skadeårsak, ikke-traumatisk' = 'Ntsci',
                                               #'Fjern? Pustehjelp' = 'Pustehjelp[VentAssi]',
+                                              'A&D Funksjon: Mobilitet' = 'FunkMob',
+                                              'A&D Funksjon: Påkledning' = 'FunkKler',
+                                              'A&D Funksjon: Spising' = 'FunkSpis',
+                                              'A&D Funksjon: Toalett' = 'FunkDo',
+                                              'A&D Tilfredshet: Mobilitet' = 'TilfMob',
+                                              'A&D Tilfredshet: Påkledning' = 'TilfKler',
+                                              'A&D Tilfredshet: Spising' = 'TilfSpis',
+                                              'A&D Tilfredshet: Toalett' = 'TilfDo',
                                               'Livskval.: Tilfredshet med livet' = 'LivsGen',
                                               'Livskval.: Tilfredshet med fysisk helse' = 'LivsFys',
                                               'Livskval.: Tilfredshet med psykisk helse' = 'LivsPsyk',
-                                              'Ufrivillig urinlekkasje' = 'UrinInkontinens', 
+                                              'Urin: Ufrivillig urinlekkasje' = 'UrinInkontinens', 
                                               'Urin: Kirurgiske inngrep' = 'UrinKirInngr',
                                               'Urin: Legemiddelbruk' = 'UrinLegemidler',
                                               'Urin: Legemiddelbruk, hvilke' = 'UrinLegemidlerHvilke',
@@ -129,7 +148,7 @@ med 2017-11-01. Pasienter med liggetid over 28 dager i
                                               'Tarm: Kirurgiske inngrep, hvilke' = 'TarmKirInngrepHvilke'
                                   )
                             ),
-                            dateRangeInput(inputId = 'datovalg', start = "2017-07-01", end = Sys.Date(),
+                            dateRangeInput(inputId = 'datovalg', start = startDatoStandard, end = Sys.Date(),
                                            label = "Tidsperiode", separator="t.o.m.", language="nb"),
                             selectInput(inputId = "erMann", label="Kjønn",
                                         choices = c("Begge"=2, "Menn"=1, "Kvinner"=0)
@@ -196,7 +215,7 @@ med 2017-11-01. Pasienter med liggetid over 28 dager i
                                               'Livskval.: Tilfredshet med psykisk helse' = 'LivsPsyk'
                                              )
                             ),
-                            dateRangeInput(inputId = 'datovalgGjsnGrVar', start = "2017-07-01", end = Sys.Date(),
+                            dateRangeInput(inputId = 'datovalgGjsnGrVar', start = startDatoStandard, end = Sys.Date(),
                                            label = "Tidsperiode", separator="t.o.m.", language="nb"),
                             selectInput(inputId = "erMannGjsnGrVar", label="Kjønn",
                                         choices = c("Begge"=2, "Menn"=1, "Kvinner"=0)
@@ -331,7 +350,6 @@ server <- function(input, output) {
       AktivitetH <- KobleMedHoved(HovedSkjema, Aktivitet)
       FunksjonH <- KobleMedHoved(HovedSkjema, AktivFunksjon)
       TilfredsH <- AktivitetH
-
       #RegData <- KobleMedHoved(HovedSkjema,Livskvalitet, alleHovedskjema = T) #SKAL iKKE BRUKES
       AlleTab <- list(HovedSkjema=HovedSkjema, 
                       LivskvalitetH=LivskvalitetH, 
@@ -342,6 +360,7 @@ server <- function(input, output) {
                       TilfredsH = TilfredsH, 
                       AktivitetH = AktivitetH)
       reshID <- 107627
+      # startDatoStandard <- '2017-01-01'
       
       
       
@@ -371,7 +390,8 @@ server <- function(input, output) {
             #             h5(HTML(paste0(UtDataFord$utvalgTxt, '<br />')))
             #       )}) #, align='center'
             
-            output$undertittelBelegg <- renderUI({
+            output$undertittelReg <- renderUI({
+                  br()
                   t1 <- 'Tabellene viser innleggelser '
                   h4(HTML(undertittel <- switch(input$tidsenhetReg,
                          Mnd = paste0(t1, 'siste 12 måneder før ', input$sluttDatoReg, '<br />'),
@@ -379,10 +399,11 @@ server <- function(input, output) {
                   ))})
       output$tabAntOpphShMnd12 <- renderTable({
             switch(input$tidsenhetReg,
-                   Mnd=tabAntOpphShMnd(RegData=HovedSkjema, datoTil=input$sluttDatoReg, antMnd=12), #input$datovalgTab[2])  
-                   Aar=tabAntOpphSh5Aar(RegData=HovedSkjema, datoTil=input$sluttDatoReg))
+                   Mnd=tabAntOpphShMnd(RegData=HovedSkjema, datoTil=input$sluttDatoReg, traume=input$traumeReg, antMnd=12), #input$datovalgTab[2])  
+                   Aar=tabAntOpphSh5Aar(RegData=HovedSkjema, datoTil=input$sluttDatoReg, traume=input$traumeReg))
       }, rownames = T, digits=0, spacing="xs" 
       )
+      
      
       
       observe({

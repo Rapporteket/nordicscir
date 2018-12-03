@@ -47,13 +47,42 @@ tabBelegg <- function(RegData, tidsenhet='Mnd', datoTil=Sys.Date(), enhetsUtvalg
       tabBeleggAnt <- tabBeleggAnt[, max(1, dim(tabBeleggAnt)[2]-antTidsenh) : dim(tabBeleggAnt)[2]] #Tar med 12 siste
       return(tabBeleggAnt)
 }
+
+#' @section Liggetider. Siste inntil 5 år eller siste inntil 12 måneder/kvartal/halvår
+#' @rdname NordicScirtabeller
+#' @export
+tabLiggetider <- function(RegData, tidsenhet='Mnd', datoTil=Sys.Date(), enhetsUtvalg=0, reshID=0) {
+      datoFra <- switch(tidsenhet, 
+                        Mnd = lubridate::floor_date(as.Date(datoTil)%m-% months(12, abbreviate = T), 'month'), #as.Date(paste0(as.numeric(substr(datoTil,1,4))-1, substr(datoTil,5,8), '01'), tz='UTC')
+                        Aar = paste0(lubridate::year(as.Date(datoTil))-4, '-01-01')
+      )
+      RegData <- NSUtvalg(RegData=RegData, datoFra=datoFra, datoTil = datoTil, 
+                          enhetsUtvalg = enhetsUtvalg, reshID = reshID)$RegData
+      #print(paste0('tidsenhet: ', tidsenhet))
+      #print(paste0('dim Regdata: ', dim(RegData)[1]))
+      RegData <- SorterOgNavngiTidsEnhet(RegData, tidsenhet=tidsenhet)$RegData
+      #RegData <- Mtid$RegData
+      Liggetider <- rbind('Liggetid, tot.' = tapply(RegData$Ligge , RegData$TidsEnhet, 
+                                                        FUN=function(x) length(unique(x))),
+                            'Liggetid på rehab.' = tapply(RegData$SkjemaGUID, RegData$TidsEnhet, FUN=length), #table(RegDataEget$TidsEnhet), #Neget,		
+                            'Liggetid før rehab' = round(as.numeric(tapply(RegData$DagerRehab, RegData$TidsEnhet, 
+                                                                              sum, na.rm=T)),0)	
+      )
+      
+      antTidsenh <- ifelse(tidsenhet=='Aar', 4, 11)
+      
+      Liggetider <- Liggetider[, max(1, dim(Liggetider)[2]-antTidsenh) : dim(Liggetider)[2]] #Tar med 12 siste
+      return(Liggetider)
+}
+
 #' @section tabAntOpphShMnd antall opphold siste X (antMnd) mnd
 #' @rdname NordicScirtabeller
 #' @export
-tabAntOpphShMnd <- function(RegData, datoTil=Sys.Date(), antMnd=12){
+tabAntOpphShMnd <- function(RegData, datoTil=Sys.Date(), traume='', antMnd=12){
       #RegData må inneholde DateAdmittedIntensive, DateDischargedIntensive 
       datoFra <- lubridate::floor_date(as.Date(datoTil)%m-% months(antMnd, abbreviate = T), 'month') #as.Date(paste0(as.numeric(substr(datoTil,1,4))-1, substr(datoTil,5,8), '01'), tz='UTC')
       aggVar <-  c('ShNavn', 'InnDato')
+      RegData <- NSUtvalg(RegData = RegData, traume=traume)$RegData
       RegDataDum <- RegData[RegData$InnDato <= as.Date(datoTil, tz='UTC')
                               & RegData$InnDato > as.Date(datoFra, tz='UTC'), aggVar]
       RegDataDum$Maaned1 <- floor_date(RegDataDum$InnDato, 'month')
@@ -70,7 +99,7 @@ tabAntOpphShMnd <- function(RegData, datoTil=Sys.Date(), antMnd=12){
 #' @rdname NordicScirtabeller
 #' @export
 #' 
-tabAntOpphSh5Aar <- function(RegData, datoTil){
+tabAntOpphSh5Aar <- function(RegData, datoTil=Sys.Date(), traume=''){
       AarNaa <- as.numeric(format.Date(datoTil, "%Y"))
       
       tabAvdAarN <- addmargins(table(RegData[which(RegData$Aar %in% (AarNaa-4):AarNaa), c('ShNavn','Aar')]))
