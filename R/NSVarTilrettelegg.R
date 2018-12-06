@@ -251,7 +251,8 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
       if (substr(valgtVar,1,4)=='Livs') {
             indDato <- which(RegData$InnDato >= as.Date('2015-01-01')) #Ikke filtrer på startdato
             indTidspkt <- which(RegData$QolDt <= RegData$DischgDt)
-            RegData <- RegData[indTidspkt, ]
+            indAlder <- which(RegData$Alder >= 16)
+            RegData <- RegData[indTidspkt %i% indAlder, ]
             xAkseTxt <- 'Skåring: 0-10. Høyest er best.'
       }
       
