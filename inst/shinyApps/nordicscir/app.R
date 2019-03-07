@@ -4,6 +4,9 @@ library(shiny)
 library(knitr)
 library(lubridate)
 #ibrary(shinyBS) # Additional Bootstrap Controls
+library(kableExtra)
+#library(zoo)
+
 
 startDatoStandard <- '2017-01-01'
 
@@ -11,33 +14,32 @@ startDatoStandard <- '2017-01-01'
 
 ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
       title = 'NORSK SPINALSKADEREGISTER med FIKTIVE data',
-      tabPanel("Viktigste resultater/Oversiktsside",
+      tabPanel("Info og samlede resultater",
                #fluidRow(
                #column(width=5,
-               h2("Dæsjbord?  - vise viktigste variable/resultater?", align='center' ),
-               h2("Evt. gi tilbakemelding på hva som skal være på sida", align='center' ),
                br(),
+               
+               tags$head(tags$style(".butt{background-color:#6baed6;} .butt{color: white;}")), # background color and font color
                
                h2("Månedsrapport"), #),
+               downloadButton(outputId = 'mndRapp.pdf', label='Last ned MÅNEDSRAPPORT', class = "butt"),
+               br(),
+               br(),
+               h2("Resultater egen avdeling"), #),
+               downloadButton(outputId = 'samlerappEgen', label='Skal denne være med?', class = "butt"),
+               br(),
+               h2("Resultater hele landet"), #),
+               downloadButton(outputId = 'samlerappLandet', label='Skal denne være med?', class = "butt"),
+               br(),
+               br(),
+               br(),
                
-               #downloadButton('mndRapp'),
-               downloadButton(outputId = 'mndRapp', label='Månedsrapport-virker ikke på server', 
-                              class = "butt"),
-               tags$head(tags$style(".butt{background-color:#6baed6;} .butt{color: white;}")), # background color and font color
- 
-               br(),
-               br(),
-               tags$ul(tags$b('Andre ting å ta stilling til: '),
+              tags$ul(tags$b('Andre ting å ta stilling til: '),
                        tags$li("Navn på faner"), 
-                       tags$li("Layout på sider ?"), 
-                       tags$li("Ønskes annen organisering av innhold?"), 
-                       tags$li("Hvilke utvalgs/filtreringsmuligheter skal vi ha i de ulike fanene"), 
-                       tags$li("Innhold i tabeller som vises i tilknytning til figurer.")
+                       tags$li("Hvilke utvalgs/filtreringsmuligheter skal vi ha i de ulike fanene")
                ),
                br(),
                tags$ul(tags$b('Kommer: '),
-                       tags$li("Riktig antall desimaler i tabeller"),
-                       tags$li("Mulighet for å laste ned tabeller"),
                        tags$li('Tabell med Nevrologisk klassifikasjon for ferdigstilte innleggelser fra og
 med 2017-11-01. Pasienter med liggetid over 28 dager i ryggmargsskadeavdeling'),
                        tags$li('Registreringsforsinkelse fordeling, se årsrapp. s.32 om målnivå innen 1 mnd'),
@@ -79,11 +81,13 @@ med 2017-11-01. Pasienter med liggetid over 28 dager i ryggmargsskadeavdeling'),
                mainPanel(
                      tabsetPanel(id='ark',
                                  tabPanel('Antall registreringer',
-                                          #p('Tabellene viser siste 12 måneder eller siste 5 år'),
+                                          #p('Tabellen viser registreringer siste 12 måneder eller siste 5 år'),
                                           uiOutput("undertittelReg"),
                                           p("Velg tidsperiode ved å velge sluttdato/tidsenhet i menyen til venstre"), #em(
                                           br(),
-                                          fluidRow(tableOutput("tabAntOpphShMnd12"))
+                                          fluidRow(tableOutput("tabAntOpphShMnd12"),
+                                                   downloadButton(outputId = 'lastNed_tabAntOpph', label='Last ned')
+                                          )
 #                                          br(),
                                           # h3("Belegg FJERNES! på rehabiliteringsavdelinga - ønskes flere/andre variable?"), 
                                           # #uiOutput("undertittelBelegg"),
@@ -92,12 +96,16 @@ med 2017-11-01. Pasienter med liggetid over 28 dager i ryggmargsskadeavdeling'),
                                  tabPanel('Oppfølgingsskjema',
                                           h3("Antall registreringsskjema med ulike oppfølgingsskjema"),
                                           tableOutput('tabAntTilknyttedeSkjema'),
+                                          downloadButton(outputId = 'lastNed_tabOppfAnt', label='Last ned'),
                                           br(),
                                           h3("Andel (%) registreringsskjema med ulike oppfølgingsskjema"),
                                           tableOutput("tabAndelTilknyttedeSkjema"),
+                                          downloadButton(outputId = 'lastNed_tabOppfPst', label='Last ned'),
+                                          
                                           br(),
-                                          h3('Antall skjema registrert på opphold i valgte tidsperiode'),
-                                          tableOutput('AntallSkjema')
+                                          h3('Antall skjema registrert for innleggelser i valgte tidsperiode'),
+                                          tableOutput('AntallSkjema'),
+                                          downloadButton(outputId = 'lastNed_tabAlleSkjemaAnt', label='Last ned')
                                  )
                      ))
       ), #tab Registreringsoversikter
@@ -162,15 +170,19 @@ med 2017-11-01. Pasienter med liggetid over 28 dager i ryggmargsskadeavdeling'),
                                                     "Egen enhet"=2)
                             ),
 
+                            #valgAIS <- as.character(0:5),
+                            #names(valgAIS) <- c('Alle', LETTERS[1:5]),
+                            #valgAIS <- c('"Alle"=0', '"A"=1', '"B"=2', '"C"=3', '"D"=4', '"E"=5'),
+                            
                             selectInput(inputId = 'AIS', label='AIS-grad',
                                         multiple = T, #selected=0,
-                                        choices = c("Alle"=0,
-                                                    "A"=1, 
-                                                    "B"=2,
-                                                    "C"=3,
-                                                    "D"=4,
-                                                    "E"=5
-                                                    )
+                                        choices = #valgAIS
+                                              c("Alle"=0,
+                                              "A"=1,
+                                              "B"=2,
+                                              "C"=3,
+                                              "D"=4,
+                                              "E"=5)
                             ),
                             selectInput(inputId = 'traume', label='Traume',
                                         choices = c("Alle"=' ', #'ikke'
@@ -195,9 +207,10 @@ med 2017-11-01. Pasienter med liggetid over 28 dager i ryggmargsskadeavdeling'),
                                  'Tabell',
                                  uiOutput("tittelFord"),
                                  br(),
-                                 tableOutput('fordelingTab'))
+                                 tableOutput('fordelingTab'),
+                                 downloadButton(outputId = 'lastNed_tabFord', label='Last ned') 
                      )
-               )
+               ))
       ), #tab Fordelinger
 
 #------------Sykehusvise resultater------------
@@ -257,8 +270,9 @@ med 2017-11-01. Pasienter med liggetid over 28 dager i ryggmargsskadeavdeling'),
                                  'Tabell',
                                  uiOutput("tittelGjsnGrVar"),
                                  br(),
-                                 h5('Testtekst'),
-                                 tableOutput('gjsnGrVarTab'))
+                                 tableOutput('gjsnGrVarTab'),
+                                 downloadButton(outputId = 'lastNed_tabGjsnGrVar', label='Last ned') # , class = "butt"))
+                           )
                      )
                )
                
@@ -303,7 +317,7 @@ server <- function(input, output) {
                   AktivTilfredshet <- rapbase::LoadRegData(registryName, qTilf, dbType)
                   } #hente data på server
 
-      #Hente data og evt. parametre som er statistke i appen
+      #----------Hente data og evt. parametre som er statistke i appen----------
      if (!exists('HovedSkjema')){
             #Tulledata:
             data('NordicScirFIKTIVEdata', package = 'nordicscir')
@@ -360,53 +374,68 @@ server <- function(input, output) {
                       TilfredsH = TilfredsH, 
                       AktivitetH = AktivitetH)
       reshID <- 107627
-      # startDatoStandard <- '2017-01-01'
-      
-      
-      
-            output$mndRapp = downloadHandler(
-                  filename = 'NSmndRapp.pdf',
-                  content = function(file) {
-                        src <- normalizePath('NSmndRapp.pdf')
-                        owd <- setwd(tempdir())
-                        on.exit(setwd(owd))
-                        file.copy(src, 'NSmndRapp.pdf', overwrite = TRUE)
-                        out = knit2pdf(system.file('NSmndRapp.Rnw', package = 'nordicscir'), clean = TRUE)
-                        file.rename(out, file) # move pdf to file for downloading
-                  },
 
-                  contentType = 'application/pdf'
-            )
+#-------Samlerapporter--------------------      
+      # funksjon for å kjøre Rnw-filer (render file funksjon)
+      contentFile <- function(file, srcFil, tmpFile) {
+            src <- normalizePath(system.file(srcFil, package="nordicscir"))
+            
+            # gå til tempdir. Har ikke skriverettigheter i arbeidskatalog
+            owd <- setwd(tempdir())
+            on.exit(setwd(owd))
+            file.copy(src, tmpFile, overwrite = TRUE)
+            
+            texfil <- knitr::knit(tmpFile, encoding = 'UTF-8')
+            tools::texi2pdf(texfil, clean = TRUE)
+            
+            gc() #Opprydning gc-"garbage collection"
+            file.copy(paste0(substr(tmpFile, 1, nchar(tmpFile)-3), 'pdf'), file)
+      }
       
-            
-            output$tabBelegg <- renderTable(
-            tabBelegg(RegData = HovedSkjema, datoTil=input$sluttDatoReg, tidsenhet=input$tidsenhetReg, 
-                      enhetsUtvalg=as.numeric(input$enhetsNivaa), reshID=reshID)
-            , rownames = T, digits=0, spacing="xs"
-            )
-            # output$tittelFord <- renderUI({
-            #       tagList(
-            #             h3(UtDataFord$tittel),
-            #             h5(HTML(paste0(UtDataFord$utvalgTxt, '<br />')))
-            #       )}) #, align='center'
-            
+      
+      
+      output$mndRapp.pdf <- downloadHandler(
+            filename = function(){ paste0('MndRapp', Sys.time(), '.pdf')}, 
+            content = function(file){
+                  contentFile(file, srcFil="NSmndRapp.Rnw", tmpFile="tmpNSmndRapp.Rnw")
+            })
+      # output$samlerappEgen <- downloadHandler(
+      #             filename = function(){ paste0('SamleRappEgen', Sys.time(), '.pdf')}, 
+      #             content = function(file){
+      #                   contentFile(file, srcFil="NSsamleRapp.Rnw", tmpFile="tmpNSsamleRapp.Rnw")
+      #             })
+      # output$samlerappLandet <- downloadHandler(
+      #                   filename = function(){ paste0('SamleRappLand', Sys.time(), '.pdf')}, 
+      #                   content = function(file){
+      #                         contentFile(file, srcFil="NSsamleRappLand.Rnw", tmpFile="tmpNSsamleRappLand.Rnw")
+      #                   })
+ #----------Tabeller----------------------           
+            # output$tabBelegg <- renderTable(
+            # tabBelegg(RegData = HovedSkjema, datoTil=input$sluttDatoReg, tidsenhet=input$tidsenhetReg, 
+            #           enhetsUtvalg=as.numeric(input$enhetsNivaa), reshID=reshID)
+            # , rownames = T, digits=0, spacing="xs"
+            # )
+
             output$undertittelReg <- renderUI({
                   br()
-                  t1 <- 'Tabellene viser innleggelser '
+                  t1 <- 'Tabellen viser innleggelser '
                   h4(HTML(undertittel <- switch(input$tidsenhetReg,
                          Mnd = paste0(t1, 'siste 12 måneder før ', input$sluttDatoReg, '<br />'),
                          Aar = paste0(t1, 'siste 5 år før ', input$sluttDatoReg, '<br />'))
                   ))})
-      output$tabAntOpphShMnd12 <- renderTable({
-            switch(input$tidsenhetReg,
-                   Mnd=tabAntOpphShMnd(RegData=HovedSkjema, datoTil=input$sluttDatoReg, traume=input$traumeReg, antMnd=12), #input$datovalgTab[2])  
-                   Aar=tabAntOpphSh5Aar(RegData=HovedSkjema, datoTil=input$sluttDatoReg, traume=input$traumeReg))
-      }, rownames = T, digits=0, spacing="xs" 
-      )
+      observe({
+            tabAntOpphShMndAar <- switch(input$tidsenhetReg,
+             Mnd=tabAntOpphShMnd(RegData=HovedSkjema, datoTil=input$sluttDatoReg, traume=input$traumeReg, antMnd=12), #input$datovalgTab[2])  
+             Aar=tabAntOpphSh5Aar(RegData=HovedSkjema, datoTil=input$sluttDatoReg, traume=input$traumeReg))
+      
+      output$tabAntOpphShMnd12 <- renderTable({tabAntOpphShMndAar}, rownames = T, digits=0, spacing="xs")
+      output$lastNed_tabAntOpph <- downloadHandler(
+            filename = function(){paste0('tabAntOpph.csv')},
+            content = function(file, filename){write.csv2(tabAntOpphShMndAar, file, row.names = F, na = '')
+            })
       
      
       
-      observe({
             #Antall skjema av alle typer.
             tabTilknSkjema <- tabSkjemaTilknyttetH(Data=AlleTab, datoFra=input$datovalgReg[1], datoTil=input$datovalgReg[2])
             
@@ -414,19 +443,37 @@ server <- function(input, output) {
                   tabTilknSkjema$Antall
                   ,rownames = T, digits=0, spacing="xs" )
             
+            output$lastNed_tabOppfAnt <- downloadHandler(
+                  filename = function(){'tabOppfAnt.csv'},
+                  content = function(file, filename){write.csv2(tabTilknSkjema$Antall, file, row.names = F, na = '')
+                  })
             #Andel (prosent) av registreringsskjemaene som har oppfølgingsskjema.      
             output$tabAndelTilknyttedeSkjema <- renderTable(
                   tabTilknSkjema$Andeler
                   ,rownames = T, digits=0, spacing="xs" )
+            
+             output$lastNed_tabOppfPst <- downloadHandler(
+                   filename = function(){'tabOppfPst.csv'},
+                   content = function(file, filename){write.csv2(tabTilknSkjema$Andeler, file, row.names = F, na = '')
+                   })
+            
       })
-      
+ 
       #Antall skjema av hver type
       output$AntallSkjema <- renderTable(
             #tabAntSkjema(Data=AlleTab, datoFra='2015-01-01', datoTil='2018-11-01'),
             t(tabAntSkjema(Data=AlleTab, datoFra=input$datovalgReg[1], datoTil=input$datovalgReg[2]))
             ,rownames = T, digits=0, spacing="xs" )
-            
-      observe({   #Fordelingsfigurer og tabeller
+     
+      output$lastNed_tabAlleSkjemaAnt <- downloadHandler(
+            filename = function(){'tabOppfPst.csv'},
+            content = function(file, filename){
+                  write.csv2(t(tabAntSkjema(Data=AlleTab, datoFra=input$datovalgReg[1], datoTil=input$datovalgReg[2])), 
+                             file, row.names = F, na = '')
+            })
+      
+#---------Fordelinger------------
+            observe({   #Fordelingsfigurer og tabeller
             #RegData <- finnRegData(Data = AlleTab, valgtVar <- 'UrinKirInngr')
             RegData <- finnRegData(valgtVar = input$valgtVar, Data = AlleTab)
             RegData <- TilLogiskeVar(RegData)
@@ -457,7 +504,24 @@ server <- function(input, output) {
                   )}) #, align='center'
             output$fordelingTab <- renderTable(
                   tabFord, rownames = T)
-      })
+            
+            output$fordelingTab <- function() { #gr1=UtDataFord$hovedgrTxt, gr2=UtDataFord$smltxt renderTable(
+                  antKol <- ncol(tabFord)
+                  kableExtra::kable(tabFord, format = 'html'
+                                    , full_width=F
+                                    , digits = c(0,1,0,1)[1:antKol]
+                  ) %>%
+                        add_header_above(c(" "=1, 'Egen enhet/gruppe' = 2, 'Resten' = 2)[1:(antKol/2+1)]) %>%
+                        column_spec(column = 1, width_min = '7em') %>%
+                        column_spec(column = 2:(ncol(tabFord)+1), width = '7em') %>%
+                        row_spec(0, bold = T)
+            }
+            
+            output$lastNed_tabFord <- downloadHandler(
+                  filename = function(){paste0(input$valgtVar, '_fordeling.csv')},
+                  content = function(file, filename){write.csv2(tabFord, file, row.names = F, na = '')
+                  })
+      }) #observe Fordeling
       
       observe({ #Sykehusvise gjennomsnitt, figur og tabell
             RegData <- finnRegData(valgtVar = input$valgtVarGjsnGrVar, Data = AlleTab)
@@ -475,14 +539,39 @@ server <- function(input, output) {
                                               minald=as.numeric(input$alderGjsnGrVar[1]), maxald=as.numeric(input$alderGjsnGrVar[2]), 
                                               erMann=as.numeric(input$erMannGjsnGrVar), valgtMaal = input$sentralmaal)
             tabGjsnGrVar <- lagTabavFigGjsnGrVar(UtDataFraFig = UtDataGjsnGrVar)
-            #tabGjsnGrVar <- lagTabavFig(UtDataFraFig = Data)
+            
             output$tittelGjsnGrVar <- renderUI({
                   tagList(
                         h3(UtDataGjsnGrVar$tittel),
                         h5(HTML(paste0(UtDataGjsnGrVar$utvalgTxt, '<br />')))
                   )}) #, align='center'
-            output$gjsnGrVarTab <- renderTable(
-                  tabGjsnGrVar, rownames = T)
+            # output$gjsnGrVarTab <- renderTable(
+            #       tabGjsnGrVar, rownames = T)
+            
+            output$gjsnGrVarTab <- function() { 
+                  antKol <- ncol(tabGjsnGrVar)
+                  kableExtra::kable(tabGjsnGrVar, format = 'html'
+                                    #, full_width=T
+                                    , digits = c(0,1) #,0,1)[1:antKol]
+                  ) %>%
+                        column_spec(column = 1, width_min = '5em') %>%
+                        column_spec(column = 2:(antKol+1), width = '4em') %>%
+                        row_spec(0, bold = T)
+            }
+            output$lastNed_tabGjsnGrVar <- downloadHandler(
+                  filename = function(){
+                        paste0(input$valgtVar, '_tabGjsnSh .csv')
+                  },
+                  content = function(file, filename){
+                        write.csv2(tabGjsnGrVar, file, row.names = T, na = '')
+                  })
+            
+            output$titteltabGjsnGrVar <- renderUI({
+                  tagList(
+                        h3(tabGjsnGrVar$tittel),
+                        h5(HTML(paste0(tabGjsnGrVar$utvalgTxt, '<br />')))
+                  )}) #, align='center'
+            
             
       }) #observe gjsnGrVar
 } #server

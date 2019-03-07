@@ -207,7 +207,7 @@ colnames(tab) <- c(paste0(UtDataFraFig$hovedgrTxt,', N'),
 return(tab)
 }
 
-#' @section Vise figurdata som tabell, fordelingsfigur
+#' @section Vise figurdata som tabell, sentralmål per sykshus
 #' @rdname NordicScirtabeller
 #' @export
 lagTabavFigGjsnGrVar <- function(UtDataFraFig){
@@ -217,3 +217,35 @@ lagTabavFigGjsnGrVar <- function(UtDataFraFig){
       colnames(tab) <- c('Antall (N)', UtDataFraFig$SentralmaalTxt)
       return(tab)
 }
+
+
+#' @section Nevrologisk klassifikasjon
+#' @rdname NordicScirtabeller
+#' @export
+lagTabNevrKlass <- function(HovedSkjema, datoFra='2018-01-01', datoTil=Sys.time()){
+
+NevrKlass <- rbind(
+      'Utført og klassifiserbar, innkomst: ' = 
+            addmargins(table(HovedSkjema$ShNavn[HovedSkjema$AAis %in% 1:5])),
+      'Utført og klassifiserbar, utreise: ' = 
+            addmargins(table(HovedSkjema$ShNavn[HovedSkjema$FAis %in% 1:5])), 
+      'Ikke utført  ved innkomst:' = 
+            addmargins(table(HovedSkjema$ShNavn[HovedSkjema$ANeuNoMeasure == TRUE #-1 
+                                                     & HovedSkjema$AAis == -1])),
+      'Ikke utført ved utreise:' =
+            addmargins(table(HovedSkjema$ShNavn[HovedSkjema$FNeuNoMeasure == TRUE #-1 
+                                                     & HovedSkjema$FAis == -1])),
+      'Utført, men ikke klassifiserbar, innkomst: ' = 
+            addmargins(table(HovedSkjema$ShNavn[HovedSkjema$AAis==9])),
+      'Utført, men ikke klassifiserbar, utreise: ' = 
+            addmargins(table(HovedSkjema$ShNavn[HovedSkjema$FAis==9]))
+)
+
+colnames(NevrKlass)[dim(NevrKlass)[2] ]<- 'Hele landet'
+
+xtable::xtable(NevrKlass, align=c('l', rep('r', ncol(NevrKlass))), digits=0, 
+               caption=paste0('Nevrologisk klassifikasjon for ferdigstilte innleggelser fra og med ',
+                              datoFra, '.'))
+return(NevrKlass)
+}
+
