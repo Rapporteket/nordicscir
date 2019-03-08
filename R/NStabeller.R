@@ -21,7 +21,7 @@
 NULL
 #' @export
 
-#' @section Belegg (antall opphold, pasienter og intensivdøgn). Siste inntil 5 år eller siste inntil 12 måneder/kvartal/halvår
+#' @section Belegg (antall opphold, pasienter og rehabdøgn). Siste inntil 5 år eller siste inntil 12 måneder/kvartal/halvår
 #' @rdname NordicScirtabeller
 #' @export
 tabBelegg <- function(RegData, tidsenhet='Mnd', datoTil=Sys.Date(), enhetsUtvalg=0, reshID=0) {
@@ -48,30 +48,21 @@ tabBelegg <- function(RegData, tidsenhet='Mnd', datoTil=Sys.Date(), enhetsUtvalg
       return(tabBeleggAnt)
 }
 
-#' @section Liggetider. Siste inntil 5 år eller siste inntil 12 måneder/kvartal/halvår
+#' @section Liggetider. Liggetid tot.(OpphTot), Liggetid rehab.(DagerRehab), Liggetid før rehab (DagerTilRehab): 
+#' min/max, gjsn, median
 #' @rdname NordicScirtabeller
 #' @export
-tabLiggetider <- function(RegData, tidsenhet='Mnd', datoTil=Sys.Date(), enhetsUtvalg=0, reshID=0) {
-      datoFra <- switch(tidsenhet, 
-                        Mnd = lubridate::floor_date(as.Date(datoTil)%m-% months(12, abbreviate = T), 'month'), #as.Date(paste0(as.numeric(substr(datoTil,1,4))-1, substr(datoTil,5,8), '01'), tz='UTC')
-                        Aar = paste0(lubridate::year(as.Date(datoTil))-4, '-01-01')
-      )
+tabLiggetider <- function(RegData, datoFra='2018-01-01', datoTil=Sys.Date(), enhetsUtvalg=0, reshID=0) {
+
       RegData <- NSUtvalg(RegData=RegData, datoFra=datoFra, datoTil = datoTil, 
                           enhetsUtvalg = enhetsUtvalg, reshID = reshID)$RegData
-      #print(paste0('tidsenhet: ', tidsenhet))
-      #print(paste0('dim Regdata: ', dim(RegData)[1]))
-      RegData <- SorterOgNavngiTidsEnhet(RegData, tidsenhet=tidsenhet)$RegData
-      #RegData <- Mtid$RegData
-      Liggetider <- rbind('Liggetid, tot.' = tapply(RegData$Ligge , RegData$TidsEnhet, 
-                                                        FUN=function(x) length(unique(x))),
-                            'Liggetid på rehab.' = tapply(RegData$SkjemaGUID, RegData$TidsEnhet, FUN=length), #table(RegDataEget$TidsEnhet), #Neget,		
-                            'Liggetid før rehab' = round(as.numeric(tapply(RegData$DagerRehab, RegData$TidsEnhet, 
-                                                                              sum, na.rm=T)),0)	
+
+      Liggetider <- rbind('Liggetid, totalt' = summary(RegData$OpphTot)[c(1,3,4,6)],
+                          'Liggetid på rehab.' =summary(RegData$DagerRehab)[c(1,3,4,6)],	
+                          'Liggetid før rehab.' = summary(RegData$DagerTilRehab)[c(1,3,4,6)]	
       )
-      
-      antTidsenh <- ifelse(tidsenhet=='Aar', 4, 11)
-      
-      Liggetider <- Liggetider[, max(1, dim(Liggetider)[2]-antTidsenh) : dim(Liggetider)[2]] #Tar med 12 siste
+      colnames(Liggetider) <- c('Min', 'Median', 'Gj.sn.', 'Maks')
+
       return(Liggetider)
 }
 
@@ -222,8 +213,13 @@ lagTabavFigGjsnGrVar <- function(UtDataFraFig){
 #' @section Nevrologisk klassifikasjon
 #' @rdname NordicScirtabeller
 #' @export
-lagTabNevrKlass <- function(HovedSkjema, datoFra='2018-01-01', datoTil=Sys.time()){
-
+lagTabNevrKlass <- function(HovedSkjema, datoFra='2018-01-01', datoTil=Sys.Date()){
+      
+      Utvalg <- NSUtvalg(HovedSkjema, datoFra = datoFra, datoTil = datoTil)
+      HovedSkjema <- Utvalg$RegData
+      Ant <- addmargins(table(HovedSkjema$ShNavn))
+      AntKlassInnUt <- addmargins(table(HovedSkjema$ShNavn[(HovedSkjema$AAis %in% 1:5) & (HovedSkjema$FAis %in% 1:5)]))
+      
 NevrKlass <- rbind(
       'Utført og klassifiserbar, innkomst: ' = 
             addmargins(table(HovedSkjema$ShNavn[HovedSkjema$AAis %in% 1:5])),
@@ -238,7 +234,9 @@ NevrKlass <- rbind(
       'Utført, men ikke klassifiserbar, innkomst: ' = 
             addmargins(table(HovedSkjema$ShNavn[HovedSkjema$AAis==9])),
       'Utført, men ikke klassifiserbar, utreise: ' = 
-            addmargins(table(HovedSkjema$ShNavn[HovedSkjema$FAis==9]))
+            addmargins(table(HovedSkjema$ShNavn[HovedSkjema$FAis==9])),
+      'Klassifisert ved både inn- og utreise: ' = 
+            paste0(sprintf('%.0f',AntKlassInnUt/Ant*100), '%')
 )
 
 colnames(NevrKlass)[dim(NevrKlass)[2] ]<- 'Hele landet'

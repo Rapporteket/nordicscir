@@ -3,6 +3,7 @@
 \name{NordicScirtabeller}
 \alias{NordicScirtabeller}
 \alias{tabBelegg}
+\alias{tabLiggetider}
 \alias{tabAntOpphShMnd}
 \alias{tabAntOpphSh5Aar}
 \alias{tabAntOpphPasSh5Aar}
@@ -10,25 +11,34 @@
 \alias{tabAntSkjema}
 \alias{lagTabavFigAndeler}
 \alias{lagTabavFigGjsnGrVar}
+\alias{lagTabNevrKlass}
 \title{Funksjoner for å lage tabeller Group of functions page title}
 \usage{
 tabBelegg(RegData, tidsenhet = "Mnd", datoTil = Sys.Date(),
   enhetsUtvalg = 0, reshID = 0)
 
-tabAntOpphShMnd(RegData, datoTil = Sys.Date(), traume = "", antMnd = 12)
+tabLiggetider(RegData, tidsenhet = "Mnd", datoTil = Sys.Date(),
+  enhetsUtvalg = 0, reshID = 0)
 
-tabAntOpphSh5Aar(RegData, datoTil)
+tabAntOpphShMnd(RegData, datoTil = Sys.Date(), traume = "",
+  antMnd = 12)
+
+tabAntOpphSh5Aar(RegData, datoTil = Sys.Date(), traume = "")
 
 tabAntOpphPasSh5Aar(RegData, gr = "opph", datoTil)
 
 tabSkjemaTilknyttetH(Data = AlleTab, datoFra = "2017-01-01",
   datoTil = Sys.Date())
 
-tabAntSkjema(Data = AlleTab, datoFra = "2017-01-01", datoTil = Sys.Date())
+tabAntSkjema(Data = AlleTab, datoFra = "2017-01-01",
+  datoTil = Sys.Date())
 
 lagTabavFigAndeler(UtDataFraFig)
 
 lagTabavFigGjsnGrVar(UtDataFraFig)
+
+lagTabNevrKlass(HovedSkjema, datoFra = "2018-01-01",
+  datoTil = Sys.time())
 }
 \arguments{
 \item{RegData}{data}
@@ -70,6 +80,10 @@ RegData må inneholde Aar.
 NA
 }
 
+\section{Liggetider. Siste inntil 5 år eller siste inntil 12 måneder/kvartal/halvår}{
+NA
+}
+
 \section{tabAntOpphShMnd antall opphold siste X (antMnd) mnd}{
 NA
 }
@@ -91,7 +105,13 @@ Hmmm
 
 \section{Vise figurdata som tabell, fordelingsfigur}{
 NA
+}
 
+\section{Vise figurdata som tabell, sentralmål per sykshus}{
+NA
+}
+
+\section{Nevrologisk klassifikasjon}{
 NA
 }
 

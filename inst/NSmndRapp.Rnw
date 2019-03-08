@@ -322,7 +322,7 @@ colnames(NevrKlass)[dim(NevrKlass)[2] ]<- 'Hele landet'
 
 xtable::xtable(NevrKlass, align=c('l', rep('r', ncol(NevrKlass))), digits=0, 
 		caption=paste0('Nevrologisk klassifikasjon for ferdigstilte innleggelser fra og med ',
-		               datoFra, '.'))
+		               datoFra, '. Antall.'))
 
 @
 \end{frame}
@@ -366,7 +366,7 @@ colnames(NevrKlass28)[dim(NevrKlass28)[2] ]<- 'Hele landet'
 
 xtable::xtable(NevrKlass28, digits=0, align=c('l', rep('r', ncol(NevrKlass28))), 
 		caption=paste0('Nevrologisk klassifikasjon for ferdigstilte innleggelser fra og med ',
-		               datoFra, '. Pasienter med liggetid over 28 dager i ryggmargsskadeavdeling.'))
+		               datoFra, '. Antall pasienter med liggetid over 28 dager i ryggmargsskadeavdeling.'))
 
 @
 

@@ -8,42 +8,79 @@ library(kableExtra)
 #library(zoo)
 
 
-startDatoStandard <- '2017-01-01'
+startDatoStandard <- '2018-01-01' #Sys.Date()-364
 
 
 
 ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
       title = 'NORSK SPINALSKADEREGISTER med FIKTIVE data',
-      tabPanel("Info og samlede resultater",
+      tabPanel("Startside",
                #fluidRow(
                #column(width=5,
                br(),
-               
                tags$head(tags$style(".butt{background-color:#6baed6;} .butt{color: white;}")), # background color and font color
                
-               h2("Månedsrapport"), #),
-               downloadButton(outputId = 'mndRapp.pdf', label='Last ned MÅNEDSRAPPORT', class = "butt"),
-               br(),
-               br(),
-               h2("Resultater egen avdeling"), #),
-               downloadButton(outputId = 'samlerappEgen', label='Skal denne være med?', class = "butt"),
-               br(),
-               h2("Resultater hele landet"), #),
-               downloadButton(outputId = 'samlerappLandet', label='Skal denne være med?', class = "butt"),
-               br(),
-               br(),
-               br(),
-               
-              tags$ul(tags$b('Andre ting å ta stilling til: '),
-                       tags$li("Navn på faner"), 
-                       tags$li("Hvilke utvalgs/filtreringsmuligheter skal vi ha i de ulike fanene")
+               sidebarPanel(width = 3,
+                            br(),
+                            #h2('Nedlastbare dokumenter med samling av resultater'),
+                            h3("Månedsrapport"), #),
+                            downloadButton(outputId = 'mndRapp.pdf', label='Last ned MÅNEDSRAPPORT', class = "butt"),
+                            br(),
+                            br(),
+                            h3("Resultater egen avdeling"), #),
+                            downloadButton(outputId = 'samlerappEgen', label='Ikke klargjort. Skal den være med?', class = "butt"),
+                            br(),
+                            h3("Resultater hele landet"), #),
+                            downloadButton(outputId = 'samlerappLandet', label='Ikke klargjort. Skal den være med?', class = "butt"),
+                            br(),
+                            br(),
+                            h3('Utvalg'),
+                            br(),
+                            dateRangeInput(inputId = 'datovalgDash', start = startDatoStandard, end = Sys.Date(),
+                                           label = "Tidsperiode", separator="t.o.m.", language="nb"),
+                            
+                            br(),
+                            br(),
+                            br(),
+                            br()
                ),
-               br(),
-               tags$ul(tags$b('Kommer: '),
-                       tags$li('Tabell med Nevrologisk klassifikasjon for ferdigstilte innleggelser fra og
-med 2017-11-01. Pasienter med liggetid over 28 dager i ryggmargsskadeavdeling'),
-                       tags$li('Registreringsforsinkelse fordeling, se årsrapp. s.32 om målnivå innen 1 mnd'),
-                       tags$li('Tabell med: Liggetid tot., Liggetid rehab., Liggetid før rehab: min/max, gjsn, median')
+               mainPanel(width = 8,
+                         br(),
+                         tags$ul(tags$b('NB: Må ta stilling til: '),
+                                 tags$li("Navn på faner"), 
+                                 tags$li("Hvilke utvalgs/filtreringsmuligheter skal vi ha i de ulike fanene")
+                         ),
+                         br(),
+                         h2('Velkommen til ny versjon av Rapporteket-NorScir!!!', align='center'),
+                         h4('Rapporteket inneholder ei samling av figurer og tabeller som viser resultater
+                            fra registeret. På hver side kan man gjøre utvalg i menyene til venstre på siden. 
+                            Alle resultater er basert på ferdigstile registreringer.'),
+                         br(),
+                         h4('Mulighet for å laste ned tabellene på denne siden kommer...'),
+                         br(),
+                         h3('Figur med alle kvalitetsindikatorer?'),
+                         br(),
+                         br(),
+                         h3('Registreringsforsinkelse fordeling, se årsrapp. s.32 om målnivå innen 1 mnd'),
+                         br(),
+                         h3('Liggetidsoversikt'),
+                         #h5('Angivelse av hvilket utvalg som er gjort, som på fordelingstabeller'),
+                         tableOutput('tabLiggetider'),
+                         br(),
+                         #h2('Nevrologisk klassifikasjon', align='center'),
+                         br(),
+                         column(width=6,
+                                h3('Nevrologisk klassifikasjon.', align='center'),
+                                br(),
+                                tableOutput('tabNevrKlass')),
+                         column(width=6,
+                                h3('Nevrologisk klassifikasjon for pasienter med liggetid over 28 dager i
+                                   ryggmargsskadeavdeling.', align='center'),
+                                tableOutput('tabNevrKlass28')
+                                ),
+                         br(),
+                         br(),
+                         br()
                )
       ), #tab
       
@@ -88,10 +125,10 @@ med 2017-11-01. Pasienter med liggetid over 28 dager i ryggmargsskadeavdeling'),
                                           fluidRow(tableOutput("tabAntOpphShMnd12"),
                                                    downloadButton(outputId = 'lastNed_tabAntOpph', label='Last ned')
                                           )
-#                                          br(),
+                                          #                                          br(),
                                           # h3("Belegg FJERNES! på rehabiliteringsavdelinga - ønskes flere/andre variable?"), 
                                           # #uiOutput("undertittelBelegg"),
-                                          # fluidRow( tableOutput("tabBelegg"))
+                                          # fluidRow( tableOutput("tabLiggetider"))
                                  ),
                                  tabPanel('Oppfølgingsskjema',
                                           h3("Antall registreringsskjema med ulike oppfølgingsskjema"),
@@ -111,7 +148,7 @@ med 2017-11-01. Pasienter med liggetid over 28 dager i ryggmargsskadeavdeling'),
       ), #tab Registreringsoversikter
       
       
-#--------Fordelinger-----------            
+      #--------Fordelinger-----------            
       tabPanel("Fordelinger",
                sidebarPanel(width = 3,
                             selectInput(
@@ -317,7 +354,7 @@ server <- function(input, output) {
                   AktivTilfredshet <- rapbase::LoadRegData(registryName, qTilf, dbType)
                   } #hente data på server
 
-      #----------Hente data og evt. parametre som er statistke i appen----------
+  #----------Hente data og evt. parametre som er statistke i appen----------
      if (!exists('HovedSkjema')){
             #Tulledata:
             data('NordicScirFIKTIVEdata', package = 'nordicscir')
@@ -409,9 +446,36 @@ server <- function(input, output) {
       #                   content = function(file){
       #                         contentFile(file, srcFil="NSsamleRappLand.Rnw", tmpFile="tmpNSsamleRappLand.Rnw")
       #                   })
- #----------Tabeller----------------------           
-            # output$tabBelegg <- renderTable(
-            # tabBelegg(RegData = HovedSkjema, datoTil=input$sluttDatoReg, tidsenhet=input$tidsenhetReg, 
+
+#--------------Startside------------------------------
+      
+      output$tabNevrKlass <- renderTable(
+            lagTabNevrKlass(HovedSkjema, datoFra = input$datovalgDash[1], datoTil = input$datovalgDash[2]),
+            rownames=T
+      )
+      
+      output$tabNevrKlass28 <- renderTable({
+            HovedSkjema28 <- HovedSkjema[which(HovedSkjema$DagerRehab >28),]
+            lagTabNevrKlass(HovedSkjema28, datoFra = input$datovalgDash[1], datoTil = input$datovalgDash[2])},
+            rownames=T
+      )
+      
+      output$tabLiggetider <- renderTable({
+            tabLiggetider(RegData = HovedSkjema, datoFra = input$datovalgDash[1], datoTil = input$datovalgDash[2])},
+            rownames=T,
+            digits = 0
+      )
+      # output$tabLiggetider <- function() { 
+      #       tabLigget <- tabLiggetider(RegData = HovedSkjema, datoFra = input$datovalgDash[1], datoTil = input$datovalgDash[2])
+      #       kableExtra::kable(tabLigget, format = 'html'
+      #                         , full_width=F
+      #                         , digits = c(0,0,0,1,0)
+      #       )}
+      
+      
+ #----------Tabeller, registreringsoversikter ----------------------           
+            # output$tabLiggetider <- renderTable(
+            # tabLiggetider(RegData = HovedSkjema, datoTil=input$sluttDatoReg, tidsenhet=input$tidsenhetReg, 
             #           enhetsUtvalg=as.numeric(input$enhetsNivaa), reshID=reshID)
             # , rownames = T, digits=0, spacing="xs"
             # )

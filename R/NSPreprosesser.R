@@ -58,6 +58,7 @@ NSPreprosesser <- function(RegData)
       
       # Riktig format
       #	RegData$alder <- as.numeric(RegData$decimalAge)	#
+      RegData$ShNavn <- as.factor(RegData$ShNavn)
       
       #Riktig format på datovariable:
       RegData$InnDato <- as.Date(RegData$AdmitDt, tz= 'UTC', format="%Y-%m-%d") #as.POSIXlt(RegData$AdmitDt, format="%Y-%m-%d")
