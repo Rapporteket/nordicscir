@@ -287,7 +287,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
        RegData <- RegData[which(RegData$InnDato >= as.Date('2015-01-01') & 
                                    RegData$LutfxnDt <= RegData$DischgDt), ]}
  
-      if (valgtVar=='UrinInkontinens') {
+      if (valgtVar=='UrinInkontinensTom2018') {
             #0:4,9: Nei, Ja daglig, Ja ukentlig, Ja månedlig, Ikke relevant, Ukjent	
             tittel <- 'Ufrivillig urinlekkasje'
             gr <- c(0:4,9)
@@ -295,6 +295,21 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
             grtxt <- c('Nei', 'Ja, daglig', 'Ja, ukentlig', 'Ja, månedlig', 'Ikke relevant', 'Ukjent')
             RegData$VariabelGr <- factor(RegData$Incontnc, levels = gr, labels = grtxt)
       }
+      if (valgtVar=='UrinInkontinens') {
+            # -1 = Velg verdi
+            # 1 = 1 Daglig
+            # 2 = 2 En eller flere ganger per uke (men ikke daglig)
+            # 3 = 3 Sjeldnere enn en gang per uke
+            # 7 = 7 Aldri
+            # 8 = 8 Ikke relevant
+            # 9 = 9 Ukjent
+            tittel <- 'Ufrivillig urinlekkasje'
+            gr <- c(1:3,7:9)
+            RegData <- RegData[RegData$Incontnc2 %in% gr,]
+            grtxt <- c('Daglig', 'Ukentlig', 'Sjeldnere enn ukentlig', 'Aldri', 'Ikke relevant', 'Ukjent')
+            RegData$VariabelGr <- factor(RegData$Incontnc2, levels = gr, labels = grtxt)
+      }
+      
       if (valgtVar=='UrinKirInngr') {
             flerevar <- 1
             retn <- 'H'
@@ -323,7 +338,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
             RegData[ ,variable] <- 0
             RegData[ ,variable][ind1] <- 1
       }
-      if (valgtVar=='UrinLegemidler') {
+      if (valgtVar=='UrinLegemidlerTom2018') {
             RegData <- RegData[which(RegData$InnDato >= as.Date('2015-01-01')), ]
             #0:1,9: Nei, Ja, Ukjent	
             tittel <- 'Bruk av legemidler som påvirker urinveiene'
@@ -331,6 +346,15 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
             RegData <- RegData[RegData$AnyDrugs %in% gr,]
             grtxt <- c('Nei', 'Ja', 'Ukjent')
             RegData$VariabelGr <- factor(RegData$AnyDrugs, levels = gr, labels = grtxt)
+      }
+      if (valgtVar=='UrinLegemidler') {
+            RegData <- RegData[which(RegData$InnDato >= as.Date('2019-01-01')), ]
+            #0:1,9: Nei, Ja, Ukjent	
+            tittel <- 'Bruk av legemidler som påvirker urinveiene'
+            gr <- c(0:1,9)
+            RegData <- RegData[RegData$AnyDrugs2 %in% gr,]
+            grtxt <- c('Nei', 'Ja', 'Ukjent')
+            RegData$VariabelGr <- factor(RegData$AnyDrugs2, levels = gr, labels = grtxt)
       }
       if (valgtVar=='UrinLegemidlerHvilke') {
             flerevar <- 1
@@ -359,12 +383,12 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
             RegData <- RegData[RegData$InnDato >= as.Date('2015-01-01'), ]
             variable <- switch(valgtVar,
                                UrinTomBlareHoved =  c('EmbladUn', 'EmbladM1', 'EmbladM2', 'EmbladM3', 'EmbladM4', 'EmbladM5', 'EmbladM6', 
-                                                  'EmbladM7', 'EmbladM8', 'EmbladM9', 'EmbladM10', 'EmbladM11', 'EmbladM12'),
+                                                  'EmbladM7', 'EmbladM8', 'EmbladM9', 'EmbladM11', 'EmbladM12'),
                                UrinTomBlareTillegg =c('EmbladS1', 'EmbladS2', 'EmbladS3', 'EmbladS4', 'EmbladS5', 'EmbladS6', 
-                                                  'EmbladS7', 'EmbladS8', 'EmbladS9', 'EmbladS10', 'EmbladS11', 'EmbladS12'))
+                                                  'EmbladS7', 'EmbladS8', 'EmbladS9', 'EmbladS11', 'EmbladS12'))
             grtxt <- c('Ukjent', 'Normal vannlating', 'Viljestyrt', 'Ufrivillig', 'Pressing', 'Ekstern kompresjon',
                        'Selvkateterisering', 'Kateterisering m/hjelp', 'Transuretralt', 'Suprapubisk', 
-                       'Sakral nerverotstimulering', 'Stomi', 'Annen metode')
+                       'Stomi', 'Annen metode')
             if (valgtVar == 'UrinTomBlareTillegg'){grtxt <- grtxt[-1]}
             #Ikke nødvendig å gjøre om til 01 når har boolske variable
             ind1 <- which(RegData[,variable]==TRUE, arr.ind=T)
@@ -399,7 +423,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
             RegData[ ,variable] <- 0
             RegData[ ,variable][ind1] <- 1
       }
-      if (valgtVar=='TarmInkontinens') {
+      if (valgtVar=='TarmInkontinensTom2018') { #Utgår
             retn <- 'H'
             tittel <- 'Hyppighet av fekal inkontinens'
             gr <- c(1:7,9)
@@ -407,6 +431,23 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
             grtxt <- c('Mer enn daglig', 'Daglig', 'Ukentlig', 'Mer enn månedlig',
                        'Månedlig', 'Mindre enn månedlig', 'Aldri', 'Ukjent')
             RegData$VariabelGr <- factor(RegData$Fcincfrq, levels = gr, labels = grtxt)
+      }
+      if (valgtVar=='TarmInkontinens') {
+            retn <- 'H'
+            tittel <- 'Hyppighet av fekal inkontinens'
+            gr <- c(1:4,7:9)
+            RegData <- RegData[RegData$Fcincfrq2 %in% gr,]
+            # -1 = Velg verdi
+            # 1 = 1 Daglig
+            # 2 = 2 1-6 ganger per uke
+            # 3 = 3 1-4 ganger per måned
+            # 4 = 4 Sjeldnere enn en gang per måned
+            # 7 = 7 Aldri
+            # 8 = 8 Ikke relevant
+            # 9 = 9 Ukjent
+            grtxt <- c('Daglig', '1-6 ganger/uke', '1-4 ganger/måned',
+                       'Mindre enn månedlig', 'Aldri', 'Ikke relevant', 'Ukjent' )
+            RegData$VariabelGr <- factor(RegData$Fcincfrq2, levels = gr, labels = grtxt)
       }
       if (valgtVar=='TarmKirInngrep') {
             tittel <- 'Kirurgisk inngrep i mage/–tarm kanalen'
@@ -421,8 +462,9 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
             flerevar <- 1
             retn <- 'H'
             tittel <- 'Kirurgiske inngrep i mage/–tarm kanalen'
-            variable <- c('Apndec', 'Chcyec', 'Colost', 'Ileost', 'Otgisurg')
-            grtxt <- c('Appendektomi','Fjerning av galleblæren', 'Kolostomi', 'Ileostomi', 'Annet')
+            variable <- c('Apndec', 'Chcyec', 'Colost', 'Ileost', 'Hemec', 'Apndic', 'Otgisurg')
+            grtxt <- c('Appendektomi','Fjerning av galleblæren', 'Kolostomi', 'Ileostomi', 
+                       'Hemoroidektomi', 'Appendikostomi', 'Annet')
             cexgr <- 1
             ind1 <- which(RegData[,variable]==TRUE , arr.ind=T)
             RegData[ ,variable] <- 0
@@ -438,12 +480,19 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
                              TarmAvfTillegg = 'Avføring, tilleggsmetode')
             RegData <- RegData[RegData$InnDato >= as.Date('2016-01-01'), ]
             variable <- switch(valgtVar,
-                               TarmAvfHoved =  c('DefcmthUn', 'DefcmthM1', 'DefcmthM2', 'DefcmthM3', 'DefcmthM4', 'DefcmthM5',
-                                                      'DefcmthM6', 'DefcmthM7', 'DefcmthM8', 'DefcmthM9', 'DefcmthM10'),
+                               TarmAvfHoved =  c('DefcmthUn', 'DefcmthM1', 'DefcmthM2', 'DefcmthM3', 'DefcmthM4', 
+                                                 'DefcmthM5', 'DefcmthM6', 'DefcmthM7', 'DefcmthM8', 'DefcmthM9', 
+                                                 'DefcmthM10', 'DefcmthNa'),
                                TarmAvfTillegg =c('OthdefS1', 'OthdefS2', 'OthdefS3', 'OthdefS4', 'OthdefS5',
-                                                      'OthdefS6', 'OthdefS7', 'OthdefS8', 'OthdefS9', 'OthdefS10'))
-            grtxt <- c('Ukjent', 'Normal avføring', 'Pressing/trykking', 'Digital stimulering', 'Stikkpiller',
-                       'Manuell fjerning', 'Miniklyster', 'Klyster (>150ml)', 'Kolostomi', 'Sakralstimulering', 'Annen')
+                                                      'OthdefS6', 'OthdefS7', 'OthdefS9', 'OthdefS10'))
+            grtxt <- switch(valgtVar,
+                            TarmAvfHoved = c('Ukjent', 'Normal avføring', 'Pressing/trykking', 'Digital stimulering', 
+                                             'Stikkpiller', 'Manuell fjerning', 'Miniklyster', 'Klyster (>150ml)', 
+                                             'Kolostomi', 'Sakralstimulering', 'Annen', 'Ikke relevant'),
+                            TarmAvfTillegg = c('Ukjent', 'Normal avføring', 'Pressing/trykking', 'Digital stimulering', 
+                                          'Stikkpiller', 'Manuell fjerning', 'Miniklyster', 'Klyster (>150ml)', 
+                                          'Sakralstimulering', 'Annen')
+            )
             if (valgtVar == 'TarmAvfTillegg'){grtxt <- grtxt[-1]}
             #Ikke nødvendig å gjøre om til 01 når har boolske variable
             ind1 <- which(RegData[,variable]==TRUE, arr.ind=T)

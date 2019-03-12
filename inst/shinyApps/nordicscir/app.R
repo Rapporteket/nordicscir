@@ -27,11 +27,11 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                             downloadButton(outputId = 'mndRapp.pdf', label='Last ned MÅNEDSRAPPORT', class = "butt"),
                             br(),
                             br(),
-                            h3("Resultater egen avdeling"), #),
-                            downloadButton(outputId = 'samlerappEgen', label='Ikke klargjort. Skal den være med?', class = "butt"),
-                            br(),
                             h3("Resultater hele landet"), #),
                             downloadButton(outputId = 'samlerappLandet', label='Ikke klargjort. Skal den være med?', class = "butt"),
+                            br(),
+                            h3("Resultater eget sykehus"), #),
+                            downloadButton(outputId = 'samlerappEgen', label='Ikke klargjort. Skal den være med?', class = "butt"),
                             br(),
                             br(),
                             h3('Utvalg'),
@@ -40,32 +40,36 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                            label = "Tidsperiode", separator="t.o.m.", language="nb"),
                             
                             br(),
-                            br(),
-                            br(),
                             br()
                ),
                mainPanel(width = 8,
                          br(),
-                         tags$ul(tags$b('NB: Må ta stilling til: '),
-                                 tags$li("Navn på faner"), 
-                                 tags$li("Hvilke utvalgs/filtreringsmuligheter skal vi ha i de ulike fanene")
-                         ),
+                         # tags$ul(tags$b('NB: Må ta stilling til: '),
+                         #         tags$li("Navn på faner"), 
+                         #         tags$li("Hvilke utvalgs/filtreringsmuligheter skal vi ha i de ulike fanene")),
                          br(),
-                         h2('Velkommen til ny versjon av Rapporteket-NorScir!!!', align='center'),
-                         h4('Rapporteket inneholder ei samling av figurer og tabeller som viser resultater
+                         h2('Velkommen til Rapporteket-NorScir!', align='center'),
+                         h5('[Denne passer på Resultatportalen, men synes ikke den passer her...:] Alle pasienter med nyervervet ryggmargsskade eller Cauda equina syndrom som legges
+inn til spesialisert rehabilitering ved en ryggmargsskadeavdeling, blir forespurt om samtykke til å bli registrert i Norsk ryggmargsskaderegister. Dette registeret har til hensikt å sikre og forbedre ryggmargsskadeomsorgen i Norge.
+Mer informasjon om selve registeret finnes på: '),
+                         a("NorScirs hjemmeside", href="www.norscir.no"),
+                         h5('Skal få lenken inn på linje med resten...'),
+                         #uiOutput('lenkeNorScir'),
+                         br(),
+                         h5('Oversikt over registerets kvalitetsindikatorer og resultater finnes på www.kvalitetsregsistre.no:'),
+                         a("NorScirs kvalitetsindikatorresultater", 
+                           href="https://www.kvalitetsregistre.no/registers/561/resultater"),
+                         br(),
+                         h4('Du er nå inne på Rapporteket for NorScir som er registerets resultattjeneste. 
+                              Disse sidene inneholder ei samling av 
+                        figurer og tabeller som viser resultater
                             fra registeret. På hver side kan man gjøre utvalg i menyene til venstre på siden. 
                             Alle resultater er basert på ferdigstile registreringer.'),
-                         br(),
-                         h4('Mulighet for å laste ned tabellene på denne siden kommer...'),
-                         br(),
-                         h3('Figur med alle kvalitetsindikatorer?'),
-                         br(),
-                         br(),
-                         h3('Registreringsforsinkelse fordeling, se årsrapp. s.32 om målnivå innen 1 mnd'),
                          br(),
                          h3('Liggetidsoversikt'),
                          #h5('Angivelse av hvilket utvalg som er gjort, som på fordelingstabeller'),
                          tableOutput('tabLiggetider'),
+                         h4('(Mulighet for å laste ned tabellene på denne siden kommer...)'),
                          br(),
                          #h2('Nevrologisk klassifikasjon', align='center'),
                          br(),
@@ -83,71 +87,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                          br()
                )
       ), #tab
-      
-      #-----Registreringsoversikter------------
-      tabPanel("Registreringsoversikter",
-               sidebarPanel(width=3,
-                            h3('Utvalg'),
-                            conditionalPanel(condition = "input.ark == 'Antall registreringer'",
-                                             dateInput(inputId = 'sluttDatoReg', label = 'Velg sluttdato', language="nb",
-                                                       value = Sys.Date(), max = Sys.Date() )
-                            ),
-                            conditionalPanel(
-                                  condition = "input.ark == 'Antall registreringer'",
-                                  selectInput(inputId = "tidsenhetReg", label="Velg tidsenhet",
-                                              choices = rev(c('År'= 'Aar', 'Måned'='Mnd')))),
-                            # conditionalPanel(
-                            #       condition = "input.ark == 'Antall registreringer'",
-                            #       selectInput(inputId = 'enhetsNivaa', label='Enhetsnivå',
-                            #                   choices = c("Hele landet" = 0, "Egen enhet" = 2))
-                            # ),
-                            conditionalPanel(
-                                  condition = "input.ark == 'Antall registreringer'",
-                                  selectInput(inputId = 'traumeReg', label='Traume',
-                                              choices = c("Alle"=' ', #'ikke'
-                                                          "Traume"='ja', 
-                                                          "Ikke traume"='nei'))
-                            ),
-                            conditionalPanel(
-                                  condition = "input.ark == 'Oppfølgingsskjema'",
-                                  dateRangeInput(inputId = 'datovalgReg', start = startDatoStandard, end = Sys.Date(),
-                                                 label = "Tidsperiode", separator="t.o.m.", language="nb")
-                            )
-               ),
-               
-               mainPanel(
-                     tabsetPanel(id='ark',
-                                 tabPanel('Antall registreringer',
-                                          #p('Tabellen viser registreringer siste 12 måneder eller siste 5 år'),
-                                          uiOutput("undertittelReg"),
-                                          p("Velg tidsperiode ved å velge sluttdato/tidsenhet i menyen til venstre"), #em(
-                                          br(),
-                                          fluidRow(tableOutput("tabAntOpphShMnd12"),
-                                                   downloadButton(outputId = 'lastNed_tabAntOpph', label='Last ned')
-                                          )
-                                          #                                          br(),
-                                          # h3("Belegg FJERNES! på rehabiliteringsavdelinga - ønskes flere/andre variable?"), 
-                                          # #uiOutput("undertittelBelegg"),
-                                          # fluidRow( tableOutput("tabLiggetider"))
-                                 ),
-                                 tabPanel('Oppfølgingsskjema',
-                                          h3("Antall registreringsskjema med ulike oppfølgingsskjema"),
-                                          tableOutput('tabAntTilknyttedeSkjema'),
-                                          downloadButton(outputId = 'lastNed_tabOppfAnt', label='Last ned'),
-                                          br(),
-                                          h3("Andel (%) registreringsskjema med ulike oppfølgingsskjema"),
-                                          tableOutput("tabAndelTilknyttedeSkjema"),
-                                          downloadButton(outputId = 'lastNed_tabOppfPst', label='Last ned'),
-                                          
-                                          br(),
-                                          h3('Antall skjema registrert for innleggelser i valgte tidsperiode'),
-                                          tableOutput('AntallSkjema'),
-                                          downloadButton(outputId = 'lastNed_tabAlleSkjemaAnt', label='Last ned')
-                                 )
-                     ))
-      ), #tab Registreringsoversikter
-      
-      
+
       #--------Fordelinger-----------            
       tabPanel("Fordelinger",
                sidebarPanel(width = 3,
@@ -178,9 +118,11 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                               'Livskval.: Tilfredshet med livet' = 'LivsGen',
                                               'Livskval.: Tilfredshet med fysisk helse' = 'LivsFys',
                                               'Livskval.: Tilfredshet med psykisk helse' = 'LivsPsyk',
-                                              'Urin: Ufrivillig urinlekkasje' = 'UrinInkontinens', 
+                                              'Urin: Ufrivillig urinlekkasje (fra 2019)' = 'UrinInkontinens', 
+                                              'Urin: Ufrivillig urinlekkasje (t.o.m. 2018)' = 'UrinInkontinensTom2018', 
                                               'Urin: Kirurgiske inngrep' = 'UrinKirInngr',
-                                              'Urin: Legemiddelbruk' = 'UrinLegemidler',
+                                              'Urin: Legemiddelbruk (fra 2019)' = 'UrinLegemidler',
+                                              'Urin: Legemiddelbruk (t.o.m. 2018)' = 'UrinLegemidlerTom2018',
                                               'Urin: Legemiddelbruk, hvilke' = 'UrinLegemidlerHvilke',
                                               'Urin: Blæretømming, hovedmetode' = 'UrinTomBlareHoved',
                                               'Urin: Blæretømming, tilleggsmetode' = 'UrinTomBlareTillegg',
@@ -188,7 +130,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                               'Tarm: Avføring, tilleggsmetode' = 'TarmAvfTillegg',
                                               'Tarm: Avføringsmiddelbruk' = 'TarmAvfmiddel',
                                               'Tarm: Avføringsmidler, hvilke' = 'TarmAvfmiddelHvilke',
-                                              'Tarm: Fekal inkontinens' = 'TarmInkontinens',
+                                              'Tarm: Fekal inkontinens (fra 2019)' = 'TarmInkontinens',
+                                              'Tarm: Fekal inkontinens (t.o.m. 2018)' = 'TarmInkontinensTom2018',
                                               'Tarm: Kirurgisk inngrep' = 'TarmKirInngrep',
                                               'Tarm: Kirurgiske inngrep, hvilke' = 'TarmKirInngrepHvilke'
                                   )
@@ -206,7 +149,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                                     "Hele landet"=0, 
                                                     "Egen enhet"=2)
                             ),
-
+                            
                             #valgAIS <- as.character(0:5),
                             #names(valgAIS) <- c('Alle', LETTERS[1:5]),
                             #valgAIS <- c('"Alle"=0', '"A"=1', '"B"=2', '"C"=3', '"D"=4', '"E"=5'),
@@ -215,11 +158,11 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                         multiple = T, #selected=0,
                                         choices = #valgAIS
                                               c("Alle"=0,
-                                              "A"=1,
-                                              "B"=2,
-                                              "C"=3,
-                                              "D"=4,
-                                              "E"=5)
+                                                "A"=1,
+                                                "B"=2,
+                                                "C"=3,
+                                                "D"=4,
+                                                "E"=5)
                             ),
                             selectInput(inputId = 'traume', label='Traume',
                                         choices = c("Alle"=' ', #'ikke'
@@ -239,6 +182,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                      tabsetPanel(
                            tabPanel(
                                  'Figur',
+                                 em('(Høyreklikk på figuren for å laste den ned)'),
                                  plotOutput('fordelinger')),
                            tabPanel(
                                  'Tabell',
@@ -246,10 +190,11 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                  br(),
                                  tableOutput('fordelingTab'),
                                  downloadButton(outputId = 'lastNed_tabFord', label='Last ned') 
-                     )
-               ))
+                           )
+                     ))
       ), #tab Fordelinger
-
+   
+         
 #------------Sykehusvise resultater------------
       tabPanel("Sykehusvise resultater",
                sidebarPanel(width = 3,
@@ -302,6 +247,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                      tabsetPanel(
                            tabPanel(
                                  'Figur',
+                                 em('(Høyreklikk på figuren for å laste den ned)'),
                                  plotOutput('gjsnGrVar')),
                            tabPanel(
                                  'Tabell',
@@ -313,9 +259,76 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                      )
                )
                
-) #GjsnGrVar 
+), #GjsnGrVar 
 
-)
+
+
+#-----Registreringsoversikter------------
+tabPanel("Registreringsoversikter",
+         sidebarPanel(width=3,
+                      h3('Utvalg'),
+                      conditionalPanel(condition = "input.ark == 'Antall registreringer'",
+                                       dateInput(inputId = 'sluttDatoReg', label = 'Velg sluttdato', language="nb",
+                                                 value = Sys.Date(), max = Sys.Date() )
+                      ),
+                      conditionalPanel(
+                            condition = "input.ark == 'Antall registreringer'",
+                            selectInput(inputId = "tidsenhetReg", label="Velg tidsenhet",
+                                        choices = rev(c('År'= 'Aar', 'Måned'='Mnd')))),
+                      # conditionalPanel(
+                      #       condition = "input.ark == 'Antall registreringer'",
+                      #       selectInput(inputId = 'enhetsNivaa', label='Enhetsnivå',
+                      #                   choices = c("Hele landet" = 0, "Egen enhet" = 2))
+                      # ),
+                      conditionalPanel(
+                            condition = "input.ark == 'Antall registreringer'",
+                            selectInput(inputId = 'traumeReg', label='Traume',
+                                        choices = c("Alle"=' ', #'ikke'
+                                                    "Traume"='ja', 
+                                                    "Ikke traume"='nei'))
+                      ),
+                      conditionalPanel(
+                            condition = "input.ark == 'Oppfølgingsskjema'",
+                            dateRangeInput(inputId = 'datovalgReg', start = startDatoStandard, end = Sys.Date(),
+                                           label = "Tidsperiode", separator="t.o.m.", language="nb")
+                      )
+         ),
+         
+         mainPanel(
+               tabsetPanel(id='ark',
+                           tabPanel('Antall registreringer',
+                                    #p('Tabellen viser registreringer siste 12 måneder eller siste 5 år'),
+                                    uiOutput("undertittelReg"),
+                                    p("Velg tidsperiode ved å velge sluttdato/tidsenhet i menyen til venstre"), #em(
+                                    br(),
+                                    fluidRow(tableOutput("tabAntOpphShMnd12"),
+                                             downloadButton(outputId = 'lastNed_tabAntOpph', label='Last ned')
+                                    )
+                                    #                                          br(),
+                                    # h3("Belegg FJERNES! på rehabiliteringsavdelinga - ønskes flere/andre variable?"), 
+                                    # #uiOutput("undertittelBelegg"),
+                                    # fluidRow( tableOutput("tabLiggetider"))
+                           ),
+                           tabPanel('Oppfølgingsskjema',
+                                    h3("Antall registreringsskjema med ulike oppfølgingsskjema"),
+                                    tableOutput('tabAntTilknyttedeSkjema'),
+                                    downloadButton(outputId = 'lastNed_tabOppfAnt', label='Last ned'),
+                                    br(),
+                                    h3("Andel (%) registreringsskjema med ulike oppfølgingsskjema"),
+                                    tableOutput("tabAndelTilknyttedeSkjema"),
+                                    downloadButton(outputId = 'lastNed_tabOppfPst', label='Last ned'),
+                                    
+                                    br(),
+                                    h3('Antall skjema registrert for innleggelser i valgte tidsperiode'),
+                                    tableOutput('AntallSkjema'),
+                                    downloadButton(outputId = 'lastNed_tabAlleSkjemaAnt', label='Last ned')
+                           )
+               ))
+) #tab Registreringsoversikter
+) #ui-del
+
+
+
 
 #----- Define server logic required to draw a histogram-------
 server <- function(input, output) {
@@ -448,6 +461,8 @@ server <- function(input, output) {
       #                   })
 
 #--------------Startside------------------------------
+      
+      output$lenkeNorScir <- renderUI({tagList("www.norscir.no", www.norscir.no)})
       
       output$tabNevrKlass <- renderTable(
             lagTabNevrKlass(HovedSkjema, datoFra = input$datovalgDash[1], datoTil = input$datovalgDash[2]),
