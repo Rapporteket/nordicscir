@@ -34,6 +34,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                             downloadButton(outputId = 'samlerappEgen', label='Last ned', class = "butt"),
                             br(),
                             br(),
+                            br(),
+                            br(),
                             h3('Gjør utvalg for tabellene til høyre:'),
                             br(),
                             dateRangeInput(inputId = 'datovalgDash', start = startDatoStandard, end = Sys.Date(),
@@ -46,26 +48,35 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                          # tags$ul(tags$b('NB: Må ta stilling til: '),
                          #         tags$li("Navn på faner"), 
                          #         tags$li("Hvilke utvalgs/filtreringsmuligheter skal vi ha i de ulike fanene")),
-                         helpText('[Denne passer på Resultatportalen, men synes ikke den passer her...:] Alle pasienter med nyervervet ryggmargsskade eller Cauda equina syndrom som legges
-inn til spesialisert rehabilitering ved en ryggmargsskadeavdeling, blir forespurt om samtykke til å bli registrert i Norsk ryggmargsskaderegister. Dette registeret har til hensikt å sikre og forbedre ryggmargsskadeomsorgen i Norge.
-Mer informasjon om selve registeret finnes på: ',
+                         helpText('Mer informasjon om selve registeret finnes på: ',
                                   a("NorScirs hjemmeside", href="http://www.norscir.no", target="_blank")), #target gjør at lenken åpnes i ny fane
                          
-                         h2('Velkommen til Rapporteket-NorScir!', align='center'),
+                         h2('Velkommen til Rapporteket-Norsk Ryggmargsskaderegister!', align='center'),
                          
                          #uiOutput('lenkeNorScir'),
                          br(),
-                         h4('Du er nå inne på Rapporteket for NorScir som er registerets resultattjeneste. 
-                              Disse sidene inneholder ei samling av 
-                        figurer og tabeller som viser resultater
-                            fra registeret. På hver side kan man gjøre utvalg i menyene til venstre på siden. 
-                            Alle resultater er basert på ferdigstile registreringer. Merk at data er hentet direkte fra registerets database
-                            og ikke kvalitetssikret.'),
+                         h4('Du er nå inne på Rapporteket for NorSCIR. Rapporteket er registerets resultattjeneste. 
+                            Disse sidene inneholder en samling av figurer og tabeller som viser resultater fra registeret. 
+                            På hver av sidene kan man gjøre utvalg i menyene til venstre. Alle resultater er basert 
+                            på ferdigstilte registreringer. Merk at data er hentet direkte fra registerets database. 
+                            Dette medfører at nyere data ikke er kvalitetssikret ennå.'),
+                         h4('Du kan se på resultater for eget sykehus, nasjonale data og eget sykehus sett opp mot landet for øvrig.'),
                          br(),
-                         helpText('Åpent tilgjengelig oversikt over registerets kvalitetsindikatorer og resultater finnes på www.kvalitetsregistre.no:',
-                                  a("NorScirs kvalitetsindikatorresultater", href="https://www.kvalitetsregistre.no/registers/561/resultater"),
+                         h4('Under fanen ', tags$u('Fordelinger'), 'kan man se på fordelinger av ulike variable. 
+                              Man kan velge hvilken variabel man vil se på og gjøre filtreringer. 
+                              Resultatene som vises er 
+                              basert på AdmitDt, altså dato for første akutte innleggelse. Alle figurer og 
+                              tabeller kan lastes ned.'),
+                         h4('Fanen ', tags$u('Sykehusvise resultater '), 'viser gjennomsnittsverdier per sykehus. 
+                            Man kan velge hvilken variabel man vil se på og om man vil se gjennomsnitt eller median. 
+                            Man kan også velge å filtrere data.'),
+                         h4(tags$u('Registreringsoversikter '), 'viser aktivitet i registeret'),
+                         helpText('Oversikt over registerets kvalitetsindikatorer og resultater finnes på www.kvalitetsregistre.no:',
+                                  a("NorSCIR", href="https://www.kvalitetsregistre.no/registers/561/resultater"),
                                   target="_blank"),
                          br(),
+                         helpText('Hjemmeside NorSCIR: ', #
+                                  a("www.norscir.no", href="http://www.norscir.no", target="_blank")), #target gjør at lenken åpnes i ny fane
                          h3('Liggetidsoversikt'),
                          #h5('Angivelse av hvilket utvalg som er gjort, som på fordelingstabeller'),
                          tableOutput('tabLiggetider'),
@@ -94,8 +105,8 @@ Mer informasjon om selve registeret finnes på: ',
                             selectInput(
                                   inputId = "valgtVar", label="Velg variabel",
                                   choices = c('Alder' = 'Alder', 
-                                              'Ais, innleggelse' = 'AAis' ,
-                                              'Ais, kontroll' = 'FAis', 
+                                              'Ais ved innleggelse' = 'AAis' ,
+                                              'Ais ved utskriving' = 'FAis', 
                                               'Lengde på rehab.opphold' = 'DagerRehab', 
                                               'Planlagt utskrevet til' = 'PPlaceDis',
                                               'Tid fra skade til oppstart rehab.' = 'DagerTilRehab', 
@@ -267,28 +278,28 @@ Mer informasjon om selve registeret finnes på: ',
 tabPanel("Registreringsoversikter",
          sidebarPanel(width=3,
                       h3('Utvalg'),
-                      conditionalPanel(condition = "input.ark == 'Antall registreringer'",
+                      conditionalPanel(condition = "input.ark == 'Antall personer med ryggmargsskade'",
                                        dateInput(inputId = 'sluttDatoReg', label = 'Velg sluttdato', language="nb",
                                                  value = Sys.Date(), max = Sys.Date() )
                       ),
                       conditionalPanel(
-                            condition = "input.ark == 'Antall registreringer'",
+                            condition = "input.ark == 'Antall personer med ryggmargsskade'",
                             selectInput(inputId = "tidsenhetReg", label="Velg tidsenhet",
                                         choices = rev(c('År'= 'Aar', 'Måned'='Mnd')))),
                       # conditionalPanel(
-                      #       condition = "input.ark == 'Antall registreringer'",
+                      #       condition = "input.ark == 'Antall personer med ryggmargsskade'",
                       #       selectInput(inputId = 'enhetsNivaa', label='Enhetsnivå',
                       #                   choices = c("Hele landet" = 0, "Egen enhet" = 2))
                       # ),
                       conditionalPanel(
-                            condition = "input.ark == 'Antall registreringer'",
+                            condition = "input.ark == 'Antall personer med ryggmargsskade'",
                             selectInput(inputId = 'traumeReg', label='Traume',
                                         choices = c("Alle"=' ', #'ikke'
                                                     "Traume"='ja', 
                                                     "Ikke traume"='nei'))
                       ),
                       conditionalPanel(
-                            condition = "input.ark == 'Oppfølgingsskjema'",
+                            condition = "input.ark == 'Antall hovedskjema med tilknyttede skjema'",
                             dateRangeInput(inputId = 'datovalgReg', start = startDatoStandard, end = Sys.Date(),
                                            label = "Tidsperiode", separator="t.o.m.", language="nb")
                       )
@@ -296,7 +307,7 @@ tabPanel("Registreringsoversikter",
          
          mainPanel(
                tabsetPanel(id='ark',
-                           tabPanel('Antall registreringer',
+                           tabPanel('Antall personer med ryggmargsskade',
                                     #p('Tabellen viser registreringer siste 12 måneder eller siste 5 år'),
                                     uiOutput("undertittelReg"),
                                     p("Velg tidsperiode ved å velge sluttdato/tidsenhet i menyen til venstre"), #em(
@@ -309,20 +320,28 @@ tabPanel("Registreringsoversikter",
                                     # #uiOutput("undertittelBelegg"),
                                     # fluidRow( tableOutput("tabLiggetider"))
                            ),
-                           tabPanel('Oppfølgingsskjema',
+                           tabPanel('Antall hovedskjema med tilknyttede skjema',
                                     h3("Antall registreringsskjema med ulike oppfølgingsskjema"),
                                     tableOutput('tabAntTilknyttedeSkjema'),
                                     downloadButton(outputId = 'lastNed_tabOppfAnt', label='Last ned'),
                                     br(),
                                     h3("Andel (%) registreringsskjema med ulike oppfølgingsskjema"),
                                     tableOutput("tabAndelTilknyttedeSkjema"),
-                                    downloadButton(outputId = 'lastNed_tabOppfPst', label='Last ned'),
-                                    
-                                    br(),
-                                    h3('Antall skjema registrert for innleggelser i valgte tidsperiode'),
-                                    tableOutput('AntallSkjema'),
-                                    downloadButton(outputId = 'lastNed_tabAlleSkjemaAnt', label='Last ned')
+                                    downloadButton(outputId = 'lastNed_tabOppfPst', label='Last ned')
+                           ), 
+                           tabPanel('Antall Kontrollskjema med tilknyttede skjema',
+                                    h3("Antall kontrollskjema med ulike oppfølgingsskjema"),
+                                    helpText('Oppbyggingen av denne skal være lik tabellen vi har i dag 
+                                             som heter: Antall hovedskjema med tilknyttede skjema. 
+                                             Forskjellen er at det er Kontrollskjema som da opptrer som «hovedskjema».')
+                                    # tableOutput('tabAntTilknyttedeSkjema'),
+                                    # downloadButton(outputId = 'lastNed_tabOppfAnt', label='Last ned'),
+                                    # br(),
+                                    # h3("Andel (%) registreringsskjema med ulike oppfølgingsskjema"),
+                                    # tableOutput("tabAndelTilknyttedeSkjema"),
+                                    # downloadButton(outputId = 'lastNed_tabOppfPst', label='Last ned')
                            )
+                                    
                ))
 ) #tab Registreringsoversikter
 ) #ui-del
@@ -498,9 +517,10 @@ server <- function(input, output) {
             output$undertittelReg <- renderUI({
                   br()
                   t1 <- 'Tabellen viser innleggelser '
-                  h4(HTML(undertittel <- switch(input$tidsenhetReg,
-                         Mnd = paste0(t1, 'siste 12 måneder før ', input$sluttDatoReg, '<br />'),
-                         Aar = paste0(t1, 'siste 5 år før ', input$sluttDatoReg, '<br />'))
+                  t2 <- ', basert på første akutte innleggelse'
+                  h4(HTML(switch(input$tidsenhetReg, #undertittel <- 
+                         Mnd = paste0(t1, 'siste 12 måneder før ', input$sluttDatoReg, t2, '<br />'),
+                         Aar = paste0(t1, 'siste 5 år før ', input$sluttDatoReg, t2, '<br />'))
                   ))})
       observe({
             tabAntOpphShMndAar <- switch(input$tidsenhetReg,
@@ -539,18 +559,11 @@ server <- function(input, output) {
       })
  
       #Antall skjema av hver type
-      output$AntallSkjema <- renderTable(
-            #tabAntSkjema(Data=AlleTab, datoFra='2015-01-01', datoTil='2018-11-01'),
-            t(tabAntSkjema(Data=AlleTab, datoFra=input$datovalgReg[1], datoTil=input$datovalgReg[2]))
-            ,rownames = T, digits=0, spacing="xs" )
+      # output$AntallSkjema <- renderTable(
+      #       t(tabAntSkjema(Data=AlleTab, datoFra=input$datovalgReg[1], datoTil=input$datovalgReg[2]))
+      #       ,rownames = T, digits=0, spacing="xs" )
      
-      output$lastNed_tabAlleSkjemaAnt <- downloadHandler(
-            filename = function(){'tabOppfPst.csv'},
-            content = function(file, filename){
-                  write.csv2(t(tabAntSkjema(Data=AlleTab, datoFra=input$datovalgReg[1], datoTil=input$datovalgReg[2])), 
-                             file, row.names = F, na = '')
-            })
-      
+
 #---------Fordelinger------------
             observe({   #Fordelingsfigurer og tabeller
             #RegData <- finnRegData(Data = AlleTab, valgtVar <- 'UrinKirInngr')
