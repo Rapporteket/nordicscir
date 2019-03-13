@@ -28,13 +28,13 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                             br(),
                             br(),
                             h3("Resultater hele landet"), #),
-                            downloadButton(outputId = 'samlerappLandet', label='Ikke klargjort. Skal den være med?', class = "butt"),
+                            downloadButton(outputId = 'samlerappLandet', label='Last ned', class = "butt"),
                             br(),
                             h3("Resultater eget sykehus"), #),
-                            downloadButton(outputId = 'samlerappEgen', label='Ikke klargjort. Skal den være med?', class = "butt"),
+                            downloadButton(outputId = 'samlerappEgen', label='Last ned', class = "butt"),
                             br(),
                             br(),
-                            h3('Utvalg'),
+                            h3('Gjør utvalg for tabellene til høyre:'),
                             br(),
                             dateRangeInput(inputId = 'datovalgDash', start = startDatoStandard, end = Sys.Date(),
                                            label = "Tidsperiode", separator="t.o.m.", language="nb"),
@@ -43,28 +43,28 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                             br()
                ),
                mainPanel(width = 8,
-                         br(),
                          # tags$ul(tags$b('NB: Må ta stilling til: '),
                          #         tags$li("Navn på faner"), 
                          #         tags$li("Hvilke utvalgs/filtreringsmuligheter skal vi ha i de ulike fanene")),
-                         br(),
-                         h2('Velkommen til Rapporteket-NorScir!', align='center'),
-                         h5('[Denne passer på Resultatportalen, men synes ikke den passer her...:] Alle pasienter med nyervervet ryggmargsskade eller Cauda equina syndrom som legges
+                         helpText('[Denne passer på Resultatportalen, men synes ikke den passer her...:] Alle pasienter med nyervervet ryggmargsskade eller Cauda equina syndrom som legges
 inn til spesialisert rehabilitering ved en ryggmargsskadeavdeling, blir forespurt om samtykke til å bli registrert i Norsk ryggmargsskaderegister. Dette registeret har til hensikt å sikre og forbedre ryggmargsskadeomsorgen i Norge.
-Mer informasjon om selve registeret finnes på: '),
-                         a("NorScirs hjemmeside", href="www.norscir.no"),
-                         h5('Skal få lenken inn på linje med resten...'),
+Mer informasjon om selve registeret finnes på: ',
+                                  a("NorScirs hjemmeside", href="http://www.norscir.no", target="_blank")), #target gjør at lenken åpnes i ny fane
+                         
+                         h2('Velkommen til Rapporteket-NorScir!', align='center'),
+                         
                          #uiOutput('lenkeNorScir'),
-                         br(),
-                         h5('Oversikt over registerets kvalitetsindikatorer og resultater finnes på www.kvalitetsregsistre.no:'),
-                         a("NorScirs kvalitetsindikatorresultater", 
-                           href="https://www.kvalitetsregistre.no/registers/561/resultater"),
                          br(),
                          h4('Du er nå inne på Rapporteket for NorScir som er registerets resultattjeneste. 
                               Disse sidene inneholder ei samling av 
                         figurer og tabeller som viser resultater
                             fra registeret. På hver side kan man gjøre utvalg i menyene til venstre på siden. 
-                            Alle resultater er basert på ferdigstile registreringer.'),
+                            Alle resultater er basert på ferdigstile registreringer. Merk at data er hentet direkte fra registerets database
+                            og ikke kvalitetssikret.'),
+                         br(),
+                         helpText('Åpent tilgjengelig oversikt over registerets kvalitetsindikatorer og resultater finnes på www.kvalitetsregistre.no:',
+                                  a("NorScirs kvalitetsindikatorresultater", href="https://www.kvalitetsregistre.no/registers/561/resultater"),
+                                  target="_blank"),
                          br(),
                          h3('Liggetidsoversikt'),
                          #h5('Angivelse av hvilket utvalg som er gjort, som på fordelingstabeller'),
@@ -449,16 +449,16 @@ server <- function(input, output) {
             content = function(file){
                   contentFile(file, srcFil="NSmndRapp.Rnw", tmpFile="tmpNSmndRapp.Rnw")
             })
-      # output$samlerappEgen <- downloadHandler(
-      #             filename = function(){ paste0('SamleRappEgen', Sys.time(), '.pdf')}, 
-      #             content = function(file){
-      #                   contentFile(file, srcFil="NSsamleRapp.Rnw", tmpFile="tmpNSsamleRapp.Rnw")
-      #             })
-      # output$samlerappLandet <- downloadHandler(
-      #                   filename = function(){ paste0('SamleRappLand', Sys.time(), '.pdf')}, 
-      #                   content = function(file){
-      #                         contentFile(file, srcFil="NSsamleRappLand.Rnw", tmpFile="tmpNSsamleRappLand.Rnw")
-      #                   })
+      output$samlerappEgen <- downloadHandler(
+                  filename = function(){ paste0('SamleRappEgen', Sys.time(), '.pdf')},
+                  content = function(file){
+                        contentFile(file, srcFil="NSsamleRapp.Rnw", tmpFile="tmpNSsamleRapp.Rnw")
+                  })
+      output$samlerappLandet <- downloadHandler(
+                        filename = function(){ paste0('SamleRappLand', Sys.time(), '.pdf')},
+                        content = function(file){
+                              contentFile(file, srcFil="NSsamleRappLand.Rnw", tmpFile="tmpNSsamleRappLand.Rnw")
+                        })
 
 #--------------Startside------------------------------
       

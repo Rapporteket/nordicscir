@@ -98,7 +98,8 @@ options(replace.assign=TRUE, width=90) #, warnings=FALSE, echo=FALSE, fig.align=
 
 <<LasteData, echo=FALSE, eval=T>>=
 if (!exists('NSdata')){
-      NSdata <- nordicscir::NSRegDataSQL()
+      #NSdata <- nordicscir::NSRegDataSQL()
+      NSdata <- HovedSkjema
 }
 @
 
