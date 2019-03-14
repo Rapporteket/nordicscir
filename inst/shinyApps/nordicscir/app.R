@@ -175,6 +175,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                  br(),
                                  em('(Høyreklikk på figuren for å laste den ned)'),
                                  br(),
+                                 br(),
                                  plotOutput('fordelinger')),
                            tabPanel(
                                  'Tabell',
@@ -241,6 +242,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                  'Figur',
                                  br(),
                                  em('(Høyreklikk på figuren for å laste den ned)'),
+                                 br(),
                                  br(),
                                  plotOutput('gjsnGrVar')),
                            tabPanel(
@@ -318,7 +320,7 @@ tabPanel("Registreringsoversikter",
                                     tableOutput('tabAntTilknyttedeKtrSkjema'),
                                     downloadButton(outputId = 'lastNed_tabOppfKtrAnt', label='Last ned'),
                                     br(),
-                                    h3("Andel (%) registreringsskjema med ulike oppfølgingsskjema"),
+                                    h3("Andel (%) kontrollskjema med ulike oppfølgingsskjema"),
                                     tableOutput("tabAndelTilknyttedeKtrSkjema"),
                                     downloadButton(outputId = 'lastNed_tabOppfKtrPst', label='Last ned')
                            )
