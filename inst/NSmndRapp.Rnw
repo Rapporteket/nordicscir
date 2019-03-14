@@ -93,6 +93,7 @@ Rapporten viser følgende:
 \item Antall hovedskjema per år og avdeling. 
 \item	Registreringsoversikt med antall Registreringsskjema (hovedskjema) og tilknyttede skjema.  
 \item	Andeler av hovedskjema som har et tilknyttet skjema
+\item Liggetider ved eget sykehus
 %\item	Andel som ikke har vært til kontrollopphold
 \item	Fordeling, skadeårsaker
 \item	Fordeling, ikke-traumatiske skadeårsaker (fra 01.01.2018)
@@ -223,6 +224,37 @@ xtable::xtable(AndelMKtr, digits=1, align=c('l', rep('r', ncol(AndelMKtr))),
 \end{frame}
 
 
+\begin{frame}[fragile] 
+<<'Liggetider', results='asis'>>=
+#Tabell: Andel registreringsskjema med oppfølging siste 12 mnd
+
+#!!! Får feil encoding hvis benytter funksjonen tabLiggetider fra NStabeller.R
+
+Liggetider <- function(RegData, datoFra='2018-01-01', datoTil=Sys.Date(), enhetsUtvalg=0, reshID=0,
+                          traume='') {
+      RegData <- NSUtvalg(RegData=RegData, datoFra=datoFra, datoTil = datoTil, traume=traume,
+                          enhetsUtvalg = enhetsUtvalg, reshID = reshID)$RegData
+      Liggetider <- rbind('Liggetid, totalt' = summary(RegData$OpphTot)[c(1,3,4,6)],
+                          'Liggetid på rehab.' =summary(RegData$DagerRehab)[c(1,3,4,6)],	
+                          'Liggetid før rehab.' = summary(RegData$DagerTilRehab)[c(1,3,4,6)]	
+      )
+      colnames(Liggetider) <- c('Min', 'Median', 'Gj.sn.', 'Maks')
+      return(Liggetider)
+}
+
+LiggetiderMtraume <- Liggetider(RegData=HovedSkjema, datoFra=datoFra, datoTil=Sys.Date(), enhetsUtvalg=2, reshID=reshID,
+                          traume='ja')
+xtable::xtable(LiggetiderMtraume, digits=0, align=c('l', rep('r', ncol(LiggetiderMtraume))),
+		caption=paste0('Liggetider ved eget sykehus, pasienter med traume. Innleggelser fra og med ',datoFra,'.'))
+
+LiggetiderUtraume <- Liggetider(RegData=HovedSkjema, datoFra=datoFra, datoTil=Sys.Date(), enhetsUtvalg=2, reshID=reshID,
+                          traume='nei')
+xtable::xtable(LiggetiderUtraume, digits=0, align=c('l', rep('r', ncol(LiggetiderMtraume))),
+		caption=paste0('Liggetider eget sykehus, pasienter uten traume. Innleggelser fra og med ',datoFra,'.'))
+
+@
+\end{frame}
+
 
 
 
@@ -301,28 +333,43 @@ Variabelen ble innført i desember og alle hovedskjema ferdigstilt (lukket førs
 
 <<'NevrologiskKlass', results='asis'>>=
 
-NevrKlass <- rbind(
-'Utført og klassifiserbar, innkomst: ' = 
-      addmargins(table(HovedSkjema12mnd$ShNavn[HovedSkjema12mnd$AAis %in% 1:5])),
-'Utført og klassifiserbar, utreise: ' = 
-      addmargins(table(HovedSkjema12mnd$ShNavn[HovedSkjema12mnd$FAis %in% 1:5])), 
-'Ikke utført  ved innkomst:' = 
-      addmargins(table(HovedSkjema12mnd$ShNavn[HovedSkjema12mnd$ANeuNoMeasure == TRUE #-1 
-                                               & HovedSkjema12mnd$AAis == -1])),
-'Ikke utført ved utreise:' =
-      addmargins(table(HovedSkjema12mnd$ShNavn[HovedSkjema12mnd$FNeuNoMeasure == TRUE #-1 
-                                          & HovedSkjema12mnd$FAis == -1])),
-'Utført, men ikke klassifiserbar, innkomst: ' = 
-      addmargins(table(HovedSkjema12mnd$ShNavn[HovedSkjema12mnd$AAis==9])),
-'Utført, men ikke klassifiserbar, utreise: ' = 
-      addmargins(table(HovedSkjema12mnd$ShNavn[HovedSkjema12mnd$FAis==9]))
-)
+#NevrKlass <- lagTabNevrKlass(HovedSkjema = HovedSkjema12mnd, datoFra=datoFra, datoTil=Sys.Date())
+#!!! Får trøbbel med encoding når benytter funksjonen over.
 
+TabNevrKlass <- function(HovedSkjema, datoFra='2018-01-01', datoTil=Sys.Date()){
+      
+      Utvalg <- NSUtvalg(HovedSkjema, datoFra = datoFra, datoTil = datoTil)
+      HovedSkjema <- Utvalg$RegData
+      Ant <- addmargins(table(HovedSkjema$ShNavn))
+      AntKlassInnUt <- addmargins(table(HovedSkjema$ShNavn[(HovedSkjema$AAis %in% 1:5) & (HovedSkjema$FAis %in% 1:5)]))
+      
+NevrKlass <- rbind(
+      'Utført og klassifiserbar, innkomst: ' = 
+            addmargins(table(HovedSkjema$ShNavn[HovedSkjema$AAis %in% 1:5])),
+      'Ikke utført  ved innkomst:' =
+            addmargins(table(HovedSkjema$ShNavn[HovedSkjema$ANeuNoMeasure == TRUE & HovedSkjema$AAis == -1])),
+      'Utført, men ikke klassifiserbar, innkomst: ' =
+            addmargins(table(HovedSkjema$ShNavn[HovedSkjema$AAis==9])),
+       'Utført og klassifiserbar, utreise: ' =
+             addmargins(table(HovedSkjema$ShNavn[HovedSkjema$FAis %in% 1:5])),
+      'Ikke utført ved utreise:' =
+            addmargins(table(HovedSkjema$ShNavn[HovedSkjema$FNeuNoMeasure == TRUE
+                                                     & HovedSkjema$FAis == -1])),
+      'Utført, men ikke klassifiserbar, utreise: ' =
+            addmargins(table(HovedSkjema$ShNavn[HovedSkjema$FAis==9])),
+      'Klassifisert ved både inn- og utreise: ' = 
+            paste0(sprintf('%.0f',AntKlassInnUt/Ant*100), '%')
+)
 colnames(NevrKlass)[dim(NevrKlass)[2] ]<- 'Hele landet'
 
-xtable::xtable(NevrKlass, align=c('l', rep('r', ncol(NevrKlass))), digits=0, 
+return(NevrKlass)
+}
+
+NevrKlass <- TabNevrKlass(HovedSkjema = HovedSkjema12mnd, datoFra=datoFra, datoTil=Sys.Date())
+
+xtable::xtable(NevrKlass, digits=0, align=c('l', rep('r', ncol(NevrKlass))), 
 		caption=paste0('Nevrologisk klassifikasjon for ferdigstilte innleggelser fra og med ',
-		               datoFra, '. Antall.'))
+		               datoFra, ', antall.'))
 
 @
 \end{frame}
@@ -333,40 +380,17 @@ xtable::xtable(NevrKlass, align=c('l', rep('r', ncol(NevrKlass))), digits=0,
 
 HovedSkjema28 <- HovedSkjema12mnd[which(HovedSkjema12mnd$DagerRehab >28),]
 
-Ant28 <- addmargins(table(HovedSkjema28$ShNavn))
-AntKlassInnUt28 <- addmargins(table(HovedSkjema28$ShNavn[(HovedSkjema28$AAis %in% 1:5) & (HovedSkjema28$FAis %in% 1:5)]))
-
-NevrKlass28 <- rbind(
-'Utført og klassifiserbar, innkomst: ' = 
-      addmargins(table(HovedSkjema28$ShNavn[HovedSkjema28$AAis %in% 1:5])),
-'Utført og klassifiserbar, utreise: ' = 
-      addmargins(table(HovedSkjema28$ShNavn[HovedSkjema28$FAis %in% 1:5])), 
-'Ikke utført ved innkomst:' = 
-#      addmargins(table(HovedSkjema28$ShNavn[HovedSkjema28$ANeuNoMeasure == -1 & HovedSkjema28$AAis == -1])),
-      addmargins(table(HovedSkjema28$ShNavn[HovedSkjema28$ANeuNoMeasure == TRUE & HovedSkjema28$AAis == -1])),
-'Ikke utført ved utreise:' =
-      addmargins(table(HovedSkjema28$ShNavn[HovedSkjema28$FNeuNoMeasure == TRUE & HovedSkjema28$FAis == -1])),
-'Utført, men ikke klassifiserbar, innkomst: ' = 
-      addmargins(table(HovedSkjema28$ShNavn[HovedSkjema28$AAis==9])),
-'Utført, men ikke klassifiserbar, utreise: ' = 
-      addmargins(table(HovedSkjema28$ShNavn[HovedSkjema28$FAis==9])),
-'Klassifisert ved både inn- og utreise: ' = 
-      paste0(sprintf('%.0f',AntKlassInnUt28/Ant28*100), '%') 
-)
-
-#Kvalitetsindikator: Teller/Nevner*100, hvor
-#Teller = Antall med (AAis =1,2,3,4 eller 5) OG (FAis =1,2,3,4 eller 5) OG (RehabDy>28)
-#Nevner = Antall (RehabDy>28)
-#For kvalitetsindikatorene ønskes fargekoder på teksten. Grenser:
-#•	Rød hvis <75%
-#•	Gul hvis 75-90%
-#•	Grønn hvis >90%
-
-colnames(NevrKlass28)[dim(NevrKlass28)[2] ]<- 'Hele landet'
+#NevrKlass28 <- lagTabNevrKlass(HovedSkjema = HovedSkjema28, datoFra=datoFra, datoTil=Sys.Date())
+NevrKlass28 <- TabNevrKlass(HovedSkjema = HovedSkjema28, datoFra=datoFra, datoTil=Sys.Date())
 
 xtable::xtable(NevrKlass28, digits=0, align=c('l', rep('r', ncol(NevrKlass28))), 
 		caption=paste0('Nevrologisk klassifikasjon for ferdigstilte innleggelser fra og med ',
 		               datoFra, '. Antall pasienter med liggetid over 28 dager i ryggmargsskadeavdeling.'))
+
+#For kvalitetsindikatorene ønskes fargekoder på teksten. Grenser:
+#•	Rød hvis <75%
+#•	Gul hvis 75-90%
+#•	Grønn hvis >90%
 
 @
 

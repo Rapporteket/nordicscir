@@ -54,9 +54,10 @@ tabBelegg <- function(RegData, tidsenhet='Mnd', datoTil=Sys.Date(), enhetsUtvalg
 #' min/max, gjsn, median
 #' @rdname NordicScirtabeller
 #' @export
-tabLiggetider <- function(RegData, datoFra='2018-01-01', datoTil=Sys.Date(), enhetsUtvalg=0, reshID=0) {
+tabLiggetider <- function(RegData, datoFra='2018-01-01', datoTil=Sys.Date(), enhetsUtvalg=0, reshID=0,
+                          traume='') {
 
-      RegData <- NSUtvalg(RegData=RegData, datoFra=datoFra, datoTil = datoTil, 
+      RegData <- NSUtvalg(RegData=RegData, datoFra=datoFra, datoTil = datoTil, traume=traume,
                           enhetsUtvalg = enhetsUtvalg, reshID = reshID)$RegData
 
       Liggetider <- rbind('Liggetid, totalt' = summary(RegData$OpphTot)[c(1,3,4,6)],
@@ -257,29 +258,25 @@ lagTabNevrKlass <- function(HovedSkjema, datoFra='2018-01-01', datoTil=Sys.Date(
 NevrKlass <- rbind(
       'Utført og klassifiserbar, innkomst: ' = 
             addmargins(table(HovedSkjema$ShNavn[HovedSkjema$AAis %in% 1:5])),
-      'Ikke utført  ved innkomst:' = 
-            addmargins(table(HovedSkjema$ShNavn[HovedSkjema$ANeuNoMeasure == TRUE #-1 
-                                                & HovedSkjema$AAis == -1])),
-      'Utført, men ikke klassifiserbar, innkomst: ' = 
+      'Ikke utført  ved innkomst:' =
+            addmargins(table(HovedSkjema$ShNavn[HovedSkjema$ANeuNoMeasure == TRUE & HovedSkjema$AAis == -1])),
+      'Utført, men ikke klassifiserbar, innkomst: ' =
             addmargins(table(HovedSkjema$ShNavn[HovedSkjema$AAis==9])),
-      'Utført, men ikke klassifiserbar, innkomst: ' = 
-            addmargins(table(HovedSkjema$ShNavn[HovedSkjema$AAis==9])),
-      'Utført og klassifiserbar, utreise: ' = 
-            addmargins(table(HovedSkjema$ShNavn[HovedSkjema$FAis %in% 1:5])), 
+       'Utført og klassifiserbar, utreise: ' =
+             addmargins(table(HovedSkjema$ShNavn[HovedSkjema$FAis %in% 1:5])),
       'Ikke utført ved utreise:' =
-            addmargins(table(HovedSkjema$ShNavn[HovedSkjema$FNeuNoMeasure == TRUE #-1 
+            addmargins(table(HovedSkjema$ShNavn[HovedSkjema$FNeuNoMeasure == TRUE
                                                      & HovedSkjema$FAis == -1])),
-      'Utført, men ikke klassifiserbar, utreise: ' = 
+      'Utført, men ikke klassifiserbar, utreise: ' =
             addmargins(table(HovedSkjema$ShNavn[HovedSkjema$FAis==9])),
       'Klassifisert ved både inn- og utreise: ' = 
             paste0(sprintf('%.0f',AntKlassInnUt/Ant*100), '%')
 )
-
 colnames(NevrKlass)[dim(NevrKlass)[2] ]<- 'Hele landet'
 
-xtable::xtable(NevrKlass, align=c('l', rep('r', ncol(NevrKlass))), digits=0, 
-               caption=paste0('Nevrologisk klassifikasjon for ferdigstilte innleggelser fra og med ',
-                              datoFra, '.'))
+# xtable::xtable(NevrKlass, align=c('l', rep('r', ncol(NevrKlass))), digits=0, 
+#                caption=paste0('Nevrologisk klassifikasjon for ferdigstilte innleggelser fra og med ',
+#                               datoFra, '.'))
 return(NevrKlass)
 }
 

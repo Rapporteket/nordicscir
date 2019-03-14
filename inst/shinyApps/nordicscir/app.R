@@ -61,9 +61,9 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                          br(),
                          h4('Oversikt over registerets kvalitetsindikatorer og resultater finner du på www.kvalitetsregistre.no:', #helpText
                                   a("NorSCIR", href="https://www.kvalitetsregistre.no/registers/561/resultater"),
-                                  target="_blank"),
+                                  target="_blank", align='center'),
                          br(),
-                         h4('Hjemmeside NorSCIR: ', #
+                         h4('Hjemmeside NorSCIR: ', align='center',
                                   a("www.norscir.no", href="http://www.norscir.no", target="_blank")) #target gjør at lenken åpnes i ny fane
                          
                          # column(width=6,
@@ -174,6 +174,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                  'Figur',
                                  br(),
                                  em('(Høyreklikk på figuren for å laste den ned)'),
+                                 br(),
                                  plotOutput('fordelinger')),
                            tabPanel(
                                  'Tabell',
@@ -240,6 +241,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                  'Figur',
                                  br(),
                                  em('(Høyreklikk på figuren for å laste den ned)'),
+                                 br(),
                                  plotOutput('gjsnGrVar')),
                            tabPanel(
                                  'Tabell',
