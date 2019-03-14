@@ -7,7 +7,6 @@
 \alias{tabAntOpphShMnd}
 \alias{tabAntOpphSh5Aar}
 \alias{tabAntOpphPasSh5Aar}
-\alias{tabSkjemaTilknyttetH}
 \alias{tabSkjemaTilknyttet}
 \alias{tabAntSkjema}
 \alias{lagTabavFigAndeler}
@@ -27,9 +26,6 @@ tabAntOpphShMnd(RegData, datoTil = Sys.Date(), traume = "",
 tabAntOpphSh5Aar(RegData, datoTil = Sys.Date(), traume = "")
 
 tabAntOpphPasSh5Aar(RegData, gr = "opph", datoTil)
-
-tabSkjemaTilknyttetH(Data = AlleTab, datoFra = "2017-01-01",
-  datoTil = Sys.Date())
 
 tabSkjemaTilknyttet(Data = AlleTab, moderSkjema = "Hoved",
   datoFra = "2017-01-01", datoTil = Sys.Date())
@@ -58,24 +54,17 @@ lagTabNevrKlass(HovedSkjema, datoFra = "2018-01-01",
 \item{personIDvar}{Variabelen som angir pasientidentifikasjon}
 
 \item{datoTil}{til og med dato}
-
-\item{Data}{Liste med alle datatabeller/skjema}
-
-\item{datoFra}{fra og med dato}
-
-\item{datoTil}{til og med dato}
-
-\item{Data}{Liste med alle datatabeller/skjema}
-
-\item{datoFra}{fra og med dato}
-
-\item{datoTil}{til og med dato}
-}
-\value{
-Div tabeller
 }
 \description{
 Fil som beregner div tabeller.Group of functions Description section
+
+AntReg <- table(Data$HovedSkjema$ShNavn)
+AntOppf <- cbind(Hoved = AntReg, 
+                 apply(RaaTab[ ,-1], MARGIN=2, 
+                       FUN=function(x) tapply(x,INDEX=RaaTab$Sykehus, sum))
+                 )
+addmargins(AntOppf, margin=1, FUN = list('Hele landet' = sum) )
+AndelOppf <- (100*AntOppf / as.vector(AntReg))[,-1]
 }
 \details{
 Detaljer. kommer senereGroup of functions Details paragraph.
@@ -111,8 +100,6 @@ Hmmm
 }
 
 \section{Tabell}{
- Antall og andel hovedskjema som har ulike typer registreringsskjema
-
  Antall og andel moder"skjema som har ulike typer registreringsskjema
 
  Antall av ulike typer skjema

@@ -49,13 +49,14 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                               basert på AdmitDt, altså dato for første akutte innleggelse. Alle figurer og 
                             tabeller kan lastes ned.'),
                          br(),
-                         h4(tags$b('Innhold i de ulike fanene:')),
+                         h4(tags$b(tags$u('Innhold i de ulike fanene:'))),
                          h4(tags$b('Fordelinger '), 'viser på fordelinger (figur/tabell) av ulike variable. 
                               Man kan velge hvilken variabel man vil se på, og man kan gjøre ulike filtreringer.'),
                          h4(tags$b('Sykehusvise resultater '), 'viser gjennomsnittsverdier per sykehus. 
                             Man kan velge hvilken variabel man vil se på og om man vil se gjennomsnitt eller median. 
                             Man kan også velge å filtrere data.'),
                          h4(tags$b('Registreringsoversikter '), 'viser aktivitet i registeret. Også her kan man gjøre filtreringer.'),
+                         br(),
                          br(),
                          br(),
                          h4('Oversikt over registerets kvalitetsindikatorer og resultater finner du på www.kvalitetsregistre.no:', #helpText

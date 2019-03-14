@@ -15,8 +15,10 @@
 #' @param RegData data
 #' @param personIDvar Variabelen som angir pasientidentifikasjon
 #' @param datoTil sluttdato. Brukes i tabellene AntOpph per 12 mnd og Belegg
+#' @param  Data Liste med alle datatabeller/skjema
+#' @param datoFra fra og med dato
+#' @param datoTil til og med dato
 # @inheritParams NIRFigAndeler
-#' @return Div tabeller
 #' @name NordicScirtabeller
 NULL
 #' @export
@@ -122,45 +124,39 @@ tabAntOpphPasSh5Aar <- function(RegData, gr='opph', datoTil){
       return(tabAvdAarN)
 }
 
-#' @section Tabell: Antall og andel hovedskjema som har ulike typer registreringsskjema
-#' @param  Data Liste med alle datatabeller/skjema
-#' @param datoFra fra og med dato
-#' @param datoTil til og med dato
-#' @rdname NordicScirtabeller
-#' @export
+#' #' @section Tabell: Antall og andel hovedskjema som har ulike typer registreringsskjema
+#' #' @rdname NordicScirtabeller
+#' #' @export
+#' #' 
+#' tabSkjemaTilknyttetH <- function(Data=AlleTab, datoFra='2017-01-01', datoTil=Sys.Date()){
+#'       
+#'       Data$HovedSkjema <- NSUtvalg(Data$HovedSkjema, datoFra = datoFra, datoTil = datoTil)$RegData
+#'       
+#'       RaaTab <- data.frame(Sykehus = Data$HovedSkjema$ShNavn,
+#'                      #Aar = as.POSIXlt(Hskjema$AdmitDt, format="%Y-%m-%d")$year +1900,
+#'                      Livskvalitet = Data$HovedSkjema$SkjemaGUID %in% Data$LivskvalitetH$HovedskjemaGUID,
+#'                      #Kontroll = HovedSkjema$SkjemaGUID %in% Kontroll$HovedskjemaGUID,
+#'                      Urin = Data$HovedSkjema$SkjemaGUID %in% Data$UrinH$HovedskjemaGUID,
+#'                      Tarm = Data$HovedSkjema$SkjemaGUID %in% Data$TarmH$HovedskjemaGUID,
+#'                      Funksjon = Data$HovedSkjema$SkjemaGUID %in% Data$FunksjonH$HovedskjemaGUID,
+#'                      Tilfredshet = Data$HovedSkjema$SkjemaGUID %in% 
+#'                            Data$FunksjonH$HovedskjemaGUID[Data$FunksjonH$SkjemaGUID %in% Data$TilfredsH$HovedskjemaGUID]
+#' )
 #' 
-tabSkjemaTilknyttetH <- function(Data=AlleTab, datoFra='2017-01-01', datoTil=Sys.Date()){
-      
-      Data$HovedSkjema <- NSUtvalg(Data$HovedSkjema, datoFra = datoFra, datoTil = datoTil)$RegData
-      
-      RaaTab <- data.frame(Sykehus = Data$HovedSkjema$ShNavn,
-                     #Aar = as.POSIXlt(Hskjema$AdmitDt, format="%Y-%m-%d")$year +1900,
-                     Livskvalitet = Data$HovedSkjema$SkjemaGUID %in% Data$LivskvalitetH$HovedskjemaGUID,
-                     #Kontroll = HovedSkjema$SkjemaGUID %in% Kontroll$HovedskjemaGUID,
-                     Urin = Data$HovedSkjema$SkjemaGUID %in% Data$UrinH$HovedskjemaGUID,
-                     Tarm = Data$HovedSkjema$SkjemaGUID %in% Data$TarmH$HovedskjemaGUID,
-                     Funksjon = Data$HovedSkjema$SkjemaGUID %in% Data$FunksjonH$HovedskjemaGUID,
-                     Tilfredshet = Data$HovedSkjema$SkjemaGUID %in% 
-                           Data$FunksjonH$HovedskjemaGUID[Data$FunksjonH$SkjemaGUID %in% Data$TilfredsH$HovedskjemaGUID]
-)
-
-AntReg <- table(Data$HovedSkjema$ShNavn)
-AntOppf <- cbind(Hoved = AntReg, 
-                 apply(RaaTab[ ,-1], MARGIN=2, 
-                       FUN=function(x) tapply(x,INDEX=RaaTab$Sykehus, sum))
-                 )
-addmargins(AntOppf, margin=1, FUN = list('Hele landet' = sum) )
-AndelOppf <- (100*AntOppf / as.vector(AntReg))[,-1]
-
-tab = list(Antall = AntOppf,
-           Andeler = AndelOppf)
-return(tab)
-}
+#' AntReg <- table(Data$HovedSkjema$ShNavn)
+#' AntOppf <- cbind(Hoved = AntReg, 
+#'                  apply(RaaTab[ ,-1], MARGIN=2, 
+#'                        FUN=function(x) tapply(x,INDEX=RaaTab$Sykehus, sum))
+#'                  )
+#' addmargins(AntOppf, margin=1, FUN = list('Hele landet' = sum) )
+#' AndelOppf <- (100*AntOppf / as.vector(AntReg))[,-1]
+#' 
+#' tab = list(Antall = AntOppf,
+#'            Andeler = AndelOppf)
+#' return(tab)
+#' }
 
 #' @section Tabell: Antall og andel moder"skjema som har ulike typer registreringsskjema
-#' @param  Data Liste med alle datatabeller/skjema
-#' @param datoFra fra og med dato
-#' @param datoTil til og med dato
 #' @param moderSkjema Hvilket skjema man skal knytte oppfølgingene til
 #' @rdname NordicScirtabeller
 #' @export
@@ -199,9 +195,6 @@ tabSkjemaTilknyttet <- function(Data=AlleTab, moderSkjema='Hoved', datoFra='2017
 
 
 #' @section Tabell: Antall av ulike typer skjema
-#' @param  Data Liste med alle datatabeller/skjema
-#' @param datoFra fra og med dato
-#' @param datoTil til og med dato
 #' @rdname NordicScirtabeller
 #' @export
 #' 
