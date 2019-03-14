@@ -88,6 +88,8 @@ Tarm$HovedskjemaGUID <- toupper(Tarm$HovedskjemaGUID)
 AktivFunksjon$HovedskjemaGUID <- toupper(AktivFunksjon$HovedskjemaGUID)
 AktivTilfredshet$HovedskjemaGUID <- toupper(AktivTilfredshet$HovedskjemaGUID)
 
+DataAlleTab <- list()
+
 #HovedSkjema$SkjemaGUID <- tolower(HovedSkjema$SkjemaGUID)
 #Livskvalitet$SkjemaGUID <- tolower(Livskvalitet$SkjemaGUID)
 #Kontroll$SkjemaGUID <- tolower(Kontroll$SkjemaGUID)

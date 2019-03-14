@@ -8,6 +8,7 @@
 \alias{tabAntOpphSh5Aar}
 \alias{tabAntOpphPasSh5Aar}
 \alias{tabSkjemaTilknyttetH}
+\alias{tabSkjemaTilknyttet}
 \alias{tabAntSkjema}
 \alias{lagTabavFigAndeler}
 \alias{lagTabavFigGjsnGrVar}
@@ -17,7 +18,7 @@
 tabBelegg(RegData, tidsenhet = "Mnd", datoTil = Sys.Date(),
   enhetsUtvalg = 0, reshID = 0)
 
-tabLiggetider(RegData, tidsenhet = "Mnd", datoTil = Sys.Date(),
+tabLiggetider(RegData, datoFra = "2018-01-01", datoTil = Sys.Date(),
   enhetsUtvalg = 0, reshID = 0)
 
 tabAntOpphShMnd(RegData, datoTil = Sys.Date(), traume = "",
@@ -30,6 +31,9 @@ tabAntOpphPasSh5Aar(RegData, gr = "opph", datoTil)
 tabSkjemaTilknyttetH(Data = AlleTab, datoFra = "2017-01-01",
   datoTil = Sys.Date())
 
+tabSkjemaTilknyttet(Data = AlleTab, moderSkjema = "Hoved",
+  datoFra = "2017-01-01", datoTil = Sys.Date())
+
 tabAntSkjema(Data = AlleTab, datoFra = "2017-01-01",
   datoTil = Sys.Date())
 
@@ -38,18 +42,26 @@ lagTabavFigAndeler(UtDataFraFig)
 lagTabavFigGjsnGrVar(UtDataFraFig)
 
 lagTabNevrKlass(HovedSkjema, datoFra = "2018-01-01",
-  datoTil = Sys.time())
+  datoTil = Sys.Date())
 }
 \arguments{
 \item{RegData}{data}
 
 \item{datoTil}{sluttdato. Brukes i tabellene AntOpph per 12 mnd og Belegg}
 
+\item{datoFra}{fra og med dato}
+
+\item{Data}{Liste med alle datatabeller/skjema}
+
+\item{moderSkjema}{Hvilket skjema man skal knytte oppfølgingene til}
+
+\item{personIDvar}{Variabelen som angir pasientidentifikasjon}
+
+\item{datoTil}{til og med dato}
+
 \item{Data}{Liste med alle datatabeller/skjema}
 
 \item{datoFra}{fra og med dato}
-
-\item{personIDvar}{Variabelen som angir pasientidentifikasjon}
 
 \item{datoTil}{til og med dato}
 
@@ -76,12 +88,13 @@ RegData må inneholde InnDato.
 -tabAntOpphSh5Aar:Antall opphold per år og enhet siste 5 år (inkl. inneværende år) fram til datoTil. 
 RegData må inneholde Aar.
 }
-\section{Belegg (antall opphold, pasienter og intensivdøgn). Siste inntil 5 år eller siste inntil 12 måneder/kvartal/halvår}{
+\section{Belegg (antall opphold, pasienter og rehabdøgn). Siste inntil 5 år eller siste inntil 12 måneder/kvartal/halvår}{
 NA
 }
 
-\section{Liggetider. Siste inntil 5 år eller siste inntil 12 måneder/kvartal/halvår}{
-NA
+\section{Liggetider. Liggetid tot.(OpphTot), Liggetid rehab.(DagerRehab), Liggetid før rehab (DagerTilRehab)}{
+ 
+min/max, gjsn, median
 }
 
 \section{tabAntOpphShMnd antall opphold siste X (antMnd) mnd}{
@@ -99,6 +112,8 @@ Hmmm
 
 \section{Tabell}{
  Antall og andel hovedskjema som har ulike typer registreringsskjema
+
+ Antall og andel moder"skjema som har ulike typer registreringsskjema
 
  Antall av ulike typer skjema
 }

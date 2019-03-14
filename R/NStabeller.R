@@ -157,6 +157,47 @@ tab = list(Antall = AntOppf,
 return(tab)
 }
 
+#' @section Tabell: Antall og andel moder"skjema som har ulike typer registreringsskjema
+#' @param  Data Liste med alle datatabeller/skjema
+#' @param datoFra fra og med dato
+#' @param datoTil til og med dato
+#' @param moderSkjema Hvilket skjema man skal knytte oppfølgingene til
+#' @rdname NordicScirtabeller
+#' @export
+#' 
+tabSkjemaTilknyttet <- function(Data=AlleTab, moderSkjema='Hoved', datoFra='2017-01-01', datoTil=Sys.Date()){
+      #Denne skal fungere både for HovedSkjema og kontrollskjema. I AlleTab er 
+      ModerSkjema <- switch(moderSkjema,
+                            'Hoved' = Data$HovedSkjema,
+                            'Ktr' = Data$KontrollH)
+      if (moderSkjema == 'Ktr') {ModerSkjema <- ModerSkjema[!is.na(ModerSkjema$CNum), ] }
+      ModerSkjema <- NSUtvalg(ModerSkjema, datoFra = datoFra, datoTil = datoTil)$RegData
+      
+      RaaTab <- data.frame(Sykehus = ModerSkjema$ShNavn,
+                           #Aar = as.POSIXlt(Hskjema$AdmitDt, format="%Y-%m-%d")$year +1900,
+                           Livskvalitet = ModerSkjema$SkjemaGUID %in% Data$LivskvalitetH$HovedskjemaGUID,
+                           #Kontroll = HovedSkjema$SkjemaGUID %in% Kontroll$HovedskjemaGUID,
+                           Urin = ModerSkjema$SkjemaGUID %in% Data$UrinH$HovedskjemaGUID,
+                           Tarm = ModerSkjema$SkjemaGUID %in% Data$TarmH$HovedskjemaGUID,
+                           Funksjon = ModerSkjema$SkjemaGUID %in% Data$FunksjonH$HovedskjemaGUID,
+                           Tilfredshet = ModerSkjema$SkjemaGUID %in% 
+                                 Data$FunksjonH$HovedskjemaGUID[Data$FunksjonH$SkjemaGUID %in% Data$TilfredsH$HovedskjemaGUID]
+      )
+      
+      AntReg <- table(ModerSkjema$ShNavn)
+      AntOppf <- cbind(Hoved = AntReg, 
+                       apply(RaaTab[ ,-1], MARGIN=2, 
+                             FUN=function(x) tapply(x,INDEX=RaaTab$Sykehus, sum))
+      )
+      addmargins(AntOppf, margin=1, FUN = list('Hele landet' = sum) )
+      AndelOppf <- (100*AntOppf / as.vector(AntReg))[,-1]
+      
+      tab = list(Antall = AntOppf,
+                 Andeler = AndelOppf)
+      return(tab)
+}
+
+
 #' @section Tabell: Antall av ulike typer skjema
 #' @param  Data Liste med alle datatabeller/skjema
 #' @param datoFra fra og med dato

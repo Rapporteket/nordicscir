@@ -27,75 +27,53 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                             downloadButton(outputId = 'mndRapp.pdf', label='Last ned MÅNEDSRAPPORT', class = "butt"),
                             br(),
                             br(),
-                            h3("Resultater hele landet"), #),
+                            h3("Resultater hele landet, SC-bruker"), #),
                             downloadButton(outputId = 'samlerappLandet', label='Last ned', class = "butt"),
                             br(),
-                            h3("Resultater eget sykehus"), #),
+                            h3("Resultater eget sykehus, SC-bruker"), #),
                             downloadButton(outputId = 'samlerappEgen', label='Last ned', class = "butt"),
                             br(),
-                            br(),
-                            br(),
-                            br(),
-                            h3('Gjør utvalg for tabellene til høyre:'),
-                            br(),
-                            dateRangeInput(inputId = 'datovalgDash', start = startDatoStandard, end = Sys.Date(),
-                                           label = "Tidsperiode", separator="t.o.m.", language="nb"),
-                            
                             br(),
                             br()
                ),
                mainPanel(width = 8,
-                         # tags$ul(tags$b('NB: Må ta stilling til: '),
-                         #         tags$li("Navn på faner"), 
-                         #         tags$li("Hvilke utvalgs/filtreringsmuligheter skal vi ha i de ulike fanene")),
-                         helpText('Mer informasjon om selve registeret finnes på: ',
-                                  a("NorScirs hjemmeside", href="http://www.norscir.no", target="_blank")), #target gjør at lenken åpnes i ny fane
-                         
-                         h2('Velkommen til Rapporteket-Norsk Ryggmargsskaderegister!', align='center'),
-                         
-                         #uiOutput('lenkeNorScir'),
+                         h2('Velkommen til Rapporteket - Norsk Ryggmargsskaderegister!', align='center'),
                          br(),
                          h4('Du er nå inne på Rapporteket for NorSCIR. Rapporteket er registerets resultattjeneste. 
                             Disse sidene inneholder en samling av figurer og tabeller som viser resultater fra registeret. 
                             På hver av sidene kan man gjøre utvalg i menyene til venstre. Alle resultater er basert 
                             på ferdigstilte registreringer. Merk at data er hentet direkte fra registerets database. 
                             Dette medfører at nyere data ikke er kvalitetssikret ennå.'),
-                         h4('Du kan se på resultater for eget sykehus, nasjonale data og eget sykehus sett opp mot landet for øvrig.'),
-                         br(),
-                         h4('Under fanen ', tags$u('Fordelinger'), 'kan man se på fordelinger av ulike variable. 
-                              Man kan velge hvilken variabel man vil se på og gjøre filtreringer. 
-                              Resultatene som vises er 
+                         h4('Du kan se på resultater for eget sykehus, nasjonale data og eget sykehus sett opp mot landet for øvrig.
+                            Resultatene som vises er 
                               basert på AdmitDt, altså dato for første akutte innleggelse. Alle figurer og 
-                              tabeller kan lastes ned.'),
-                         h4('Fanen ', tags$u('Sykehusvise resultater '), 'viser gjennomsnittsverdier per sykehus. 
+                            tabeller kan lastes ned.'),
+                         br(),
+                         h4(tags$b('Innhold i de ulike fanene:')),
+                         h4(tags$b('Fordelinger '), 'viser på fordelinger (figur/tabell) av ulike variable. 
+                              Man kan velge hvilken variabel man vil se på, og man kan gjøre ulike filtreringer.'),
+                         h4(tags$b('Sykehusvise resultater '), 'viser gjennomsnittsverdier per sykehus. 
                             Man kan velge hvilken variabel man vil se på og om man vil se gjennomsnitt eller median. 
                             Man kan også velge å filtrere data.'),
-                         h4(tags$u('Registreringsoversikter '), 'viser aktivitet i registeret'),
-                         helpText('Oversikt over registerets kvalitetsindikatorer og resultater finnes på www.kvalitetsregistre.no:',
+                         h4(tags$b('Registreringsoversikter '), 'viser aktivitet i registeret. Også her kan man gjøre filtreringer.'),
+                         br(),
+                         br(),
+                         h4('Oversikt over registerets kvalitetsindikatorer og resultater finner du på www.kvalitetsregistre.no:', #helpText
                                   a("NorSCIR", href="https://www.kvalitetsregistre.no/registers/561/resultater"),
                                   target="_blank"),
                          br(),
-                         helpText('Hjemmeside NorSCIR: ', #
-                                  a("www.norscir.no", href="http://www.norscir.no", target="_blank")), #target gjør at lenken åpnes i ny fane
-                         h3('Liggetidsoversikt'),
-                         #h5('Angivelse av hvilket utvalg som er gjort, som på fordelingstabeller'),
-                         tableOutput('tabLiggetider'),
-                         h4('(Mulighet for å laste ned tabellene på denne siden kommer...)'),
-                         br(),
-                         #h2('Nevrologisk klassifikasjon', align='center'),
-                         br(),
-                         column(width=6,
-                                h3('Nevrologisk klassifikasjon.', align='center'),
-                                br(),
-                                tableOutput('tabNevrKlass')),
-                         column(width=6,
-                                h3('Nevrologisk klassifikasjon for pasienter med liggetid over 28 dager i
-                                   ryggmargsskadeavdeling.', align='center'),
-                                tableOutput('tabNevrKlass28')
-                                ),
-                         br(),
-                         br(),
-                         br()
+                         h4('Hjemmeside NorSCIR: ', #
+                                  a("www.norscir.no", href="http://www.norscir.no", target="_blank")) #target gjør at lenken åpnes i ny fane
+                         
+                         # column(width=6,
+                         #        h3('Nevrologisk klassifikasjon.', align='center'),
+                         #        br(),
+                         #        tableOutput('tabNevrKlass')),
+                         # column(width=6,
+                         #        h3('Nevrologisk klassifikasjon for pasienter med liggetid over 28 dager i
+                         #           ryggmargsskadeavdeling.', align='center'),
+                         #        tableOutput('tabNevrKlass28')
+                         #        ),
                )
       ), #tab
 
@@ -193,6 +171,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                      tabsetPanel(
                            tabPanel(
                                  'Figur',
+                                 br(),
                                  em('(Høyreklikk på figuren for å laste den ned)'),
                                  plotOutput('fordelinger')),
                            tabPanel(
@@ -258,6 +237,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                      tabsetPanel(
                            tabPanel(
                                  'Figur',
+                                 br(),
                                  em('(Høyreklikk på figuren for å laste den ned)'),
                                  plotOutput('gjsnGrVar')),
                            tabPanel(
@@ -299,7 +279,8 @@ tabPanel("Registreringsoversikter",
                                                     "Ikke traume"='nei'))
                       ),
                       conditionalPanel(
-                            condition = "input.ark == 'Antall hovedskjema med tilknyttede skjema'",
+                            condition = "input.ark == 'Antall hovedskjema med tilknyttede skjema' |
+                            input.ark == 'Antall kontrollskjema med tilknyttede skjema' ",
                             dateRangeInput(inputId = 'datovalgReg', start = startDatoStandard, end = Sys.Date(),
                                            label = "Tidsperiode", separator="t.o.m.", language="nb")
                       )
@@ -322,24 +303,21 @@ tabPanel("Registreringsoversikter",
                            ),
                            tabPanel('Antall hovedskjema med tilknyttede skjema',
                                     h3("Antall registreringsskjema med ulike oppfølgingsskjema"),
-                                    tableOutput('tabAntTilknyttedeSkjema'),
-                                    downloadButton(outputId = 'lastNed_tabOppfAnt', label='Last ned'),
+                                    tableOutput('tabAntTilknyttedeHovedSkjema'),
+                                    downloadButton(outputId = 'lastNed_tabOppfHovedAnt', label='Last ned'),
                                     br(),
                                     h3("Andel (%) registreringsskjema med ulike oppfølgingsskjema"),
-                                    tableOutput("tabAndelTilknyttedeSkjema"),
-                                    downloadButton(outputId = 'lastNed_tabOppfPst', label='Last ned')
+                                    tableOutput("tabAndelTilknyttedeHovedSkjema"),
+                                    downloadButton(outputId = 'lastNed_tabOppfHovedPst', label='Last ned')
                            ), 
-                           tabPanel('Antall Kontrollskjema med tilknyttede skjema',
+                           tabPanel('Antall kontrollskjema med tilknyttede skjema',
                                     h3("Antall kontrollskjema med ulike oppfølgingsskjema"),
-                                    helpText('Oppbyggingen av denne skal være lik tabellen vi har i dag 
-                                             som heter: Antall hovedskjema med tilknyttede skjema. 
-                                             Forskjellen er at det er Kontrollskjema som da opptrer som «hovedskjema».')
-                                    # tableOutput('tabAntTilknyttedeSkjema'),
-                                    # downloadButton(outputId = 'lastNed_tabOppfAnt', label='Last ned'),
-                                    # br(),
-                                    # h3("Andel (%) registreringsskjema med ulike oppfølgingsskjema"),
-                                    # tableOutput("tabAndelTilknyttedeSkjema"),
-                                    # downloadButton(outputId = 'lastNed_tabOppfPst', label='Last ned')
+                                    tableOutput('tabAntTilknyttedeKtrSkjema'),
+                                    downloadButton(outputId = 'lastNed_tabOppfKtrAnt', label='Last ned'),
+                                    br(),
+                                    h3("Andel (%) registreringsskjema med ulike oppfølgingsskjema"),
+                                    tableOutput("tabAndelTilknyttedeKtrSkjema"),
+                                    downloadButton(outputId = 'lastNed_tabOppfKtrPst', label='Last ned')
                            )
                                     
                ))
@@ -530,32 +508,56 @@ server <- function(input, output) {
       output$tabAntOpphShMnd12 <- renderTable({tabAntOpphShMndAar}, rownames = T, digits=0, spacing="xs")
       output$lastNed_tabAntOpph <- downloadHandler(
             filename = function(){paste0('tabAntOpph.csv')},
-            content = function(file, filename){write.csv2(tabAntOpphShMndAar, file, row.names = F, na = '')
+            content = function(file, filename){write.csv2(tabAntOpphShMndAar, file, row.names = T, na = '')
             })
       
      
       
             #Antall skjema av alle typer.
-            tabTilknSkjema <- tabSkjemaTilknyttetH(Data=AlleTab, datoFra=input$datovalgReg[1], datoTil=input$datovalgReg[2])
+            tabTilknHovedSkjema <- tabSkjemaTilknyttet(Data=AlleTab, moderSkjema = 'Hoved',
+                                                       datoFra=input$datovalgReg[1], datoTil=input$datovalgReg[2])
             
-            output$tabAntTilknyttedeSkjema <- renderTable(
-                  tabTilknSkjema$Antall
+      #Hovedskjema som har tilknyttede skjema av ulik type
+            output$tabAntTilknyttedeHovedSkjema <- renderTable(
+                  tabTilknHovedSkjema$Antall
                   ,rownames = T, digits=0, spacing="xs" )
             
-            output$lastNed_tabOppfAnt <- downloadHandler(
-                  filename = function(){'tabOppfAnt.csv'},
-                  content = function(file, filename){write.csv2(tabTilknSkjema$Antall, file, row.names = F, na = '')
+            output$lastNed_tabOppfHovedAnt <- downloadHandler(
+                  filename = function(){'tabOppfHovedAnt.csv'},
+                  content = function(file, filename){write.csv2(tabTilknHovedSkjema$Antall, file, row.names = T, na = '')
                   })
             #Andel (prosent) av registreringsskjemaene som har oppfølgingsskjema.      
-            output$tabAndelTilknyttedeSkjema <- renderTable(
-                  tabTilknSkjema$Andeler
+            output$tabAndelTilknyttedeHovedSkjema <- renderTable(
+                  tabTilknHovedSkjema$Andeler
                   ,rownames = T, digits=0, spacing="xs" )
             
-             output$lastNed_tabOppfPst <- downloadHandler(
-                   filename = function(){'tabOppfPst.csv'},
-                   content = function(file, filename){write.csv2(tabTilknSkjema$Andeler, file, row.names = F, na = '')
+             output$lastNed_tabOppfHovedPst <- downloadHandler(
+                   filename = function(){'tabOppfHovedPst.csv'},
+                   content = function(file, filename){write.csv2(tabTilknHovedSkjema$Andeler, file, row.names = T, na = '')
                    })
-            
+
+             #Kontrollskjema som har tilknyttede skjema av ulik type
+             tabTilknKtrSkjema <- tabSkjemaTilknyttet(Data=AlleTab, moderSkjema = 'Ktr',
+                                                        datoFra=input$datovalgReg[1], datoTil=input$datovalgReg[2])
+             
+             output$tabAntTilknyttedeKtrSkjema <- renderTable(
+                   tabTilknKtrSkjema$Antall
+                   ,rownames = T, digits=0, spacing="xs" )
+             
+             output$lastNed_tabOppfKtrAnt <- downloadHandler(
+                   filename = function(){'tabOppfKtrAnt.csv'},
+                   content = function(file, filename){write.csv2(tabTilknKtrSkjema$Antall, file, row.names = T, na = '')
+                   })
+             #Andel (prosent) av kontrollskjemaene som har oppfølgingsskjema.      
+             output$tabAndelTilknyttedeKtrSkjema <- renderTable(
+                   tabTilknKtrSkjema$Andeler
+                   ,rownames = T, digits=0, spacing="xs" )
+             
+             output$lastNed_tabOppfKtrPst <- downloadHandler(
+                   filename = function(){'tabOppfKtrPst.csv'},
+                   content = function(file, filename){write.csv2(tabTilknKtrSkjema$Andeler, file, row.names = T, na = '')
+                   })
+             
       })
  
       #Antall skjema av hver type
