@@ -27,11 +27,11 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                             downloadButton(outputId = 'mndRapp.pdf', label='Last ned MÅNEDSRAPPORT', class = "butt"),
                             br(),
                             br(),
-                            h3("Resultater hele landet, SC-bruker"), #),
-                            downloadButton(outputId = 'samlerappLandet', label='Last ned', class = "butt"),
-                            br(),
-                            h3("Resultater eget sykehus, SC-bruker"), #),
-                            downloadButton(outputId = 'samlerappEgen', label='Last ned', class = "butt"),
+                            # h3("Resultater hele landet, SC-bruker"), #),
+                            # downloadButton(outputId = 'samlerappLandet', label='Last ned', class = "butt"),
+                            # br(),
+                            # h3("Resultater eget sykehus, SC-bruker"), #),
+                            # downloadButton(outputId = 'samlerappEgen', label='Last ned', class = "butt"),
                             br(),
                             br(),
                             br()
@@ -451,16 +451,21 @@ server <- function(input, output) {
             content = function(file){
                   contentFile(file, srcFil="NSmndRapp.Rnw", tmpFile="tmpNSmndRapp.Rnw")
             })
-      output$samlerappEgen <- downloadHandler(
-                  filename = function(){ paste0('SamleRappEgen', Sys.time(), '.pdf')},
-                  content = function(file){
-                        contentFile(file, srcFil="NSsamleRapp.Rnw", tmpFile="tmpNSsamleRapp.Rnw")
-                  })
-      output$samlerappLandet <- downloadHandler(
-                        filename = function(){ paste0('SamleRappLand', Sys.time(), '.pdf')},
-                        content = function(file){
-                              contentFile(file, srcFil="NSsamleRappLand.Rnw", tmpFile="tmpNSsamleRappLand.Rnw")
-                        })
+      # output$samlerappEgen <- downloadHandler(
+      #             filename = function(){ paste0('SamleRappEgen', Sys.time(), '.pdf')},
+      #             content = function(file){
+      #                   contentFile(file, srcFil="NSsamleRapp.Rnw", tmpFile="tmpNSsamleRapp.Rnw")
+      #             })
+      # output$samlerappLandet <- downloadHandler(
+      #                   filename = function(){ paste0('SamleRappLand', Sys.time(), '.pdf')},
+      #                   content = function(file){
+      #                         contentFile(file, srcFil="NSsamleRappLand.Rnw", tmpFile="tmpNSsamleRappLand.Rnw")
+      #                   })
+      
+      # downloadButton(outputId = 'mndRapp.pdf', label='Last ned MÅNEDSRAPPORT', class = "butt"),
+      # downloadButton(outputId = 'samlerappLandet', label='Last ned', class = "butt"),
+      # downloadButton(outputId = 'samlerappEgen', label='Last ned', class = "butt"),
+      
 
 #--------------Startside------------------------------
       
