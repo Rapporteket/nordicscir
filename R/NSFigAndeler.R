@@ -41,13 +41,14 @@
 #'                 0: Nei, RegData gis som input til funksjonen (Standard)
 #'                 1: Ja
 #' @param figurtype angir hvilken figurtype som skal lages: andeler, gjsnGrVar
+#' @param datoUt Om man skal velge inn eller ut-dato som grunnlag for datofiltrering
 #' 
 #' @export
 
-NSFigAndeler <- function(RegData, outfile='', valgtVar,
+NSFigAndeler <- function(RegData, outfile='', valgtVar, 
                          datoFra='2010-01-01', datoTil='2050-01-01', AIS='',
                          minald=0, maxald=130, erMann=99, traume='',paratetra=99,
-                         enhetsUtvalg=1, reshID, hentData=0, preprosess=1) {
+                         enhetsUtvalg=1, reshID, hentData=0, preprosess=1, datoUt=0) {
       
       if (hentData == 1) {
             RegData <- NSRegDataSQL(valgtVar=valgtVar)
@@ -89,7 +90,7 @@ NSFigAndeler <- function(RegData, outfile='', valgtVar,
             
             Utvalg <- NSUtvalg(RegData=RegData, datoFra=datoFra, datoTil=datoTil, minald=minald, maxald=maxald,
                                erMann=erMann, traume=traume, AIS=AIS, paratetra=paratetra,
-                               enhetsUtvalg = enhetsUtvalg, reshID = reshID)
+                               enhetsUtvalg = enhetsUtvalg, reshID = reshID, datoUt=datoUt)
             RegData <- Utvalg$RegData
             utvalgTxt <- Utvalg$utvalgTxt
             medSml <- Utvalg$medSml

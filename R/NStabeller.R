@@ -14,11 +14,10 @@
 #' 
 #' @param RegData data
 #' @param personIDvar Variabelen som angir pasientidentifikasjon
-#' @param datoTil sluttdato. Brukes i tabellene AntOpph per 12 mnd og Belegg
 #' @param  Data Liste med alle datatabeller/skjema
 #' @param datoFra fra og med dato
 #' @param datoTil til og med dato
-# @inheritParams NIRFigAndeler
+#' @inheritParams NIRFigAndeler
 #' @name NordicScirtabeller
 NULL
 #' @export
@@ -188,6 +187,7 @@ tabSkjemaTilknyttet <- function(Data=AlleTab, moderSkjema='Hoved', datoFra='2017
       )
       addmargins(AntOppf, margin=1, FUN = list('Hele landet' = sum) )
       AndelOppf <- (100*AntOppf / as.vector(AntReg))[,-1]
+      if (moderSkjema == 'Ktr') { colnames(AntOppf)[1] <- 'Kontroll'}
       
       tab = list(Antall = AntOppf,
                  Andeler = AndelOppf)

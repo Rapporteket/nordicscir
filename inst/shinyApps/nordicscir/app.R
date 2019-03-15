@@ -128,6 +128,8 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                             ),
                             dateRangeInput(inputId = 'datovalg', start = startDatoStandard, end = Sys.Date(),
                                            label = "Tidsperiode", separator="t.o.m.", language="nb"),
+                            radioButtons(inputId = 'datoUt', 'Bruke utskrivingsdato til datofiltrering',
+                                         choiceNames = c('nei','ja'), choiceValues = 0:1, selected = 0),
                             selectInput(inputId = "erMann", label="Kjønn",
                                         choices = c("Begge"=2, "Menn"=1, "Kvinner"=0)
                             ),
@@ -316,11 +318,11 @@ tabPanel("Registreringsoversikter",
                                     downloadButton(outputId = 'lastNed_tabOppfHovedPst', label='Last ned')
                            ), 
                            tabPanel('Antall kontrollskjema med tilknyttede skjema',
-                                    h3("Antall kontrollskjema med ulike oppfølgingsskjema"),
+                                    h3("Antall kontrollskjema med tilknyttede skjema"),
                                     tableOutput('tabAntTilknyttedeKtrSkjema'),
                                     downloadButton(outputId = 'lastNed_tabOppfKtrAnt', label='Last ned'),
                                     br(),
-                                    h3("Andel (%) kontrollskjema med ulike oppfølgingsskjema"),
+                                    h3("Andel (%) kontrollskjema med tilknyttede skjema"),
                                     tableOutput("tabAndelTilknyttedeKtrSkjema"),
                                     downloadButton(outputId = 'lastNed_tabOppfKtrPst', label='Last ned')
                            )
@@ -581,6 +583,8 @@ server <- function(input, output) {
             #RegData <- finnRegData(Data = AlleTab, valgtVar <- 'UrinKirInngr')
             RegData <- finnRegData(valgtVar = input$valgtVar, Data = AlleTab)
             RegData <- TilLogiskeVar(RegData)
+            print(input$datoUt)
+            
             output$fordelinger <- renderPlot({
                   NSFigAndeler(RegData=RegData, valgtVar=input$valgtVar, preprosess = 0,
                                datoFra=input$datovalg[1], datoTil=input$datovalg[2], 
@@ -588,7 +592,8 @@ server <- function(input, output) {
                                AIS=input$AIS, traume=input$traume, paratetra=as.numeric(input$paratetra),
                                minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]), 
                                erMann=as.numeric(input$erMann), 
-                               enhetsUtvalg=as.numeric(input$enhetsUtvalg))
+                               enhetsUtvalg=as.numeric(input$enhetsUtvalg),
+                               datoUt=as.numeric(input$datoUt))
             }, height=800, width=800 #height = function() {session$clientData$output_fordelinger_width}
             )
             

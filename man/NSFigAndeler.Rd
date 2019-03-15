@@ -7,7 +7,7 @@
 NSFigAndeler(RegData, outfile = "", valgtVar, datoFra = "2010-01-01",
   datoTil = "2050-01-01", AIS = "", minald = 0, maxald = 130,
   erMann = 99, traume = "", paratetra = 99, enhetsUtvalg = 1,
-  reshID, hentData = 0, preprosess = 1)
+  reshID, hentData = 0, preprosess = 1, datoUt = 0)
 }
 \arguments{
 \item{RegData}{- ei dataramme med alle nødvendige variable fra registeret.}
@@ -25,6 +25,8 @@ NSFigAndeler(RegData, outfile = "", valgtVar, datoFra = "2010-01-01",
 \item{preprosess}{Preprosesser data
 0: Nei
 1: Ja (Standard)}
+
+\item{datoUt}{Om man skal velge inn eller ut-dato som grunnlag for datofiltrering}
 
 \item{figurtype}{angir hvilken figurtype som skal lages: andeler, gjsnGrVar}
 }

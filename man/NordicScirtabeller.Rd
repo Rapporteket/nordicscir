@@ -18,7 +18,7 @@ tabBelegg(RegData, tidsenhet = "Mnd", datoTil = Sys.Date(),
   enhetsUtvalg = 0, reshID = 0)
 
 tabLiggetider(RegData, datoFra = "2018-01-01", datoTil = Sys.Date(),
-  enhetsUtvalg = 0, reshID = 0)
+  enhetsUtvalg = 0, reshID = 0, traume = "")
 
 tabAntOpphShMnd(RegData, datoTil = Sys.Date(), traume = "",
   antMnd = 12)
@@ -53,7 +53,8 @@ lagTabNevrKlass(HovedSkjema, datoFra = "2018-01-01",
 
 \item{personIDvar}{Variabelen som angir pasientidentifikasjon}
 
-\item{datoTil}{til og med dato}
+\item{datoTil}{til og med dato
+inheritParams NIRFigAndeler}
 }
 \description{
 Fil som beregner div tabeller.Group of functions Description section
