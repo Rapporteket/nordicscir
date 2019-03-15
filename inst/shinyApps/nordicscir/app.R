@@ -309,11 +309,11 @@ tabPanel("Registreringsoversikter",
                                     # fluidRow( tableOutput("tabLiggetider"))
                            ),
                            tabPanel('Antall hovedskjema med tilknyttede skjema',
-                                    h3("Antall registreringsskjema med ulike oppfølgingsskjema"),
+                                    h3("Antall hovedskjema med tilknyttede skjema"),
                                     tableOutput('tabAntTilknyttedeHovedSkjema'),
                                     downloadButton(outputId = 'lastNed_tabOppfHovedAnt', label='Last ned'),
                                     br(),
-                                    h3("Andel (%) registreringsskjema med ulike oppfølgingsskjema"),
+                                    h3("Andel (%) hovedskjema med tilknyttede skjema"),
                                     tableOutput("tabAndelTilknyttedeHovedSkjema"),
                                     downloadButton(outputId = 'lastNed_tabOppfHovedPst', label='Last ned')
                            ), 
