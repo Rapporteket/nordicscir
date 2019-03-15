@@ -583,7 +583,7 @@ server <- function(input, output) {
             #RegData <- finnRegData(Data = AlleTab, valgtVar <- 'UrinKirInngr')
             RegData <- finnRegData(valgtVar = input$valgtVar, Data = AlleTab)
             RegData <- TilLogiskeVar(RegData)
-            print(input$datoUt)
+            #print(input$datoUt)
             
             output$fordelinger <- renderPlot({
                   NSFigAndeler(RegData=RegData, valgtVar=input$valgtVar, preprosess = 0,
