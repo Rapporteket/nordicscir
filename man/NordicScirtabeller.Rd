@@ -43,7 +43,9 @@ lagTabNevrKlass(HovedSkjema, datoFra = "2018-01-01",
 \arguments{
 \item{RegData}{data}
 
-\item{datoTil}{sluttdato. Brukes i tabellene AntOpph per 12 mnd og Belegg}
+\item{datoTil}{til og med dato}
+
+\item{reshID}{- avdelingsid for egen avdeling, standard: 0-hele landet.}
 
 \item{datoFra}{fra og med dato}
 
@@ -52,20 +54,9 @@ lagTabNevrKlass(HovedSkjema, datoFra = "2018-01-01",
 \item{moderSkjema}{Hvilket skjema man skal knytte oppfølgingene til}
 
 \item{personIDvar}{Variabelen som angir pasientidentifikasjon}
-
-\item{datoTil}{til og med dato
-inheritParams NIRFigAndeler}
 }
 \description{
 Fil som beregner div tabeller.Group of functions Description section
-
-AntReg <- table(Data$HovedSkjema$ShNavn)
-AntOppf <- cbind(Hoved = AntReg, 
-                 apply(RaaTab[ ,-1], MARGIN=2, 
-                       FUN=function(x) tapply(x,INDEX=RaaTab$Sykehus, sum))
-                 )
-addmargins(AntOppf, margin=1, FUN = list('Hele landet' = sum) )
-AndelOppf <- (100*AntOppf / as.vector(AntReg))[,-1]
 }
 \details{
 Detaljer. kommer senereGroup of functions Details paragraph.
@@ -96,8 +87,7 @@ NA
 }
 
 \section{Antall registreringer/pasienter siste 5 år}{
-
-Hmmm
+NA
 }
 
 \section{Tabell}{
