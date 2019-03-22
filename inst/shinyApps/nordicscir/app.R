@@ -9,11 +9,25 @@ library(kableExtra)
 
 
 startDatoStandard <- '2018-01-01' #Sys.Date()-364
+# gjør Rapportekets www-felleskomponenter tilgjengelig for applikasjonen
+addResourcePath('rap', system.file('www', package='rapbase'))
+regTitle = 'NORSK SPINALSKADEREGISTER med FIKTIVE data'
 
 
 
 ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
-      title = 'NORSK SPINALSKADEREGISTER med FIKTIVE data',
+      
+      # title = 'NORSK SPINALSKADEREGISTER med FIKTIVE data'
+      
+      # definÃ©r tittel
+      
+            # lag logo og tittel som en del av navbar
+            title = div(img(src="rap/logo.svg", alt="Rapporteket", height="26px"), regTitle),
+            # sett inn tittle ogsÃ¥ i browser-vindu
+            windowTitle = regTitle,
+            # velg css (forelÃ¸pig den eneste bortsett fra "naken" utgave)
+            #theme = "rap/bootstrap.css",
+            
       tabPanel("Startside",
                #fluidRow(
                #column(width=5,

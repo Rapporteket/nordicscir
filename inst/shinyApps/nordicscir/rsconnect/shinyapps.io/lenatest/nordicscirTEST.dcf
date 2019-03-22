@@ -5,8 +5,8 @@ account: lenatest
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 570439
-bundleId: 1942302
+bundleId: 1942325
 url: https://lenatest.shinyapps.io/nordicscirTEST/
-when: 1552654263.82642
+when: 1552654942.50942
 asMultiple: FALSE
 asStatic: FALSE
