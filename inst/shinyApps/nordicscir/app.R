@@ -62,6 +62,9 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                             br()
                ),
                mainPanel(width = 8,
+                         rapbase::appNavbarUserWidget(user = uiOutput("appUserName"),
+                                                      organization = uiOutput("appOrgName"),
+                                                      addUserInfo = TRUE),
                          h2('Velkommen til Rapporteket - Norsk Ryggmargsskaderegister!', align='center'),
                          br(),
                          h4('Du er nå inne på Rapporteket for NorSCIR. Rapporteket er registerets resultattjeneste. 
@@ -375,6 +378,9 @@ server <- function(input, output, session) {
             #hideTab(inputId = "tabs_andeler", target = "Figur, sykehusvisning")
       }
       })
+      # widget
+      output$appUserName <- renderText(rapbase::getUserFullName(session))
+      output$appOrgName <- renderText(rapbase::getUserReshId(session))
       
  #NB: Skal bare forholde oss til oppfølgingsskjema som er tilknyttet et gyldig Hovedskjema
       
