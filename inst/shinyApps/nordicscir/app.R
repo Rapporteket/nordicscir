@@ -8,26 +8,37 @@ library(kableExtra)
 #library(zoo)
 
 
-startDatoStandard <- '2018-01-01' #Sys.Date()-364
+startDatoStandard <- Sys.Date()-364
+
 # gjør Rapportekets www-felleskomponenter tilgjengelig for applikasjonen
 addResourcePath('rap', system.file('www', package='rapbase'))
-regTitle = 'NORSK SPINALSKADEREGISTER med FIKTIVE data'
 
+context <- Sys.getenv("R_RAP_INSTANCE") #Blir tom hvis jobber lokalt
+paaServer <- (context == "TEST" | context == "QA" | context == "PRODUCTION")
 
+regTitle = ifelse(paaServer,'NORSK SPINALSKADEREGISTER',
+                  'NORSK SPINALSKADEREGISTER med FIKTIVE data')
+
+#----Valg
+
+valgAIS <- 0:5
+names(valgAIS) <- c("Alle","A","B","C","D","E")
+#valgAIS <- as.character(0:5),
+#names(valgAIS) <- c('Alle', LETTERS[1:5]),
+
+valgParaTetra <- c(99,0,1,9)
+names(valgParaTetra) <- c("Alle", "Paraplegi", "Tetraplegi", "Ukjent")
 
 ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
       
-      # title = 'NORSK SPINALSKADEREGISTER med FIKTIVE data'
-      
-      # definÃ©r tittel
-      
+
             # lag logo og tittel som en del av navbar
             title = div(img(src="rap/logo.svg", alt="Rapporteket", height="26px"), regTitle),
             # sett inn tittle ogsÃ¥ i browser-vindu
             windowTitle = regTitle,
             # velg css (forelÃ¸pig den eneste bortsett fra "naken" utgave)
             #theme = "rap/bootstrap.css",
-            
+#----startside--------            
       tabPanel("Startside",
                #fluidRow(
                #column(width=5,
@@ -64,7 +75,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                             tabeller kan lastes ned.'),
                          br(),
                          h4(tags$b(tags$u('Innhold i de ulike fanene:'))),
-                         h4(tags$b('Fordelinger '), 'viser på fordelinger (figur/tabell) av ulike variable. 
+                         h4(tags$b('Fordelinger '), 'viser fordelinger (figur/tabell) av ulike variable. 
                               Man kan velge hvilken variabel man vil se på, og man kan gjøre ulike filtreringer.'),
                          h4(tags$b('Sykehusvise resultater '), 'viser gjennomsnittsverdier per sykehus. 
                             Man kan velge hvilken variabel man vil se på og om man vil se gjennomsnitt eller median. 
@@ -156,19 +167,16 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                                     "Egen enhet"=2)
                             ),
                             
-                            #valgAIS <- as.character(0:5),
-                            #names(valgAIS) <- c('Alle', LETTERS[1:5]),
-                            #valgAIS <- c('"Alle"=0', '"A"=1', '"B"=2', '"C"=3', '"D"=4', '"E"=5'),
-                            
+                          
                             selectInput(inputId = 'AIS', label='AIS-grad',
                                         multiple = T, #selected=0,
-                                        choices = #valgAIS
-                                              c("Alle"=0,
-                                                "A"=1,
-                                                "B"=2,
-                                                "C"=3,
-                                                "D"=4,
-                                                "E"=5)
+                                        choices = valgAIS
+                                              # c("Alle"=0,
+                                              #   "A"=1,
+                                              #   "B"=2,
+                                              #   "C"=3,
+                                              #   "D"=4,
+                                              #   "E"=5)
                             ),
                             selectInput(inputId = 'traume', label='Traume',
                                         choices = c("Alle"=' ', #'ikke'
@@ -176,10 +184,11 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                                     "Ikke traume"='nei')
                             ),
                             selectInput(inputId = 'paratetra', label='Nivå ved utreise',
-                                        choices = c("Alle" = 99,
-                                                    "Paraplegi" = 0, 
-                                                    "Tetraplegi" = 1,
-                                                    "Ukjent" = 9)
+                                        choices = valgParaTetra
+                                              # c("Alle" = 99,
+                                              #       "Paraplegi" = 0, 
+                                              #       "Tetraplegi" = 1,
+                                              #       "Ukjent" = 9)
                             )
                             #sliderInput(inputId="aar", label = "Årstall", min = 2012,  #min(RegData$Aar),
                             #           max = as.numeric(format(Sys.Date(), '%Y')), value = )
@@ -349,99 +358,73 @@ tabPanel("Registreringsoversikter",
 
 
 #----- Define server logic required to draw a histogram-------
-server <- function(input, output) {
-
+server <- function(input, output, session) {
+      
+      #raplog::appLogger(session)
+      system.file('fil.Rnw', package='nordicscir')
+      
+      #hospitalName <-getHospitalName(rapbase::getUserReshId(session))
+      reshID <- reactive({ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 107627)}) 
+      rolle <- reactive({ifelse(paaServer, rapbase::getShinyUserRole(shinySession=session), 'SC')})
+      #output$reshID <- renderText({ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 105460)}) #evt renderUI
+      
+      
+      reactive({if (rolle() != 'SC') {
+      #NB: Må aktiveres i ui-del også
+                  shinyjs::hide(id = 'velgResh')
+            #hideTab(inputId = "tabs_andeler", target = "Figur, sykehusvisning")
+      }
+      })
+      
  #NB: Skal bare forholde oss til oppfølgingsskjema som er tilknyttet et gyldig Hovedskjema
       
-      context <- Sys.getenv("R_RAP_INSTANCE") #Blir tom hvis jobber lokalt
-      if (context == "TEST" | context == "QA" | context == "PRODUCTION") {
-                  
-                  registryName <- "nordicscir"
-                  dbType <- "mysql"
- #IKKE klar. Må plukke ut datasett koblet til Hovedskjema. Finn hvilke variable fra hovedskjema som trenger å være
-#                  med for å gjøre alle filtreringer
-                  
-                  qLivs <- paste0('SELECT  UPPER(HovedskjemaGUID) AS HovedskjemaGUID, UPPER(SkjemaGUID) AS SkjemaGUID
-                      FROM LifeQualityFormDataContract')
-                  qKontr <- paste0('SELECT  UPPER(HovedskjemaGUID) AS HovedskjemaGUID, UPPER(SkjemaGUID) AS SkjemaGUID,
-                        HealthUnitShortName, NoControl, CNum
-                       FROM ControlFormDataContract')
-                  qUrin <- paste0('SELECT  UPPER(HovedskjemaGUID) AS HovedskjemaGUID, UPPER(SkjemaGUID) AS SkjemaGUID 
-                      FROM UrinaryTractFunctionFormDataContract')
-                  qTarm <- paste0('SELECT  UPPER(HovedskjemaGUID) AS HovedskjemaGUID, UPPER(SkjemaGUID) AS SkjemaGUID 
-                      FROM BowelFunctionFormDataContract')
-                  qFunk <- paste0('SELECT  UPPER(HovedskjemaGUID) AS HovedskjemaGUID, UPPER(SkjemaGUID) AS SkjemaGUID 
-                      FROM ActivityAndParticipationPerformanceFormDataContract')
-                  qTilf <- paste0('SELECT  UPPER(HovedskjemaGUID) AS HovedskjemaGUID, UPPER(SkjemaGUID) AS SkjemaGUID
-                      FROM ActivityAndParticipationSatisfactionFormDataContract')
-                  
-                  #RegData <- NSRegDataSQL(valgtVar = valgtVar) #datoFra = datoFra, datoTil = datoTil)
+      if (paaServer) {
                   HovedSkjema <- NSRegDataSQL() #datoFra = datoFra, datoTil = datoTil)
-                  Livskvalitet <- rapbase::LoadRegData(registryName, qLivs, dbType)
-                  Kontroll <- rapbase::LoadRegData(registryName, qKontr, dbType)
-                  Urin <- rapbase::LoadRegData(registryName, qUrin, dbType)
-                  Tarm <- rapbase::LoadRegData(registryName, qTarm, dbType)
-                  AktivFunksjon <- rapbase::LoadRegData(registryName, qFunk, dbType)
-                  AktivTilfredshet <- rapbase::LoadRegData(registryName, qTilf, dbType)
+                  LivskvalH <- NSRegDataSQL(valgtVar='LivsXX')
+                  KontrollH <- NSRegDataSQL(valgtVar='KontXX')
+                  UrinH <- NSRegDataSQL(valgtVar='UrinXX')
+                  TarmH <- NSRegDataSQL(valgtVar='TarmXX')
+                  AktivFunksjonH <- NSRegDataSQL(valgtVar='FunkXX')
+                  AktivTilfredshetH <- NSRegDataSQL(valgtVar='TilfXX')
+                  
+                  HovedSkjema <- NSPreprosesser(HovedSkjema)
+                  LivskvalH <- NSPreprosesser(LivskvalH)
+                  KontrollH <- NSPreprosesser(KontrollH)
+                  UrinH <- NSPreprosesser(UrinH)
+                  TarmH <- NSPreprosesser(TarmH)
+                  AktivFunksjonH <- NSPreprosesser(AktivFunksjonH)
+                  AktivTilfredshetH <- NSPreprosesser(AktivTilfredshetH)
+                  
                   } #hente data på server
 
-  #----------Hente data og evt. parametre som er statistke i appen----------
-     if (!exists('HovedSkjema')){
+      if (!exists('HovedSkjema')){
             #Tulledata:
-            data('NordicScirFIKTIVEdata', package = 'nordicscir')
-            # data('HovedSkjemaTull', package = 'nordicscir')
-            # data('LivskvalitetTull', package = 'nordicscir')
-            # data('KontrollTull', package = 'nordicscir')
-            # data('UrinTull', package = 'nordicscir')
-            # data('TarmTull', package = 'nordicscir')
-            # data('AktivFunksjonTull', package = 'nordicscir')
-            # data('AktivTilfredshetTull', package = 'nordicscir')
-            
-            
-            #Laste ekte data lokalt
-            # dato <- 'FormDataContract2018-01-30' #2017-05-24
-            # sti <- 'A:/NordicScir/'
-            # HovedSkjema <- read.table(paste0(sti, 'Main',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
-            # Livskvalitet <- read.table(paste0(sti, 'LifeQuality',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
-            # Kontroll <- read.table(paste0(sti, 'Control', dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
-            # #Urin <- read.table(paste0(sti, 'UrinaryTractFunction', dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
-            # Tarm <- read.table(paste0(sti, 'BowelFunction',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
-            # AktivFunksjon <- read.table(paste0(sti, 'ActivityAndParticipationPerformance',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
-            # AktivTilfredshet <- read.table(paste0(sti, 'ActivityAndParticipationSatisfaction',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
-      }  
+            data('NordicScirFIKTIVEdata', package = 'nordicscir') #NB: Ikke koblede data
+
             Livskvalitet$HovedskjemaGUID <- toupper(Livskvalitet$HovedskjemaGUID)
             Kontroll$HovedskjemaGUID <- toupper(Kontroll$HovedskjemaGUID)
             Urin$HovedskjemaGUID <- toupper(Urin$HovedskjemaGUID)
             Tarm$HovedskjemaGUID <- toupper(Tarm$HovedskjemaGUID)
             AktivFunksjon$HovedskjemaGUID <- toupper(AktivFunksjon$HovedskjemaGUID)
             AktivTilfredshet$HovedskjemaGUID <- toupper(AktivTilfredshet$HovedskjemaGUID)
-            
-            
-            # sum(Aktivitet$HovedskjemaGUID %in% HovedSkjema$SkjemaGUID)
-            # sum(AktivFunksjon$HovedskjemaGUID %in% HovedSkjema$SkjemaGUID)
-            # sum(AktivTilfredshet$HovedskjemaGUID %in% HovedSkjema$SkjemaGUID)
-            # sum(AktivTilfredshet$HovedskjemaGUID %in% AktivFunksjon$SkjemaGUID)
-      #}
-      
-      HovedSkjema <- NSPreprosesser(HovedSkjema)
-      LivskvalitetH <- KobleMedHoved(HovedSkjema,Livskvalitet)
-      KontrollH <- KobleMedHoved(HovedSkjema,Kontroll)
-      UrinH <- KobleMedHoved(HovedSkjema,Urin)
-      TarmH <- KobleMedHoved(HovedSkjema,Tarm)
-      Aktivitet <- KobleMedHoved(AktivFunksjon, AktivTilfredshet) #[,-which(names(AktivFunksjon)=='HovedskjemaGUID')]
-      AktivitetH <- KobleMedHoved(HovedSkjema, Aktivitet)
-      FunksjonH <- KobleMedHoved(HovedSkjema, AktivFunksjon)
-      TilfredsH <- AktivitetH
-      #RegData <- KobleMedHoved(HovedSkjema,Livskvalitet, alleHovedskjema = T) #SKAL iKKE BRUKES
+           
+            HovedSkjema <- NSPreprosesser(HovedSkjema)
+            LivskvalitetH <- KobleMedHoved(HovedSkjema,Livskvalitet)
+            KontrollH <- KobleMedHoved(HovedSkjema,Kontroll)
+            UrinH <- KobleMedHoved(HovedSkjema,Urin)
+            TarmH <- KobleMedHoved(HovedSkjema,Tarm)
+            AktivFunksjonH <- KobleMedHoved(HovedSkjema, AktivFunksjon)
+            Aktivitet <- KobleMedHoved(AktivFunksjon, AktivTilfredshet) #[,-which(names(AktivFunksjon)=='HovedskjemaGUID')]
+            AktivTilfredshetH <- KobleMedHoved(HovedSkjema, Aktivitet)
+      }
       AlleTab <- list(HovedSkjema=HovedSkjema, 
                       LivskvalitetH=LivskvalitetH, 
                       KontrollH=KontrollH, 
                       UrinH=UrinH, 
                       TarmH=TarmH, 
-                      FunksjonH=FunksjonH, 
-                      TilfredsH = TilfredsH, 
-                      AktivitetH = AktivitetH)
-      reshID <- 107627
+                      AktivFunksjonH = AktivFunksjonH, 
+                      AktivTilfredshetH = AktivTilfredshetH)
+      
 
 #-------Samlerapporter--------------------      
       # funksjon for å kjøre Rnw-filer (render file funksjon)
@@ -602,7 +585,7 @@ server <- function(input, output) {
             output$fordelinger <- renderPlot({
                   NSFigAndeler(RegData=RegData, valgtVar=input$valgtVar, preprosess = 0,
                                datoFra=input$datovalg[1], datoTil=input$datovalg[2], 
-                               reshID = reshID, 
+                               reshID = reshID(), 
                                AIS=input$AIS, traume=input$traume, paratetra=as.numeric(input$paratetra),
                                minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]), 
                                erMann=as.numeric(input$erMann), 
@@ -614,7 +597,7 @@ server <- function(input, output) {
             #RegData må hentes ut fra valgtVar
             UtDataFord <- NSFigAndeler(RegData=RegData, preprosess = 0, valgtVar=input$valgtVar,
                                        datoFra=input$datovalg[1], datoTil=input$datovalg[2], 
-                                       reshID = reshID, 
+                                       reshID = reshID(), 
                                        AIS=input$AIS, traume=input$traume, paratetra=as.numeric(input$paratetra),
                                        minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]), 
                                        erMann=as.numeric(input$erMann), 

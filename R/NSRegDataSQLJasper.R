@@ -14,9 +14,9 @@
 #' @return RegData data frame
 #' @export
 
-NSRegDataSQL <- function(valgtVar='Alder') {
+NSRegDataSQL_Jasper <- function(valgtVar='Alder') {
       
-registryName <- 'nordicscirPROD' #"nordicscir"
+registryName <- "nordicscir"
 dbType <- "mysql"
    
 #HovedSkjema: MainFormDataContract

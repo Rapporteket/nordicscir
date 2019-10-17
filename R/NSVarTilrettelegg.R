@@ -239,7 +239,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
             sortAvtagende <- FALSE
       }
       
-#----------------URIN-skjema (start 01.01.2015):
+#----------------Livskvalitet-skjema (start 01.01.2015):
       #For flerevar=1 må vi omdefinere variablene slik at alle gyldige registreringer 
       #(dvs. alle registreringer som skal telles med) er 0 eller 1. De som har oppfylt spørsmålet
       # er 1, mens ugyldige registreringer er NA. Det betyr at hvis vi skal ta bort registreringer
@@ -366,13 +366,13 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
                        '...behandling av UVI', '...forebyggende', 'Annet')
             cexgr <- 1
             Dum <- RegData
-            ind1 <- which(RegData[,variable]==TRUE , arr.ind=T)
-            indIkkeAnti <- which(Dum$DrugsAnti==FALSE)
+            ind1 <- which(RegData[,variable]==1 , arr.ind=T) #==TRUE
+            indIkkeAnti <- which(Dum$DrugsAnti==0) #==FALSE De som ikke fått antibiotika. Kan ikke være med i variabelens undergruppe.
             RegData[ ,variable] <- 0
-            RegData[indIkkeAnti ,c('Antiuti', 'Antiprop')] <- NA
+            RegData[indIkkeAnti ,c('Antiuti', 'Antiprop')] <- NA #Disse ser ut til å være tomme fra før
             RegData[ ,variable][ind1] <- 1
       }
-      
+      #RegData[,variable]
       
       if (valgtVar %in% c('UrinTomBlareHoved','UrinTomBlareTillegg')) {
             flerevar <- 1

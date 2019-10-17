@@ -72,7 +72,7 @@ NSFigAndeler <- function(RegData, outfile='', valgtVar,
                                  hovedgrTxt='',
                                  smltxt='')
             
-            FigTypUt <- rapbase::figtype(outfile)
+            FigTypUt <- rapFigurer::figtype(outfile)
             plot.new()
             text(0.5, 0.6, paste0('Ingen registreringer i Rapportdatabasen'), cex=1.2)
             if ( outfile != '') {dev.off()}
@@ -171,7 +171,7 @@ NSFigAndeler <- function(RegData, outfile='', valgtVar,
             #-----Hvis få registreringer: ---------------------
             Ngrense <- 5      # 5
             if (sum(Nfig$Hoved) < Ngrense | (medSml ==1 & sum(Nfig$Rest)< Ngrense)) {
-                  FigTypUt <- rapbase::figtype(outfile)
+                  FigTypUt <- rapFigurer::figtype(outfile)
                   farger <- FigTypUt$farger
                   plot.new()
                   title(NSVarSpes$tittel)	#, line=-6)
@@ -185,7 +185,7 @@ NSFigAndeler <- function(RegData, outfile='', valgtVar,
                   #Plottspesifikke parametre:
                   
                   #Plottspesifikke parametre:
-                  FigTypUt <- rapbase::figtype(outfile, fargepalett=Utvalg$fargepalett)
+                  FigTypUt <- rapFigurer::figtype(outfile, fargepalett=Utvalg$fargepalett)
                   #Tilpasse marger for å kunne skrive utvalgsteksten
                   NutvTxt <- length(utvalgTxt)
                   grtxtpst <- paste0(grtxt, ' (', sprintf('%.1f',AggVerdier$Hoved), '%)')

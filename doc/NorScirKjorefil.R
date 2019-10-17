@@ -17,25 +17,12 @@ rm(list=ls())
 
 varBort <- c('ShNavn', 'RHF', 'HF', 'MunicipalNumber', 'Municipal', 'PostalCode', 'HealthUnitName', 'Hospital', 'HealthUnitId')
 HovedSkjema <- lageTulleData(HovedSkjema, varBort=varBort, antSh=3) 
-save(HovedSkjema, file='A:/NordicScir/HovedSkjemaTull.RData')
-
 Livskvalitet <- lageTulleData(Livskvalitet, varBort=varBort, antSh=3) 
-save(Livskvalitet, file='A:/NordicScir/LivskvalitetTull.RData')
-
 Kontroll <- lageTulleData(Kontroll, varBort=varBort, antSh=3) 
-save(Kontroll, file='A:/NordicScir/KontrollTull.RData')
-
 Urin <- lageTulleData(Urin, varBort=varBort, antSh=3) 
-save(Urin, file='A:/NordicScir/UrinTull.RData')
-
 Tarm <- lageTulleData(Tarm, varBort=varBort, antSh=3) 
-save(Tarm, file='A:/NordicScir/TarmTull.RData')
-
 AktivFunksjon <- lageTulleData(AktivFunksjon, varBort=varBort, antSh=3) 
-save(AktivFunksjon, file='A:/NordicScir/AktivFunksjonTull.RData')
-
 AktivTilfredshet <- lageTulleData(AktivTilfredshet, varBort=varBort, antSh=3) 
-save(AktivTilfredshet, file='A:/NordicScir/AktivTilfredshetTull.RData')
 
 objekter <- c('HovedSkjema', 'Livskvalitet', 'Kontroll', 'Urin', 'Tarm', 'AktivFunksjon', 'AktivTilfredshet')
 save(list = objekter, file='A:/NordicScir/NordicScirFIKTIVEdata.RData')
@@ -71,7 +58,7 @@ file.remove(file=removeFiles)
 rm(list=ls())
 library(nordicscir)
 
-dato <- 'FormDataContract2019-03-12' #2017-05-24
+dato <- 'FormDataContract2019-10-17' #2017-05-24
 sti <- 'A:/NordicScir/'
 HovedSkjema <- read.table(paste0(sti, 'Main',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
 Livskvalitet <- read.table(paste0(sti, 'LifeQuality',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
@@ -88,15 +75,20 @@ Tarm$HovedskjemaGUID <- toupper(Tarm$HovedskjemaGUID)
 AktivFunksjon$HovedskjemaGUID <- toupper(AktivFunksjon$HovedskjemaGUID)
 AktivTilfredshet$HovedskjemaGUID <- toupper(AktivTilfredshet$HovedskjemaGUID)
 
-DataAlleTab <- list()
+#DataAlleTab <- list()
 
-#HovedSkjema$SkjemaGUID <- tolower(HovedSkjema$SkjemaGUID)
-#Livskvalitet$SkjemaGUID <- tolower(Livskvalitet$SkjemaGUID)
-#Kontroll$SkjemaGUID <- tolower(Kontroll$SkjemaGUID)
-#Urin$SkjemaGUID <- tolower(Urin$SkjemaGUID)
-#Tarm$SkjemaGUID <- tolower(Tarm$SkjemaGUID)
-#AktivFunksjon$SkjemaGUID <- tolower(AktivFunksjon$SkjemaGUID)
-#AktivTilfredshet$SkjemaGUID <- tolower(AktivTilfredshet$SkjemaGUID)
+HovedSkjema <- NSPreprosesser(HovedSkjema)
+LivskvalitetH <- KobleMedHoved(HovedSkjema,Livskvalitet)
+KontrollH <- KobleMedHoved(HovedSkjema,Kontroll)
+UrinH <- KobleMedHoved(HovedSkjema,Urin)
+TarmH <- KobleMedHoved(HovedSkjema,Tarm)
+AktivFunksjonH <- KobleMedHoved(HovedSkjema, AktivFunksjon)
+Aktivitet <- KobleMedHoved(AktivFunksjon, AktivTilfredshet) #[,-which(names(AktivFunksjon)=='HovedskjemaGUID')]
+AktivTilfredshetH <- KobleMedHoved(HovedSkjema, Aktivitet)
+
+
+objekter <- c('HovedSkjema', 'LivskvalitetH', 'KontrollH', 'UrinH', 'TarmH', 'AktivFunksjonH', 'AktivTilfredshetH')
+save(list = objekter, file='A:/NordicScir/NordicScirData.RData')
 
 
 # KobleMedHoved <- function(HovedSkjema,Skjema2) {
@@ -106,10 +98,11 @@ DataAlleTab <- list()
 #                       by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = F, all.y=F)
 # return(NSdata)
 # }
-
-RegData <- KobleMedHoved(HovedSkjema,Livskvalitet)
-RegData <- HovedSkjema
-HovedSkjema <- NSPreprosesser(HovedSkjema)
+ind18 <- which(as.Date(HovedSkjema$AdmitDt) >= '2018-01-01' & as.Date(HovedSkjema$AdmitDt) <= '2018-12-31')
+HovedSkjema18 <- HovedSkjema[ind18,]
+RegData18 <- KobleMedHoved(HovedSkjema18,Urin)
+RegData <- RegData18
+RegData <- NSPreprosesser(RegData)
 
 save(AktivTilfredshet, file='AktivTilfredshet.RData')
 
@@ -166,11 +159,12 @@ erMann <- 9                      #1-menn, 0-kvinner, Standard: '', dvs. begge
 traume <- ''    #'ja','nei', standard: ikke valgt
 AIS <- 99 # as.character(c(1,4))	#AISgrad ved innleggelse alle(''), velge en eller flere fra 1:5
 paratetra <- 99
-datoFra <- '2017-01-01'             #Standard: bør være minste registrerte verdi ? min og max dato i utvalget vises alltid i figuren.
-datoTil <- '2018-12-28'
+datoFra <- '2018-01-01'             #Standard: bør være minste registrerte verdi ? min og max dato i utvalget vises alltid i figuren.
+datoTil <- '2018-12-31'
 valgtMaal='gjsn'	#'Med'-median, 'Gjsn' gjennomsnitt
 grVar <- 'ShNavn'
-
+datoUt=0 #Velge ut-dato som filtrering
+outfile <-
 #------------------------------ Fordelinger --------------------------
 RegData <- HovedSkjema
 valgtVar <- 'UtTil'	#AAis, FAis, Alder, DagerRehab, DagerTilRehab, NivaaInn, Ntsci,
@@ -202,9 +196,9 @@ outfile <- '' #paste0(valgtVar, '.png')	#Navn angis av Jasper
 RegData <- TilfredsH
 preprosess <- 0
 
-UtDataFord <- NSFigAndeler(RegData=RegData, preprosess=preprosess, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
+UtDataFord <- NSFigAndeler(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
 		AIS=AIS, minald=minald, maxald=maxald, erMann=erMann, traume=traume, paratetra=paratetra,
-		reshID=reshID, enhetsUtvalg=1)    #, preprosess=1
+		reshID=reshID, enhetsUtvalg=0)    #, preprosess=1
 #Aktuelt å legge til en parameter som sier hvilket skjema variabelen tilhører. Dette for å koble
 #sammen riktig skjema til hovedskjema.
 

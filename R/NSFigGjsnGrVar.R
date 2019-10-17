@@ -174,7 +174,7 @@ NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='gjsn', grVar='ShNavn',
 #--------------------------FIGUR---------------------------------------------------
 
     if 	( max(Ngr) < Ngrense)	{#Dvs. hvis ALLE er mindre enn grensa.
-          rapbase::figtype(outfile)
+          rapFigurer::figtype(outfile)
           plot.new()
           if (dim(RegData)[1]>0) {
                 tekst <- paste0('Færre enn ', Ngrense, ' registreringer ved hvert av sykehusene')
@@ -188,7 +188,7 @@ NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='gjsn', grVar='ShNavn',
           #--------------------------------------------------------
           
           #Plottspesifikke parametre:
-    FigTypUt <- rapbase::figtype(outfile, fargepalett=Utvalg$fargepalett)
+    FigTypUt <- rapFigurer::figtype(outfile, fargepalett=Utvalg$fargepalett)
     farger <- FigTypUt$farger
     cexleg <- 1.1	#Størrelse på legendtekst
     cexgr <- 1.1
