@@ -400,7 +400,7 @@ server <- function(input, output, session) {
             data('NordicScirFIKTIVEdata', package = 'nordicscir') #NB: Ikke koblede data
 
             Livskval$HovedskjemaGUID <- toupper(Livskval$HovedskjemaGUID)
-            Kontroll$HovedskjemaGUID <- toupper(Kontroll$HovedskjemaGUID)
+            KontrollH$HovedskjemaGUID <- toupper(KontrollH$HovedskjemaGUID)
             Urin$HovedskjemaGUID <- toupper(Urin$HovedskjemaGUID)
             Tarm$HovedskjemaGUID <- toupper(Tarm$HovedskjemaGUID)
             AktivFunksjon$HovedskjemaGUID <- toupper(AktivFunksjon$HovedskjemaGUID)
@@ -408,7 +408,7 @@ server <- function(input, output, session) {
            
             #HovedSkjema <- NSPreprosesser(HovedSkjema)
             LivskvalH <- KobleMedHoved(HovedSkjema,Livskval)
-            KontrollH <- KobleMedHoved(HovedSkjema,Kontroll)
+            KontrollH <- KobleMedHoved(HovedSkjema,KontrollH)
             UrinH <- KobleMedHoved(HovedSkjema,Urin)
             TarmH <- KobleMedHoved(HovedSkjema,Tarm)
             AktivFunksjonH <- KobleMedHoved(HovedSkjema, AktivFunksjon)
@@ -434,27 +434,42 @@ server <- function(input, output, session) {
      
 #-------Samlerapporter--------------------      
       # funksjon for å kjøre Rnw-filer (render file funksjon)
-      contentFile <- function(file, srcFil, tmpFile) {
-            src <- normalizePath(system.file(srcFil, package="nordicscir"))
+      # filename function for re-use - i dette tilfellet vil det funke fint å hardkode det samme..
+      downloadFilename <- function(fileBaseName, type='') {
+            paste0(fileBaseName, as.character(as.integer(as.POSIXct(Sys.time()))), '.pdf')
+      }
+      
+      contentFile <- function(file, srcFil, tmpFil, package,
+                              reshID=0, datoFra=startDato, datoTil=Sys.Date()) {
+            src <- normalizePath(system.file(srcFil, package=package))
+            dev.off()
             
             # gå til tempdir. Har ikke skriverettigheter i arbeidskatalog
             owd <- setwd(tempdir())
             on.exit(setwd(owd))
-            file.copy(src, tmpFile, overwrite = TRUE)
+            file.copy(src, tmpFil, overwrite = TRUE)
             
-            texfil <- knitr::knit(tmpFile, encoding = 'UTF-8')
+            texfil <- knitr::knit(tmpFil, encoding = 'UTF-8')
             tools::texi2pdf(texfil, clean = TRUE)
             
             gc() #Opprydning gc-"garbage collection"
-            file.copy(paste0(substr(tmpFile, 1, nchar(tmpFile)-3), 'pdf'), file)
+            file.rename(stringr::str_replace(texfil,'tex','pdf'), file)
       }
       
-      
-      
+      output$mndRapp.pdf <- downloadHandler(
+            filename = function(){ downloadFilename('NorScirMaanedsrapport')},
+            content = function(file){
+                  contentFile(file, srcFil="NSmndRapp.Rnw", tmpFil="tmpNSmndRapp.Rnw",
+                              package = "nordicsir",
+                              reshID = reshID())
+            })
+
+
       output$mndRapp.pdf <- downloadHandler(
             filename = function(){ paste0('MndRapp', Sys.time(), '.pdf')}, 
             content = function(file){
-                  contentFile(file, srcFil="NSmndRapp.Rnw", tmpFile="tmpNSmndRapp.Rnw")
+                  contentFile(file, srcFil="NSmndRapp.Rnw", tmpFil="tmpNSmndRapp.Rnw",
+                              package= 'nordicscir', reshID=reshID())
             })
       # output$samlerappEgen <- downloadHandler(
       #             filename = function(){ paste0('SamleRappEgen', Sys.time(), '.pdf')},

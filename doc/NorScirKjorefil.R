@@ -38,7 +38,7 @@ library(tools)	#texi2pdf
 setwd("C:/ResultattjenesteGIT/nordicscir/inst")
 #HENT DATA
 reshID <- 107627	#0 - alle	#105593-Haukeland, 106896-Sunnaas, 107627-St.Olavs
-
+load('A:/NordicScir/NordicScirData.RData')
 knit('NSmndRapp.Rnw')
 texi2pdf('NSmndRapp.tex')
 

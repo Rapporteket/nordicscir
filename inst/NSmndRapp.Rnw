@@ -46,7 +46,7 @@ aarFra <- paste0(1900+dato$year-5, '-01-01')
 #       qTilf <- paste0('SELECT  UPPER(HovedskjemaGUID) AS HovedskjemaGUID, UPPER(SkjemaGUID) AS SkjemaGUID
 #                       FROM ActivityAndParticipationSatisfactionFormDataContract')
 #       
-#       LivskvalitetH <- rapbase::LoadRegData(registryName, qLivs, dbType)
+#       LivskvalH <- rapbase::LoadRegData(registryName, qLivs, dbType)
 #       KontrollH <- rapbase::LoadRegData(registryName, qKontr, dbType)
 #       UrinH <- rapbase::LoadRegData(registryName, qUrin, dbType)
 #       TarmH <- rapbase::LoadRegData(registryName, qTarm, dbType)
@@ -55,7 +55,7 @@ aarFra <- paste0(1900+dato$year-5, '-01-01')
 #       }
 
 #Bare gyldige kontrollskjema:
-Kontroll <- Kontroll[Kontroll$NoControl=='False', ] # & Kontroll$CNum==1, ]
+KontrollH <- KontrollH[KontrollH$NoControl=='False', ] # & KontrollH$CNum==1, ]
 
 #RegData <- NSRegDataSQL(datoFra=datoFra, datoTil=datoTil)
 HovedSkjema <- NSPreprosesser(RegData=HovedSkjema[which(HovedSkjema$AdmitDt > as.Date('2011-01-01')), ])
@@ -139,8 +139,8 @@ xtable::xtable(tabAvdN, digits=0, align=c('l', rep('r', ncol(tabAvdN))),
 
 RaaTab <- data.frame(Sykehus = HovedSkjema12mnd$ShNavn,
       #Aar = as.POSIXlt(Hskjema$AdmitDt, format="%Y-%m-%d")$year +1900,
-      LivskvalitetH = HovedSkjema12mnd$SkjemaGUID %in% LivskvalitetH$HovedskjemaGUID,
-      #Kontroll = HovedSkjema12mnd$SkjemaGUID %in% Kontroll$HovedskjemaGUID,
+      LivskvalH = HovedSkjema12mnd$SkjemaGUID %in% LivskvalH$HovedskjemaGUID,
+      #KontrollH = HovedSkjema12mnd$SkjemaGUID %in% KontrollH$HovedskjemaGUID,
       UrinH = HovedSkjema12mnd$SkjemaGUID %in% UrinH$HovedskjemaGUID,
       TarmH = HovedSkjema12mnd$SkjemaGUID %in% TarmH$HovedskjemaGUID,
       Funksjon = HovedSkjema12mnd$SkjemaGUID %in% AktivFunksjonH$HovedskjemaGUID,
@@ -176,22 +176,22 @@ xtable::xtable(t(AndelOppf), digits=1, align=c('l', rep('r', nrow(AndelOppf))),
 
 <<'AndelKtrMOppfolg', results='asis'>>=
 #Tabell: Andel kontrollskjema med oppfølging
-RaaTabKtr <- data.frame(Sykehus = Kontroll$HealthUnitShortName,
+RaaTabKtr <- data.frame(Sykehus = KontrollH$HealthUnitShortName,
       #Aar = as.POSIXlt(Hskjema$AdmitDt, format="%Y-%m-%d")$year +1900,
-      LivskvalitetH = Kontroll$SkjemaGUID %in% LivskvalitetH$HovedskjemaGUID,
-      UrinH = Kontroll$SkjemaGUID %in% UrinH$HovedskjemaGUID,
-      TarmH = Kontroll$SkjemaGUID %in% TarmH$HovedskjemaGUID,
-      Funksjon = Kontroll$SkjemaGUID %in% AktivFunksjonH$HovedskjemaGUID,
-      Tilfredshet = Kontroll$SkjemaGUID %in% 
+      LivskvalH = KontrollH$SkjemaGUID %in% LivskvalH$HovedskjemaGUID,
+      UrinH = KontrollH$SkjemaGUID %in% UrinH$HovedskjemaGUID,
+      TarmH = KontrollH$SkjemaGUID %in% TarmH$HovedskjemaGUID,
+      Funksjon = KontrollH$SkjemaGUID %in% AktivFunksjonH$HovedskjemaGUID,
+      Tilfredshet = KontrollH$SkjemaGUID %in% 
             AktivFunksjonH$SkjemaGUID[AktivFunksjonH$SkjemaGUID %in% AktivTilfredshetH$HovedskjemaGUID]
 )
 
-AntRegKtr <- table(Kontroll$HealthUnitShortName)
+AntRegKtr <- table(KontrollH$HealthUnitShortName)
 #AntOppf <- apply(RaaTab[ ,-1], MARGIN=2, 
  #                      FUN=function(x) table(x,RaaTab$Sykehus)['TRUE',])
 AntOppfKtr <- apply(RaaTabKtr[ ,-1], MARGIN=2, 
                        FUN=function(x) tapply(x,INDEX=RaaTabKtr$Sykehus, sum))
-AntKtr <- rbind(Kontroll=AntRegKtr, t(AntOppfKtr))
+AntKtr <- rbind(KontrollH=AntRegKtr, t(AntOppfKtr))
 AndelOppfKtr <- t(100*AntOppfKtr / as.vector(AntRegKtr))
 
 
@@ -211,7 +211,7 @@ xtable::xtable(AndelOppfKtr, digits=1, align=c('l', rep('r', ncol(AndelOppfKtr))
 <<'AndelUOppf', results='asis'>>=
 #Andel med kontroll per sykehus og år
 
-indOppf <- which(HovedSkjema$SkjemaGUID %in% Kontroll$HovedskjemaGUID)
+indOppf <- which(HovedSkjema$SkjemaGUID %in% KontrollH$HovedskjemaGUID)
 
 RegShAar <- addmargins(table(HovedSkjema$Aar, HovedSkjema$ShNavn))
 RegShAarKtr <- addmargins(table(HovedSkjema$Aar[indOppf], HovedSkjema$ShNavn[indOppf]))
