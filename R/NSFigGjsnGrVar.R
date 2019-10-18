@@ -21,7 +21,7 @@
 
 NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='gjsn', grVar='ShNavn',
                               datoFra='2010-01-01', datoTil='2050-12-31', 
-					AIS='', minald=0, maxald=130, erMann='', traume='', paratetra=99, 
+					AIS='', minald=0, maxald=130, erMann='', traume=99, paratetra=99, 
 					preprosess=1, outfile='', hentData=0) {
 
       if (hentData == 1) {

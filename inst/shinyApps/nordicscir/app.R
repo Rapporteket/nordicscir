@@ -62,9 +62,9 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                             br()
                ),
                mainPanel(width = 8,
-                         rapbase::appNavbarUserWidget(user = uiOutput("appUserName"),
+                         if (paaServer){ rapbase::appNavbarUserWidget(user = uiOutput("appUserName"),
                                                       organization = uiOutput("appOrgName"),
-                                                      addUserInfo = TRUE),
+                                                      addUserInfo = TRUE)},
                          h2('Velkommen til Rapporteket - Norsk Ryggmargsskaderegister!', align='center'),
                          br(),
                          h4('Du er nå inne på Rapporteket for NorSCIR. Rapporteket er registerets resultattjeneste. 
@@ -378,9 +378,6 @@ server <- function(input, output, session) {
             #hideTab(inputId = "tabs_andeler", target = "Figur, sykehusvisning")
       }
       })
-      # widget
-      output$appUserName <- renderText(rapbase::getUserFullName(session))
-      output$appOrgName <- renderText(rapbase::getUserReshId(session))
       
  #NB: Skal bare forholde oss til oppfølgingsskjema som er tilknyttet et gyldig Hovedskjema
       
@@ -393,29 +390,24 @@ server <- function(input, output, session) {
                   AktivFunksjonH <- NSRegDataSQL(valgtVar='FunkXX')
                   AktivTilfredshetH <- NSRegDataSQL(valgtVar='TilfXX')
                   
-                  HovedSkjema <- NSPreprosesser(HovedSkjema)
-                  LivskvalH <- NSPreprosesser(LivskvalH)
-                  KontrollH <- NSPreprosesser(KontrollH)
-                  UrinH <- NSPreprosesser(UrinH)
-                  TarmH <- NSPreprosesser(TarmH)
-                  AktivFunksjonH <- NSPreprosesser(AktivFunksjonH)
-                  AktivTilfredshetH <- NSPreprosesser(AktivTilfredshetH)
-                  
-                  } #hente data på server
+                  # widget
+                  output$appUserName <- renderText(rapbase::getUserFullName(session))
+                  output$appOrgName <- renderText(rapbase::getUserReshId(session))
+      } 
 
       if (!exists('HovedSkjema')){
             #Tulledata:
             data('NordicScirFIKTIVEdata', package = 'nordicscir') #NB: Ikke koblede data
 
-            Livskvalitet$HovedskjemaGUID <- toupper(Livskvalitet$HovedskjemaGUID)
+            Livskval$HovedskjemaGUID <- toupper(Livskval$HovedskjemaGUID)
             Kontroll$HovedskjemaGUID <- toupper(Kontroll$HovedskjemaGUID)
             Urin$HovedskjemaGUID <- toupper(Urin$HovedskjemaGUID)
             Tarm$HovedskjemaGUID <- toupper(Tarm$HovedskjemaGUID)
             AktivFunksjon$HovedskjemaGUID <- toupper(AktivFunksjon$HovedskjemaGUID)
             AktivTilfredshet$HovedskjemaGUID <- toupper(AktivTilfredshet$HovedskjemaGUID)
            
-            HovedSkjema <- NSPreprosesser(HovedSkjema)
-            LivskvalitetH <- KobleMedHoved(HovedSkjema,Livskvalitet)
+            #HovedSkjema <- NSPreprosesser(HovedSkjema)
+            LivskvalH <- KobleMedHoved(HovedSkjema,Livskval)
             KontrollH <- KobleMedHoved(HovedSkjema,Kontroll)
             UrinH <- KobleMedHoved(HovedSkjema,Urin)
             TarmH <- KobleMedHoved(HovedSkjema,Tarm)
@@ -423,15 +415,23 @@ server <- function(input, output, session) {
             Aktivitet <- KobleMedHoved(AktivFunksjon, AktivTilfredshet) #[,-which(names(AktivFunksjon)=='HovedskjemaGUID')]
             AktivTilfredshetH <- KobleMedHoved(HovedSkjema, Aktivitet)
       }
+      HovedSkjema <- NSPreprosesser(HovedSkjema)
+      LivskvalH <- NSPreprosesser(LivskvalH)
+      KontrollH <- NSPreprosesser(KontrollH)
+      UrinH <- NSPreprosesser(UrinH)
+      TarmH <- NSPreprosesser(TarmH)
+      AktivFunksjonH <- NSPreprosesser(AktivFunksjonH)
+      AktivTilfredshetH <- NSPreprosesser(AktivTilfredshetH)
+      
       AlleTab <- list(HovedSkjema=HovedSkjema, 
-                      LivskvalitetH=LivskvalitetH, 
+                      LivskvalH=LivskvalH, 
                       KontrollH=KontrollH, 
                       UrinH=UrinH, 
                       TarmH=TarmH, 
                       AktivFunksjonH = AktivFunksjonH, 
                       AktivTilfredshetH = AktivTilfredshetH)
       
-
+     
 #-------Samlerapporter--------------------      
       # funksjon for å kjøre Rnw-filer (render file funksjon)
       contentFile <- function(file, srcFil, tmpFile) {
@@ -519,8 +519,8 @@ server <- function(input, output, session) {
             tabAntOpphShMndAar <- switch(input$tidsenhetReg,
              Mnd=tabAntOpphShMnd(RegData=HovedSkjema, datoTil=input$sluttDatoReg, traume=input$traumeReg, antMnd=12), #input$datovalgTab[2])  
              Aar=tabAntOpphSh5Aar(RegData=HovedSkjema, datoTil=input$sluttDatoReg, traume=input$traumeReg))
-      
-      output$tabAntOpphShMnd12 <- renderTable({tabAntOpphShMndAar}, rownames = T, digits=0, spacing="xs")
+            
+            output$tabAntOpphShMnd12 <- renderTable({tabAntOpphShMndAar}, rownames = T, digits=0, spacing="xs")
       output$lastNed_tabAntOpph <- downloadHandler(
             filename = function(){paste0('tabAntOpph.csv')},
             content = function(file, filename){write.csv2(tabAntOpphShMndAar, file, row.names = T, na = '')

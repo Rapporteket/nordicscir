@@ -32,10 +32,7 @@ tabBelegg <- function(RegData, tidsenhet='Mnd', datoTil=Sys.Date(), enhetsUtvalg
       )
       RegData <- NSUtvalg(RegData=RegData, datoFra=datoFra, datoTil = datoTil, 
                              enhetsUtvalg = enhetsUtvalg, reshID = reshID)$RegData
-      #print(paste0('tidsenhet: ', tidsenhet))
-      #print(paste0('dim Regdata: ', dim(RegData)[1]))
       RegData <- SorterOgNavngiTidsEnhet(RegData, tidsenhet=tidsenhet)$RegData
-      #RegData <- Mtid$RegData
       tabBeleggAnt <- rbind('Antall pasienter' = tapply(RegData$PasientID, RegData$TidsEnhet, 
                                                              FUN=function(x) length(unique(x))),
                             'Antall rehab.opphold' = tapply(RegData$SkjemaGUID, RegData$TidsEnhet, FUN=length), #table(RegDataEget$TidsEnhet), #Neget,		
@@ -170,13 +167,13 @@ tabSkjemaTilknyttet <- function(Data=AlleTab, moderSkjema='Hoved', datoFra='2017
       
       RaaTab <- data.frame(Sykehus = ModerSkjema$ShNavn,
                            #Aar = as.POSIXlt(Hskjema$AdmitDt, format="%Y-%m-%d")$year +1900,
-                           Livskvalitet = ModerSkjema$SkjemaGUID %in% Data$LivskvalitetH$HovedskjemaGUID,
+                           Livskvalitet = ModerSkjema$SkjemaGUID %in% Data$LivskvalH$HovedskjemaGUID,
                            #Kontroll = HovedSkjema$SkjemaGUID %in% Kontroll$HovedskjemaGUID,
                            Urin = ModerSkjema$SkjemaGUID %in% Data$UrinH$HovedskjemaGUID,
                            Tarm = ModerSkjema$SkjemaGUID %in% Data$TarmH$HovedskjemaGUID,
-                           Funksjon = ModerSkjema$SkjemaGUID %in% Data$FunksjonH$HovedskjemaGUID,
+                           Funksjon = ModerSkjema$SkjemaGUID %in% Data$AktivFunksjonH$HovedskjemaGUID,
                            Tilfredshet = ModerSkjema$SkjemaGUID %in% 
-                                 Data$FunksjonH$HovedskjemaGUID[Data$FunksjonH$SkjemaGUID %in% Data$TilfredsH$HovedskjemaGUID]
+                                 Data$AktivFunksjonH$HovedskjemaGUID[Data$AktivFunksjonH$SkjemaGUID %in% Data$AktivTilfredshetH$HovedskjemaGUID]
       )
       
       AntReg <- table(ModerSkjema$ShNavn)

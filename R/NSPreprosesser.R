@@ -10,8 +10,6 @@
 #'
 NSPreprosesser <- function(RegData)
       {
-      #Kun ferdigstilte registreringer:
-      # Rapporteket får kun levert ferdigstilte registreringer fra MRS/NHN.
       
   #   RegData$ShNavn <- factor(RegData$ReshId, levels=c(105593, 106896, 107627), 
   #                                        labels=c('Haukeland', 'Sunnaas', 'St.Olavs'))
@@ -56,16 +54,24 @@ NSPreprosesser <- function(RegData)
       #names(RegData)[which(names(RegData) == 'OutOfHosptlDy')] <- 'Permisjon'
       #RegData$Permisjon <- with(RegData, OutOfHosptlDy+OutOfHosptlDy2+OutOfRehabDy)
       
-      # Riktig format
+      #Riktig format på datovariable:
+      RegData$InnDato <- as.Date(RegData$AdmitDt, tz= 'UTC', format="%Y-%m-%d") #as.POSIXlt(RegData$AdmitDt, format="%Y-%m-%d")
+      RegData$AdmitDt <- strptime(RegData$AdmitDt, format="%Y-%m-%d")
+
+      #Kun ferdigstilte registreringer:
+      # Rapporteket får kun levert ferdigstilte registreringer fra MRS/NHN.Men det kan dukke opp ufullstendige registreringer.
+      #Fjerner de som mangler sykehus og eller AdmitDt:
+      RegData <- RegData[which(RegData$ReshId %in% c(105593, 106896, 107627)), ] #dplyr::filter(RegData, ReshId %in% c(105593, 106896, 107627))
+      #RegData <- RegData[-which(is.na(RegData$AdmitDt)), ]
+      
+            # Riktig format
       #	RegData$alder <- as.numeric(RegData$decimalAge)	#
       RegData$ShNavn <- as.factor(RegData$ShNavn)
       
-      #Riktig format på datovariable:
-      RegData$InnDato <- as.Date(RegData$AdmitDt, tz= 'UTC', format="%Y-%m-%d") #as.POSIXlt(RegData$AdmitDt, format="%Y-%m-%d")
-      RegData$AdmitDt <- as.POSIXlt(RegData$AdmitDt, format="%Y-%m-%d")
 
       # Nye variable:
       RegData$MndNum <- RegData$AdmitDt$mon +1
+      head(format(RegData$AdmitDt, '%b'))
       RegData$MndAar <- format(RegData$AdmitDt, '%b%y')
       RegData$Kvartal <- ceiling(RegData$MndNum/3)
       RegData$Halvaar <- ceiling(RegData$MndNum/6)

@@ -25,33 +25,34 @@ dato <- as.POSIXlt(datoTil, tz='UTC')
 datoFra <- as.Date(paste0(1900+dato$year-1,'-', dato$mon+1, '-', '01'))
 aarFra <- paste0(1900+dato$year-5, '-01-01')
       
-if (!exists('HovedSkjema')){
-      HovedSkjema <- NSRegDataSQL() #datoFra = datoFra, datoTil = datoTil)
-
-      registryName <- "nordicscir"
-      dbType <- "mysql"
-
-      qLivs <- paste0('SELECT  UPPER(HovedskjemaGUID) AS HovedskjemaGUID, UPPER(SkjemaGUID) AS SkjemaGUID
-                      FROM LifeQualityFormDataContract')
-      qKontr <- paste0('SELECT  UPPER(HovedskjemaGUID) AS HovedskjemaGUID, UPPER(SkjemaGUID) AS SkjemaGUID,
-                        HealthUnitShortName, NoControl, CNum
-                       FROM ControlFormDataContract')
-      qUrin <- paste0('SELECT  UPPER(HovedskjemaGUID) AS HovedskjemaGUID, UPPER(SkjemaGUID) AS SkjemaGUID 
-                      FROM UrinaryTractFunctionFormDataContract')
-      qTarm <- paste0('SELECT  UPPER(HovedskjemaGUID) AS HovedskjemaGUID, UPPER(SkjemaGUID) AS SkjemaGUID 
-                      FROM BowelFunctionFormDataContract')
-      qFunk <- paste0('SELECT  UPPER(HovedskjemaGUID) AS HovedskjemaGUID, UPPER(SkjemaGUID) AS SkjemaGUID 
-                      FROM ActivityAndParticipationPerformanceFormDataContract')
-      qTilf <- paste0('SELECT  UPPER(HovedskjemaGUID) AS HovedskjemaGUID, UPPER(SkjemaGUID) AS SkjemaGUID
-                      FROM ActivityAndParticipationSatisfactionFormDataContract')
-      
-      Livskvalitet <- rapbase::LoadRegData(registryName, qLivs, dbType)
-      Kontroll <- rapbase::LoadRegData(registryName, qKontr, dbType)
-      Urin <- rapbase::LoadRegData(registryName, qUrin, dbType)
-      Tarm <- rapbase::LoadRegData(registryName, qTarm, dbType)
-      AktivFunksjon <- rapbase::LoadRegData(registryName, qFunk, dbType)
-      AktivTilfredshet <- rapbase::LoadRegData(registryName, qTilf, dbType)
-      }
+# Kjøres enten fra app eller lokalt og da er data tilgjengelig
+# if (!exists('HovedSkjema')){
+#       HovedSkjema <- NSRegDataSQL() #datoFra = datoFra, datoTil = datoTil)
+# 
+#       registryName <- "nordicscir"
+#       dbType <- "mysql"
+# 
+#       qLivs <- paste0('SELECT  UPPER(HovedskjemaGUID) AS HovedskjemaGUID, UPPER(SkjemaGUID) AS SkjemaGUID
+#                       FROM LifeQualityFormDataContract')
+#       qKontr <- paste0('SELECT  UPPER(HovedskjemaGUID) AS HovedskjemaGUID, UPPER(SkjemaGUID) AS SkjemaGUID,
+#                         HealthUnitShortName, NoControl, CNum
+#                        FROM ControlFormDataContract')
+#       qUrin <- paste0('SELECT  UPPER(HovedskjemaGUID) AS HovedskjemaGUID, UPPER(SkjemaGUID) AS SkjemaGUID 
+#                       FROM UrinaryTractFunctionFormDataContract')
+#       qTarm <- paste0('SELECT  UPPER(HovedskjemaGUID) AS HovedskjemaGUID, UPPER(SkjemaGUID) AS SkjemaGUID 
+#                       FROM BowelFunctionFormDataContract')
+#       qFunk <- paste0('SELECT  UPPER(HovedskjemaGUID) AS HovedskjemaGUID, UPPER(SkjemaGUID) AS SkjemaGUID 
+#                       FROM ActivityAndParticipationPerformanceFormDataContract')
+#       qTilf <- paste0('SELECT  UPPER(HovedskjemaGUID) AS HovedskjemaGUID, UPPER(SkjemaGUID) AS SkjemaGUID
+#                       FROM ActivityAndParticipationSatisfactionFormDataContract')
+#       
+#       LivskvalitetH <- rapbase::LoadRegData(registryName, qLivs, dbType)
+#       KontrollH <- rapbase::LoadRegData(registryName, qKontr, dbType)
+#       UrinH <- rapbase::LoadRegData(registryName, qUrin, dbType)
+#       TarmH <- rapbase::LoadRegData(registryName, qTarm, dbType)
+#       AktivFunksjonH <- rapbase::LoadRegData(registryName, qFunk, dbType)
+#       AktivTilfredshetH <- rapbase::LoadRegData(registryName, qTilf, dbType)
+#       }
 
 #Bare gyldige kontrollskjema:
 Kontroll <- Kontroll[Kontroll$NoControl=='False', ] # & Kontroll$CNum==1, ]
@@ -138,13 +139,13 @@ xtable::xtable(tabAvdN, digits=0, align=c('l', rep('r', ncol(tabAvdN))),
 
 RaaTab <- data.frame(Sykehus = HovedSkjema12mnd$ShNavn,
       #Aar = as.POSIXlt(Hskjema$AdmitDt, format="%Y-%m-%d")$year +1900,
-      Livskvalitet = HovedSkjema12mnd$SkjemaGUID %in% Livskvalitet$HovedskjemaGUID,
+      LivskvalitetH = HovedSkjema12mnd$SkjemaGUID %in% LivskvalitetH$HovedskjemaGUID,
       #Kontroll = HovedSkjema12mnd$SkjemaGUID %in% Kontroll$HovedskjemaGUID,
-      Urin = HovedSkjema12mnd$SkjemaGUID %in% Urin$HovedskjemaGUID,
-      Tarm = HovedSkjema12mnd$SkjemaGUID %in% Tarm$HovedskjemaGUID,
-      Funksjon = HovedSkjema12mnd$SkjemaGUID %in% AktivFunksjon$HovedskjemaGUID,
+      UrinH = HovedSkjema12mnd$SkjemaGUID %in% UrinH$HovedskjemaGUID,
+      TarmH = HovedSkjema12mnd$SkjemaGUID %in% TarmH$HovedskjemaGUID,
+      Funksjon = HovedSkjema12mnd$SkjemaGUID %in% AktivFunksjonH$HovedskjemaGUID,
       Tilfredshet = HovedSkjema12mnd$SkjemaGUID %in% 
-            AktivFunksjon$HovedskjemaGUID[AktivFunksjon$SkjemaGUID %in% AktivTilfredshet$HovedskjemaGUID]
+            AktivFunksjonH$HovedskjemaGUID[AktivFunksjonH$SkjemaGUID %in% AktivTilfredshetH$HovedskjemaGUID]
 )
 
 AntReg <- table(HovedSkjema12mnd$ShNavn)
@@ -177,12 +178,12 @@ xtable::xtable(t(AndelOppf), digits=1, align=c('l', rep('r', nrow(AndelOppf))),
 #Tabell: Andel kontrollskjema med oppfølging
 RaaTabKtr <- data.frame(Sykehus = Kontroll$HealthUnitShortName,
       #Aar = as.POSIXlt(Hskjema$AdmitDt, format="%Y-%m-%d")$year +1900,
-      Livskvalitet = Kontroll$SkjemaGUID %in% Livskvalitet$HovedskjemaGUID,
-      Urin = Kontroll$SkjemaGUID %in% Urin$HovedskjemaGUID,
-      Tarm = Kontroll$SkjemaGUID %in% Tarm$HovedskjemaGUID,
-      Funksjon = Kontroll$SkjemaGUID %in% AktivFunksjon$HovedskjemaGUID,
+      LivskvalitetH = Kontroll$SkjemaGUID %in% LivskvalitetH$HovedskjemaGUID,
+      UrinH = Kontroll$SkjemaGUID %in% UrinH$HovedskjemaGUID,
+      TarmH = Kontroll$SkjemaGUID %in% TarmH$HovedskjemaGUID,
+      Funksjon = Kontroll$SkjemaGUID %in% AktivFunksjonH$HovedskjemaGUID,
       Tilfredshet = Kontroll$SkjemaGUID %in% 
-            AktivFunksjon$SkjemaGUID[AktivFunksjon$SkjemaGUID %in% AktivTilfredshet$HovedskjemaGUID]
+            AktivFunksjonH$SkjemaGUID[AktivFunksjonH$SkjemaGUID %in% AktivTilfredshetH$HovedskjemaGUID]
 )
 
 AntRegKtr <- table(Kontroll$HealthUnitShortName)

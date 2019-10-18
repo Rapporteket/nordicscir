@@ -17,14 +17,14 @@ rm(list=ls())
 
 varBort <- c('ShNavn', 'RHF', 'HF', 'MunicipalNumber', 'Municipal', 'PostalCode', 'HealthUnitName', 'Hospital', 'HealthUnitId')
 HovedSkjema <- lageTulleData(HovedSkjema, varBort=varBort, antSh=3) 
-Livskvalitet <- lageTulleData(Livskvalitet, varBort=varBort, antSh=3) 
+Livskval <- lageTulleData(Livskval, varBort=varBort, antSh=3) 
 Kontroll <- lageTulleData(Kontroll, varBort=varBort, antSh=3) 
 Urin <- lageTulleData(Urin, varBort=varBort, antSh=3) 
 Tarm <- lageTulleData(Tarm, varBort=varBort, antSh=3) 
 AktivFunksjon <- lageTulleData(AktivFunksjon, varBort=varBort, antSh=3) 
 AktivTilfredshet <- lageTulleData(AktivTilfredshet, varBort=varBort, antSh=3) 
 
-objekter <- c('HovedSkjema', 'Livskvalitet', 'Kontroll', 'Urin', 'Tarm', 'AktivFunksjon', 'AktivTilfredshet')
+objekter <- c('HovedSkjema', 'Livskval', 'Kontroll', 'Urin', 'Tarm', 'AktivFunksjon', 'AktivTilfredshet')
 save(list = objekter, file='A:/NordicScir/NordicScirFIKTIVEdata.RData')
 
 
@@ -54,21 +54,21 @@ removeFiles <- c(paste0('NSmndRapp',filtype),
 file.remove(file=removeFiles)
 
 #------------------------ LASTE DATA -------------------------------------
-
-rm(list=ls())
 library(nordicscir)
+rm(list=ls())
+load('A:/NordicScir/NordicScirData.RData')
 
 dato <- 'FormDataContract2019-10-17' #2017-05-24
 sti <- 'A:/NordicScir/'
 HovedSkjema <- read.table(paste0(sti, 'Main',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
-Livskvalitet <- read.table(paste0(sti, 'LifeQuality',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
+Livskval <- read.table(paste0(sti, 'LifeQuality',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
 Kontroll <- read.table(paste0(sti, 'Control', dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
 Urin <- read.table(paste0(sti, 'UrinaryTractFunction', dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
 Tarm <- read.table(paste0(sti, 'BowelFunction',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
 AktivFunksjon <- read.table(paste0(sti, 'ActivityAndParticipationPerformance',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
 AktivTilfredshet <- read.table(paste0(sti, 'ActivityAndParticipationSatisfaction',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
 
-Livskvalitet$HovedskjemaGUID <- toupper(Livskvalitet$HovedskjemaGUID)
+Livskval$HovedskjemaGUID <- toupper(Livskval$HovedskjemaGUID)
 Kontroll$HovedskjemaGUID <- toupper(Kontroll$HovedskjemaGUID)
 Urin$HovedskjemaGUID <- toupper(Urin$HovedskjemaGUID)
 Tarm$HovedskjemaGUID <- toupper(Tarm$HovedskjemaGUID)
@@ -77,8 +77,8 @@ AktivTilfredshet$HovedskjemaGUID <- toupper(AktivTilfredshet$HovedskjemaGUID)
 
 #DataAlleTab <- list()
 
-HovedSkjema <- NSPreprosesser(HovedSkjema)
-LivskvalitetH <- KobleMedHoved(HovedSkjema,Livskvalitet)
+#HovedSkjema <- NSPreprosesser(HovedSkjema)
+LivskvalH <- KobleMedHoved(HovedSkjema,Livskval)
 KontrollH <- KobleMedHoved(HovedSkjema,Kontroll)
 UrinH <- KobleMedHoved(HovedSkjema,Urin)
 TarmH <- KobleMedHoved(HovedSkjema,Tarm)
@@ -87,9 +87,8 @@ Aktivitet <- KobleMedHoved(AktivFunksjon, AktivTilfredshet) #[,-which(names(Akti
 AktivTilfredshetH <- KobleMedHoved(HovedSkjema, Aktivitet)
 
 
-objekter <- c('HovedSkjema', 'LivskvalitetH', 'KontrollH', 'UrinH', 'TarmH', 'AktivFunksjonH', 'AktivTilfredshetH')
+objekter <- c('HovedSkjema', 'LivskvalH', 'KontrollH', 'UrinH', 'TarmH', 'AktivFunksjonH', 'AktivTilfredshetH')
 save(list = objekter, file='A:/NordicScir/NordicScirData.RData')
-
 
 # KobleMedHoved <- function(HovedSkjema,Skjema2) {
 #       varBegge <- intersect(names(Skjema2),names(HovedSkjema)) ##Variabelnavn som finnes i begge datasett
@@ -113,23 +112,23 @@ save(AktivTilfredshet, file='AktivTilfredshet.RData')
 #------------------------ TESTE DATA -------------------------------------
 
 #---Oppsummering/test av andel som har fått oppfølging---
-paste0('Ant. hovedskjema m/Livskvalitet: ',sum(HovedSkjema$SkjemaGUID %in% Livskvalitet$HovedskjemaGUID))
+paste0('Ant. hovedskjema m/Livskvalitet: ',sum(HovedSkjema$SkjemaGUID %in% Livskval$HovedskjemaGUID))
 paste0('Ant. hovedskjema m/AktivFunksjon: ', sum(HovedSkjema$SkjemaGUID %in% AktivFunksjon$HovedskjemaGUID))
 paste0('Ant. Satisfaction m/AktivFunksjon: ', sum(AktivFunksjon$SkjemaGUID %in% AktivTilfredshet$HovedskjemaGUID))
 
-length(unique(Livskvalitet$HovedskjemaGUID))
-sum(unique(Livskvalitet$HovedskjemaGUID) %in% HovedSkjema$SkjemaGUID)
-sum(Livskvalitet$HovedskjemaGUID %in% HovedSkjema$SkjemaGUID)
+length(unique(Livskval$HovedskjemaGUID))
+sum(unique(Livskval$HovedskjemaGUID) %in% HovedSkjema$SkjemaGUID)
+sum(Livskval$HovedskjemaGUID %in% HovedSkjema$SkjemaGUID)
 
-table(table(Livskvalitet$HovedskjemaGUID))
-table(table(LivskvalitetHoved$SkjemaGUID))
+table(table(Livskval$HovedskjemaGUID))
+table(table(LivskvalHoved$SkjemaGUID))
 
 
 tabVar <- c('HealthUnitName','Aar')
 Hskjema <- HovedSkjema[c('SkjemaGUID','HealthUnitName','AdmitDt')][order(HovedSkjema$SkjemaGUID),]
 RaaTab <- cbind(Hskjema,
                 #Aar = as.POSIXlt(Hskjema$AdmitDt, format="%Y-%m-%d")$year +1900,
-                MedLivskval = match(Hskjema$SkjemaGUID, sort(Livskvalitet$HovedskjemaGUID)),
+                MedLivskval = match(Hskjema$SkjemaGUID, sort(Livskval$HovedskjemaGUID)),
                 MedKtr = match(HovedSkjema$SkjemaGUID, sort(Kontroll$HovedskjemaGUID)),
                 MedUrin = match(HovedSkjema$SkjemaGUID, sort(Urin$HovedskjemaGUID)),
                 MedTarm = match(HovedSkjema$SkjemaGUID, sort(Tarm$HovedskjemaGUID)),
@@ -180,7 +179,7 @@ valgtVar <- 'TarmAvfHoved'   #'TarmAvfHoved','TarmAvfTillegg', TarmAvfmiddel, Ta
                               #TarmInkontinens, TarmKirInngrep, TarmKirInngrepHvilke
 
 #Livskvalitet
-RegData <- KobleMedHoved(RegData,Livskvalitet)
+RegData <- KobleMedHoved(RegData,Livskval)
 valgtVar <- 'LivsPsyk'                #LivsGen, LivsFys, LivsPsyk
 
 #Funksjon (Aktivitet og deltagelse)
@@ -236,7 +235,7 @@ Data <- NSFigGjsnGrVar(RegData=RegData, outfile=outfile, valgtVar=valgtVar, dato
 		valgtMaal='med', AIS=AIS, minald=minald, maxald=maxald, erMann=erMann, traume=traume)
 
 variable <- c('Alder', 'DagerRehab', 'DagerTilRehab', 'OpphTot', 'RegForsinkelse') 
-variable <- c('LivsGen', 'LivsFys', 'LivsPsyk') #Koble på livskvalitetsdata
+variable <- c('LivsGen', 'LivsFys', 'LivsPsyk') #Koble på Livskvalitetsdata
 for (valgtVar in variable) {
 	outfile <- paste0('M_',valgtVar, '.png')
 	NSFigGjsnGrVar(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 

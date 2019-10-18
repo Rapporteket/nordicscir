@@ -16,8 +16,8 @@
 #' @export
 
 
-NSUtvalg <- function(RegData, datoFra='2010-01-01', datoTil='3000-05-25', minald=0, maxald=110,
-                     erMann=99, traume='', AIS='', enhetsUtvalg=0, paratetra=99,
+NSUtvalg <- function(RegData, datoFra='2010-01-01', datoTil=Sys.Date(), minald=0, maxald=110,
+                     erMann=99, traume=99, AIS='', enhetsUtvalg=0, paratetra=99,
                      reshID=0, fargepalett='BlaaOff', datoUt=0) {
       
       
@@ -40,7 +40,7 @@ NSUtvalg <- function(RegData, datoFra='2010-01-01', datoTil='3000-05-25', minald
       indAldUt <- which(RegData$Alder < minald | RegData$Alder > maxald)
       indDatoUt <- setdiff(1:Ninn,
                            which(RegData$InnDato >= datoFra & RegData$InnDato <= datoTil)) #Får bort NA
-      traumeValgBort <- switch(traume, ja = c(6,9) , nei = c(1:5,9), alle = NULL) #6 ikke-tr, 1:5 traumer, 9 ukjent
+      traumeValgBort <- switch(traume, ja = c(6,9) , nei = c(1:5,9), alle = 99) #6 ikke-tr, 1:5 traumer, 9 ukjent
       indTrUt <-  which(RegData$SkadeArsak %in% traumeValgBort)
       indKjUt <- if (erMann %in% 0:1) {which(RegData$erMann != erMann)} else {indKjUt <- NULL}
       AIS <- as.numeric(AIS)
