@@ -462,11 +462,11 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
             flerevar <- 1
             retn <- 'H'
             tittel <- 'Kirurgiske inngrep i mage/–tarm kanalen'
-            variable <- c('Apndec', 'Chcyec', 'Colost', 'Ileost', 'Hemec', 'Apndic', 'Otgisurg')
+            variable <- c('Apndec', 'Chcyec', 'Colost', 'Ileost', 'Hemrhoid', 'Otgisurg') # 'Apndic', 
             grtxt <- c('Appendektomi','Fjerning av galleblæren', 'Kolostomi', 'Ileostomi', 
-                       'Hemoroidektomi', 'Appendikostomi', 'Annet')
+                       'Hemoroidektomi', 'Annet') #'Appendikostomi', 
             cexgr <- 1
-            ind1 <- which(RegData[,variable]==TRUE , arr.ind=T)
+            ind1 <- which(RegData[,variable]==1 , arr.ind=T) #which(RegData[,variable]==TRUE , arr.ind=T)
             RegData[ ,variable] <- 0
             RegData[ ,variable][ind1] <- 1
       }
