@@ -1,6 +1,7 @@
 #Resultattjeneste for NordicScir
 library(nordicscir)
 library(shiny)
+library(shinyjs)
 library(knitr)
 library(lubridate)
 #ibrary(shinyBS) # Additional Bootstrap Controls
@@ -42,6 +43,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
       tabPanel("Startside",
                #fluidRow(
                #column(width=5,
+               shinyjs::useShinyjs(),
                br(),
                tags$head(tags$style(".butt{background-color:#6baed6;} .butt{color: white;}")), # background color and font color
                
@@ -51,9 +53,11 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                             h3("Månedsrapport"), #),
                             downloadButton(outputId = 'mndRapp.pdf', label='Last ned MÅNEDSRAPPORT', class = "butt"),
                             br(),
+                            br('NB: Nedlasting tar litt tid. I mellomtida får man ikke sett på andre resultater.'),
                             br(),
-                            # h3("Resultater hele landet, SC-bruker"), #),
-                            # downloadButton(outputId = 'samlerappLandet', label='Last ned', class = "butt"),
+                            h3("Resultater, hele landet (kun SC-bruker)"), #),
+                            #shinydashboard::infoBox("Resultater hele landet (kun SC-bruker)", 
+                        downloadButton(outputId = 'samleRappLand.pdf', label='Last ned samlerapport', class = "butt"),
                             # br(),
                             # h3("Resultater eget sykehus, SC-bruker"), #),
                             # downloadButton(outputId = 'samlerappEgen', label='Last ned', class = "butt"),
@@ -372,9 +376,10 @@ server <- function(input, output, session) {
       #output$reshID <- renderText({ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 105460)}) #evt renderUI
       
       
-      reactive({if (rolle() != 'SC') {
-      #NB: Må aktiveres i ui-del også
-                  shinyjs::hide(id = 'velgResh')
+      observe({if (rolle() != 'SC') {
+            #print('OK')
+      #NB: Må aktiveres i ui-del også OK
+                  shinyjs::hide(id = 'samleRappLand.pdf')
             #hideTab(inputId = "tabs_andeler", target = "Figur, sykehusvisning")
       }
       })
@@ -400,7 +405,7 @@ server <- function(input, output, session) {
             data('NordicScirFIKTIVEdata', package = 'nordicscir') #NB: Ikke koblede data
 
             Livskval$HovedskjemaGUID <- toupper(Livskval$HovedskjemaGUID)
-            KontrollH$HovedskjemaGUID <- toupper(KontrollH$HovedskjemaGUID)
+            Kontroll$HovedskjemaGUID <- toupper(Kontroll$HovedskjemaGUID)
             Urin$HovedskjemaGUID <- toupper(Urin$HovedskjemaGUID)
             Tarm$HovedskjemaGUID <- toupper(Tarm$HovedskjemaGUID)
             AktivFunksjon$HovedskjemaGUID <- toupper(AktivFunksjon$HovedskjemaGUID)
@@ -408,7 +413,7 @@ server <- function(input, output, session) {
            
             #HovedSkjema <- NSPreprosesser(HovedSkjema)
             LivskvalH <- KobleMedHoved(HovedSkjema,Livskval)
-            KontrollH <- KobleMedHoved(HovedSkjema,KontrollH)
+            KontrollH <- KobleMedHoved(HovedSkjema,Kontroll)
             UrinH <- KobleMedHoved(HovedSkjema,Urin)
             TarmH <- KobleMedHoved(HovedSkjema,Tarm)
             AktivFunksjonH <- KobleMedHoved(HovedSkjema, AktivFunksjon)
@@ -465,10 +470,10 @@ server <- function(input, output, session) {
             })
 
 
-      output$mndRapp.pdf <- downloadHandler(
-            filename = function(){ paste0('MndRapp', Sys.time(), '.pdf')}, 
+      output$samleRappLand.pdf <- downloadHandler(
+            filename = function(){ paste0('NorScirSamleRapport')}, 
             content = function(file){
-                  contentFile(file, srcFil="NSmndRapp.Rnw", tmpFil="tmpNSmndRapp.Rnw",
+                  contentFile(file, srcFil="NSsamleRappLand.Rnw", tmpFil="tmpNSsamleRappLand.Rnw",
                               package= 'nordicscir', reshID=reshID())
             })
       # output$samlerappEgen <- downloadHandler(
@@ -531,6 +536,8 @@ server <- function(input, output, session) {
                          Aar = paste0(t1, 'siste 5 år før ', input$sluttDatoReg, t2, '<br />'))
                   ))})
       observe({
+            #print(rolle())
+            #print((rolle() != 'SC'))
             tabAntOpphShMndAar <- switch(input$tidsenhetReg,
              Mnd=tabAntOpphShMnd(RegData=HovedSkjema, datoTil=input$sluttDatoReg, traume=input$traumeReg, antMnd=12), #input$datovalgTab[2])  
              Aar=tabAntOpphSh5Aar(RegData=HovedSkjema, datoTil=input$sluttDatoReg, traume=input$traumeReg))
