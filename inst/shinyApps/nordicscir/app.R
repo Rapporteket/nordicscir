@@ -15,11 +15,8 @@ startDatoStandard <- Sys.Date()-364
 addResourcePath('rap', system.file('www', package='rapbase'))
 
 context <- Sys.getenv("R_RAP_INSTANCE") #Blir tom hvis jobber lokalt
-<<<<<<< HEAD
 paaServer <- context %in% c("DEV", "TEST", "QA", "PRODUCTION") #rapbase::isRapContext()
-=======
-paaServer <- rapbase::isRapContext()
->>>>>>> f400332d9fd7c9b6f3575b5298d6b085007fd70a
+
 
 regTitle = ifelse(paaServer,'NORSK SPINALSKADEREGISTER',
                   'NORSK SPINALSKADEREGISTER med FIKTIVE data')
@@ -389,11 +386,11 @@ server <- function(input, output, session) {
       })
       
  #NB: Skal bare forholde oss til oppfølgingsskjema som er tilknyttet et gyldig Hovedskjema
-      paaServer <- (context == "TEST" | context == "QA" | context == "PRODUCTION")
+      #paaServer <- (context == "TEST" | context == "QA" | context == "PRODUCTION")
       if (paaServer) {
                   HovedSkjema <- NSRegDataSQL() #datoFra = datoFra, datoTil = datoTil)
                   LivskvalH <- NSRegDataSQL(valgtVar='LivsXX')
-                  KontrollH <- NSRegDataSQL(valgtVar='KontXX')
+                  #KontrollH <- NSRegDataSQL(valgtVar='KontXX')
                   UrinH <- NSRegDataSQL(valgtVar='UrinXX')
                   TarmH <- NSRegDataSQL(valgtVar='TarmXX')
                   AktivFunksjonH <- NSRegDataSQL(valgtVar='FunkXX')
@@ -426,7 +423,7 @@ server <- function(input, output, session) {
       }
       HovedSkjema <- NSPreprosesser(HovedSkjema)
       LivskvalH <- NSPreprosesser(LivskvalH)
-      KontrollH <- NSPreprosesser(KontrollH)
+      #KontrollH <- NSPreprosesser(KontrollH)
       UrinH <- NSPreprosesser(UrinH)
       TarmH <- NSPreprosesser(TarmH)
       AktivFunksjonH <- NSPreprosesser(AktivFunksjonH)
@@ -434,7 +431,7 @@ server <- function(input, output, session) {
       
       AlleTab <- list(HovedSkjema=HovedSkjema, 
                       LivskvalH=LivskvalH, 
-                      KontrollH=KontrollH, 
+                      #KontrollH=KontrollH, 
                       UrinH=UrinH, 
                       TarmH=TarmH, 
                       AktivFunksjonH = AktivFunksjonH, 
