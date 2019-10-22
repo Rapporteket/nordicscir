@@ -15,7 +15,11 @@ startDatoStandard <- Sys.Date()-364
 addResourcePath('rap', system.file('www', package='rapbase'))
 
 context <- Sys.getenv("R_RAP_INSTANCE") #Blir tom hvis jobber lokalt
+<<<<<<< HEAD
 paaServer <- context %in% c("DEV", "TEST", "QA", "PRODUCTION") #rapbase::isRapContext()
+=======
+paaServer <- rapbase::isRapContext()
+>>>>>>> f400332d9fd7c9b6f3575b5298d6b085007fd70a
 
 regTitle = ifelse(paaServer,'NORSK SPINALSKADEREGISTER',
                   'NORSK SPINALSKADEREGISTER med FIKTIVE data')
