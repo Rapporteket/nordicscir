@@ -251,7 +251,7 @@ varTarm <- c('
  ')
 # ,Tarm.PasientGUID
 
-varKont <- c("CAis",
+varKont <- paste0('Kont.',c("CAis",
              "CMtrLvlAreaL",
              "CMtrLvlAreaR",
              "CMtrLvlLC",
@@ -288,6 +288,7 @@ varKont <- c("CAis",
        ,"ProceedingID"
       ,"SkjemaGUID"
       ,"UnitId")
+      )
 #"HealthUnitId","HealthUnitName","HealthUnitShortName","HF" ,"Hospital","RHF"          
 
 valgtSkjema <- substr(valgtVar,1,4)
@@ -308,7 +309,7 @@ if (valgtSkjema %in% c('Livs', 'Urin', 'Tarm', 'Tilf', 'Funk', 'Kont')) {
            Urin = 'INNER JOIN UrinaryTractFunctionFormDataContract Urin ',
            Tarm = 'INNER JOIN BowelFunctionFormDataContract Tarm ',
            Funk = 'INNER JOIN ActivityAndParticipationPerformanceFormDataContract Funk ',
-           Kont = 'INNER JOIN ControlFormDataContract k '
+           Kont = 'INNER JOIN ControlFormDataContract Kont '
            ),
            'ON UPPER(h.SkjemaGUID) = UPPER(',valgtSkjema , '.HovedskjemaGUID) ')
       #qSkjema er NULL hvis ingen treff 
