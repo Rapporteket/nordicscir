@@ -373,7 +373,7 @@ server <- function(input, output, session) {
       
       #hospitalName <-getHospitalName(rapbase::getUserReshId(session))
       reshID <- reactive({ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 107627)}) 
-      rolle <- reactive({ifelse(paaServer, rapbase::getShinyUserRole(shinySession=session), 'SC')})
+      rolle <- reactive({ifelse(paaServer, rapbase::getUserRole(shinySession=session), 'SC')})
       #output$reshID <- renderText({ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 105460)}) #evt renderUI
       
       
@@ -390,7 +390,7 @@ server <- function(input, output, session) {
       if (paaServer) {
                   HovedSkjema <- NSRegDataSQL() #datoFra = datoFra, datoTil = datoTil)
                   LivskvalH <- NSRegDataSQL(valgtVar='LivsXX')
-                  #KontrollH <- NSRegDataSQL(valgtVar='KontXX')
+                  KontrollH <- NSRegDataSQL(valgtVar='KontXX')
                   UrinH <- NSRegDataSQL(valgtVar='UrinXX')
                   TarmH <- NSRegDataSQL(valgtVar='TarmXX')
                   AktivFunksjonH <- NSRegDataSQL(valgtVar='FunkXX')
@@ -412,7 +412,7 @@ server <- function(input, output, session) {
             AktivFunksjon$HovedskjemaGUID <- toupper(AktivFunksjon$HovedskjemaGUID)
             AktivTilfredshet$HovedskjemaGUID <- toupper(AktivTilfredshet$HovedskjemaGUID)
            
-            #HovedSkjema <- NSPreprosesser(HovedSkjema)
+            #HovedSkjema <- NSPreprosesser(HovedSkjema) 
             LivskvalH <- KobleMedHoved(HovedSkjema,Livskval)
             KontrollH <- KobleMedHoved(HovedSkjema,Kontroll)
             UrinH <- KobleMedHoved(HovedSkjema,Urin)
@@ -423,7 +423,7 @@ server <- function(input, output, session) {
       }
       HovedSkjema <- NSPreprosesser(HovedSkjema)
       LivskvalH <- NSPreprosesser(LivskvalH)
-      #KontrollH <- NSPreprosesser(KontrollH)
+      KontrollH <- NSPreprosesser(KontrollH)
       UrinH <- NSPreprosesser(UrinH)
       TarmH <- NSPreprosesser(TarmH)
       AktivFunksjonH <- NSPreprosesser(AktivFunksjonH)
