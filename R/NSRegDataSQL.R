@@ -29,7 +29,7 @@ dbType <- "mysql"
 
 
    
-varHoved <- paste0("
+varHoved <- c("
       h.AAis,
       h.AdmitDt,
       h.AdmitRehDt,
@@ -62,12 +62,13 @@ varHoved <- paste0("
       h.PlaceDis,
       h.PPlacedis,
       h.RehabDy,
-      h.UnitId AS ReshId,
       h.Scietiol,
       h.SkjemaGUID,
+      h.UnitId,
       h.VentAssi
 ")
 #h.PasientGUID,
+#h.UnitId AS ReshId,
 
 varLivs <- c('
 ,Livs.FormDate
@@ -290,8 +291,12 @@ varKont <- c('
 ,Kont.SkjemaGUID
 ,Kont.UnitId
 ')
-
 #"HealthUnitId","HealthUnitName","HealthUnitShortName","HF" ,"Hospital","RHF"          
+
+varHoved <- c("h.SkjemaGUID,h.UnitId,
+              h.VentAssi")
+
+
 
 valgtSkjema <- substr(valgtVar,1,4)
 
@@ -333,7 +338,14 @@ query <- paste0('SELECT ',
             )
 
 
-print(query)
+#print(query)
+#Test av spørring på server:
+# SELECT 
+# h.SkjemaGUID AS SkjemaGUIDh,h.UnitId, h.VentAssi 
+# ,Tilf.DataClDtS ,Tilf.DreslbdyS ,Tilf.FeedingS ,Tilf.FirstTimeClosed ,Tilf.HovedskjemaGUID ,Tilf.MobilmodS ,Tilf.SkjemaGUID ,Tilf.ToiletinS  
+# FROM             MainFormDataContract h 
+# INNER JOIN ActivityAndParticipationPerformanceFormDataContract Funk  ON UPPER(h.SkjemaGUID) = UPPER(Funk.HovedskjemaGUID)  
+# INNER JOIN ActivityAndParticipationSatisfactionFormDataContract Tilf ON UPPER(Funk.SkjemaGUID) = UPPER(Tilf.HovedskjemaGUID)
 
 
 RegData <- rapbase::LoadRegData(registryName, query, dbType)

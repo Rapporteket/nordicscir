@@ -8,7 +8,7 @@
 #' @param erMann - kjønn, 1-menn, 0-kvinner, standard: '' (alt annet enn 0 og 1), dvs. begge
 #' @param minald - alder, fra og med
 #' @param maxald - alder, til og med
-#' @param traume - 'ja','nei', standard: ikke valgt
+#' @param traume - 'ja','nei', 'alle' standard: ikke valgt
 #' @param AIS - AISgrad ved innleggelse alle(''), velge en eller flere fra A,B,C,D,E,U
 #' @param paratetra - Nivå ved utreise, flervalgs tetraplegi, paraplegi, ukjent
 #' @param enhetsUtvalg - 1:eget sykehus, 0:hele landet (standard) 
@@ -17,7 +17,7 @@
 
 
 NSUtvalg <- function(RegData, datoFra='2010-01-01', datoTil=Sys.Date(), minald=0, maxald=110,
-                     erMann=99, traume=99, AIS='', enhetsUtvalg=0, paratetra=99,
+                     erMann=99, traume='alle', AIS='', enhetsUtvalg=0, paratetra=99,
                      reshID=0, fargepalett='BlaaOff', datoUt=0) {
       
       

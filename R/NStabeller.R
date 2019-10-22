@@ -163,7 +163,7 @@ tabSkjemaTilknyttet <- function(Data=AlleTab, moderSkjema='Hoved', datoFra='2017
                             'Hoved' = Data$HovedSkjema,
                             'Ktr' = Data$KontrollH)
       if (moderSkjema == 'Ktr') {ModerSkjema <- ModerSkjema[!is.na(ModerSkjema$CNum), ] }
-      ModerSkjema <- NSUtvalg(ModerSkjema, datoFra = datoFra, datoTil = datoTil)$RegData
+      ModerSkjema <- NSUtvalg(RegData=ModerSkjema, datoFra = datoFra, datoTil = datoTil)$RegData
       
       RaaTab <- data.frame(Sykehus = ModerSkjema$ShNavn,
                            #Aar = as.POSIXlt(Hskjema$AdmitDt, format="%Y-%m-%d")$year +1900,

@@ -47,7 +47,7 @@
 
 NSFigAndeler <- function(RegData, outfile='', valgtVar, 
                          datoFra='2010-01-01', datoTil='2050-01-01', AIS='',
-                         minald=0, maxald=130, erMann=99, traume=99,paratetra=99,
+                         minald=0, maxald=130, erMann=99, traume='alle',paratetra=99,
                          enhetsUtvalg=1, reshID, hentData=0, preprosess=1, datoUt=0) {
       
       if (hentData == 1) {

@@ -418,7 +418,7 @@ server <- function(input, output, session) {
             UrinH <- KobleMedHoved(HovedSkjema,Urin)
             TarmH <- KobleMedHoved(HovedSkjema,Tarm)
             AktivFunksjonH <- KobleMedHoved(HovedSkjema, AktivFunksjon)
-            Aktivitet <- KobleMedHoved(AktivFunksjon, AktivTilfredshet) #[,-which(names(AktivFunksjon)=='HovedskjemaGUID')]
+            Aktivitet <- KobleMedHoved(HovedSkjema = AktivFunksjon, Skjema2 = AktivTilfredshet) #[,-which(names(AktivFunksjon)=='HovedskjemaGUID')]
             AktivTilfredshetH <- KobleMedHoved(HovedSkjema, Aktivitet)
       }
       HovedSkjema <- NSPreprosesser(HovedSkjema)
@@ -431,7 +431,7 @@ server <- function(input, output, session) {
       
       AlleTab <- list(HovedSkjema=HovedSkjema, 
                       LivskvalH=LivskvalH, 
-                      #KontrollH=KontrollH, 
+                      KontrollH=KontrollH, 
                       UrinH=UrinH, 
                       TarmH=TarmH, 
                       AktivFunksjonH = AktivFunksjonH, 
