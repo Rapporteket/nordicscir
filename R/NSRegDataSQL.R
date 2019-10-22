@@ -251,6 +251,44 @@ varTarm <- c('
  ')
 # ,Tarm.PasientGUID
 
+varKont <- c("CAis",
+             "CMtrLvlAreaL",
+             "CMtrLvlAreaR",
+             "CMtrLvlLC",
+             "CMtrLvlLL",
+             "CMtrLvlLS",
+             "CMtrLvlLT",
+             "CMtrLvlRC"
+             ,"CMtrLvlRL"            
+             ,"CMtrLvlRS"
+             ,"CMtrLvlRT"
+             ,"CNeuExmDt"
+             ,"CNeuNoMeasure"
+             ,"CNum"                 
+             ,"CPlaceDis"
+             ,"CSensLvlAreaL"
+             ,"CSensLvlAreaR"
+             ,"CSensLvlLC"
+             ,"CSensLvlLL"
+             ,"CSensLvlLS"
+             ,"CSensLvlLT"
+             ,"CSensLvlRC"
+             ,"CSensLvlRL"
+             ,"CSensLvlRS"           
+             ,"CSensLvlRT"
+             ,"CVentAssi"
+             ,"FirstTimeClosed"
+             ,"FormDate"      
+             ,"FormStatus"
+             ,"FormTypeId"
+             ,"HovedskjemaGUID"
+      ,"LastUpdate"
+            ,"NoControl"
+      ,"NoControlReason"      
+       ,"ProceedingID"
+      ,"SkjemaGUID"
+      ,"UnitId")
+#"HealthUnitId","HealthUnitName","HealthUnitShortName","HF" ,"Hospital","RHF"          
 
 valgtSkjema <- substr(valgtVar,1,4)
 
