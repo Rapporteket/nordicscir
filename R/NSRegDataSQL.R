@@ -252,7 +252,7 @@ varTarm <- c('
 # ,Tarm.PasientGUID
 
 varKont <- c('
-      Kont.CAis
+      ,Kont.CAis
 ,Kont.CMtrLvlAreaL
 ,Kont.CMtrLvlAreaR
 ,Kont.CMtrLvlLC
@@ -323,6 +323,7 @@ if (valgtSkjema %in% c('Livs', 'Urin', 'Tarm', 'Tilf', 'Funk', 'Kont')) {
                   }
       }
 
+
 query <- paste0('SELECT ',
                varHoved,
                variable,
@@ -330,6 +331,9 @@ query <- paste0('SELECT ',
             MainFormDataContract h ',
             qSkjema
             )
+
+
+print(query)
 
 
 RegData <- rapbase::LoadRegData(registryName, query, dbType)
