@@ -16,7 +16,7 @@
 
 NSRegDataSQL <- function(valgtVar='Alder') {
       
-registryName <- 'nordicscirPROD' #"nordicscir"
+registryName <- 'nordicscir' #"nordicscir"
 dbType <- "mysql"
    
 #HovedSkjema: MainFormDataContract
