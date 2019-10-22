@@ -251,44 +251,46 @@ varTarm <- c('
  ')
 # ,Tarm.PasientGUID
 
-varKont <- paste0('Kont.',c("CAis",
-             "CMtrLvlAreaL",
-             "CMtrLvlAreaR",
-             "CMtrLvlLC",
-             "CMtrLvlLL",
-             "CMtrLvlLS",
-             "CMtrLvlLT",
-             "CMtrLvlRC"
-             ,"CMtrLvlRL"            
-             ,"CMtrLvlRS"
-             ,"CMtrLvlRT"
-             ,"CNeuExmDt"
-             ,"CNeuNoMeasure"
-             ,"CNum"                 
-             ,"CPlaceDis"
-             ,"CSensLvlAreaL"
-             ,"CSensLvlAreaR"
-             ,"CSensLvlLC"
-             ,"CSensLvlLL"
-             ,"CSensLvlLS"
-             ,"CSensLvlLT"
-             ,"CSensLvlRC"
-             ,"CSensLvlRL"
-             ,"CSensLvlRS"           
-             ,"CSensLvlRT"
-             ,"CVentAssi"
-             ,"FirstTimeClosed"
-             ,"FormDate"      
-             ,"FormStatus"
-             ,"FormTypeId"
-             ,"HovedskjemaGUID"
-      ,"LastUpdate"
-            ,"NoControl"
-      ,"NoControlReason"      
-       ,"ProceedingID"
-      ,"SkjemaGUID"
-      ,"UnitId")
-      )
+varKont <- c('
+      Kont.CAis
+,Kont.CMtrLvlAreaL
+,Kont.CMtrLvlAreaR
+,Kont.CMtrLvlLC
+,Kont.CMtrLvlLL
+,Kont.CMtrLvlLS
+,Kont.CMtrLvlLT
+,Kont.CMtrLvlRC
+,Kont.CMtrLvlRL            
+,Kont.CMtrLvlRS
+,Kont.CMtrLvlRT
+,Kont.CNeuExmDt
+,Kont.CNeuNoMeasure
+,Kont.CNum                 
+,Kont.CPlaceDis
+,Kont.CSensLvlAreaL
+,Kont.CSensLvlAreaR
+,Kont.CSensLvlLC
+,Kont.CSensLvlLL
+,Kont.CSensLvlLS
+,Kont.CSensLvlLT
+,Kont.CSensLvlRC
+,Kont.CSensLvlRL
+,Kont.CSensLvlRS           
+,Kont.CSensLvlRT
+,Kont.CVentAssi
+,Kont.FirstTimeClosed
+,Kont.FormDate      
+,Kont.FormStatus
+,Kont.FormTypeId
+,Kont.HovedskjemaGUID
+,Kont.LastUpdate
+,Kont.NoControl
+,Kont.NoControlReason      
+,Kont.ProceedingID
+,Kont.SkjemaGUID
+,Kont.UnitId
+')
+
 #"HealthUnitId","HealthUnitName","HealthUnitShortName","HF" ,"Hospital","RHF"          
 
 valgtSkjema <- substr(valgtVar,1,4)
