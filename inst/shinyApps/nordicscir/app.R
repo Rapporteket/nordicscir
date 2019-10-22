@@ -385,7 +385,7 @@ server <- function(input, output, session) {
       })
       
  #NB: Skal bare forholde oss til oppfølgingsskjema som er tilknyttet et gyldig Hovedskjema
-      
+      paaServer <- (context == "TEST" | context == "QA" | context == "PRODUCTION")
       if (paaServer) {
                   HovedSkjema <- NSRegDataSQL() #datoFra = datoFra, datoTil = datoTil)
                   LivskvalH <- NSRegDataSQL(valgtVar='LivsXX')
