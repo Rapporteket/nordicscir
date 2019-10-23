@@ -120,13 +120,13 @@ finnRegData <- function(valgtVar='Alder', Data = AlleTab){
       valgtSkjema <- substr(valgtVar,1,4)
       if (valgtSkjema %in% c('Livs', 'Urin', 'Tarm', 'Tilf', 'Funk', 'Kont', 'Akti')) {
             RegData <- switch(valgtSkjema, 
-                              'Livs' = Data$LivskvalitetH,
+                              'Livs' = Data$LivskvalH,
                               'Tarm' = Data$TarmH,
                               'Urin' = Data$UrinH,
                               'Kont' = Data$KontrollH,
-                              'Funk' = Data$FunksjonH,
-                              'Tilf' = Data$TilfredsH,
-                              'Akti' = Data$AktivitetH)} else {
+                              'Funk' = Data$AktivFunksjonH,
+                              'Tilf' = Data$AktivTilfredshetH #,'Akti' = Data$AktivitetH
+                              )} else {
                                     RegData <- Data$HovedSkjema}
       return(RegData)
 }

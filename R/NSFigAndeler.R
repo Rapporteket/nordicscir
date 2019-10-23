@@ -55,6 +55,7 @@ NSFigAndeler <- function(RegData, outfile='', valgtVar,
       }
       
       if ( dim(RegData)[1] == 0 ) { 
+            print('RegData er tom')
             FigDataParam <- list(AggVerdier=NA, 
                                  N=0, 
                                  Ngr=0,	

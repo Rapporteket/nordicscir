@@ -293,10 +293,6 @@ varKont <- c('
 ')
 #"HealthUnitId","HealthUnitName","HealthUnitShortName","HF" ,"Hospital","RHF"          
 
-varHoved <- c("h.SkjemaGUID,h.UnitId,
-              h.VentAssi")
-
-
 
 valgtSkjema <- substr(valgtVar,1,4)
 

@@ -441,7 +441,7 @@ server <- function(input, output, session) {
 #-------Samlerapporter--------------------      
       # funksjon for å kjøre Rnw-filer (render file funksjon)
       # filename function for re-use - i dette tilfellet vil det funke fint å hardkode det samme..
-      downloadFilename <- function(fileBaseName, type='') {
+      downloadFilename <- function(fileBaseName) {
             paste0(fileBaseName, as.character(as.integer(as.POSIXct(Sys.time()))), '.pdf')
       }
       
@@ -463,7 +463,7 @@ server <- function(input, output, session) {
       }
       
       output$mndRapp.pdf <- downloadHandler(
-            filename = function(){ downloadFilename('NorScirMaanedsrapport')},
+            filename = function(){'NorScirMaanedsrapport.pdf'}, #downloadFilename('NorScirMaanedsrapport')
             content = function(file){
                   contentFile(file, srcFil="NSmndRapp.Rnw", tmpFil="tmpNSmndRapp.Rnw",
                               package = "nordicsir",
@@ -472,10 +472,11 @@ server <- function(input, output, session) {
 
 
       output$samleRappLand.pdf <- downloadHandler(
-            filename = function(){ paste0('NorScirSamleRapport')}, 
+            filename = function(){'NorScirSamleRapport.pdf'}, # downloadFilename('NorScirSamleRapport')
             content = function(file){
                   contentFile(file, srcFil="NSsamleRappLand.Rnw", tmpFil="tmpNSsamleRappLand.Rnw",
-                              package= 'nordicscir', reshID=reshID())
+                              package= 'nordicscir', 
+                              reshID=reshID())
             })
       # output$samlerappEgen <- downloadHandler(
       #             filename = function(){ paste0('SamleRappEgen', Sys.time(), '.pdf')},
@@ -606,8 +607,8 @@ server <- function(input, output, session) {
 
 #---------Fordelinger------------
             observe({   #Fordelingsfigurer og tabeller
-            #RegData <- finnRegData(Data = AlleTab, valgtVar <- 'UrinKirInngr')
-            RegData <- finnRegData(valgtVar = input$valgtVar, Data = AlleTab)
+            RegData <- finnRegData(Data = AlleTab, valgtVar <- 'Livsk')
+            #RegData <- finnRegData(valgtVar = input$valgtVar, Data = AlleTab)
             RegData <- TilLogiskeVar(RegData)
             #print(input$datoUt)
             
@@ -660,6 +661,8 @@ server <- function(input, output, session) {
       
       observe({ #Sykehusvise gjennomsnitt, figur og tabell
             RegData <- finnRegData(valgtVar = input$valgtVarGjsnGrVar, Data = AlleTab)
+            print(input$valgtVarGjsnGrVar)
+            print(dim(RegData))
             output$gjsnGrVar <- renderPlot(
                   NSFigGjsnGrVar(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarGjsnGrVar,
                                  datoFra=input$datovalgGjsnGrVar[1], datoTil=input$datovalgGjsnGrVar[2], 
