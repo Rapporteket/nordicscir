@@ -45,10 +45,9 @@
 #' 
 #' @export
 
-NSFigAndeler <- function(RegData, outfile='', valgtVar='Alder', 
-                         datoFra='2010-01-01', datoTil=Sys.Date(), AIS='',
-                         minald=0, maxald=130, erMann=99, traume='alle',nivaaUt=99,
-                         enhetsUtvalg=0, reshID=0, hentData=0, preprosess=1, datoUt=0) {
+NSFigAndelerSh <- function(RegData, outfile='', valgtVar, hentData=0, preprosess=1, 
+                         datoFra='2010-01-01', datoTil='2050-01-01', datoUt=0, AIS='',
+                         minald=0, maxald=130, erMann=99, traume='alle',nivaaUt=99) {
       
       if (hentData == 1) {
             RegData <- NSRegDataSQL(valgtVar=valgtVar)
@@ -69,7 +68,7 @@ NSFigAndeler <- function(RegData, outfile='', valgtVar='Alder',
                                  yAkseTxt='',
                                  utvalgTxt='', 
                                  fargepalett='', 
-                                 medSml='',
+                                 #medSml='',
                                  hovedgrTxt='',
                                  smltxt='')
             
@@ -90,52 +89,58 @@ NSFigAndeler <- function(RegData, outfile='', valgtVar='Alder',
             
             
             Utvalg <- NSUtvalg(RegData=RegData, datoFra=datoFra, datoTil=datoTil, minald=minald, maxald=maxald,
-                               erMann=erMann, traume=traume, AIS=AIS, nivaaUt=nivaaUt,
-                               enhetsUtvalg = enhetsUtvalg, reshID = reshID, datoUt=datoUt)
+                               erMann=erMann, traume=traume, AIS=AIS, nivaaUt=nivaaUt, datoUt=datoUt)
             RegData <- Utvalg$RegData
             utvalgTxt <- Utvalg$utvalgTxt
-            medSml <- Utvalg$medSml
+            #medSml <- Utvalg$medSml
             
             #--------------- Gjøre beregninger ------------------------------
-            AggVerdier <- list(Hoved = 0, Rest =0)
-            N <- list(Hoved = 0, Rest =0)   #Nevner
-            Ngr <- list(Hoved = 0, Rest =0) #Teller 
-            Nfig <- list(Hoved = 0, Rest =0) #figurtekst: N i legend
-            ind <- Utvalg$ind
+            #      AggVerdier <- list(Hoved = 0, Rest =0)
+            N <- table(RegData$ShNavn)   #Nevner
+            #Ngr <- tapply(RegData) #Teller 
+            #Nfig <- list(Hoved = 0, Rest =0) #figurtekst: N i legend
             variable <- NSVarSpes$variable
             flerevar <- NSVarSpes$flerevar
             
-            Ngr$Hoved <- switch(as.character(flerevar), 
-                                '0' = table(RegData$VariabelGr[ind$Hoved]),
-                                '1' = apply(RegData[ind$Hoved,variable], MARGIN=2, 
+            # dataAgg <- aggregate(RegData$Alder, by=list(RegData$VariabelGr,RegData$ShNavn),
+            #                      FUN='length')
+            # dataAgg <- aggregate(RegData$Alder, by=list(RegData$VariabelGr,RegData$ShNavn), 
+            #                  FUN = function(x){})
+            # ggplot2::ggplot(dataAgg, aes(fill=Group.2, y=x, x=Group.1)) + 
+            #       geom_bar(position="dodge", stat="identity")
+            # ggplot2::ggplot(dataAgg, aes(fill=Group.1, y=x, x=Group.2)) + 
+            #       geom_bar(position="fill", stat="identity")
+            # #geom_bar(position="stack", stat="identity")
+            
+            Ngr <- switch(as.character(flerevar), 
+                                '0' = table(RegData$VariabelGr, RegData$ShNavn),
+                                '1' = apply(RegData[ ,variable], MARGIN=2, 
                                             FUN=function(x) sum(x == 1, na.rm=T)))
             #N$ gjelder selv om totalutvalget er ulikt for de ulike variablene i flerevar
-            N$Hoved <- switch(as.character(flerevar), 
-                              '0' = sum(Ngr$Hoved),	#length(ind$Hoved)- Kan inneholde NA
-                              '1' = apply(RegData[ind$Hoved,variable], MARGIN=2, 
+            N <- switch(as.character(flerevar), 
+                              '0' = table(RegData$ShNavn), #sum(Ngr),	
+                              '1' = apply(RegData[ ,variable], MARGIN=2, 
                                           FUN=function(x) sum(x %in% 0:1, na.rm=T)))
-            AggVerdier$Hoved <- 100*Ngr$Hoved/N$Hoved
+            AggVerdier <- 100*prop.table(ftable(RegData[ ,c('ShNavn', 'VariabelGr')]),1)
+          AggTot <- 100*prop.table(table(RegData[ ,'VariabelGr']))
             
             
+           #  #-------Eksempel
+           #  specie <- c(rep("sorgho" , 3) , rep("poacee" , 3) , rep("banana" , 3) , rep("triticum" , 3) )
+           #  condition <- rep(c("normal" , "stress" , "Nitrogen") , 4)
+           #  value <- abs(rnorm(12 , 0 , 15))
+           #  data <- data.frame(specie,condition,value)
+           #  ggplot(data, aes(fill=condition, y=value, x=specie)) + 
+           #        geom_bar(position="dodge", stat="identity")
+           # #------------------
             
-            if (medSml==1) {
-                  Ngr$Rest <- switch(as.character(flerevar), 
-                                     '0' = table(RegData$VariabelGr[ind$Rest]),
-                                     '1' = apply(RegData[ind$Rest,variable], MARGIN=2, 
-                                                 FUN=function(x) sum(x == 1, na.rm=T)))
-                  N$Rest <- switch(as.character(flerevar), 
-                                   '0' = sum(Ngr$Rest),	#length(ind$Rest)- Kan inneholde NA
-                                   '1' = apply(RegData[ind$Rest,variable], MARGIN=2, 
-                                               FUN=function(x) sum(x %in% 0:1, na.rm=T)))
-                  AggVerdier$Rest <- 100*Ngr$Rest/N$Rest
-            }
-            
+           
             if(flerevar==1) {
-                  Nfig$Hoved <- max(N$Hoved)
+                  Nfig <- max(N)
                   #ifelse(min(N$Hoved)==max(N$Hoved),
                   #              min(N$Hoved[1]), 
                   #               paste0(min(N$Hoved),'-',max(N$Hoved)))
-                  Nfig$Rest <- max(N$Rest)
+                  Nfig <- max(N)
                   #ifelse(min(N$Rest)==max(N$Rest),
                   #              min(N$Rest[1]), 
                   #              paste0(min(N$Rest),'-',max(N$Rest)))
@@ -146,13 +151,17 @@ NSFigAndeler <- function(RegData, outfile='', valgtVar='Alder',
             
             
             grtxt <- NSVarSpes$grtxt
-            grtxt2 <- paste0(' (', sprintf('%.1f',AggVerdier$Hoved), '%)')
+            #grtxt2 <- paste0('(', sprintf('%.1f',AggVerdier), '%)')
+            grtxt2 <- paste0('(', sprintf('%.1f',AggTot), '%)')
+            grtxtpst <- paste0(grtxt, '\n(', sprintf('%.1f',AggTot), '%)')
             cexgr <- NSVarSpes$cexgr
-            hovedgrTxt <- Utvalg$hovedgrTxt
+            hovedgrTxt <- levels(RegData$ShNavn) #attributes(AggVerdier)$row.vars$ShNavn
             yAkseTxt='Andel pasienter (%)'
             
-            FigDataParam <- list(AggVerdier=AggVerdier, N=N, 
+            FigDataParam <- list(AggVerdier=AggVerdier, 
+                                 N=N, 
                                  Ngr=Ngr,	
+                                 Nfig=Nfig,
                                  KImaal <- NSVarSpes$KImaal,
                                  #soyletxt=soyletxt,
                                  grtxt2=grtxt2, 
@@ -162,16 +171,14 @@ NSFigAndeler <- function(RegData, outfile='', valgtVar='Alder',
                                  xAkseTxt=NSVarSpes$xAkseTxt,
                                  yAkseTxt=yAkseTxt,
                                  utvalgTxt=Utvalg$utvalgTxt, 
-                                 fargepalett=Utvalg$fargepalett, 
-                                 medSml=medSml,
-                                 hovedgrTxt=hovedgrTxt,
-                                 smltxt=Utvalg$smltxt)
+                                 fargepalett=Utvalg$fargepalett) 
+                                 #,hovedgrTxt=hovedgrTxt)
             
             #-----------Figur---------------------------------------
             #FigurAndeler <- function(     ){
             #-----Hvis få registreringer: ---------------------
             Ngrense <- 5      # 5
-            if (sum(Nfig$Hoved) < Ngrense | (medSml ==1 & sum(Nfig$Rest)< Ngrense)) {
+            if (sum(Nfig) < Ngrense) {
                   FigTypUt <- rapFigurer::figtype(outfile)
                   farger <- FigTypUt$farger
                   plot.new()
@@ -189,54 +196,41 @@ NSFigAndeler <- function(RegData, outfile='', valgtVar='Alder',
                   FigTypUt <- rapFigurer::figtype(outfile, fargepalett=Utvalg$fargepalett)
                   #Tilpasse marger for å kunne skrive utvalgsteksten
                   NutvTxt <- length(utvalgTxt)
-                  grtxtpst <- paste0(grtxt, '\n(', sprintf('%.1f',AggVerdier$Hoved), '%)')
                   vmarg <- switch(NSVarSpes$retn, V=0, H=max(0, strwidth(grtxtpst, units='figure', cex=cexgr)*0.8))
                   par('fig'=c(vmarg, 1, 0, 1-0.02*(NutvTxt-1)))	#Har alltid datoutvalg med
                   
                   farger <- FigTypUt$farger
-                  fargeHoved <- farger[1]
-                  fargeRest <- farger[3]
+                  fargeHoved <- rev(farger[c(1,2,4)])
                   antGr <- length(grtxt)
-                  lwdRest <- 3	#tykkelse på linja som repr. landet
                   cexleg <- 1	#Størrelse på legendtekst
                   
                   
                   if (NSVarSpes$retn == 'V' ) {
                         #Vertikale søyler eller linje
-                        if (grtxt2[1] == '') {grtxt2 <- paste0('(', sprintf('%.1f',AggVerdier$Hoved), '%)')}
-                        ymax <- max(c(AggVerdier$Hoved, AggVerdier$Rest),na.rm=T)*1.15
-                        pos <- barplot(as.numeric(AggVerdier$Hoved), beside=TRUE, ylab="Andel pasienter (%)",	#las=txtretn, 
-                                       cex.lab=cexleg, sub=NSVarSpes$xAkseTxt, cex.sub=cexleg,	col=fargeHoved, border='white', ylim=c(0, ymax))	#farger[c(1,3)] #names.arg=grtxt, cex.names=cexgr,
-                        mtext(at=pos, grtxt, side=1, las=1, cex=cexgr, adj=0.5, line=0.5)
-                        mtext(at=pos, grtxt2, side=1, cex=cexgr-0.1, adj=0.5, line=1.5) #las=txtretn, 
-                        if (medSml == 1) {
-                              points(pos, as.numeric(AggVerdier$Rest), col=fargeRest,  cex=2, pch=18) #c("p","b","o"),
-                              legend('top', c(paste0(hovedgrTxt, ' (N=', Nfig$Hoved,')'), paste0('Landet forøvrig (N=', Nfig$Rest,')')),
-                                     border=c(fargeHoved,NA), col=c(fargeHoved,fargeRest), bty='n', pch=c(15,18), pt.cex=2, lty=NA,
-                                     lwd=lwdRest, ncol=2, cex=cexleg)
-                        } else {
-                              legend('top', paste0(hovedgrTxt, ' (N=', Nfig$Hoved,')'),
+                        #if (grtxt2[1] == '') {grtxt2 <- paste0('(', sprintf('%.1f',AggVerdier), '%)')}
+                        ymax <- max(AggVerdier,na.rm=T)*1.15
+                        pos <-   barplot(AggVerdier, beside=T, ylab="Andel pasienter (%)", 
+                                         cex.lab=cexleg, sub=NSVarSpes$xAkseTxt, cex.sub=cexleg, 
+                                         col=fargeHoved, border='white', ylim=c(0, ymax))
+                        mtext(at=pos[2,], grtxt, side=1, las=1, cex=cexgr, adj=0.5, line=0.5)
+                        mtext(at=pos[2,], grtxt2, side=1, cex=cexgr-0.1, adj=0.5, line=1.5) #las=txtretn, 
+                        mtext('(Hele landet:)',  at=-2, side=1, cex=cexgr-0.1, adj=0, line=1.5) 
+                        legend('top', paste0(hovedgrTxt, ' (N=', Nfig,')'),
                                      border=NA, fill=fargeHoved, bty='n', ncol=1, cex=cexleg)
-                        }
                   }
                   
                   if (NSVarSpes$retn == 'H') {
+                        
                         #Horisontale søyler
-                        ymax <- antGr*1.4
-                        xmax <- min(max(c(AggVerdier$Hoved, AggVerdier$Rest),na.rm=T)*1.25, 100)
-                        #par('fig'=c(0.1, 1, 0, 0.9))
-                        pos <- barplot(rev(as.numeric(AggVerdier$Hoved)), horiz=TRUE, beside=TRUE, las=1, xlab="Andel pasienter (%)", #main=tittel,
-                                       cex.lab=cexleg,col=fargeHoved, border='white', font.main=1, xlim=c(0, xmax), ylim=c(0,ymax))	#
-                        mtext(at=pos+0.1, text=rev(grtxtpst), side=2, las=1, cex=cexgr, adj=1, line=0.25)	
-                        if (medSml == 1) {
-                              points(rev(as.numeric(AggVerdier$Rest)), pos, col=fargeRest,  cex=2, pch=18) #c("p","b","o"),
-                              legend('topleft', c(paste0(hovedgrTxt, ' (N=', Nfig$Hoved,')'), paste0('Landet forøvrig (N=', Nfig$Rest,')')),
-                                     border=c(fargeHoved,NA), col=c(fargeHoved,fargeRest), bty='n', pch=c(15,18), pt.cex=2, lty=NA,
-                                     lwd=lwdRest, ncol=2, cex=cexleg)
-                        } else {
-                              legend('top', paste0(hovedgrTxt, ' (N=', Nfig$Hoved,')'),
+                        #ymax <- antGr*3*1.4
+                        xmax <- min(max(c(AggVerdier),na.rm=T)*1.25, 100)
+                        #dplyr::arrange(-dplyr::row_number(AggVerdier))
+                        pos <-   barplot(AggVerdier[,ncol(AggVerdier):1], horiz=TRUE, beside=T, xlab="Andel pasienter (%)", 
+                                         cex.lab=cexleg, cex.sub=cexleg, #sub=NSVarSpes$xAkseTxt, 
+                                         col=fargeHoved, border='white', xlim=c(0, xmax)) #, ylim=c(0, ymax))
+                        mtext(at=pos[2,]+0.1, text=rev(grtxtpst), side=2, las=1, cex=cexgr, adj=1, line=0.25)	
+                              legend('top', paste0(hovedgrTxt, ' (N=', Nfig,')'),
                                      border=NA, fill=fargeHoved, bty='n', ncol=1, cex=cexleg)
-                        }
                   }
                   
                   title(NSVarSpes$tittel, line=1, font.main=1, cex.main=1.5)
@@ -253,4 +247,5 @@ NSFigAndeler <- function(RegData, outfile='', valgtVar='Alder',
       
       return(invisible(FigDataParam))
       
-}
+      }
+      

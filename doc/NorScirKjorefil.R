@@ -58,7 +58,7 @@ library(nordicscir)
 rm(list=ls())
 load('A:/NordicScir/NordicScirData.RData')
 
-dato <- 'FormDataContract2019-10-17' #2017-05-24
+dato <- 'FormDataContract2019-10-30' #2017-05-24
 sti <- 'A:/NordicScir/'
 HovedSkjema <- read.table(paste0(sti, 'Main',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
 Livskval <- read.table(paste0(sti, 'LifeQuality',dato,'.csv'), stringsAsFactors=FALSE, sep=';', header=T)
@@ -146,24 +146,40 @@ AndelSatisfact <- round(100*ftable(RaaTab[!is.na(RaaTab$MedSatisfact),tabVar])/f
 AndelPerform <- round(100*ftable(RaaTab[!is.na(RaaTab$MedPerform),tabVar])/ftable(RaaTab[,tabVar]),1)
 
 
+table(HovedSkjema$FormStatus)
+table(LivskvalH$FormStatus)
+table(UrinH$FormStatus)
+table(TarmH$FormStatus)
+table(KontrollH$FormStatus)
+table(AktivFunksjonH$FormStatus)
+table(AktivTilfredshetH$FormStatus)
+
+
 #------------------------------ Parametre --------------------------
 rm(list=ls())
 library(nordicscir)
 setwd("C:/Registerinfo og historie/NordicScir/Figurer/")
+load('A:/NordicScir/NordicScirData.RData')
 reshID <- 107627             ##105593-Haukeland, 106896-Sunnaas, 107627-St.Olavs, standard i funksj: 0 dvs. 'Alle'. Standard i rapporten skal v?re at man f?r opp eget sykehus.
 enhetsUtvalg <- 0
 minald <- 0
 maxald <- 130
 erMann <- 9                      #1-menn, 0-kvinner, Standard: '', dvs. begge
-traume <- ''    #'ja','nei', standard: ikke valgt
+traume <- 'alle'    #'ja','nei', standard: ikke valgt
 AIS <- 99 # as.character(c(1,4))	#AISgrad ved innleggelse alle(''), velge en eller flere fra 1:5
-paratetra <- 99
+nivaaUt <- 99
 datoFra <- '2018-01-01'             #Standard: bør være minste registrerte verdi ? min og max dato i utvalget vises alltid i figuren.
-datoTil <- '2018-12-31'
+datoTil <- '2019-12-31'
 valgtMaal='gjsn'	#'Med'-median, 'Gjsn' gjennomsnitt
 grVar <- 'ShNavn'
 datoUt=0 #Velge ut-dato som filtrering
-outfile <-
+outfile <- ''
+valgtVar <- 'alder'
+
+RegData <- NSPreprosesser(HovedSkjema)
+table(RegData$Aar, RegData$ASensLvlLC)
+UtDataFord <- NSFigAndelerSh(RegData=HovedSkjema, valgtVar = 'Ntsci', datoFra='2018-01-01')
+
 #------------------------------ Fordelinger --------------------------
 RegData <- HovedSkjema
 valgtVar <- 'UtTil'	#AAis, FAis, Alder, DagerRehab, DagerTilRehab, NivaaInn, Ntsci,
@@ -175,7 +191,7 @@ valgtVar <- 'UrinTomBlareHoved'   #'UrinInkontinens', 'UrinLegemidler','UrinLege
                                     #'UrinTomBlareHoved', 'UrinTomBlareTillegg'
 #TarmSkjema: 
 RegData <- KobleMedHoved(HovedSkjema,Tarm)
-valgtVar <- 'TarmAvfHoved'   #'TarmAvfHoved','TarmAvfTillegg', TarmAvfmiddel, TarmAvfmiddelHvilke
+valgtVar <- 'TarmInkontinensFra2019'   #'TarmAvfHoved','TarmAvfTillegg', TarmAvfmiddel, TarmAvfmiddelHvilke
                               #TarmInkontinens, TarmKirInngrep, TarmKirInngrepHvilke
 
 #Livskvalitet
@@ -196,7 +212,7 @@ RegData <- TilfredsH
 preprosess <- 0
 
 UtDataFord <- NSFigAndeler(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
-		AIS=AIS, minald=minald, maxald=maxald, erMann=erMann, traume=traume, paratetra=paratetra,
+		AIS=AIS, minald=minald, maxald=maxald, erMann=erMann, traume=traume, nivaaUt=nivaaUt,
 		reshID=reshID, enhetsUtvalg=0)    #, preprosess=1
 #Aktuelt å legge til en parameter som sier hvilket skjema variabelen tilhører. Dette for å koble
 #sammen riktig skjema til hovedskjema.
@@ -223,7 +239,7 @@ setwd("C:/Registerinfo og historie/NordicScir/Figurer/")
 for (valgtVar in variable) {
 	outfile <- paste0(valgtVar, '.png')
 	NSFigAndeler(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
-	             AIS=AIS, minald=minald, maxald=maxald, erMann=erMann, traume=traume, paratetra=paratetra,
+	             AIS=AIS, minald=minald, maxald=maxald, erMann=erMann, traume=traume, nivaaUt=nivaaUt,
 	             reshID=reshID, enhetsUtvalg=1, hentData=0)
 }
 
@@ -240,7 +256,7 @@ for (valgtVar in variable) {
 	outfile <- paste0('M_',valgtVar, '.png')
 	NSFigGjsnGrVar(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
 	               valgtMaal=valgtMaal, minald=minald, maxald=maxald, erMann=erMann, traume=traume,
-	               AIS=AIS, paratetra = paratetra)
+	               AIS=AIS, nivaaUt = nivaaUt)
 }
 #------------------------------ Nevrologisk kategori --------------------------
 rm(list=ls())

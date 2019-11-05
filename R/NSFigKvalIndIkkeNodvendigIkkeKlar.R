@@ -24,7 +24,7 @@
 
 NSFigKvalInd <- function(NSdata, outfile='', valgtVar,
                            datoFra='2010-01-01', datoTil='2050-01-01', AIS='',
-                           minald=0, maxald=130, erMann=99, traume='',paratetra=99,
+                           minald=0, maxald=130, erMann=99, traume='',nivaaUt=99,
                            enhetsUtvalg=1, reshID, hentData=0, preprosess=1) {
 
   if (hentData == 1) { #Ikke oppdatert NSRegDataSQL til å ta høyde for denne. IKKE hent data...!
@@ -51,7 +51,7 @@ NSFigKvalInd <- function(NSdata, outfile='', valgtVar,
   #--------------- Gjøre utvlag og Tilrettelegge variable ------------------------------
   
   Utvalg <- NSUtvalg(RegData=HovedSkjema, datoFra=datoFra, datoTil=datoTil, minald=minald, maxald=maxald,
-                     erMann=erMann, traume=traume, AIS=AIS, paratetra=paratetra,
+                     erMann=erMann, traume=traume, AIS=AIS, nivaaUt=nivaaUt,
                      enhetsUtvalg = enhetsUtvalg, reshID = reshID)
   RegData <- Utvalg$RegData
   utvalgTxt <- Utvalg$utvalgTxt

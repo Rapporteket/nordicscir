@@ -21,7 +21,7 @@
 
 NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='gjsn', grVar='ShNavn',
                               datoFra='2010-01-01', datoTil='2050-12-31', 
-					AIS='', minald=0, maxald=130, erMann='', traume='alle', paratetra=99, 
+					AIS='', minald=0, maxald=130, erMann='', traume='alle', nivaaUt=99, 
 					preprosess=1, outfile='', hentData=0) {
 
       if (hentData == 1) {
@@ -37,7 +37,7 @@ NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='gjsn', grVar='ShNavn',
       
       #------- Gjøre utvalg
       Utvalg <- NSUtvalg(RegData=RegData, datoFra=datoFra, datoTil=datoTil, minald=minald, maxald=maxald,
-                         erMann=erMann, traume=traume, AIS=AIS, paratetra=paratetra)
+                         erMann=erMann, traume=traume, AIS=AIS, nivaaUt=nivaaUt)
       RegData <- Utvalg$RegData
       utvalgTxt <- Utvalg$utvalgTxt
             

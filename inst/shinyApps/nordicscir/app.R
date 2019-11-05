@@ -4,6 +4,7 @@ library(shiny)
 library(shinyjs)
 library(knitr)
 library(lubridate)
+library(dplyr)
 #ibrary(shinyBS) # Additional Bootstrap Controls
 library(kableExtra)
 #library(zoo)
@@ -28,8 +29,8 @@ names(valgAIS) <- c("Alle","A","B","C","D","E")
 #valgAIS <- as.character(0:5),
 #names(valgAIS) <- c('Alle', LETTERS[1:5]),
 
-valgParaTetra <- c(99,0,1,9)
-names(valgParaTetra) <- c("Alle", "Paraplegi", "Tetraplegi", "Ukjent")
+valgNivaaUt <- c(99,0,1,2,3,9)
+names(valgNivaaUt) <- c("Alle", "Paraplegi", "Tetraplegi", "C1-4", "C5-8", "Ukjent")
 
 ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
       
@@ -91,14 +92,24 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                          h4(tags$b('Registreringsoversikter '), 'viser aktivitet i registeret. Også her kan man gjøre filtreringer.'),
                          br(),
                          br(),
+                         h3('Kommentar: HER ville jeg vist sykehusets registreringer per måned i løpet av siste år'),
+                         br(),
                          br(),
                          h4('Oversikt over registerets kvalitetsindikatorer og resultater finner du på www.kvalitetsregistre.no:', #helpText
                                   a("NorSCIR", href="https://www.kvalitetsregistre.no/registers/561/resultater"),
                                   target="_blank", align='center'),
                          br(),
-                         h4('Hjemmeside NorSCIR: ', align='center',
-                                  a("www.norscir.no", href="http://www.norscir.no", target="_blank")) #target gjør at lenken åpnes i ny fane
+                         h4('Alle pasienter med nyervervet ryggmargsskade eller Cauda equina syndrom som legges 
+                            inn til spesialisert rehabilitering ved en ryggmargsskadeavdeling, blir forespurt 
+                            om samtykke til å bli registrert i Norsk ryggmargsskaderegister. Dette registeret 
+                            har til hensikt å sikre og forbedre ryggmargsskadeomsorgen i Norge. Mer informasjon 
+                            om selve registeret finnes på NorSCIRs hjemmeside: ', align='center',
+                                     a("www.norscir.no", href="http://www.norscir.no", target="_blank"))
+                         #h4('Mer informasjon om selve registeret finnes på NorSCIRs hjemmeside: ', align='center',
+                         #         a("www.norscir.no", href="http://www.norscir.no", target="_blank")) #target gjør at lenken åpnes i ny fane
+           
                          
+                                       
                          # column(width=6,
                          #        h3('Nevrologisk klassifikasjon.', align='center'),
                          #        br(),
@@ -119,6 +130,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                   choices = c('Alder' = 'Alder', 
                                               'Ais ved innleggelse' = 'AAis' ,
                                               'Ais ved utskriving' = 'FAis', 
+                                              'Anbefalt tid til kontroll' = 'AnbefTidKtr',
                                               'Lengde på rehab.opphold' = 'DagerRehab', 
                                               'Planlagt utskrevet til' = 'PPlaceDis',
                                               'Tid fra skade til oppstart rehab.' = 'DagerTilRehab', 
@@ -153,7 +165,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                               'Tarm: Avføring, tilleggsmetode' = 'TarmAvfTillegg',
                                               'Tarm: Avføringsmiddelbruk' = 'TarmAvfmiddel',
                                               'Tarm: Avføringsmidler, hvilke' = 'TarmAvfmiddelHvilke',
-                                              'Tarm: Fekal inkontinens (fra 2019)' = 'TarmInkontinens',
+                                              'Tarm: Fekal inkontinens (fra 2019)' = 'TarmInkontinensFra2019',
                                               'Tarm: Fekal inkontinens (t.o.m. 2018)' = 'TarmInkontinensTom2018',
                                               'Tarm: Kirurgisk inngrep' = 'TarmKirInngrep',
                                               'Tarm: Kirurgiske inngrep, hvilke' = 'TarmKirInngrepHvilke'
@@ -161,7 +173,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                             ),
                             dateRangeInput(inputId = 'datovalg', start = startDatoStandard, end = Sys.Date(),
                                            label = "Tidsperiode", separator="t.o.m.", language="nb"),
-                            radioButtons(inputId = 'datoUt', 'Bruke utskrivingsdato til datofiltrering',
+                            radioButtons(inputId = 'datoUt', 'Bruk utskrivingsdato til datofiltrering?',
                                          choiceNames = c('nei','ja'), choiceValues = 0:1, selected = 0),
                             selectInput(inputId = "erMann", label="Kjønn",
                                         choices = c("Begge"=2, "Menn"=1, "Kvinner"=0)
@@ -174,42 +186,34 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                                                     "Hele landet"=0, 
                                                     "Egen enhet"=2)
                             ),
-                            
-                          
-                            selectInput(inputId = 'AIS', label='AIS-grad',
+                            selectInput(inputId = 'AIS', label='AIS-grad ved utreise',
                                         multiple = T, #selected=0,
                                         choices = valgAIS
-                                              # c("Alle"=0,
-                                              #   "A"=1,
-                                              #   "B"=2,
-                                              #   "C"=3,
-                                              #   "D"=4,
-                                              #   "E"=5)
-                            ),
+                             ),
                             selectInput(inputId = 'traume', label='Traume',
                                         choices = c("Alle"=' ', #'ikke'
                                                     "Traume"='ja', 
                                                     "Ikke traume"='nei')
                             ),
-                            selectInput(inputId = 'paratetra', label='Nivå ved utreise',
-                                        choices = valgParaTetra
-                                              # c("Alle" = 99,
-                                              #       "Paraplegi" = 0, 
-                                              #       "Tetraplegi" = 1,
-                                              #       "Ukjent" = 9)
+                            selectInput(inputId = 'nivaaUt', label='Nivå ved utreise',
+                                        choices = valgNivaaUt
                             )
                             #sliderInput(inputId="aar", label = "Årstall", min = 2012,  #min(RegData$Aar),
                             #           max = as.numeric(format(Sys.Date(), '%Y')), value = )
                ),
-               mainPanel(
-                     tabsetPanel(
+               mainPanel(width = 6,
+                     tabsetPanel( id='fordeling',
                            tabPanel(
                                  'Figur',
                                  br(),
                                  em('(Høyreklikk på figuren for å laste den ned)'),
                                  br(),
                                  br(),
-                                 plotOutput('fordelinger')),
+                                 plotOutput('fordelinger'),
+                           hr()),
+                           tabPanel(
+                                 'Figur, alle sykehus',
+                                 plotOutput('fordelingPrSh')),
                            tabPanel(
                                  'Tabell',
                                  uiOutput("tittelFord"),
@@ -244,15 +248,9 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                             sliderInput(inputId="alderGjsnGrVar", label = "Alder", min = 0,
                                         max = 110, value = c(0, 110)
                             ),
-                            selectInput(inputId = 'AISGjsnGrVar', label='AIS-grad',
+                            selectInput(inputId = 'AISGjsnGrVar', label='AIS-grad ved utreise',
                                         multiple = T, #selected=0,
-                                        choices = c("Alle"=0,
-                                                    "A"=1, 
-                                                    "B"=2,
-                                                    "C"=3,
-                                                    "D"=4,
-                                                    "E"=5
-                                        )
+                                         choices = valgAIS
                             ),
                             selectInput(inputId = 'traumeGjsnGrVar', label='Traume',
                                         choices = c("Alle"=' ', #'ikke'
@@ -380,7 +378,10 @@ server <- function(input, output, session) {
       observe({if (rolle() != 'SC') {
             #print('OK')
       #NB: Må aktiveres i ui-del også OK
-                  shinyjs::hide(id = 'samleRappLand.pdf')
+            shinyjs::hide(id = 'samleRappLand.pdf')
+            #shinyjs::hide(id = 'fordSh')
+            hideTab(inputId = "fordeling", target = "Figur, alle sykehus")
+            #shinyjs::hide(id = 'fordelingPrSh')
             #hideTab(inputId = "tabs_andeler", target = "Figur, sykehusvisning")
       }
       })
@@ -607,8 +608,8 @@ server <- function(input, output, session) {
 
 #---------Fordelinger------------
             observe({   #Fordelingsfigurer og tabeller
-            RegData <- finnRegData(Data = AlleTab, valgtVar <- 'Livsk')
-            #RegData <- finnRegData(valgtVar = input$valgtVar, Data = AlleTab)
+            #RegData <- finnRegData(Data = AlleTab, valgtVar <- 'Livsk')
+            RegData <- finnRegData(valgtVar = input$valgtVar, Data = AlleTab)
             RegData <- TilLogiskeVar(RegData)
             #print(input$datoUt)
             
@@ -616,7 +617,7 @@ server <- function(input, output, session) {
                   NSFigAndeler(RegData=RegData, valgtVar=input$valgtVar, preprosess = 0,
                                datoFra=input$datovalg[1], datoTil=input$datovalg[2], 
                                reshID = reshID(), 
-                               AIS=input$AIS, traume=input$traume, paratetra=as.numeric(input$paratetra),
+                               AIS=input$AIS, traume=input$traume, nivaaUt=as.numeric(input$nivaaUt),
                                minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]), 
                                erMann=as.numeric(input$erMann), 
                                enhetsUtvalg=as.numeric(input$enhetsUtvalg),
@@ -628,11 +629,21 @@ server <- function(input, output, session) {
             UtDataFord <- NSFigAndeler(RegData=RegData, preprosess = 0, valgtVar=input$valgtVar,
                                        datoFra=input$datovalg[1], datoTil=input$datovalg[2], 
                                        reshID = reshID(), 
-                                       AIS=input$AIS, traume=input$traume, paratetra=as.numeric(input$paratetra),
+                                       AIS=input$AIS, traume=input$traume, nivaaUt=as.numeric(input$nivaaUt),
                                        minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]), 
                                        erMann=as.numeric(input$erMann), 
                                        enhetsUtvalg=as.numeric(input$enhetsUtvalg))
             tabFord <- lagTabavFigAndeler(UtDataFraFig = UtDataFord)
+            
+            output$fordelingPrSh <- renderPlot({
+                  NSFigAndelerSh(RegData=RegData, valgtVar=input$valgtVar, preprosess = 0,
+                               datoFra=input$datovalg[1], datoTil=input$datovalg[2], 
+                               AIS=input$AIS, traume=input$traume, nivaaUt=as.numeric(input$nivaaUt),
+                               minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]), 
+                               erMann=as.numeric(input$erMann), 
+                               datoUt=as.numeric(input$datoUt))
+            }, height=800, width=800 #height = function() {session$clientData$output_fordelinger_width}
+            )
             output$tittelFord <- renderUI({
                   tagList(
                         h3(UtDataFord$tittel),
@@ -661,19 +672,19 @@ server <- function(input, output, session) {
       
       observe({ #Sykehusvise gjennomsnitt, figur og tabell
             RegData <- finnRegData(valgtVar = input$valgtVarGjsnGrVar, Data = AlleTab)
-            print(input$valgtVarGjsnGrVar)
-            print(dim(RegData))
+            #print(input$valgtVarGjsnGrVar)
+            #print(dim(RegData))
             output$gjsnGrVar <- renderPlot(
                   NSFigGjsnGrVar(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarGjsnGrVar,
                                  datoFra=input$datovalgGjsnGrVar[1], datoTil=input$datovalgGjsnGrVar[2], 
-                                 AIS=input$AISGjsnGrVar, traume=input$traumeGjsnGrVar, paratetra=as.numeric(input$paratetraGjsnGrVar),
+                                 AIS=input$AISGjsnGrVar, traume=input$traumeGjsnGrVar, nivaaUt=as.numeric(input$paratetraGjsnGrVar),
                                  minald=as.numeric(input$alderGjsnGrVar[1]), maxald=as.numeric(input$alderGjsnGrVar[2]), 
                                  erMann=as.numeric(input$erMannGjsnGrVar), valgtMaal = input$sentralmaal
                   ),
                   width = 800, height = 600)
             UtDataGjsnGrVar <- NSFigGjsnGrVar(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarGjsnGrVar,
                                               datoFra=input$datovalgGjsnGrVar[1], datoTil=input$datovalgGjsnGrVar[2], 
-                                              AIS=input$AISGjsnGrVar, traume=input$traumeGjsnGrVar, paratetra=as.numeric(input$paratetraGjsnGrVar),
+                                              AIS=input$AISGjsnGrVar, traume=input$traumeGjsnGrVar, nivaaUt=as.numeric(input$paratetraGjsnGrVar),
                                               minald=as.numeric(input$alderGjsnGrVar[1]), maxald=as.numeric(input$alderGjsnGrVar[2]), 
                                               erMann=as.numeric(input$erMannGjsnGrVar), valgtMaal = input$sentralmaal)
             tabGjsnGrVar <- lagTabavFigGjsnGrVar(UtDataFraFig = UtDataGjsnGrVar)

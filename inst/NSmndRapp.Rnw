@@ -225,39 +225,6 @@ xtable::xtable(AndelMKtr, digits=1, align=c('l', rep('r', ncol(AndelMKtr))),
 \end{frame}
 
 
-\begin{frame}[fragile] 
-<<'Liggetider', results='asis'>>=
-#Tabell: Andel registreringsskjema med oppfølging siste 12 mnd
-
-#!!! Får feil encoding hvis benytter funksjonen tabLiggetider fra NStabeller.R
-
-Liggetider <- function(RegData, datoFra='2018-01-01', datoTil=Sys.Date(), enhetsUtvalg=0, reshID=0,
-                          traume='') {
-      RegData <- NSUtvalg(RegData=RegData, datoFra=datoFra, datoTil = datoTil, traume=traume,
-                          enhetsUtvalg = enhetsUtvalg, reshID = reshID)$RegData
-      Liggetider <- rbind('Liggetid, totalt' = summary(RegData$OpphTot)[c(1,3,4,6)],
-                          'Liggetid på rehab.' =summary(RegData$DagerRehab)[c(1,3,4,6)],	
-                          'Liggetid før rehab.' = summary(RegData$DagerTilRehab)[c(1,3,4,6)]	
-      )
-      colnames(Liggetider) <- c('Min', 'Median', 'Gj.sn.', 'Maks')
-      return(Liggetider)
-}
-
-LiggetiderMtraume <- Liggetider(RegData=HovedSkjema, datoFra=datoFra, datoTil=Sys.Date(), enhetsUtvalg=2, reshID=reshID,
-                          traume='ja')
-xtable::xtable(LiggetiderMtraume, digits=0, align=c('l', rep('r', ncol(LiggetiderMtraume))),
-		caption=paste0('Liggetider ved eget sykehus, pasienter med traume. Innleggelser fra og med ',datoFra,'.'))
-
-LiggetiderUtraume <- Liggetider(RegData=HovedSkjema, datoFra=datoFra, datoTil=Sys.Date(), enhetsUtvalg=2, reshID=reshID,
-                          traume='nei')
-xtable::xtable(LiggetiderUtraume, digits=0, align=c('l', rep('r', ncol(LiggetiderMtraume))),
-		caption=paste0('Liggetider eget sykehus, pasienter uten traume. Innleggelser fra og med ',datoFra,'.'))
-
-@
-\end{frame}
-
-
-
 
 
 
@@ -266,16 +233,25 @@ xtable::xtable(LiggetiderUtraume, digits=0, align=c('l', rep('r', ncol(Liggetide
 
 variable <- c('SkadeArsak', 'Ntsci', 'AAis', 'FAis','RegForsinkelse')
 for (valgtVar in variable) {
-	outfile <- paste0(valgtVar, '.pdf')
-	NSFigAndeler(RegData=HovedSkjema12mnd, valgtVar=valgtVar, datoFra=datoFra,
-                datoTil=datoTil, outfile=outfile, reshID=reshID, enhetsUtvalg=enhetsUtvalg,
-                hentData=0, preprosess=0)
+      outfile <- paste0(valgtVar, '.pdf')
+      NSFigAndeler(RegData=HovedSkjema12mnd, valgtVar=valgtVar, datoFra=datoFra,
+                   datoTil=datoTil, outfile=outfile, reshID=reshID, enhetsUtvalg=enhetsUtvalg,
+                   hentData=0, preprosess=0)
 }
 
-#valgtVar <- 'RegForsinkelse'
-#outfile <- paste0(valgtVar, '_Sh.pdf')
-#NSFigGjsnGrVar(RegData=HovedSkjema12mnd, hentData=0, preprosess = 0, outfile=outfile, valgtVar=valgtVar, 
-#               datoFra=datoFra, datoTil=datoTil)
+#'Tid fra skade til oppstart rehab.' = 'DagerTilRehab', 
+#'Tid med rehabilitering' = 'DagerRehab',
+
+variable <- c('DagerTilRehab', 'DagerRehab')
+
+for (valgtVar in variable) {
+      for (traume in c('ja', 'nei')){
+            outfile <- paste0(valgtVar, '_t_', traume,'.pdf')
+            NSFigAndeler(RegData=HovedSkjema12mnd, valgtVar=valgtVar, datoFra=datoFra, traume = traume,
+                         datoTil=datoTil, outfile=outfile, reshID=reshID, enhetsUtvalg=enhetsUtvalg,
+                         preprosess=0)
+            }
+      }
 @
 
 \section{Pasientkarakteristika}
@@ -316,7 +292,6 @@ Variabelen ble innført i desember og alle hovedskjema ferdigstilt (lukket førs
 \caption{Prosentvis fordeling av AIS ved innleggelse}
 \end{figure}
 \end{frame}
-
 
 \begin{frame}[fragile]
 \begin{figure}[ht]
@@ -395,6 +370,69 @@ xtable::xtable(NevrKlass28, digits=0, align=c('l', rep('r', ncol(NevrKlass28))),
 
 @
 
+\end{frame}
+
+\begin{frame}[fragile] 
+<<'Liggetider', results='asis'>>=
+#Tabell: Andel registreringsskjema med oppfølging siste 12 mnd
+
+#!!! Får feil encoding hvis benytter funksjonen tabLiggetider fra NStabeller.R
+
+Liggetider <- function(RegData, datoFra='2018-01-01', datoTil=Sys.Date(), enhetsUtvalg=0, reshID=0,
+                          traume='') {
+      RegData <- NSUtvalg(RegData=RegData, datoFra=datoFra, datoTil = datoTil, traume=traume,
+                          enhetsUtvalg = enhetsUtvalg, reshID = reshID)$RegData
+      Liggetider <- rbind('Liggetid, totalt' = summary(RegData$OpphTot)[c(1,3,4,6)],
+                          'Liggetid på rehab.' =summary(RegData$DagerRehab)[c(1,3,4,6)],	
+                          'Liggetid før rehab.' = summary(RegData$DagerTilRehab)[c(1,3,4,6)]	
+      )
+      colnames(Liggetider) <- c('Min', 'Median', 'Gj.sn.', 'Maks')
+      return(Liggetider)
+}
+
+LiggetiderMtraume <- Liggetider(RegData=HovedSkjema, datoFra=datoFra, datoTil=Sys.Date(), enhetsUtvalg=2, reshID=reshID,
+                          traume='ja')
+xtable::xtable(LiggetiderMtraume, digits=0, align=c('l', rep('r', ncol(LiggetiderMtraume))),
+		caption=paste0('Liggetider ved eget sykehus, pasienter med traume. Innleggelser fra og med ',datoFra,'.'))
+
+LiggetiderUtraume <- Liggetider(RegData=HovedSkjema, datoFra=datoFra, datoTil=Sys.Date(), enhetsUtvalg=2, reshID=reshID,
+                          traume='nei')
+xtable::xtable(LiggetiderUtraume, digits=0, align=c('l', rep('r', ncol(LiggetiderMtraume))),
+		caption=paste0('Liggetider eget sykehus, pasienter uten traume. Innleggelser fra og med ',datoFra,'.'))
+
+@
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{figure}[ht]
+\centering
+\includegraphics[scale=0.35]{DagerTilRehab_t_nei.pdf}
+\caption{Antall dager på sykehus før rehabilitering for ikke-traumatiske skader}
+\end{figure}
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{figure}[ht]
+\centering
+\includegraphics[scale=0.35]{DagerTilRehab_t_ja.pdf}
+\caption{Antall dager på sykehus før rehabilitering for traumatiske skader}
+\end{figure}
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{figure}[ht]
+\centering
+\includegraphics[scale=0.35]{DagerRehab_t_nei.pdf}
+\caption{Liggetid (dager) ved ryggmargsskadeavdeling for pasienter med ikke-traumatisk ryggmargsskade}
+\end{figure}
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{figure}[ht]
+\centering
+\includegraphics[scale=0.35]{DagerRehab_t_ja.pdf}
+\caption{Liggetid (dager) ved ryggmargsskadeavdeling for pasienter med traumatisk ryggmargsskade}
+\end{figure}
 \end{frame}
 
 
