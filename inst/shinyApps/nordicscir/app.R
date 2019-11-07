@@ -367,8 +367,9 @@ tabPanel("Registreringsoversikter",
 server <- function(input, output, session) {
       
       #raplog::appLogger(session)
-      system.file('fil.Rnw', package='nordicscir')
-      
+      system.file('NSmndRapp.Rnw', package='nordicscir')
+      system.file('NSsamleRapp.Rnw', package='nordicscir')
+   
       #hospitalName <-getHospitalName(rapbase::getUserReshId(session))
       reshID <- reactive({ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 107627)}) 
       rolle <- reactive({ifelse(paaServer, rapbase::getUserRole(shinySession=session), 'SC')})
@@ -464,7 +465,7 @@ server <- function(input, output, session) {
       }
       
       output$mndRapp.pdf <- downloadHandler(
-            filename = function(){'NorScirMaanedsrapport.pdf'}, #downloadFilename('NorScirMaanedsrapport')
+            filename = function(){downloadFilename('NorScirMaanedsrapport')},  #'NorScirMaanedsrapport.pdf'}, #
             content = function(file){
                   contentFile(file, srcFil="NSmndRapp.Rnw", tmpFil="tmpNSmndRapp.Rnw",
                               package = "nordicsir",
