@@ -122,8 +122,10 @@ maxald <- 130
 erMann <- ''	#...
 traume <- ''	#'ja','nei', standard: ikke utvalgt (
 AIS <- ''
-datoFra <- '2011-01-01'	#Standard: 0, dvs. alle år
-datoTil <- '2017-12-31'
+datoFra <- ifelse(exists('datoFra'), datoFra,'2015-01-01')	#Standard: 0, dvs. alle år
+datoTil <- ifelse(exists('datoTil'), datoTil, Sys.Date())
+#datoFra <- '2011-01-01'	#Standard: 0, dvs. alle år
+#datoTil <- datoTil #'2017-12-31'
 s1 <- 0.8	#Skaleringsparameter for enkeltfigurer
 #s2 <- 0.7	#Skaleringsparameter for "dobbeltfigurer"
 

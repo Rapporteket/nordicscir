@@ -64,6 +64,7 @@ varHoved <- c("
       h.RehabDy,
       h.Scietiol,
       h.SkjemaGUID,
+--      h.SkjemaGUID AS SkjemaGUIDhoved,
       h.UnitId,
       h.VentAssi
 ")
@@ -72,12 +73,13 @@ varHoved <- c("
 
 varLivs <- c('
 ,Livs.FormDate
-,Livs.HovedskjemaGUID
+,UPPER(Livs.HovedskjemaGUID) AS HovedskjemaGUID
 ,Livs.QolDt
 ,Livs.SatGenrl
 ,Livs.SatPhys
 ,Livs.SatPsych
-,Livs.SkjemaGUID
+-- ,Livs.SkjemaGUID AS SkjemaGUID
+-- ,Livs.SkjemaGUID AS SkjemaGUIDLivs
 ')
 #,Livs.PasientGUID
 
@@ -86,9 +88,10 @@ varFunk <- c('
 ,Funk.Dreslbdy	
 ,Funk.Feeding	
 ,Funk.FirstTimeClosed
-,Funk.HovedskjemaGUID
+,UPPER(Funk.HovedskjemaGUID) AS HovedskjemaGUID
 ,Funk.Mobilmod	
-,Funk.SkjemaGUID	
+-- ,Funk.SkjemaGUID
+-- ,Funk.SkjemaGUID AS SkjemaGUIDFunk
 ,Funk.Toiletin	
 ')
 
@@ -97,9 +100,11 @@ varTilf <- c('
 ,Tilf.DreslbdyS	
 ,Tilf.FeedingS	
 ,Tilf.FirstTimeClosed
-,Tilf.HovedskjemaGUID
-,Tilf.MobilmodS	
-,Tilf.SkjemaGUID	
+-- ,UPPER(Tilf.HovedskjemaGUID) AS HovedskjemaGUID
+,Tilf.MobilmodS
+,UPPER(Funk.HovedskjemaGUID) AS HovedskjemaGUID
+-- ,Tilf.SkjemaGUID
+-- ,Tilf.SkjemaGUID AS SkjemaGUIDTilf
 ,Tilf.ToiletinS	
 ')
 varUrin <- c("
@@ -151,7 +156,7 @@ varUrin <- c("
 ,Urin.FormDate
 ,Urin.HealthUnitId
 ,Urin.HealthUnitName
-,Urin.HovedskjemaGUID
+,UPPER(Urin.HovedskjemaGUID) AS HovedskjemaGUID
 ,Urin.Ilurts
 ,Urin.IlurtsDt
 ,Urin.Ilvscs
@@ -168,7 +173,8 @@ varUrin <- c("
 ,Urin.OthsrgDt
 ,Urin.Sarstm
 ,Urin.SarstmDt
-,Urin.SkjemaGUID
+-- ,Urin.SkjemaGUID
+-- ,Urin.SkjemaGUID AS SkjemaGUIDUrin
 ,Urin.Spcath
 ,Urin.SpcathDt
 ,Urin.Spncrelx
@@ -216,7 +222,7 @@ varTarm <- c('
  ,Tarm.FormTypeId
  ,Tarm.Gifxnun
  ,Tarm.Hemrhoid
- ,Tarm.HovedskjemaGUID
+ ,UPPER(Tarm.HovedskjemaGUID) AS HovedskjemaGUID
  ,Tarm.Ileost
  ,Tarm.IleostDt
  ,Tarm.IleostDtUnknown
@@ -246,7 +252,8 @@ varTarm <- c('
  ,Tarm.PerianalProblems
  ,Tarm.Prokinet
  ,Tarm.Recprlps
- ,Tarm.SkjemaGUID
+-- ,Tarm.SkjemaGUID
+-- ,Tarm.SkjemaGUID AS SkjemaGUIDTarm
  ,Tarm.SurgicalIntervention
  ,Tarm.Wrpadplg
  ')
@@ -283,12 +290,13 @@ varKont <- c('
 ,Kont.FormDate      
 ,Kont.FormStatus
 ,Kont.FormTypeId
-,Kont.HovedskjemaGUID
+,UPPER(Kont.HovedskjemaGUID) AS HovedskjemaGUID
 ,Kont.LastUpdate
 ,Kont.NoControl
 ,Kont.NoControlReason      
 ,Kont.ProceedingID
-,Kont.SkjemaGUID
+-- ,Kont.SkjemaGUID
+-- ,Kont.SkjemaGUID AS SkjemaGUIDKont
 ,Kont.UnitId
 ')
 #"HealthUnitId","HealthUnitName","HealthUnitShortName","HF" ,"Hospital","RHF"          
@@ -306,7 +314,7 @@ if (valgtSkjema %in% c('Livs', 'Urin', 'Tarm', 'Tilf', 'Funk', 'Kont')) {
                          Funk = varFunk,
                          Tilf = varTilf,
                          Kont = varKont)
-      
+
       qSkjema <- paste0(switch(valgtSkjema, #Dette vil bare fungere hvis konsekvent med navngiving i valgtVar
            Livs = 'INNER JOIN LifeQualityFormDataContract Livs ',
            Urin = 'INNER JOIN UrinaryTractFunctionFormDataContract Urin ',

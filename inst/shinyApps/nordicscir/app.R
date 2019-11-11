@@ -1,7 +1,7 @@
 #Resultattjeneste for NordicScir
 library(nordicscir)
 library(shiny)
-library(shinyjs)
+#library(shinyjs)
 library(knitr)
 library(lubridate)
 library(dplyr)
@@ -45,7 +45,7 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
       tabPanel("Startside",
                #fluidRow(
                #column(width=5,
-               shinyjs::useShinyjs(),
+               #shinyjs::useShinyjs(),
                br(),
                tags$head(tags$style(".butt{background-color:#6baed6;} .butt{color: white;}")), # background color and font color
                
@@ -56,14 +56,6 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                             downloadButton(outputId = 'mndRapp.pdf', label='Last ned MÅNEDSRAPPORT', class = "butt"),
                             br(),
                             br('NB: Nedlasting tar litt tid. I mellomtida får man ikke sett på andre resultater.'),
-                            br(),
-                            h3("Resultater, hele landet (kun SC-bruker)"), #),
-                            #shinydashboard::infoBox("Resultater hele landet (kun SC-bruker)", 
-                        downloadButton(outputId = 'samleRappLand.pdf', label='Last ned samlerapport', class = "butt"),
-                            # br(),
-                            # h3("Resultater eget sykehus, SC-bruker"), #),
-                            # downloadButton(outputId = 'samlerappEgen', label='Last ned', class = "butt"),
-                            br(),
                             br(),
                             br()
                ),
@@ -357,7 +349,36 @@ tabPanel("Registreringsoversikter",
                            )
                                     
                ))
-) #tab Registreringsoversikter
+), #tab Registreringsoversikter
+
+#----------------------Registeradministrasjon--------------------------------
+
+tabPanel("Registeradministrasjon",
+         sidebarPanel(width=3,
+                      h3('Utvalg'),
+                       dateRangeInput(inputId = 'datovalgSamleRapp', start = startDatoStandard-150, end = Sys.Date(),
+                                     label = "Tidsperiode", separator="t.o.m.", language="nb")
+         ),
+         
+         mainPanel(
+            tabsetPanel(id='ark',
+                        tabPanel('Samlerapporter',
+                                 h2('Her kan vi samle div som bare SC-bruker skal se...'),
+                                 br(),
+                                 br(),
+                                 h3("Resultater, hele landet"), #),
+                                 #shinydashboard::infoBox("Resultater hele landet ", 
+                                 downloadButton(outputId = 'samleRappLand.pdf', 
+                                                label='Last ned samlerapport, hele landet', class = "butt"),
+                                 br(),
+                                 h3("Resultater eget sykehus"), #),
+                                 downloadButton(outputId = 'samleRappEgen.pdf', 
+                                                label='Last ned egen samlerapport', class = "butt"),
+                                 br(),
+                                 br()
+                        )
+            ))
+) #tab Registeradministrasjon
 ) #ui-del
 
 
@@ -367,8 +388,8 @@ tabPanel("Registreringsoversikter",
 server <- function(input, output, session) {
       
       #raplog::appLogger(session)
-      system.file('NSmndRapp.Rnw', package='nordicscir')
-      system.file('NSsamleRapp.Rnw', package='nordicscir')
+      #system.file('NSmndRapp.Rnw', package='nordicscir')
+      #system.file('NSsamleRapp.Rnw', package='nordicscir')
    
       #hospitalName <-getHospitalName(rapbase::getUserReshId(session))
       reshID <- reactive({ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 107627)}) 
@@ -379,9 +400,10 @@ server <- function(input, output, session) {
       observe({if (rolle() != 'SC') {
             #print('OK')
       #NB: Må aktiveres i ui-del også OK
-            shinyjs::hide(id = 'samleRappLand.pdf')
+            #shinyjs::hide(id = 'samleRappLand.pdf')
             #shinyjs::hide(id = 'fordSh')
             hideTab(inputId = "fordeling", target = "Figur, alle sykehus")
+            hideTab(inputId = 'Registeradministrasjon')
             #shinyjs::hide(id = 'fordelingPrSh')
             #hideTab(inputId = "tabs_andeler", target = "Figur, sykehusvisning")
       }
@@ -447,50 +469,49 @@ server <- function(input, output, session) {
             paste0(fileBaseName, as.character(as.integer(as.POSIXct(Sys.time()))), '.pdf')
       }
       
-      contentFile <- function(file, srcFil, tmpFil, package,
-                              reshID=0, datoFra=startDato, datoTil=Sys.Date()) {
-            src <- normalizePath(system.file(srcFil, package=package))
-            dev.off()
-            
-            # gå til tempdir. Har ikke skriverettigheter i arbeidskatalog
-            owd <- setwd(tempdir())
-            on.exit(setwd(owd))
-            file.copy(src, tmpFil, overwrite = TRUE)
-            
-            texfil <- knitr::knit(tmpFil, encoding = 'UTF-8')
-            tools::texi2pdf(texfil, clean = TRUE)
-            
-            gc() #Opprydning gc-"garbage collection"
-            file.rename(stringr::str_replace(texfil,'tex','pdf'), file)
+      #Fra intensiv
+      contentFile <- function(file, srcFil, tmpFile, 
+                              reshID=0, datoFra=startDatoStandard, datoTil=Sys.Date()) {
+         src <- normalizePath(system.file(srcFil, package="nordicscir"))
+         #dev.off()
+         # gå til tempdir. Har ikke skriverettigheter i arbeidskatalog
+         owd <- setwd(tempdir())
+         on.exit(setwd(owd))
+         file.copy(src, tmpFile, overwrite = TRUE)
+         
+         #texfil <- knitr::knit(tmpFile, encoding = 'UTF-8')
+         #tools::texi2pdf(texfil, clean = TRUE)
+         knitr::knit2pdf(tmpFile)
+         
+         gc() #Opprydning gc-"garbage collection"
+         file.copy(paste0(substr(tmpFile, 1, nchar(tmpFile)-3), 'pdf'), file)
+         # file.rename(paste0(substr(tmpFile, 1, nchar(tmpFile)-3), 'pdf'), file)
       }
       
-      output$mndRapp.pdf <- downloadHandler(
-            filename = function(){downloadFilename('NorScirMaanedsrapport')},  #'NorScirMaanedsrapport.pdf'}, #
-            content = function(file){
-                  contentFile(file, srcFil="NSmndRapp.Rnw", tmpFil="tmpNSmndRapp.Rnw",
-                              package = "nordicsir",
-                              reshID = reshID())
-            })
-
-
-      output$samleRappLand.pdf <- downloadHandler(
-            filename = function(){'NorScirSamleRapport.pdf'}, # downloadFilename('NorScirSamleRapport')
-            content = function(file){
-                  contentFile(file, srcFil="NSsamleRappLand.Rnw", tmpFil="tmpNSsamleRappLand.Rnw",
-                              package= 'nordicscir', 
-                              reshID=reshID())
-            })
-      # output$samlerappEgen <- downloadHandler(
-      #             filename = function(){ paste0('SamleRappEgen', Sys.time(), '.pdf')},
-      #             content = function(file){
-      #                   contentFile(file, srcFil="NSsamleRapp.Rnw", tmpFile="tmpNSsamleRapp.Rnw")
-      #             })
-      # output$samlerappLandet <- downloadHandler(
-      #                   filename = function(){ paste0('SamleRappLand', Sys.time(), '.pdf')},
-      #                   content = function(file){
-      #                         contentFile(file, srcFil="NSsamleRappLand.Rnw", tmpFile="tmpNSsamleRappLand.Rnw")
-      #                   })
       
+      output$mndRapp.pdf <- downloadHandler(
+         filename = function(){ paste0('MndRapp', Sys.time(), '.pdf')}, #'MndRapp.pdf',
+         content = function(file){
+            contentFile(file, srcFil="NSmndRapp.Rnw", tmpFile="tmpNSmndRapp.Rnw",
+                        reshID = reshID()) #, datoFra = startDato, datoTil = Sys.Date())
+         })
+      output$samleRappLand.pdf <- downloadHandler(
+            filename = function(){'NorScirSamleRapportLand.pdf'}, # downloadFilename('NorScirSamleRapport')
+            content = function(file){
+                  contentFile(file, srcFil="NSsamleRappLand.Rnw", tmpFile="tmpNSsamleRappLand.Rnw",
+                              reshID=reshID(), 
+                              datoFra = input$datovalgSamleRapp[1], 
+                              datoTil = input$datovalgSamleRapp[2])
+            })
+      output$samleRappEgen.pdf <- downloadHandler(
+         filename = function(){'NorScirSamleRapportEgen.pdf'}, # downloadFilename('NorScirSamleRapport')
+         content = function(file){
+            contentFile(file, srcFil="NSsamleRapp.Rnw", tmpFile="tmpNSsamleRapp.Rnw",
+                        reshID=reshID(), 
+                        datoFra = input$datovalgSamleRapp[1], 
+                        datoTil = input$datovalgSamleRapp[2])
+         })
+
       # downloadButton(outputId = 'mndRapp.pdf', label='Last ned MÅNEDSRAPPORT', class = "butt"),
       # downloadButton(outputId = 'samlerappLandet', label='Last ned', class = "butt"),
       # downloadButton(outputId = 'samlerappEgen', label='Last ned', class = "butt"),

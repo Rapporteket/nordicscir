@@ -35,17 +35,22 @@ save(list = objekter, file='A:/NordicScir/NordicScirFIKTIVEdata.RData')
 rm(list=ls())
 library(knitr)
 library(tools)	#texi2pdf
-setwd("C:/ResultattjenesteGIT/nordicscir/inst")
+#setwd("C:/ResultattjenesteGIT/nordicscir/inst")
+setwd("../nordicscir/inst")
 #HENT DATA
 reshID <- 107627	#0 - alle	#105593-Haukeland, 106896-Sunnaas, 107627-St.Olavs
-load('A:/NordicScir/NordicScirData.RData')
-knit('NSmndRapp.Rnw')
-texi2pdf('NSmndRapp.tex')
+#load('A:/NordicScir/NordicScirData.RData')
+knit2pdf('NSmndRapp.Rnw')
+#knit('NSmndRapp.Rnw')
+#texi2pdf('NSmndRapp.tex')
 
-knit('NSsamleRappLand.Rnw')
-texi2pdf('NSsamleRappLand.tex')
-knit('NSsamleRapp.Rnw')
-texi2pdf('NSsamleRapp.tex')
+knit2pdf('NSsamleRappLand.Rnw')
+#knit('NSsamleRappLand.Rnw')
+#texi2pdf('NSsamleRappLand.tex')
+
+knit2pdf('NSsamleRapp.Rnw')
+#knit('NSsamleRapp.Rnw')
+#texi2pdf('NSsamleRapp.tex')
 
 filtype <- c('.toc','.log', '.lof','.lot','.out', '.aux', '.vrb','.snm','.nav')
 removeFiles <- c(paste0('NSmndRapp',filtype), 

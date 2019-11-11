@@ -4,10 +4,11 @@
 \alias{NSFigAndeler}
 \title{Søylediagram som viser fordeling av valgt variabel}
 \usage{
-NSFigAndeler(RegData, outfile = "", valgtVar, datoFra = "2010-01-01",
-  datoTil = "2050-01-01", AIS = "", minald = 0, maxald = 130,
-  erMann = 99, traume = "", paratetra = 99, enhetsUtvalg = 1,
-  reshID, hentData = 0, preprosess = 1, datoUt = 0)
+NSFigAndeler(RegData, outfile = "", valgtVar = "Alder",
+  datoFra = "2010-01-01", datoTil = Sys.Date(), AIS = "",
+  minald = 0, maxald = 130, erMann = 99, traume = "alle",
+  nivaaUt = 99, enhetsUtvalg = 0, reshID = 0, hentData = 0,
+  preprosess = 1, datoUt = 0)
 }
 \arguments{
 \item{RegData}{- ei dataramme med alle nødvendige variable fra registeret.}

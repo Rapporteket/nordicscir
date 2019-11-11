@@ -4,10 +4,10 @@
 \alias{NSFigAndelerSh}
 \title{Søylediagram som viser fordeling av valgt variabel}
 \usage{
-NSFigAndelerSh(RegData, outfile = "", valgtVar, datoFra = "2010-01-01",
-  datoTil = "2050-01-01", AIS = "", minald = 0, maxald = 130,
-  erMann = 99, traume = "alle", paratetra = 99, hentData = 0,
-  preprosess = 1, datoUt = 0)
+NSFigAndelerSh(RegData, outfile = "", valgtVar, hentData = 0,
+  preprosess = 1, datoFra = "2010-01-01", datoTil = "2050-01-01",
+  datoUt = 0, AIS = "", minald = 0, maxald = 130, erMann = 99,
+  traume = "alle", nivaaUt = 99)
 }
 \arguments{
 \item{RegData}{- ei dataramme med alle nødvendige variable fra registeret.}

@@ -6,7 +6,7 @@
 \usage{
 NSFigAndelStabel(RegData, outfile = "", valgtVar,
   datoFra = "2010-01-01", datoTil = "3000-01-01", minald = 0,
-  maxald = 130, erMann = "", traume = "", preprosess = 1,
+  maxald = 130, erMann = "", traume = 99, preprosess = 1,
   enhetsUtvalg = enhetsUtvalg, reshID, hentData = 0)
 }
 \arguments{
