@@ -32,7 +32,9 @@ names(valgAIS) <- c("Alle","A","B","C","D","E")
 valgNivaaUt <- c(99,0,1,2,3,9)
 names(valgNivaaUt) <- c("Alle", "Paraplegi", "Tetraplegi", "C1-4", "C5-8", "Ukjent")
 
-ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
+ui <- tagList(
+   shinyjs::useShinyjs(),
+   navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
       
 
             # lag logo og tittel som en del av navbar
@@ -52,11 +54,11 @@ ui <- navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
                sidebarPanel(width = 3,
                             br(),
                             #h2('Nedlastbare dokumenter med samling av resultater'),
+                            
                             h3("Månedsrapport"), #),
-                            downloadButton(outputId = 'mndRapp.pdf', label='Last ned MÅNEDSRAPPORT', class = "butt"),
+                            downloadButton(outputId = "mndRapp.pdf", label='Last ned MÅNEDSRAPPORT', class = "butt"),
                             br(),
                             br('NB: Nedlasting tar litt tid. I mellomtida får man ikke sett på andre resultater.'),
-                            br(),
                             br()
                ),
                mainPanel(width = 8,
@@ -380,6 +382,7 @@ tabPanel("Registeradministrasjon",
             ))
 ) #tab Registeradministrasjon
 ) #ui-del
+) #tagList
 
 
 
@@ -465,9 +468,26 @@ server <- function(input, output, session) {
 #-------Samlerapporter--------------------      
       # funksjon for å kjøre Rnw-filer (render file funksjon)
       # filename function for re-use - i dette tilfellet vil det funke fint å hardkode det samme..
-      downloadFilename <- function(fileBaseName) {
-            paste0(fileBaseName, as.character(as.integer(as.POSIXct(Sys.time()))), '.pdf')
-      }
+      # downloadFilename <- function(fileBaseName) {
+      #       paste0(fileBaseName, as.character(as.integer(as.POSIXct(Sys.time()))), '.pdf')
+      # }
+      # 
+      # contentFile <- function(file, srcFil, tmpFil, package,
+      #                         reshID=0) {
+      #       src <- normalizePath(system.file(srcFil, package=package))
+      #       dev.off()
+      #       
+      #       # gå til tempdir. Har ikke skriverettigheter i arbeidskatalog
+      #       owd <- setwd(tempdir())
+      #       on.exit(setwd(owd))
+      #       file.copy(src, tmpFil, overwrite = TRUE)
+      #       
+      #       texfil <- knitr::knit(tmpFil, encoding = 'UTF-8')
+      #       tools::texi2pdf(texfil, clean = TRUE)
+      #       
+      #       #gc() #Opprydning gc-"garbage collection"
+      #       file.rename(stringr::str_replace(texfil,'tex','pdf'), file)
+      # }
       
       #Fra intensiv
       contentFile <- function(file, srcFil, tmpFile, 
@@ -487,7 +507,6 @@ server <- function(input, output, session) {
          file.copy(paste0(substr(tmpFile, 1, nchar(tmpFile)-3), 'pdf'), file)
          # file.rename(paste0(substr(tmpFile, 1, nchar(tmpFile)-3), 'pdf'), file)
       }
-      
       
       output$mndRapp.pdf <- downloadHandler(
          filename = function(){ paste0('MndRapp', Sys.time(), '.pdf')}, #'MndRapp.pdf',
