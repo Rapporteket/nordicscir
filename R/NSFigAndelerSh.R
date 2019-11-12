@@ -184,8 +184,7 @@ NSFigAndelerSh <- function(RegData, outfile='', valgtVar, hentData=0, preprosess
                   plot.new()
                   title(NSVarSpes$tittel)	#, line=-6)
                   legend('topleft',utvalgTxt, bty='n', cex=0.9, text.col=farger[1])
-                  text(0.5, 0.6, paste0('Færre enn ', Ngrense, ' egne registreringer,'), cex=1.2)
-                  text(0.5, 0.5, paste0('eller færre enn ', Ngrense, ' i sammenlikningsgruppa'), cex=1.2)
+                  text(0.5, 0.6, paste0('Færre enn ', Ngrense, ' registreringer,'), cex=1.2)
                   if ( outfile != '') {dev.off()}
             } else {
                   
