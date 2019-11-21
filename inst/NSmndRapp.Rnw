@@ -372,6 +372,8 @@ xtable::xtable(NevrKlass28, digits=0, align=c('l', rep('r', ncol(NevrKlass28))),
 
 \end{frame}
 
+
+\section{Liggetider}
 \begin{frame}[fragile] 
 <<'Liggetider', results='asis'>>=
 #Tabell: Andel registreringsskjema med oppfølging siste 12 mnd
@@ -406,14 +408,6 @@ xtable::xtable(LiggetiderUtraume, digits=0, align=c('l', rep('r', ncol(Liggetide
 \begin{frame}[fragile]
 \begin{figure}[ht]
 \centering
-\includegraphics[scale=0.35]{DagerTilRehab_t_nei.pdf}
-\caption{Antall dager på sykehus før rehabilitering for ikke-traumatiske skader}
-\end{figure}
-\end{frame}
-
-\begin{frame}[fragile]
-\begin{figure}[ht]
-\centering
 \includegraphics[scale=0.35]{DagerTilRehab_t_ja.pdf}
 \caption{Antall dager på sykehus før rehabilitering for traumatiske skader}
 \end{figure}
@@ -422,8 +416,8 @@ xtable::xtable(LiggetiderUtraume, digits=0, align=c('l', rep('r', ncol(Liggetide
 \begin{frame}[fragile]
 \begin{figure}[ht]
 \centering
-\includegraphics[scale=0.35]{DagerRehab_t_nei.pdf}
-\caption{Liggetid (dager) ved ryggmargsskadeavdeling for pasienter med ikke-traumatisk ryggmargsskade}
+\includegraphics[scale=0.35]{DagerTilRehab_t_nei.pdf}
+\caption{Antall dager på sykehus før rehabilitering for ikke-traumatiske skader}
 \end{figure}
 \end{frame}
 
@@ -432,6 +426,14 @@ xtable::xtable(LiggetiderUtraume, digits=0, align=c('l', rep('r', ncol(Liggetide
 \centering
 \includegraphics[scale=0.35]{DagerRehab_t_ja.pdf}
 \caption{Liggetid (dager) ved ryggmargsskadeavdeling for pasienter med traumatisk ryggmargsskade}
+\end{figure}
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{figure}[ht]
+\centering
+\includegraphics[scale=0.35]{DagerRehab_t_nei.pdf}
+\caption{Liggetid (dager) ved ryggmargsskadeavdeling for pasienter med ikke-traumatisk ryggmargsskade}
 \end{figure}
 \end{frame}
 

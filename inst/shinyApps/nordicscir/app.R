@@ -19,8 +19,8 @@ context <- Sys.getenv("R_RAP_INSTANCE") #Blir tom hvis jobber lokalt
 paaServer <- context %in% c("DEV", "TEST", "QA", "PRODUCTION") #rapbase::isRapContext()
 
 
-regTitle = ifelse(paaServer,'NORSK SPINALSKADEREGISTER',
-                  'NORSK SPINALSKADEREGISTER med FIKTIVE data')
+regTitle = ifelse(paaServer,'Norsk ryggmargsskaderegister',
+                  'Norsk ryggmargsskaderegister med FIKTIVE data')
 
 #----Valg
 
