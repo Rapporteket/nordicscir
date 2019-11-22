@@ -1,7 +1,7 @@
 Package: nordicscir
 Type: Package
 Title: R-pakke for å generere resultater fra NordicScir
-Version: 1.9
+Version: 1.9.8
 Author: Lena Ringstad Olsen
 Maintainer: Lena Ringstad Olen <lena.olsen@skde.no>
 Description: An implemetation of all R related resources for NordicScir at
@@ -14,18 +14,17 @@ Depends:
     R (>= 3.5.0)
 Imports:
     kableExtra,
+    knitr,
     lubridate,
     rapbase,
     rapFigurer,
     shiny,
-    shinyjs
+    shinyjs,
+    xtable
 Remotes: 
     Rapporteket/rapbase@rel,
-    Rapporteket/rapFigurer
+    Rapporteket/rapFigurer,
+    Rapporteket/raplog,
 Suggests:
-    knitr,
-    lubridate,
-    kable,
-    xtable
 VignetteBuilder: knitr
 RoxygenNote: 6.1.1

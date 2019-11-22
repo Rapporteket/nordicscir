@@ -10,7 +10,7 @@ library(kableExtra)
 #library(zoo)
 
 
-startDatoStandard <- Sys.Date()-364
+startDatoStandard <- as.Date(paste0(as.numeric(format(Sys.Date()-400, "%Y")), '-01-01')) #Sys.Date()-400
 
 # gjør Rapportekets www-felleskomponenter tilgjengelig for applikasjonen
 addResourcePath('rap', system.file('www', package='rapbase'))
@@ -116,7 +116,7 @@ ui <- tagList(
                )
       ), #tab
 
-      #--------Fordelinger-----------            
+#--------Fordelinger-----------            
       tabPanel("Fordelinger",
                sidebarPanel(width = 3,
                             selectInput(
@@ -204,10 +204,18 @@ ui <- tagList(
                                  br(),
                                  br(),
                                  plotOutput('fordelinger'),
-                           hr()),
+                                 hr()
+                           ),
                            tabPanel(
                                  'Figur, alle sykehus',
                                  plotOutput('fordelingPrSh')),
+                           tabPanel(
+                                 'Tabell, alle sykehus',
+                                 uiOutput("tittelFord"),
+                                 br(),
+                                 tableOutput('fordelingShTab'),
+                                 downloadButton(outputId = 'lastNed_tabFordSh', label='Last ned')
+                                 ),
                            tabPanel(
                                  'Tabell',
                                  uiOutput("tittelFord"),
@@ -381,7 +389,7 @@ tabPanel("Registeradministrasjon",
                         )
             ))
 ) #tab Registeradministrasjon
-) #ui-del
+) #navbar
 ) #tagList
 
 
@@ -463,7 +471,7 @@ server <- function(input, output, session) {
                       TarmH=TarmH, 
                       AktivFunksjonH = AktivFunksjonH, 
                       AktivTilfredshetH = AktivTilfredshetH)
-      
+      print(dim(HovedSkjema))
      
 #-------Samlerapporter--------------------      
       # funksjon for å kjøre Rnw-filer (render file funksjon)
@@ -580,6 +588,7 @@ server <- function(input, output, session) {
                          Aar = paste0(t1, 'siste 5 år før ', input$sluttDatoReg, t2, '<br />'))
                   ))})
       observe({
+         
             #print(rolle())
             #print((rolle() != 'SC'))
             tabAntOpphShMndAar <- switch(input$tidsenhetReg,
@@ -649,10 +658,11 @@ server <- function(input, output, session) {
 
 #---------Fordelinger------------
             observe({   #Fordelingsfigurer og tabeller
-            #RegData <- finnRegData(Data = AlleTab, valgtVar <- 'Livsk')
+            #RegData <- finnRegData(Data = AlleTab, valgtVar <-'UrinLegemidlerHvilke')
             RegData <- finnRegData(valgtVar = input$valgtVar, Data = AlleTab)
             RegData <- TilLogiskeVar(RegData)
             #print(input$datoUt)
+            #NSFigAndeler(RegData=RegData, valgtVar='UrinLegemidlerHvilke', preprosess = 0)
             
             output$fordelinger <- renderPlot({
                   NSFigAndeler(RegData=RegData, valgtVar=input$valgtVar, preprosess = 0,
@@ -666,7 +676,6 @@ server <- function(input, output, session) {
             }, height=800, width=800 #height = function() {session$clientData$output_fordelinger_width}
             )
             
-            #RegData må hentes ut fra valgtVar
             UtDataFord <- NSFigAndeler(RegData=RegData, preprosess = 0, valgtVar=input$valgtVar,
                                        datoFra=input$datovalg[1], datoTil=input$datovalg[2], 
                                        reshID = reshID(), 
@@ -674,7 +683,31 @@ server <- function(input, output, session) {
                                        minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]), 
                                        erMann=as.numeric(input$erMann), 
                                        enhetsUtvalg=as.numeric(input$enhetsUtvalg))
+            
+            output$tittelFord <- renderUI({
+               tagList(
+                  h3(UtDataFord$tittel),
+                  h5(HTML(paste0(UtDataFord$utvalgTxt, '<br />')))
+               )}) 
+            
             tabFord <- lagTabavFigAndeler(UtDataFraFig = UtDataFord)
+            
+            output$fordelingTab <- function() { #gr1=UtDataFord$hovedgrTxt, gr2=UtDataFord$smltxt renderTable(
+               antKol <- ncol(tabFord)
+               kableExtra::kable(tabFord, format = 'html'
+                                 , full_width=F
+                                 , digits = c(0,1,0,1)[1:antKol]
+               ) %>%
+                  add_header_above(c(" "=1, 'Egen enhet/gruppe' = 2, 'Resten' = 2)[1:(antKol/2+1)]) %>%
+                  column_spec(column = 1, width_min = '7em') %>%
+                  column_spec(column = 2:(ncol(tabFord)+1), width = '7em') %>%
+                  row_spec(0, bold = T)
+            }
+            output$lastNed_tabFord <- downloadHandler(
+               filename = function(){paste0(input$valgtVar, '_fordeling.csv')},
+               content = function(file, filename){write.csv2(tabFord, file, row.names = F, na = '')
+               })
+            
             
             output$fordelingPrSh <- renderPlot({
                   NSFigAndelerSh(RegData=RegData, valgtVar=input$valgtVar, preprosess = 0,
@@ -685,30 +718,31 @@ server <- function(input, output, session) {
                                datoUt=as.numeric(input$datoUt))
             }, height=800, width=800 #height = function() {session$clientData$output_fordelinger_width}
             )
-            output$tittelFord <- renderUI({
-                  tagList(
-                        h3(UtDataFord$tittel),
-                        h5(HTML(paste0(UtDataFord$utvalgTxt, '<br />')))
-                  )}) #, align='center'
-            output$fordelingTab <- renderTable(
-                  tabFord, rownames = T)
+            UtDataFordSh <- NSFigAndelerSh(RegData=RegData, preprosess = 0, valgtVar=input$valgtVar,
+                                       datoFra=input$datovalg[1], datoTil=input$datovalg[2], 
+                                       AIS=input$AIS, traume=input$traume, nivaaUt=as.numeric(input$nivaaUt),
+                                       minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]), 
+                                       erMann=as.numeric(input$erMann), 
+                                       datoUt=as.numeric(input$datoUt))
             
-            output$fordelingTab <- function() { #gr1=UtDataFord$hovedgrTxt, gr2=UtDataFord$smltxt renderTable(
-                  antKol <- ncol(tabFord)
-                  kableExtra::kable(tabFord, format = 'html'
-                                    , full_width=F
-                                    , digits = c(0,1,0,1)[1:antKol]
-                  ) %>%
-                        add_header_above(c(" "=1, 'Egen enhet/gruppe' = 2, 'Resten' = 2)[1:(antKol/2+1)]) %>%
-                        column_spec(column = 1, width_min = '7em') %>%
-                        column_spec(column = 2:(ncol(tabFord)+1), width = '7em') %>%
-                        row_spec(0, bold = T)
+            tabFordSh <- lagTabavFigAndelerSh(UtDataFraFig = UtDataFordSh)
+            
+            output$fordelingShTab <- function() { #gr1=UtDataFord$hovedgrTxt, gr2=UtDataFord$smltxt renderTable(
+               antKol <- ncol(tabFordSh)
+               kableExtra::kable(tabFordSh, format = 'html'
+                                 , full_width=F
+                                 , digits = c(0,0,0,1,1,1)[1:antKol]
+               ) %>%
+                  add_header_above(c(" "=1, 'Antall' = 2, 'Andel' = 2)[1:(antKol/2+1)]) %>%
+                  column_spec(column = 1, width_min = '7em') %>%
+                  column_spec(column = 2:(ncol(tabFordSh)+1), width = '7em') %>%
+                  row_spec(0, bold = T)
             }
+            output$lastNed_tabFordSh <- downloadHandler(
+               filename = function(){paste0(input$valgtVar, '_fordelingSh.csv')},
+               content = function(file, filename){write.csv2(tabFordSh, file, row.names = F, na = '')
+               })
             
-            output$lastNed_tabFord <- downloadHandler(
-                  filename = function(){paste0(input$valgtVar, '_fordeling.csv')},
-                  content = function(file, filename){write.csv2(tabFord, file, row.names = F, na = '')
-                  })
       }) #observe Fordeling
       
       observe({ #Sykehusvise gjennomsnitt, figur og tabell

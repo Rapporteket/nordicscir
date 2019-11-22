@@ -361,6 +361,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
             flerevar <- 1
             retn <- 'H'
             tittel <- 'Legemidler som påvirker urinveiene'
+            #AnyDrugs: "siste året" (t.o.m. 2018), AnyDrugs2 "siste 4 uker"
             #RegData <- RegData[which((RegData$AnyDrugs %in% 0:1) & (RegData$InnDato >= as.Date('2015-01-01'))), ]
             RegData <- RegData[which((RegData$AnyDrugs2 == 1) & (RegData$InnDato >= as.Date('2019-01-01'))), ]
             variable <- c('Bladrelx', 'Spncrelx', 'DrugsAnti', 'Antiuti', 'Antiprop', 'Othdrg')

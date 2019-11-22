@@ -39,6 +39,7 @@ varHoved <- c("
       h.ANeuNoMeasure,
       h.ASensLvlAreaL,
       h.ASensLvlAreaR,
+      h.ASensLvlLC,
       h.BeforeRehDy,
       h.DischgDt,
       h.FAis,
@@ -111,6 +112,7 @@ varUrin <- c("
 ,Urin.Antiprop
 ,Urin.Antiuti
 ,Urin.AnyDrugs
+,Urin.AnyDrugs2
 ,Urin.Artsph
 ,Urin.ArtsphDt
 ,Urin.Avbladem
@@ -192,6 +194,7 @@ varUrin <- c("
 varTarm <- c('
 ,Tarm.Antichol
 ,Tarm.Apndec
+ ,Tarm.Apndic
  ,Tarm.ApndecDt
  ,Tarm.ApndecDtUnknown
  ,Tarm.Avdeftm
@@ -221,6 +224,7 @@ varTarm <- c('
  ,Tarm.FormDate
  ,Tarm.FormTypeId
  ,Tarm.Gifxnun
+ ,Tarm.Hemec
  ,Tarm.Hemrhoid
  ,UPPER(Tarm.HovedskjemaGUID) AS HovedskjemaGUID
  ,Tarm.Ileost

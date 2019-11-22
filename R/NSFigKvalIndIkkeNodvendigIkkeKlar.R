@@ -4,6 +4,7 @@
 #' 
 #' Argumentet \emph{valgtVar} kan bare være "kvalInd".
 #'
+#' @inheritParams NSUtvalg
 #' @param NSdata - Alle nødvendige variable fra hvert skjema.
 #' @param outfile - navn på fil figuren skrives ned til.
 #' @param reshID - avdelingsid for egen avdeling, standard: 0-hele landet.

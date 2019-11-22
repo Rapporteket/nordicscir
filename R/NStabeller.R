@@ -2,28 +2,14 @@
 #' 
 #' Fil som beregner div tabeller.Group of functions Description section
 #' 
-#' Detaljer. kommer senereGroup of functions Details paragraph.
-#'
 #' Fil som inneholder funksjoner for å lage tabeller, i første rekke tellinger av personer 
-#' Aktuelle tabeller:
-#' -Belegg (samlerapport), antall opphold per år og enhet, ant. pasienter per år og enhet, ant opph. per måned og enhet.
-#' -tabAntOpphSh12mnd: Antall opphold per måned og enhet siste 12 måneder fram til datoTil. 
-#' RegData må inneholde InnDato.
-#' -tabAntOpphSh5Aar:Antall opphold per år og enhet siste 5 år (inkl. inneværende år) fram til datoTil. 
-#' RegData må inneholde Aar.
-#' 
+#' Belegg (samlerapport), antall opphold per år og enhet, ant. pasienter per år og enhet, ant opph. per måned og enhet.
 #' @param RegData data
 #' @param personIDvar Variabelen som angir pasientidentifikasjon
 #' @param  Data Liste med alle datatabeller/skjema
 #' @param datoFra fra og med dato
 #' @param datoTil til og med dato
 #' @inheritParams NSFigAndeler
-#' @name NordicScirtabeller
-NULL
-#' @export
-
-#' @section Belegg (antall opphold, pasienter og rehabdøgn). Siste inntil 5 år eller siste inntil 12 måneder/kvartal/halvår
-#' @rdname NordicScirtabeller
 #' @export
 tabBelegg <- function(RegData, tidsenhet='Mnd', datoTil=Sys.Date(), enhetsUtvalg=0, reshID=0) {
       datoFra <- switch(tidsenhet, 
@@ -46,9 +32,13 @@ tabBelegg <- function(RegData, tidsenhet='Mnd', datoTil=Sys.Date(), enhetsUtvalg
       return(tabBeleggAnt)
 }
 
-#' @section Liggetider. Liggetid tot.(OpphTot), Liggetid rehab.(DagerRehab), Liggetid før rehab (DagerTilRehab): 
+#' Liggetider. Liggetid tot.(OpphTot), Liggetid rehab.(DagerRehab), Liggetid før rehab (DagerTilRehab): 
 #' min/max, gjsn, median
-#' @rdname NordicScirtabeller
+#' @param RegData data
+#' @param Data Liste med alle datatabeller/skjema
+#' @param datoFra fra og med dato
+#' @param datoTil til og med dato
+#' @inheritParams NSUtvalg
 #' @export
 tabLiggetider <- function(RegData, datoFra='2018-01-01', datoTil=Sys.Date(), enhetsUtvalg=0, reshID=0,
                           traume='') {
@@ -65,8 +55,11 @@ tabLiggetider <- function(RegData, datoFra='2018-01-01', datoTil=Sys.Date(), enh
       return(Liggetider)
 }
 
-#' @section tabAntOpphShMnd antall opphold siste X (antMnd) mnd
-#' @rdname NordicScirtabeller
+#' tabAntOpphShMnd antall opphold siste X (antMnd) mnd
+#' -tabAntOpphSh12mnd: Antall opphold per måned og enhet siste 12 måneder fram til datoTil. 
+#' -tabAntOpphSh5Aar:Antall opphold per år og enhet siste 5 år (inkl. inneværende år) fram til datoTil. 
+#' RegData må inneholde Aar.
+#' @inheritParams NSUtvalg
 #' @export
 tabAntOpphShMnd <- function(RegData, datoTil=Sys.Date(), traume='', antMnd=12){
       #RegData må inneholde DateAdmittedIntensive, DateDischargedIntensive 
@@ -85,10 +78,9 @@ tabAntOpphShMnd <- function(RegData, datoTil=Sys.Date(), traume='', antMnd=12){
 	return(tabAvdMnd)
 }
 
-#' @section Antall opphold siste 5 år
-#' @rdname NordicScirtabeller
+#' Antall opphold siste 5 år
+#' @inheritParams NSUtvalg
 #' @export
-#' 
 tabAntOpphSh5Aar <- function(RegData, datoTil=Sys.Date(), traume=''){
       AarNaa <- as.numeric(format.Date(datoTil, "%Y"))
       
@@ -99,8 +91,8 @@ tabAntOpphSh5Aar <- function(RegData, datoTil=Sys.Date(), traume=''){
       return(tabAvdAarN)
 }
 
-#' @section Antall registreringer/pasienter siste 5 år
-#' @rdname NordicScirtabeller
+#' Antall registreringer/pasienter siste 5 år
+#' @param gr gruppering 'opph'-opphold, 'pas'-pasient
 #' @export
 tabAntOpphPasSh5Aar <- function(RegData, gr='opph', datoTil){
       AarNaa <- as.numeric(format.Date(datoTil, "%Y"))
@@ -152,9 +144,9 @@ tabAntOpphPasSh5Aar <- function(RegData, gr='opph', datoTil){
 # return(tab)
 # }
 
-#' @section Tabell: Antall og andel moder"skjema som har ulike typer registreringsskjema
+#' Tabell: Antall og andel moder"skjema som har ulike typer registreringsskjema
 #' @param moderSkjema Hvilket skjema man skal knytte oppfølgingene til
-#' @rdname NordicScirtabeller
+#' @inheritParams NSUtvalg
 #' @export
 #' 
 tabSkjemaTilknyttet <- function(Data=AlleTab, moderSkjema='Hoved', datoFra='2017-01-01', datoTil=Sys.Date()){
@@ -191,10 +183,8 @@ tabSkjemaTilknyttet <- function(Data=AlleTab, moderSkjema='Hoved', datoFra='2017
 }
 
 
-#' @section Tabell: Antall av ulike typer skjema
-#' @rdname NordicScirtabeller
+#' Tabell: Antall av ulike typer skjema
 #' @export
-#' 
 tabAntSkjema <- function(Data=AlleTab, datoFra='2017-01-01', datoTil=Sys.Date()){
       # sum(Data$HovedSkjema$SkjemaGUID %in% Data$LivskvalitetH$HovedskjemaGUID)
       # sum(Data$LivskvalitetH$HovedskjemaGUID %in% Data$HovedSkjema$SkjemaGUID)
@@ -212,8 +202,8 @@ tabAntSkjema <- function(Data=AlleTab, datoFra='2017-01-01', datoTil=Sys.Date())
 }
 
 
-#' @section Vise figurdata som tabell, fordelingsfigur
-#' @rdname NordicScirtabeller
+#' Vise figurdata som tabell, fordelingsfigur
+#' @param UtDataFraFig Dataliste fra figuren
 #' @export
 lagTabavFigAndeler <- function(UtDataFraFig){
       tab <-cbind(UtDataFraFig$Ngr$Hoved, 
@@ -229,8 +219,31 @@ colnames(tab) <- c(paste0(UtDataFraFig$hovedgrTxt,', N'),
 return(tab)
 }
 
-#' @section Vise figurdata som tabell, sentralmål per sykshus
-#' @rdname NordicScirtabeller
+# RegData <- NSRegDataSQL(valgtVar = 'Alder')
+# RegData <- NSPreprosesser(RegData = RegData)
+# UtDataFraFig <- NSFigAndelerSh(RegData, valgtVar = 'Alder')
+# test <- UtDataFraFig$AggVerdier
+# t(test)
+# UtDataFraFig$Ngr
+# UtDataFraFig$grtxt
+
+#' Vise figurdata som tabell, fordeling per sykehus
+#' @param UtDataFraFig Dataliste fra figuren
+#' @export
+lagTabavFigAndelerSh <- function(UtDataFraFig){
+   tab <-cbind(UtDataFraFig$Ngr, 
+               #paste0(sprintf('%.1f',t(UtDataFraFig$AggVerdier)), '%')
+               t(UtDataFraFig$AggVerdier))
+   #tabell <- tab[,c(1,4,2,5,3,6)]
+   rownames(tab) <- UtDataFraFig$grtxt
+   colnames(tab)[4:6] <- colnames(tab)[1:3] #, N'), Andel (%)'))
+   
+   return(tab)
+}
+
+
+#' Vise figurdata som tabell, sentralmål per sykshus
+#' @param UtDataFraFig Dataliste fra figuren
 #' @export
 lagTabavFigGjsnGrVar <- function(UtDataFraFig){
       tab <-cbind(UtDataFraFig$Ngr, 
@@ -241,8 +254,9 @@ lagTabavFigGjsnGrVar <- function(UtDataFraFig){
 }
 
 
-#' @section Nevrologisk klassifikasjon
-#' @rdname NordicScirtabeller
+#' Nevrologisk klassifikasjon
+#' @param HovedSkjema- hovedskjema
+#' @inheritParams NSUtvalg
 #' @export
 lagTabNevrKlass <- function(HovedSkjema, datoFra='2018-01-01', datoTil=Sys.Date()){
       
