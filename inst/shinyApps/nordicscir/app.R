@@ -35,8 +35,7 @@ names(valgNivaaUt) <- c("Alle", "Paraplegi", "Tetraplegi", "C1-4", "C5-8", "Ukje
 ui <- tagList(
    shinyjs::useShinyjs(),
    navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
-      
-
+      id='toppPaneler',
             # lag logo og tittel som en del av navbar
             title = div(img(src="rap/logo.svg", alt="Rapporteket", height="26px"), regTitle),
             # sett inn tittle ogsÃ¥ i browser-vindu
@@ -196,34 +195,36 @@ ui <- tagList(
                             #           max = as.numeric(format(Sys.Date(), '%Y')), value = )
                ),
                mainPanel(width = 6,
-                     tabsetPanel( id='fordeling',
-                           tabPanel(
-                                 'Figur',
-                                 br(),
-                                 em('(Høyreklikk på figuren for å laste den ned)'),
-                                 br(),
-                                 br(),
-                                 plotOutput('fordelinger'),
-                                 hr()
-                           ),
-                           tabPanel(
-                                 'Figur, alle sykehus',
-                                 plotOutput('fordelingPrSh')),
-                           tabPanel(
-                                 'Tabell, alle sykehus',
-                                 uiOutput("tittelFord"),
-                                 br(),
-                                 tableOutput('fordelingShTab'),
-                                 downloadButton(outputId = 'lastNed_tabFordSh', label='Last ned')
-                                 ),
-                           tabPanel(
-                                 'Tabell',
-                                 uiOutput("tittelFord"),
-                                 br(),
-                                 tableOutput('fordelingTab'),
-                                 downloadButton(outputId = 'lastNed_tabFord', label='Last ned') 
-                           )
-                     ))
+                         tabsetPanel( id='fordeling',
+                                      tabPanel(
+                                         'Figur',
+                                         br(),
+                                         em('(Høyreklikk på figuren for å laste den ned)'),
+                                         br(),
+                                         br(),
+                                         plotOutput('fordelinger'),
+                                         hr()
+                                      ) ,
+                                      tabPanel(
+                                         'Figur, alle sykehus',
+                                         plotOutput('fordelingPrSh')),
+                                      tabPanel(
+                                         'Tabell',
+                                         uiOutput("tittelFord"),
+                                         br(),
+                                         tableOutput('fordelingTab'),
+                                         downloadButton(outputId = 'lastNed_tabFord', label='Last ned'),
+                                         br(),
+                                         br(),
+                                         br(),
+                                         br(),
+                                         #hr(),
+                                         #conditionalPanel(condition = (rolle()=='SC'),
+                                                          tableOutput('fordelingShTab'),
+                                                          downloadButton(outputId = 'lastNed_tabFordSh', label='Last ned')
+                                         #)
+                                      )
+                         )) #mainPanel
       ), #tab Fordelinger
    
          
@@ -406,16 +407,17 @@ server <- function(input, output, session) {
       reshID <- reactive({ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 107627)}) 
       rolle <- reactive({ifelse(paaServer, rapbase::getUserRole(shinySession=session), 'SC')})
       #output$reshID <- renderText({ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 105460)}) #evt renderUI
-      
+      print(reshID)
       
       observe({if (rolle() != 'SC') {
             #print('OK')
       #NB: Må aktiveres i ui-del også OK
-            #shinyjs::hide(id = 'samleRappLand.pdf')
-            #shinyjs::hide(id = 'fordSh')
-            hideTab(inputId = "fordeling", target = "Figur, alle sykehus")
-            hideTab(inputId = 'Registeradministrasjon')
-            #shinyjs::hide(id = 'fordelingPrSh')
+            shinyjs::hide(id = 'samleRappLand.pdf')
+         hideTab(inputId = "toppPaneler", target = "Registeradministrasjon")
+         hideTab(inputId = "fordeling", target = "Figur, alle sykehus")
+         shinyjs::hide(id = 'fordelingShTab')
+         shinyjs::hide(id = 'lastNed_tabFordSh')
+         #shinyjs::hide(id = 'fordelingPrSh')
             #hideTab(inputId = "tabs_andeler", target = "Figur, sykehusvisning")
       }
       })
@@ -497,7 +499,7 @@ server <- function(input, output, session) {
       #       file.rename(stringr::str_replace(texfil,'tex','pdf'), file)
       # }
       
-      #Fra intensiv
+      
       contentFile <- function(file, srcFil, tmpFile, 
                               reshID=0, datoFra=startDatoStandard, datoTil=Sys.Date()) {
          src <- normalizePath(system.file(srcFil, package="nordicscir"))
@@ -725,23 +727,23 @@ server <- function(input, output, session) {
                                        erMann=as.numeric(input$erMann), 
                                        datoUt=as.numeric(input$datoUt))
             
-            tabFordSh <- lagTabavFigAndelerSh(UtDataFraFig = UtDataFordSh)
-            
-            output$fordelingShTab <- function() { #gr1=UtDataFord$hovedgrTxt, gr2=UtDataFord$smltxt renderTable(
-               antKol <- ncol(tabFordSh)
-               kableExtra::kable(tabFordSh, format = 'html'
-                                 , full_width=F
-                                 , digits = c(0,0,0,1,1,1)[1:antKol]
-               ) %>%
-                  add_header_above(c(" "=1, 'Antall' = 2, 'Andel' = 2)[1:(antKol/2+1)]) %>%
-                  column_spec(column = 1, width_min = '7em') %>%
-                  column_spec(column = 2:(ncol(tabFordSh)+1), width = '7em') %>%
-                  row_spec(0, bold = T)
-            }
-            output$lastNed_tabFordSh <- downloadHandler(
-               filename = function(){paste0(input$valgtVar, '_fordelingSh.csv')},
-               content = function(file, filename){write.csv2(tabFordSh, file, row.names = F, na = '')
-               })
+            # tabFordSh <- lagTabavFigAndelerSh(UtDataFraFig = UtDataFordSh)
+            # 
+            # output$fordelingShTab <- function() { #gr1=UtDataFord$hovedgrTxt, gr2=UtDataFord$smltxt renderTable(
+            #    antKol <- ncol(tabFordSh)
+            #    tab <- kableExtra::kable(tabFordSh, format = 'html'
+            #                             , full_width=F
+            #                             , digits = c(0,0,0,1,1,1)[1:antKol]
+            #    ) %>%
+            #       add_header_above(tab, header= c(" "=1, 'Antall' = 3, 'Andel' = 3))  %>% #[1:(antKol/2+1)])
+            #       column_spec(column = 1, width_min = '7em') %>%
+            #       column_spec(column = 2:(ncol(tabFordSh)+1), width = '7em') %>%
+            #       row_spec(0, bold = T)
+            # }
+            # output$lastNed_tabFordSh <- downloadHandler(
+            #    filename = function(){paste0(input$valgtVar, '_fordelingSh.csv')},
+            #    content = function(file, filename){write.csv2(tabFordSh, file, row.names = F, na = '')
+            #    })
             
       }) #observe Fordeling
       

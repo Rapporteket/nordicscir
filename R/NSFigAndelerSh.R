@@ -45,7 +45,7 @@
 #' 
 #' @export
 
-NSFigAndelerSh <- function(RegData, outfile='', valgtVar, hentData=0, preprosess=1, 
+NSFigAndelerSh <- function(RegData, outfile='', valgtVar='Alder', hentData=0, preprosess=1, 
                          datoFra='2010-01-01', datoTil='2050-01-01', datoUt=0, AIS='',
                          minald=0, maxald=130, erMann=99, traume='alle',nivaaUt=99) {
       
@@ -83,7 +83,7 @@ NSFigAndelerSh <- function(RegData, outfile='', valgtVar, hentData=0, preprosess
             }
             
             #--------------- Tilrettelegge variable og gjøre utvalg ------------------------------
-            
+            #TarmAvfmiddelHvilke, 'TarmAvfHoved','TarmAvfTillegg'
             NSVarSpes <- NSVarTilrettelegg(RegData=RegData, valgtVar=valgtVar, figurtype='andeler')
             RegData <- NSVarSpes$RegData
             
