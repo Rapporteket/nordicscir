@@ -113,19 +113,30 @@ NSFigAndelerSh <- function(RegData, outfile='', valgtVar='Alder', hentData=0, pr
             # #geom_bar(position="stack", stat="identity")
             
             Ngr <- switch(as.character(flerevar), 
-                                '0' = table(RegData$VariabelGr, RegData$ShNavn),
-                                '1' = apply(RegData[ ,variable], MARGIN=2, 
-                                            FUN=function(x) sum(x == 1, na.rm=T)))
+                                '0' = t(table(RegData$VariabelGr, RegData$ShNavn)),
+                                '1' = apply(X=RegData[,variable], MARGIN = 2, 
+                                            FUN=function(x) table(RegData$ShNavn[x==1]))
+                          )#function(x) sum(x == 1, na.rm=T))
             #N$ gjelder selv om totalutvalget er ulikt for de ulike variablene i flerevar
             N <- switch(as.character(flerevar), 
-                              '0' = table(RegData$ShNavn), #sum(Ngr),	
-                              '1' = apply(RegData[ ,variable], MARGIN=2, 
-                                          FUN=function(x) sum(x %in% 0:1, na.rm=T)))
-            AggVerdier <- 100*prop.table(ftable(RegData[ ,c('ShNavn', 'VariabelGr')]),1)
-          AggTot <- 100*prop.table(table(RegData[ ,'VariabelGr']))
+                              '0' = t(table(RegData$ShNavn)), #sum(Ngr),	
+                              '1' = apply(RegData[ ,variable], MARGIN=2,
+                                          FUN=function(x) table(RegData$ShNavn)))
+                                          #FUN=function(x) sum(x %in% 0:1, na.rm=T)))
             
-            
-           #  #-------Eksempel
+          
+            AggVerdier <- switch(as.character(flerevar), 
+                           '0' = 100*prop.table(ftable(RegData[ ,c('ShNavn', 'VariabelGr')]),1), #100*t(sweep(Ngr, MARGIN=2, N, `/`)), # 
+                           '1' = 100*Ngr/N) #100*t(sweep(Ngr, MARGIN=2, N, `/`)))
+          AggTot <- switch(as.character(flerevar), 
+                           '0' = 100*prop.table(table(RegData[ ,'VariabelGr'])), 
+                           '1' = 100*apply(X=RegData[,variable], MARGIN = 2, 
+                                           FUN=function(x) sum(x==1)/length(x %in% 0:1)))
+          
+          #AggVerdier <- 100*prop.table(ftable(RegData[ ,c('ShNavn', 'VariabelGr')]),1)
+          #AggTot <- 100*prop.table(table(RegData[ ,'VariabelGr'])) 
+           
+          #  #-------Eksempel
            #  specie <- c(rep("sorgho" , 3) , rep("poacee" , 3) , rep("banana" , 3) , rep("triticum" , 3) )
            #  condition <- rep(c("normal" , "stress" , "Nitrogen") , 4)
            #  value <- abs(rnorm(12 , 0 , 15))
@@ -136,14 +147,11 @@ NSFigAndelerSh <- function(RegData, outfile='', valgtVar='Alder', hentData=0, pr
             
            
             if(flerevar==1) {
-                  Nfig <- max(N)
+                  Nfig <- apply(N, MARGIN = 1, FUN = max)
                   #ifelse(min(N$Hoved)==max(N$Hoved),
                   #              min(N$Hoved[1]), 
                   #               paste0(min(N$Hoved),'-',max(N$Hoved)))
-                  Nfig <- max(N)
-                  #ifelse(min(N$Rest)==max(N$Rest),
-                  #              min(N$Rest[1]), 
-                  #              paste0(min(N$Rest),'-',max(N$Rest)))
+                  
             } else {
                   Nfig <- N}
             
@@ -225,7 +233,7 @@ NSFigAndelerSh <- function(RegData, outfile='', valgtVar='Alder', hentData=0, pr
                         xmax <- min(max(c(AggVerdier),na.rm=T)*1.25, 100)
                         #dplyr::arrange(-dplyr::row_number(AggVerdier))
                         pos <-   barplot(AggVerdier[,ncol(AggVerdier):1], horiz=TRUE, beside=T, xlab="Andel pasienter (%)", 
-                                         cex.lab=cexleg, cex.sub=cexleg, #sub=NSVarSpes$xAkseTxt, 
+                                         cex.lab=cexleg, cex.sub=cexleg, axisnames =FALSE, #names.arg = grtxtpst, #sub=NSVarSpes$xAkseTxt, 
                                          col=fargeHoved, border='white', xlim=c(0, xmax)) #, ylim=c(0, ymax))
                         mtext(at=pos[2,]+0.1, text=rev(grtxtpst), side=2, las=1, cex=cexgr, adj=1, line=0.25)	
                               legend('top', paste0(hovedgrTxt, ' (N=', Nfig,')'),

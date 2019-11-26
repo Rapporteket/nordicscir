@@ -179,11 +179,9 @@ valgtMaal='gjsn'	#'Med'-median, 'Gjsn' gjennomsnitt
 grVar <- 'ShNavn'
 datoUt=0 #Velge ut-dato som filtrering
 outfile <- ''
-valgtVar <- 'alder'
+valgtVar <- 'TarmKirInngrepHvilke'
 
-RegData <- NSPreprosesser(HovedSkjema)
-table(RegData$Aar, RegData$ASensLvlLC)
-UtDataFord <- NSFigAndelerSh(RegData=HovedSkjema, valgtVar = 'Ntsci', datoFra='2018-01-01')
+UtDataFraFig <- NSFigAndelerSh(preprosess = 1, hentData = 1, valgtVar = valgtVar, datoFra='2018-01-01')
 
 #------------------------------ Fordelinger --------------------------
 RegData <- HovedSkjema

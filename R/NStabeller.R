@@ -231,16 +231,16 @@ return(tab)
 #' @param UtDataFraFig Dataliste fra figuren
 #' @export
 lagTabavFigAndelerSh <- function(UtDataFraFig){
-   tab <-cbind(UtDataFraFig$Ngr, 
+   tab <-rbind(UtDataFraFig$Ngr, 
                #paste0(sprintf('%.1f',t(UtDataFraFig$AggVerdier)), '%')
-               t(UtDataFraFig$AggVerdier))
+               UtDataFraFig$AggVerdier)
    #tabell <- tab[,c(1,4,2,5,3,6)]
-   rownames(tab) <- UtDataFraFig$grtxt
-   colnames(tab)[4:6] <- colnames(tab)[1:3] #, N'), Andel (%)'))
+   colnames(tab) <- UtDataFraFig$grtxt
+   #rownames(tab)[4:6] <- colnames(tab)[1:3] #, N'), Andel (%)'))
    
-   return(tab)
+   return(t(tab))
 }
-
+#lagTabavFigAndelerSh(UtDataFordSh)
 
 #' Vise figurdata som tabell, sentralmål per sykshus
 #' @param UtDataFraFig Dataliste fra figuren

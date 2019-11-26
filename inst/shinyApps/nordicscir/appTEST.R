@@ -93,35 +93,34 @@ ui <- tagList(
                ),
                
                mainPanel(width = 6,
-                      tabsetPanel( id='fordeling',
-                           tabPanel(
-                                 'Figur',
-                                 br(),
-                                 em('(Høyreklikk på figuren for å laste den ned)'),
-                                 br(),
-                                 br(),
-                                 plotOutput('fordelinger')
-                                 ),
-                           hr()
-                           # ,
-                           #       tabPanel('Figur, alle sykehus',
-                           #       plotOutput('fordelingPrSh')
-                           #       ),
-                           #       tabPanel('Tabell, alle sykehus',
-                           #       uiOutput("tittelFord"),
-                           #       br(),
-                           #       tableOutput('fordelingShTab') #,
-                           #       #downloadButton(outputId = 'lastNed_tabFordSh', label='Last ned')
-                           #       ),
-                           # tabPanel(
-                           #       'Tabell',
-                           #       uiOutput("tittelFord"),
-                           #       br(),
-                           #       tableOutput('fordelingTab'),
-                           #       downloadButton(outputId = 'lastNed_tabFord', label='Last ned')
-                           # )
-                      )
-                     ) #mainPanel
+                         tabsetPanel( id='fordeling',
+                                      tabPanel(
+                                         'Figur',
+                                         br(),
+                                         em('(Høyreklikk på figuren for å laste den ned)'),
+                                         br(),
+                                         br(),
+                                         plotOutput('fordelinger'),
+                                         hr()
+                                      ) ,
+                                      tabPanel(
+                                         'Figur, alle sykehus',
+                                         plotOutput('fordelingPrSh')),
+                                      tabPanel(
+                                         'Tabell',
+                                         uiOutput("tittelFord"),
+                                         br(),
+                                         tableOutput('fordelingTab'),
+                                         downloadButton(outputId = 'lastNed_tabFord', label='Last ned'),
+                                         br(),
+                                         br(),
+                                         br(),
+                                         br(),
+                                         #hr(),
+                                         tableOutput('fordelingShTab'),
+                                         downloadButton(outputId = 'lastNed_tabFordSh', label='Last ned')
+                                      )
+                         )) #mainPanel
       ) #tab Fordelinger
    
          ) #navbar-page
@@ -138,7 +137,10 @@ server <- function(input, output, session) {
       
       observe({if (rolle() != 'SC') {
             hideTab(inputId = "fordeling", target = "Figur, alle sykehus")
-            hideTab(inputId = 'Registeradministrasjon')
+         hideTab(inputId = "fordeling", target = "lastNed_tabFordSh")
+         hideTab(inputId = "fordeling", target = "fordelingShTab")
+         hideTab(inputId = 'Registeradministrasjon', target ='Registeradministrasjon')
+           
       }
       })
       
@@ -264,16 +266,17 @@ server <- function(input, output, session) {
                                        erMann=as.numeric(input$erMann), 
                                        datoUt=as.numeric(input$datoUt))
             
+            #RegData <- NSRegDataSQL()
+            #UtDataFordSh <- NSFigAndelerSh(RegData=RegData)
             tabFordSh <- lagTabavFigAndelerSh(UtDataFraFig = UtDataFordSh)
-            print(tabFordSh)
             
             output$fordelingShTab <- function() { #gr1=UtDataFord$hovedgrTxt, gr2=UtDataFord$smltxt renderTable(
                antKol <- ncol(tabFordSh)
-               kableExtra::kable(tabFordSh, format = 'html'
+               tab <- kableExtra::kable(tabFordSh, format = 'html'
                                  , full_width=F
                                  , digits = c(0,0,0,1,1,1)[1:antKol]
                ) %>%
-                  add_header_above(c(" "=1, 'Antall' = 2, 'Andel' = 2)[1:(antKol/2+1)]) %>%
+                  add_header_above(tab, header= c(" "=1, 'Antall' = 3, 'Andel' = 3))  %>% #[1:(antKol/2+1)])
                   column_spec(column = 1, width_min = '7em') %>%
                   column_spec(column = 2:(ncol(tabFordSh)+1), width = '7em') %>%
                   row_spec(0, bold = T)

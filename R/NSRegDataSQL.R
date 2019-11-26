@@ -216,6 +216,7 @@ varTarm <- c('
  ,Tarm.DefcmthM7
  ,Tarm.DefcmthM8
  ,Tarm.DefcmthM9
+ ,Tarm.DefcmthNa
  ,Tarm.DefcmthUn
  ,Tarm.Deffrq
  ,Tarm.DrugUse
@@ -224,7 +225,7 @@ varTarm <- c('
  ,Tarm.FormDate
  ,Tarm.FormTypeId
  ,Tarm.Gifxnun
- ,Tarm.Hemec
+ ,Tarm.Hemec 
  ,Tarm.Hemrhoid
  ,UPPER(Tarm.HovedskjemaGUID) AS HovedskjemaGUID
  ,Tarm.Ileost

@@ -220,8 +220,8 @@ ui <- tagList(
                                          br(),
                                          #hr(),
                                          #conditionalPanel(condition = (rolle()=='SC'),
-                                                          tableOutput('fordelingShTab'),
-                                                          downloadButton(outputId = 'lastNed_tabFordSh', label='Last ned')
+                                         tableOutput('fordelingShTab'),
+                                         downloadButton(outputId = 'lastNed_tabFordSh', label='Last ned')
                                          #)
                                       )
                          )) #mainPanel
@@ -407,7 +407,6 @@ server <- function(input, output, session) {
       reshID <- reactive({ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 107627)}) 
       rolle <- reactive({ifelse(paaServer, rapbase::getUserRole(shinySession=session), 'SC')})
       #output$reshID <- renderText({ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 105460)}) #evt renderUI
-      print(reshID)
       
       observe({if (rolle() != 'SC') {
             #print('OK')
@@ -473,8 +472,7 @@ server <- function(input, output, session) {
                       TarmH=TarmH, 
                       AktivFunksjonH = AktivFunksjonH, 
                       AktivTilfredshetH = AktivTilfredshetH)
-      print(dim(HovedSkjema))
-     
+      
 #-------Samlerapporter--------------------      
       # funksjon for å kjøre Rnw-filer (render file funksjon)
       # filename function for re-use - i dette tilfellet vil det funke fint å hardkode det samme..
@@ -727,23 +725,23 @@ server <- function(input, output, session) {
                                        erMann=as.numeric(input$erMann), 
                                        datoUt=as.numeric(input$datoUt))
             
-            # tabFordSh <- lagTabavFigAndelerSh(UtDataFraFig = UtDataFordSh)
-            # 
-            # output$fordelingShTab <- function() { #gr1=UtDataFord$hovedgrTxt, gr2=UtDataFord$smltxt renderTable(
-            #    antKol <- ncol(tabFordSh)
-            #    tab <- kableExtra::kable(tabFordSh, format = 'html'
-            #                             , full_width=F
-            #                             , digits = c(0,0,0,1,1,1)[1:antKol]
-            #    ) %>%
-            #       add_header_above(tab, header= c(" "=1, 'Antall' = 3, 'Andel' = 3))  %>% #[1:(antKol/2+1)])
-            #       column_spec(column = 1, width_min = '7em') %>%
-            #       column_spec(column = 2:(ncol(tabFordSh)+1), width = '7em') %>%
-            #       row_spec(0, bold = T)
-            # }
-            # output$lastNed_tabFordSh <- downloadHandler(
-            #    filename = function(){paste0(input$valgtVar, '_fordelingSh.csv')},
-            #    content = function(file, filename){write.csv2(tabFordSh, file, row.names = F, na = '')
-            #    })
+             tabFordSh <- lagTabavFigAndelerSh(UtDataFraFig = UtDataFordSh)
+             
+            output$fordelingShTab <- function() { #gr1=UtDataFord$hovedgrTxt, gr2=UtDataFord$smltxt renderTable(
+               antKol <- ncol(tabFordSh)
+               kableExtra::kable(tabFordSh, format = 'html'
+                                        , full_width=F
+                                        , digits = c(0,0,0,1,1,1)[1:antKol]
+               ) %>%
+                  add_header_above(header= c(" "=1, 'Antall' = 3, 'Andel' = 3))  %>% #[1:(antKol/2+1)])
+                  column_spec(column = 1, width_min = '7em') %>%
+                  column_spec(column = 2:(ncol(tabFordSh)+1), width = '7em') %>%
+                  row_spec(0, bold = T)
+            }
+            output$lastNed_tabFordSh <- downloadHandler(
+               filename = function(){paste0(input$valgtVar, '_fordelingSh.csv')},
+               content = function(file, filename){write.csv2(tabFordSh, file, row.names = F, na = '')
+               })
             
       }) #observe Fordeling
       
