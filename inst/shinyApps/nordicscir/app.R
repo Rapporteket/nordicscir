@@ -37,11 +37,13 @@ ui <- tagList(
    navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
       id='toppPaneler',
             # lag logo og tittel som en del av navbar
-            title = div(img(src="rap/logo.svg", alt="Rapporteket", height="26px"), regTitle),
+            #title = div(img(src="rap/logo.svg", alt="Rapporteket", height="26px"), regTitle),
+      title = div(a(includeHTML(system.file('www/logo.svg', package='rapbase'))),
+                  regTitle),
             # sett inn tittle ogsÃ¥ i browser-vindu
-            windowTitle = regTitle,
+      windowTitle = regTitle,
             # velg css (forelÃ¸pig den eneste bortsett fra "naken" utgave)
-            #theme = "rap/bootstrap.css",
+      theme = "rap/bootstrap.css",
 #----startside--------            
       tabPanel("Startside",
                #fluidRow(
@@ -61,7 +63,9 @@ ui <- tagList(
                             br()
                ),
                mainPanel(width = 8,
-                         if (paaServer){ rapbase::appNavbarUserWidget(user = uiOutput("appUserName"),
+                         shinyalert::useShinyalert(),
+                         if (paaServer){ 
+                            rapbase::appNavbarUserWidget(user = uiOutput("appUserName"),
                                                       organization = uiOutput("appOrgName"),
                                                       addUserInfo = TRUE)},
                          h2('Velkommen til Rapporteket - Norsk Ryggmargsskaderegister!', align='center'),
@@ -389,7 +393,35 @@ tabPanel("Registeradministrasjon",
                                  br()
                         )
             ))
-) #tab Registeradministrasjon
+), #tab Registeradministrasjon
+
+#------------------Abonnement------------------------
+tabPanel(p("Abonnement",
+           title='Bestill automatisk utsending av månedsrapport på e-post'),
+         sidebarLayout(
+            sidebarPanel(width = 3,
+                         selectInput("subscriptionRep", "Rapport:",
+                                     c("Månedsrapport")),
+                         selectInput("subscriptionFreq", "Frekvens:",
+                                     list(Årlig="Årlig-year",
+                                           Kvartalsvis="Kvartalsvis-quarter",
+                                           Månedlig="Månedlig-month",
+                                           Ukentlig="Ukentlig-week"), #,Daglig="Daglig-DSTday"),
+                                     selected = "Månedlig-month"),
+                         #selectInput("subscriptionFileFormat", "Format:",
+                         #            c("html", "pdf")),
+                         actionButton("subscribe", "Bestill!")
+            ),
+            mainPanel(
+               uiOutput("subscriptionContent")
+            )
+         )
+) #Tab abonnement
+
+
+
+
+
 ) #navbar
 ) #tagList
 
@@ -399,13 +431,15 @@ tabPanel("Registeradministrasjon",
 #----- Define server logic required to draw a histogram-------
 server <- function(input, output, session) {
       
-      #raplog::appLogger(session)
+   #-----------Div serveroppstart------------------  
+   #raplog::appLogger(session = session, msg = "Starter intensiv-app")
       #system.file('NSmndRapp.Rnw', package='nordicscir')
       #system.file('NSsamleRapp.Rnw', package='nordicscir')
    
       #hospitalName <-getHospitalName(rapbase::getUserReshId(session))
       reshID <- reactive({ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 107627)}) 
       rolle <- reactive({ifelse(paaServer, rapbase::getUserRole(shinySession=session), 'SC')})
+      brukernavn <- reactive({ifelse(paaServer, rapbase::getUserName(shinySession=session), 'tullebukk')})
       #output$reshID <- renderText({ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 105460)}) #evt renderUI
       
       observe({if (rolle() != 'SC') {
@@ -419,6 +453,20 @@ server <- function(input, output, session) {
          #shinyjs::hide(id = 'fordelingPrSh')
             #hideTab(inputId = "tabs_andeler", target = "Figur, sykehusvisning")
       }
+      })
+      
+      # widget
+      if (paaServer) {
+         output$appUserName <- renderText(rapbase::getUserFullName(session))
+         output$appOrgName <- renderText(paste0('rolle: ', rolle(), '<br> ReshID: ', reshID()) )}
+      
+      # User info in widget
+      userInfo <- rapbase::howWeDealWithPersonalData(session)
+      observeEvent(input$userInfo, {
+         shinyalert::shinyalert("Dette vet Rapporteket om deg:", userInfo,
+                                type = "", imageUrl = "rap/logo.svg",
+                                closeOnEsc = TRUE, closeOnClickOutside = TRUE,
+                                html = TRUE, confirmButtonText = rapbase::noOptOutOk())
       })
       
  #NB: Skal bare forholde oss til oppfølgingsskjema som er tilknyttet et gyldig Hovedskjema
