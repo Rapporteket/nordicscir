@@ -10,7 +10,7 @@ library(kableExtra)
 #library(zoo)
 
 
-startDatoStandard <- as.Date(paste0(as.numeric(format(Sys.Date()-400, "%Y")), '-01-01')) #Sys.Date()-400
+startDato <- as.Date(paste0(as.numeric(format(Sys.Date()-400, "%Y")), '-01-01')) #Sys.Date()-400
 
 # gjør Rapportekets www-felleskomponenter tilgjengelig for applikasjonen
 addResourcePath('rap', system.file('www', package='rapbase'))
@@ -60,7 +60,8 @@ ui <- tagList(
                             downloadButton(outputId = "mndRapp.pdf", label='Last ned MÅNEDSRAPPORT', class = "butt"),
                             br(),
                             br('NB: Nedlasting tar litt tid. I mellomtida får man ikke sett på andre resultater.'),
-                            br()
+                            br(),
+                            br('Hvis du ønsker månedsrapporten tilsendt på e-post, kan du gå til fanen "Abonnement" og bestille dette.'),
                ),
                mainPanel(width = 8,
                          shinyalert::useShinyalert(),
@@ -87,6 +88,8 @@ ui <- tagList(
                             Man kan velge hvilken variabel man vil se på og om man vil se gjennomsnitt eller median. 
                             Man kan også velge å filtrere data.'),
                          h4(tags$b('Registreringsoversikter '), 'viser aktivitet i registeret. Også her kan man gjøre filtreringer.'),
+                         h4(tags$b('Abonnement'), 'inneholder oversikt over rapporter du abbonerer på. Her kan du også bestille abonnement, 
+                            dvs. rapporter tilsendt på e-post.'),
                          br(),
                          br(),
                          h3('Kommentar: HER ville jeg vist sykehusets registreringer per måned i løpet av siste år'),
@@ -168,7 +171,7 @@ ui <- tagList(
                                               'Tarm: Kirurgiske inngrep, hvilke' = 'TarmKirInngrepHvilke'
                                   )
                             ),
-                            dateRangeInput(inputId = 'datovalg', start = startDatoStandard, end = Sys.Date(),
+                            dateRangeInput(inputId = 'datovalg', start = startDato, end = Sys.Date(),
                                            label = "Tidsperiode", separator="t.o.m.", language="nb"),
                             radioButtons(inputId = 'datoUt', 'Bruk utskrivingsdato til datofiltrering?',
                                          choiceNames = c('nei','ja'), choiceValues = 0:1, selected = 0),
@@ -247,7 +250,7 @@ ui <- tagList(
                                               'Livskval.: Tilfredshet med psykisk helse' = 'LivsPsyk'
                                              )
                             ),
-                            dateRangeInput(inputId = 'datovalgGjsnGrVar', start = startDatoStandard, end = Sys.Date(),
+                            dateRangeInput(inputId = 'datovalgGjsnGrVar', start = startDato, end = Sys.Date(),
                                            label = "Tidsperiode", separator="t.o.m.", language="nb"),
                             selectInput(inputId = "erMannGjsnGrVar", label="Kjønn",
                                         choices = c("Begge"=2, "Menn"=1, "Kvinner"=0)
@@ -324,7 +327,7 @@ tabPanel("Registreringsoversikter",
                       conditionalPanel(
                             condition = "input.ark == 'Antall hovedskjema med tilknyttede skjema' |
                             input.ark == 'Antall kontrollskjema med tilknyttede skjema' ",
-                            dateRangeInput(inputId = 'datovalgReg', start = startDatoStandard, end = Sys.Date(),
+                            dateRangeInput(inputId = 'datovalgReg', start = startDato, end = Sys.Date(),
                                            label = "Tidsperiode", separator="t.o.m.", language="nb")
                       )
          ),
@@ -371,7 +374,7 @@ tabPanel("Registreringsoversikter",
 tabPanel("Registeradministrasjon",
          sidebarPanel(width=3,
                       h3('Utvalg'),
-                       dateRangeInput(inputId = 'datovalgSamleRapp', start = startDatoStandard-150, end = Sys.Date(),
+                       dateRangeInput(inputId = 'datovalgSamleRapp', start = startDato-150, end = Sys.Date(),
                                      label = "Tidsperiode", separator="t.o.m.", language="nb")
          ),
          
@@ -417,9 +420,6 @@ tabPanel(p("Abonnement",
             )
          )
 ) #Tab abonnement
-
-
-
 
 
 ) #navbar
@@ -547,16 +547,13 @@ server <- function(input, output, session) {
       
       
       contentFile <- function(file, srcFil, tmpFile, 
-                              reshID=0, datoFra=startDatoStandard, datoTil=Sys.Date()) {
+                              reshID=0, datoFra=startDato, datoTil=Sys.Date()) {
          src <- normalizePath(system.file(srcFil, package="nordicscir"))
          #dev.off()
          # gå til tempdir. Har ikke skriverettigheter i arbeidskatalog
          owd <- setwd(tempdir())
          on.exit(setwd(owd))
          file.copy(src, tmpFile, overwrite = TRUE)
-         
-         #texfil <- knitr::knit(tmpFile, encoding = 'UTF-8')
-         #tools::texi2pdf(texfil, clean = TRUE)
          knitr::knit2pdf(tmpFile)
          
          gc() #Opprydning gc-"garbage collection"
@@ -846,6 +843,91 @@ server <- function(input, output, session) {
             
             
       }) #observe gjsnGrVar
+      
+      
+      #------------------ Abonnement ----------------------------------------------
+      ## reaktive verdier for å holde rede på endringer som skjer mens
+      ## applikasjonen kjører
+      rv <- reactiveValues(
+         subscriptionTab = rapbase::makeUserSubscriptionTab(session))
+      
+      ## lag tabell over gjeldende status for abonnement
+      output$activeSubscriptions <- DT::renderDataTable(
+         rv$subscriptionTab, server = FALSE, escape = FALSE, selection = 'none',
+         rownames = FALSE, options = list(dom = 't')
+      )
+      
+      ## lag side som viser status for abonnement, også når det ikke finnes noen
+      output$subscriptionContent <- renderUI({
+         fullName <- rapbase::getUserFullName(session)
+         if (length(rv$subscriptionTab) == 0) {
+            p(paste("Ingen aktive abonnement for", fullName))
+         } else {
+            tagList(
+               p(paste("Aktive abonnement for", fullName, "som sendes per epost til ",
+                       rapbase::getUserEmail(session), ":")),
+               DT::dataTableOutput("activeSubscriptions")
+            )
+         }
+      })
+      
+      abonnement <- function(rnwFil, brukernavn='tullebukk', reshID=0, 
+                             datoFra=Sys.Date()-400, datoTil=Sys.Date()) {
+         filbase <- substr(rnwFil, 1, nchar(rnwFil)-4)
+         tmpFile <- paste0(filbase, Sys.Date(),'_',digest::digest(brukernavn), '.Rnw')
+         src <- normalizePath(system.file(rnwFil, package='nordicscir'))
+         owd <- setwd(tempdir()) # gå til tempdir. Har ikke skriverettigheter i arbeidskatalog
+         file.copy(src, tmpFile, overwrite = TRUE)
+         knitr::knit2pdf(input=tmpFile) #, output = paste0(filbase, digest::digest(brukernavn),'.tex'))
+         
+         #gc() #Opprydning gc-"garbage collection"
+         utfil <- paste0(owd, '/', substr(tmpFile, 1, nchar(tmpFile)-3), 'pdf')
+         #utfil <- file.copy(from = paste0(substr(tmpFile, 1, nchar(tmpFile)-3), 'pdf'), 
+         #         to = paste0(filbase, digest::digest(brukernavn),'.pdf')) #filnavn)
+         return(utfil)
+      }
+      
+      ## nye abonnement
+      observeEvent (input$subscribe, { #MÅ HA
+         package <- "nordicscir"
+         owner <- rapbase::getUserName(session)
+         interval <- strsplit(input$subscriptionFreq, "-")[[1]][2]
+         intervalName <- strsplit(input$subscriptionFreq, "-")[[1]][1]
+         organization <- rapbase::getUserReshId(session)
+         runDayOfYear <- rapbase::makeRunDayOfYearSequence(
+            interval = interval
+         )
+         email <- rapbase::getUserEmail(session)
+         if (input$subscriptionRep == "Månedsrapport") {
+            synopsis <- "NordicSCIR/Rapporteket: månedsrapport"
+            rnwFil <- "NSmndRapp" #Navn på fila
+            print(rnwFil)
+         }
+         
+         
+         fun <- "abonnement"  #"henteSamlerapporter"
+         paramNames <- c('rnwFil', 'brukernavn', "reshID", "datoFra", 'datoTil')
+         paramValues <- c(rnwFil, brukernavn(), reshID(), startDato, Sys.Date()) #input$subscriptionFileFormat)
+         #abonnement('NIRmndRapp.Rnw')
+         
+         rapbase::createAutoReport(synopsis = synopsis, package = package,
+                                   fun = fun, paramNames = paramNames,
+                                   paramValues = paramValues, owner = owner,
+                                   email = email, organization = organization,
+                                   runDayOfYear = runDayOfYear, interval = interval,
+                                   intervalName = intervalName)
+         rv$subscriptionTab <- rapbase::makeUserSubscriptionTab(session)
+      })
+      
+      ## slett eksisterende abonnement
+      observeEvent(input$del_button, {
+         selectedRepId <- strsplit(input$del_button, "_")[[1]][2]
+         rapbase::deleteAutoReport(selectedRepId)
+         rv$subscriptionTab <- rapbase::makeUserSubscriptionTab(session)
+      })
+      
+      
+      
 } #server
 # Run the application 
 shinyApp(ui = ui, server = server)

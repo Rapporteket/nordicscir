@@ -26,7 +26,7 @@ Her kan mye hentes til analysebok
 \details{
 Argumentet \emph{valgtVar} har følgende valgmuligheter:
    \itemize{
-    \item alder: Aldersfordeling, 10-årige grupper 
+    \item Alder: Aldersfordeling, 10-årige grupper 
    }
    
 NB: valgtVar må komponeres slik at den henspeiler på hvilken 

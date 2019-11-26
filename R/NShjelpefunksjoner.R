@@ -7,25 +7,17 @@
 #' 
 #' Detaljer. kommer senereGroup of functions Details paragraph.
 #'
-#' @section Finne reinnleggelser After function section:
+#' Finne reinnleggelser After function section:
 #' Despite its location, this actually comes after the function section.
 #' Fil som inneholder hjelpefunksjoner. 
 #' SorterOgNavngiTidsEnhet Legger til tidsenhetene Aar, Halvaar, Mnd og Kvartal
 #' 
 #' 
+#' Tilrettelegge tidsenhetvariabel:
 #' @param RegData data
 #' @param PasientID Variabelen som angir pasientidentifikasjon
 # @inheritParams NIRFigAndeler
 #' @return Div hjelpefunksjoner
-#' @name hjelpeFunksjoner
-NULL
-#' @rdname hjelpeFunksjoner
-#' @export
-
-#' @section Tilrettelegge tidsenhetvariabel:
-#' Probably better if all sections come first, uless have one section per function. Makes it easier to
-#' see the information flow.
-#' @rdname hjelpeFunksjoner
 #' @export
 SorterOgNavngiTidsEnhet <- function(RegData, tidsenhet='Aar') {
       #Lager sorteringsvariabel for tidsenhet:
@@ -65,8 +57,7 @@ SorterOgNavngiTidsEnhet <- function(RegData, tidsenhet='Aar') {
       return(UtData)
 }
 
-#' @section Lage tulledata (simulerte data). Takler ikke posixlt- type data.
-#' @rdname hjelpeFunksjoner
+#' Lage tulledata (simulerte data). Takler ikke posixlt- type data.
 #' @export
 lageTulleData <- function(RegData, varBort='ShNavn', antSh=27) {
       #FUNKER IKKE !!!
@@ -84,10 +75,9 @@ lageTulleData <- function(RegData, varBort='ShNavn', antSh=27) {
 
       }
 
-#' @section Automatisk linjebryting av lange tekstetiketter
+#' Automatisk linjebryting av lange tekstetiketter
 #' @param x En tekststreng eller vektor av tekststrenger
 #' @param len Lengden strengen skal brytes ved
-#' @rdname hjelpeFunksjoner
 #' @export
 delTekst <- function(x, len) #x -tekststreng/vektor av tekststrenger, len - Lengden strengen skal brytes ved
 {sapply(x, function(y) paste(strwrap(y, len), collapse = "\n"),
@@ -95,13 +85,12 @@ delTekst <- function(x, len) #x -tekststreng/vektor av tekststrenger, len - Leng
 }
 
 
-#' @section Koble med aktuell hovedtabell
+#' Koble med aktuell hovedtabell
 #' @param HovedSkjema hvilket skjema skal oppfølgingsskjemaet kobles til? De fleste kobles til Hovedskjema. 
 #' Satisfaction kobles til Performance
 #' @param Skjema2 Oppfølgingsskjemaet som skal kobles til sitt aktuelle hovedskjema
 #' @param alleHovedskjema TRUE (FALSE) Om alle registreringer fra hovedskjemaet skal være med (TRUE), eller bare
 #' de registreringer som har ei oppfølgning (FALSE).
-#' @rdname hjelpeFunksjoner
 #' @export
 KobleMedHoved <- function(HovedSkjema, Skjema2, alleHovedskjema=F, alleSkjema2=F) {
       varBegge <- intersect(names(Skjema2),names(HovedSkjema)) ##Variabelnavn som finnes i begge datasett
@@ -111,10 +100,9 @@ KobleMedHoved <- function(HovedSkjema, Skjema2, alleHovedskjema=F, alleSkjema2=F
       return(NSdata)
 }
 
-#' @section Hente data basert på valgtVar
+#' Hente data basert på valgtVar
 #' @param valgtVar Angir hvilke(n) variable det skal vises resultat for. 
 #' @param Data Liste med alle skjema/tabeller 
-#' @rdname hjelpeFunksjoner
 #' @export
 finnRegData <- function(valgtVar='Alder', Data = AlleTab){
       valgtSkjema <- substr(valgtVar,1,4)
@@ -131,10 +119,9 @@ finnRegData <- function(valgtVar='Alder', Data = AlleTab){
       return(RegData)
 }
 
-#' @section Konvertere boolske variable fra tekst til boolske variable...
+#' Konvertere boolske variable fra tekst til boolske variable...
 #' @param valgtVar Angir hvilke(n) variable det skal vises resultat for. 
 #' @param Data Liste med alle skjema/tabeller 
-#' @rdname hjelpeFunksjoner
 #' @export
 TilLogiskeVar <- function(Skjema){
       verdiGML <- c('True','False')
@@ -147,5 +134,3 @@ TilLogiskeVar <- function(Skjema){
             }}
       return(Skjema)
 }
-
-

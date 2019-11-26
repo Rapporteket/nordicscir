@@ -18,6 +18,7 @@ Imports:
     lubridate,
     rapbase,
     rapFigurer,
+    raplog,
     shiny,
     shinyjs,
     xtable
