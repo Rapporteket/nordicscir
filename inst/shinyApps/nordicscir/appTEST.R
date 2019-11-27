@@ -61,7 +61,8 @@ ui <- tagList(
                             br(),
                             br('NB: Nedlasting tar litt tid. I mellomtida får man ikke sett på andre resultater.'),
                             br(),
-                            br('Hvis du ønsker månedsrapporten tilsendt på e-post, kan du gå til fanen "Abonnement" og bestille dette.'),
+                            br('Hvis du ønsker månedsrapporten tilsendt på e-post, 
+                               kan du gå til fanen "Abonnement" og bestille dette.'),
                ),
                mainPanel(width = 8,
                          shinyalert::useShinyalert(),
@@ -368,36 +369,8 @@ tabPanel("Registreringsoversikter",
                                     
                ))
 ) #tab Registreringsoversikter
-
-
-#------------------Abonnement------------------------
-# tabPanel(p("Abonnement",
-#            title='Bestill automatisk utsending av månedsrapport på e-post'),
-#          sidebarLayout(
-#             sidebarPanel(width = 3,
-#                          selectInput("subscriptionRep", "Rapport:",
-#                                      c("Månedsrapport")),
-#                          selectInput("subscriptionFreq", "Frekvens:",
-#                                      list(Årlig="Årlig-year",
-#                                            Kvartalsvis="Kvartalsvis-quarter",
-#                                            Månedlig="Månedlig-month",
-#                                            Ukentlig="Ukentlig-week"), #,Daglig="Daglig-DSTday"),
-#                                      selected = "Månedlig-month"),
-#                          #selectInput("subscriptionFileFormat", "Format:",
-#                          #            c("html", "pdf")),
-#                          actionButton("subscribe", "Bestill!")
-#             ),
-#             mainPanel(
-#                uiOutput("subscriptionContent")
-#             )
-#          )
-# ) #Tab abonnement
-
-
-) #navbar
-) #tagList
-
-
+)
+)
 
 
 #----- Define server logic required to draw a histogram-------

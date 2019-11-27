@@ -61,7 +61,8 @@ ui <- tagList(
                             br(),
                             br('NB: Nedlasting tar litt tid. I mellomtida får man ikke sett på andre resultater.'),
                             br(),
-                            br('Hvis du ønsker månedsrapporten tilsendt på e-post, kan du gå til fanen "Abonnement" og bestille dette.'),
+                            br('Hvis du ønsker månedsrapporten regelmessig tilsendt på e-post, 
+                               kan du gå til fanen "Abonnement" og bestille dette.')
                ),
                mainPanel(width = 8,
                          shinyalert::useShinyalert(),
@@ -443,7 +444,7 @@ server <- function(input, output, session) {
       #output$reshID <- renderText({ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 105460)}) #evt renderUI
       
       observe({if (rolle() != 'SC') {
-            #print('OK')
+            
       #NB: Må aktiveres i ui-del også OK
             shinyjs::hide(id = 'samleRappLand.pdf')
          hideTab(inputId = "toppPaneler", target = "Registeradministrasjon")
@@ -634,8 +635,6 @@ server <- function(input, output, session) {
                   ))})
       observe({
          
-            #print(rolle())
-            #print((rolle() != 'SC'))
             tabAntOpphShMndAar <- switch(input$tidsenhetReg,
              Mnd=tabAntOpphShMnd(RegData=HovedSkjema, datoTil=input$sluttDatoReg, traume=input$traumeReg, antMnd=12), #input$datovalgTab[2])  
              Aar=tabAntOpphSh5Aar(RegData=HovedSkjema, datoTil=input$sluttDatoReg, traume=input$traumeReg))
@@ -706,7 +705,7 @@ server <- function(input, output, session) {
             #RegData <- finnRegData(Data = AlleTab, valgtVar <-'UrinLegemidlerHvilke')
             RegData <- finnRegData(valgtVar = input$valgtVar, Data = AlleTab)
             RegData <- TilLogiskeVar(RegData)
-            #print(input$datoUt)
+            
             #NSFigAndeler(RegData=RegData, valgtVar='UrinLegemidlerHvilke', preprosess = 0)
             
             output$fordelinger <- renderPlot({
@@ -792,8 +791,6 @@ server <- function(input, output, session) {
       
       observe({ #Sykehusvise gjennomsnitt, figur og tabell
             RegData <- finnRegData(valgtVar = input$valgtVarGjsnGrVar, Data = AlleTab)
-            #print(input$valgtVarGjsnGrVar)
-            #print(dim(RegData))
             output$gjsnGrVar <- renderPlot(
                   NSFigGjsnGrVar(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarGjsnGrVar,
                                  datoFra=input$datovalgGjsnGrVar[1], datoTil=input$datovalgGjsnGrVar[2], 
@@ -871,8 +868,23 @@ server <- function(input, output, session) {
          }
       })
       
-      abonnement <- function(rnwFil, brukernavn='tullebukk', reshID=0, 
-                             datoFra=Sys.Date()-400, datoTil=Sys.Date()) {
+      abonnement <- function(parametre){
+         # rnwFil, brukernavn='tullebukk', reshID=0, 
+         #                     datoFra=Sys.Date()-400, datoTil=Sys.Date()) {
+         HovedSkjema <- parametre$AlleTab$HovedSkjema
+         LivskvalH <- parametre$AlleTab$LivskvalH
+         KontrollH <- parametre$AlleTab$KontrollH
+         UrinH <- parametre$AlleTab$UrinH
+         TarmH <- parametre$AlleTab$TarmH
+         AktivFunksjonH <- parametre$AlleTab$AktivFunksjonH
+         AktivTilfredshetH <- parametre$AlleTab$AktivTilfredshetH
+         rnwFil <- parametre$rnwFil
+         brukernavn <- parametre$brukernavn
+         reshID <- parametre$reshID
+         brukernavn <- parametre$brukernavn
+         datoFra <- parametre$datoFra
+         datoTil <- parametre$datoTil
+            
          filbase <- substr(rnwFil, 1, nchar(rnwFil)-4)
          tmpFile <- paste0(filbase, Sys.Date(),'_',digest::digest(brukernavn), '.Rnw')
          src <- normalizePath(system.file(rnwFil, package='nordicscir'))
@@ -900,15 +912,23 @@ server <- function(input, output, session) {
          email <- rapbase::getUserEmail(session)
          if (input$subscriptionRep == "Månedsrapport") {
             synopsis <- "NordicSCIR/Rapporteket: månedsrapport"
-            rnwFil <- "NSmndRapp" #Navn på fila
-            print(rnwFil)
+            rnwFil <- "NSmndRapp.Rnw" #Navn på fila
+            #print(rnwFil)
          }
+         
+         datoTil <- as.character(Sys.Date())
          
          
          fun <- "abonnement"  #"henteSamlerapporter"
-         paramNames <- c('rnwFil', 'brukernavn', "reshID", "datoFra", 'datoTil')
-         paramValues <- c(rnwFil, brukernavn(), reshID(), startDato, Sys.Date()) #input$subscriptionFileFormat)
-         #abonnement('NIRmndRapp.Rnw')
+         paramNames <- c('rnwFil', 'AlleTab', 'brukernavn', "reshID", "datoFra", 'datoTil')
+         #paramValues <- c(rnwFil, brukernavn(), reshID(), startDato, Sys.Date()) #input$subscriptionFileFormat)
+         paramValues <- c(rnwFil, AlleTab, 'toill', 107627, '2018-01-01', as.character(Sys.Date())) #input$subscriptionFileFormat)
+         
+         #TESTING:
+         parametre <- paramValues
+         names(parametre) <- paramNames
+         parametre <- as.list(parametre)
+         abonnement(parametre)
          
          rapbase::createAutoReport(synopsis = synopsis, package = package,
                                    fun = fun, paramNames = paramNames,
