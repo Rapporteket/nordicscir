@@ -134,3 +134,51 @@ TilLogiskeVar <- function(Skjema){
             }}
       return(Skjema)
 }
+
+#' Gererere månedsrapport for abonnement
+#'
+#' @param rnwFil navn på Rnw-fila som skal kjøres ('mndRapp.Rnw')
+#' @param brukernavn abonnentens brukernavn ved bestilling
+#' @param reshID - reshID som abonnenten var logget inn med ved bestilling
+#' @param datoFra - startdato for data som hentes til bruk i rapporten
+#' @param datoTil - sluttdato for data som hentes til bruk i rapporten
+#'
+#' @return
+#' @export
+abonnement <- function(rnwFil, brukernavn='ukjent', reshID=0, 
+                       datoFra=Sys.Date()-400, datoTil=Sys.Date()) {
+  
+  HovedSkjema <- NSRegDataSQL() 
+  LivskvalH <- NSRegDataSQL(valgtVar='LivsXX')
+  KontrollH <- NSRegDataSQL(valgtVar='KontXX')
+  UrinH <- NSRegDataSQL(valgtVar='UrinXX')
+  TarmH <- NSRegDataSQL(valgtVar='TarmXX')
+  AktivFunksjonH <- NSRegDataSQL(valgtVar='FunkXX')
+  AktivTilfredshetH <- NSRegDataSQL(valgtVar='TilfXX')
+  
+  HovedSkjema <- NSPreprosesser(HovedSkjema)
+  LivskvalH <- NSPreprosesser(LivskvalH)
+  KontrollH <- NSPreprosesser(KontrollH)
+  UrinH <- NSPreprosesser(UrinH)
+  TarmH <- NSPreprosesser(TarmH)
+  AktivFunksjonH <- NSPreprosesser(AktivFunksjonH)
+  AktivTilfredshetH <- NSPreprosesser(AktivTilfredshetH)
+  
+  reshID <- reshID[[1]]
+  datoFra <- datoFra[[1]]
+  datoTil <- datoTil[[1]]
+  
+  filbase <- substr(rnwFil[[1]], 1, nchar(rnwFil[[1]])-4)
+  tmpFile <- paste0(filbase, Sys.Date(),'_',digest::digest(brukernavn)[[1]], '.Rnw')
+  src <- normalizePath(system.file(rnwFil[[1]], package='nordicscir'))
+  owd <- setwd(tempdir()) # gå til tempdir. Har ikke skriverettigheter i arbeidskatalog
+  file.copy(src, tmpFile, overwrite = TRUE)
+  knitr::knit2pdf(input=tmpFile) #, output = paste0(filbase, digest::digest(brukernavn),'.tex'))
+  
+  #gc() #Opprydning gc-"garbage collection"
+  utfil <- paste0(owd, '/', substr(tmpFile, 1, nchar(tmpFile)-3), 'pdf')
+  #utfil <- file.copy(from = paste0(substr(tmpFile, 1, nchar(tmpFile)-3), 'pdf'), 
+  #         to = paste0(filbase, digest::digest(brukernavn),'.pdf')) #filnavn)
+  return(utfil)
+}
+

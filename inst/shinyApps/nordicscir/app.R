@@ -506,6 +506,8 @@ server <- function(input, output, session) {
             Aktivitet <- KobleMedHoved(HovedSkjema = AktivFunksjon, Skjema2 = AktivTilfredshet) #[,-which(names(AktivFunksjon)=='HovedskjemaGUID')]
             AktivTilfredshetH <- KobleMedHoved(HovedSkjema, Aktivitet)
       }
+      
+      
       HovedSkjema <- NSPreprosesser(HovedSkjema)
       LivskvalH <- NSPreprosesser(LivskvalH)
       KontrollH <- NSPreprosesser(KontrollH)
@@ -868,36 +870,6 @@ server <- function(input, output, session) {
          }
       })
       
-      abonnement <- function(parametre){
-         # rnwFil, brukernavn='tullebukk', reshID=0, 
-         #                     datoFra=Sys.Date()-400, datoTil=Sys.Date()) {
-         HovedSkjema <- parametre$AlleTab$HovedSkjema
-         LivskvalH <- parametre$AlleTab$LivskvalH
-         KontrollH <- parametre$AlleTab$KontrollH
-         UrinH <- parametre$AlleTab$UrinH
-         TarmH <- parametre$AlleTab$TarmH
-         AktivFunksjonH <- parametre$AlleTab$AktivFunksjonH
-         AktivTilfredshetH <- parametre$AlleTab$AktivTilfredshetH
-         rnwFil <- parametre$rnwFil
-         brukernavn <- parametre$brukernavn
-         reshID <- parametre$reshID
-         brukernavn <- parametre$brukernavn
-         datoFra <- parametre$datoFra
-         datoTil <- parametre$datoTil
-            
-         filbase <- substr(rnwFil, 1, nchar(rnwFil)-4)
-         tmpFile <- paste0(filbase, Sys.Date(),'_',digest::digest(brukernavn), '.Rnw')
-         src <- normalizePath(system.file(rnwFil, package='nordicscir'))
-         owd <- setwd(tempdir()) # gå til tempdir. Har ikke skriverettigheter i arbeidskatalog
-         file.copy(src, tmpFile, overwrite = TRUE)
-         knitr::knit2pdf(input=tmpFile) #, output = paste0(filbase, digest::digest(brukernavn),'.tex'))
-         
-         #gc() #Opprydning gc-"garbage collection"
-         utfil <- paste0(owd, '/', substr(tmpFile, 1, nchar(tmpFile)-3), 'pdf')
-         #utfil <- file.copy(from = paste0(substr(tmpFile, 1, nchar(tmpFile)-3), 'pdf'), 
-         #         to = paste0(filbase, digest::digest(brukernavn),'.pdf')) #filnavn)
-         return(utfil)
-      }
       
       ## nye abonnement
       observeEvent (input$subscribe, { #MÅ HA
@@ -916,19 +888,20 @@ server <- function(input, output, session) {
             #print(rnwFil)
          }
          
-         datoTil <- as.character(Sys.Date())
-         
          
          fun <- "abonnement"  #"henteSamlerapporter"
-         paramNames <- c('rnwFil', 'AlleTab', 'brukernavn', "reshID", "datoFra", 'datoTil')
-         #paramValues <- c(rnwFil, brukernavn(), reshID(), startDato, Sys.Date()) #input$subscriptionFileFormat)
-         paramValues <- c(rnwFil, AlleTab, 'toill', 107627, '2018-01-01', as.character(Sys.Date())) #input$subscriptionFileFormat)
+         paramNames <- c('rnwFil', 'brukernavn', "reshID", "datoFra", 'datoTil')
+         paramValues <- c(rnwFil, brukernavn(), reshID(), startDato, Sys.Date()) #input$subscriptionFileFormat)
+         #paramValues <- c(rnwFil, AlleTab, 'toill', 107627, '2018-01-01', as.character(Sys.Date())) #input$subscriptionFileFormat)
          
          #TESTING:
-         parametre <- paramValues
-         names(parametre) <- paramNames
-         parametre <- as.list(parametre)
-         abonnement(parametre)
+         #parametre <- paramValues
+         #names(parametre) <- paramNames
+         #parametre <- as.list(parametre)
+         # abonnement(rnwFil=rnwFil, AlleTabeller=AlleTab, brukernavn='toillbokk', reshID=107627,
+         #            datoFra=as.Date('2018-01-01'), datoTil=Sys.Date())
+         #abonnement(list(rnwFil=rnwFil), list(AlleTabeller=AlleTab), list(brukernavn='toillbokk'), list(reshID=107627),
+         #          list(datoFra=as.Date('2018-01-01')), list(datoTil=Sys.Date()))
          
          rapbase::createAutoReport(synopsis = synopsis, package = package,
                                    fun = fun, paramNames = paramNames,
