@@ -112,7 +112,7 @@ variable som finnes i registreringsskjema.
 \section{Data og nøkkeltall}
 
 <<'Variabeldef og utvalg', results='asis', echo=FALSE>>=
-NSdata <- NSPreprosesser(RegData=NSdata)
+NSdata <- HovedSkjema #NSPreprosesser(RegData=NSdata)
 #NSdata$Aar <- NSdata$InnDato$year+1900 #genereres i preprossess
 ShNavn <- NSdata$ShNavn[which(NSdata$ReshId == reshID)[1]]
 

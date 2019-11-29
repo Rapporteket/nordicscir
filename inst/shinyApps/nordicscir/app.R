@@ -92,8 +92,10 @@ ui <- tagList(
                          h4(tags$b('Abonnement'), 'inneholder oversikt over rapporter du abbonerer på. Her kan du også bestille abonnement, 
                             dvs. rapporter tilsendt på e-post.'),
                          br(),
-                         br(),
-                         h3('Kommentar: HER ville jeg vist sykehusets registreringer per måned i løpet av siste år'),
+                         h4('Antall registreringer siste år:'),
+                         fluidRow(tableOutput("tabAntOpphShMnd12startside")),
+                         #         downloadButton(outputId = 'lastNed_tabAntOpph', label='Last ned'))
+                         br('(Mer informasjon om registreringsstatus finner du på sidene "Registreringsoversikter")'),
                          br(),
                          br(),
                          h4('Oversikt over registerets kvalitetsindikatorer og resultater finner du på www.kvalitetsregistre.no:', #helpText
@@ -410,7 +412,8 @@ tabPanel(p("Abonnement",
                                      list(Årlig="Årlig-year",
                                            Kvartalsvis="Kvartalsvis-quarter",
                                            Månedlig="Månedlig-month",
-                                           Ukentlig="Ukentlig-week"), #,Daglig="Daglig-DSTday"),
+                                           Ukentlig="Ukentlig-week",
+                                     Daglig="Daglig-DSTday"),
                                      selected = "Månedlig-month"),
                          #selectInput("subscriptionFileFormat", "Format:",
                          #            c("html", "pdf")),
@@ -433,7 +436,7 @@ tabPanel(p("Abonnement",
 server <- function(input, output, session) {
       
    #-----------Div serveroppstart------------------  
-   #raplog::appLogger(session = session, msg = "Starter intensiv-app")
+   raplog::appLogger(session = session, msg = "Starter nordicscir-app'en. Data fra NorSCIR vil bli hentet")
       #system.file('NSmndRapp.Rnw', package='nordicscir')
       #system.file('NSsamleRapp.Rnw', package='nordicscir')
    
@@ -575,43 +578,41 @@ server <- function(input, output, session) {
             content = function(file){
                   contentFile(file, srcFil="NSsamleRappLand.Rnw", tmpFile="tmpNSsamleRappLand.Rnw",
                               reshID=reshID(), 
-                              datoFra = input$datovalgSamleRapp[1], 
-                              datoTil = input$datovalgSamleRapp[2])
+                              datoFra = as.Date(input$datovalgSamleRapp[1]), 
+                              datoTil = as.Date(input$datovalgSamleRapp[2]))
             })
       output$samleRappEgen.pdf <- downloadHandler(
          filename = function(){'NorScirSamleRapportEgen.pdf'}, # downloadFilename('NorScirSamleRapport')
          content = function(file){
             contentFile(file, srcFil="NSsamleRapp.Rnw", tmpFile="tmpNSsamleRapp.Rnw",
                         reshID=reshID(), 
-                        datoFra = input$datovalgSamleRapp[1], 
-                        datoTil = input$datovalgSamleRapp[2])
+                        datoFra = as.Date(input$datovalgSamleRapp[1]), 
+                        datoTil = as.Date(input$datovalgSamleRapp[2]))
          })
 
-      # downloadButton(outputId = 'mndRapp.pdf', label='Last ned MÅNEDSRAPPORT', class = "butt"),
-      # downloadButton(outputId = 'samlerappLandet', label='Last ned', class = "butt"),
-      # downloadButton(outputId = 'samlerappEgen', label='Last ned', class = "butt"),
-      
-
+ 
 #--------------Startside------------------------------
       
       output$lenkeNorScir <- renderUI({tagList("www.norscir.no", www.norscir.no)})
+      output$tabAntOpphShMnd12startside <- renderTable({tabAntOpphShMnd(RegData=HovedSkjema, antMnd=12)}, 
+                                                       rownames = T, digits=0, spacing="xs")
       
-      output$tabNevrKlass <- renderTable(
-            lagTabNevrKlass(HovedSkjema, datoFra = input$datovalgDash[1], datoTil = input$datovalgDash[2]),
-            rownames=T
-      )
-      
-      output$tabNevrKlass28 <- renderTable({
-            HovedSkjema28 <- HovedSkjema[which(HovedSkjema$DagerRehab >28),]
-            lagTabNevrKlass(HovedSkjema28, datoFra = input$datovalgDash[1], datoTil = input$datovalgDash[2])},
-            rownames=T
-      )
-      
-      output$tabLiggetider <- renderTable({
-            tabLiggetider(RegData = HovedSkjema, datoFra = input$datovalgDash[1], datoTil = input$datovalgDash[2])},
-            rownames=T,
-            digits = 0
-      )
+      # output$tabNevrKlass <- renderTable(
+      #       lagTabNevrKlass(HovedSkjema, datoFra = input$datovalgDash[1], datoTil = input$datovalgDash[2]),
+      #       rownames=T
+      # )
+      # 
+      # output$tabNevrKlass28 <- renderTable({
+      #       HovedSkjema28 <- HovedSkjema[which(HovedSkjema$DagerRehab >28),]
+      #       lagTabNevrKlass(HovedSkjema28, datoFra = input$datovalgDash[1], datoTil = input$datovalgDash[2])},
+      #       rownames=T
+      # )
+      # 
+      # output$tabLiggetider <- renderTable({
+      #       tabLiggetider(RegData = HovedSkjema, datoFra = input$datovalgDash[1], datoTil = input$datovalgDash[2])},
+      #       rownames=T,
+      #       digits = 0
+      # )
       # output$tabLiggetider <- function() { 
       #       tabLigget <- tabLiggetider(RegData = HovedSkjema, datoFra = input$datovalgDash[1], datoTil = input$datovalgDash[2])
       #       kableExtra::kable(tabLigget, format = 'html'
@@ -640,6 +641,7 @@ server <- function(input, output, session) {
             tabAntOpphShMndAar <- switch(input$tidsenhetReg,
              Mnd=tabAntOpphShMnd(RegData=HovedSkjema, datoTil=input$sluttDatoReg, traume=input$traumeReg, antMnd=12), #input$datovalgTab[2])  
              Aar=tabAntOpphSh5Aar(RegData=HovedSkjema, datoTil=input$sluttDatoReg, traume=input$traumeReg))
+            
             
             output$tabAntOpphShMnd12 <- renderTable({tabAntOpphShMndAar}, rownames = T, digits=0, spacing="xs")
       output$lastNed_tabAntOpph <- downloadHandler(

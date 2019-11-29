@@ -395,12 +395,12 @@ Liggetider <- function(RegData, datoFra='2018-01-01', datoTil=Sys.Date(), enhets
 LiggetiderMtraume <- Liggetider(RegData=HovedSkjema, datoFra=datoFra, datoTil=Sys.Date(), enhetsUtvalg=2, reshID=reshID,
                           traume='ja')
 xtable::xtable(LiggetiderMtraume, digits=0, align=c('l', rep('r', ncol(LiggetiderMtraume))),
-		caption=paste0('Liggetider ved eget sykehus, pasienter med traume. Innleggelser fra og med ',datoFra,'.'))
+		caption=paste0('Liggetider ved eget sykehus, pasienter med traumatisk ryggmargsskade. Innleggelser fra og med ',datoFra,'.'))
 
 LiggetiderUtraume <- Liggetider(RegData=HovedSkjema, datoFra=datoFra, datoTil=Sys.Date(), enhetsUtvalg=2, reshID=reshID,
                           traume='nei')
 xtable::xtable(LiggetiderUtraume, digits=0, align=c('l', rep('r', ncol(LiggetiderMtraume))),
-		caption=paste0('Liggetider eget sykehus, pasienter uten traume. Innleggelser fra og med ',datoFra,'.'))
+		caption=paste0('Liggetider eget sykehus, pasienter med en ikke-traumatisk skade. Innleggelser fra og med ',datoFra,'.'))
 
 @
 \end{frame}
@@ -409,7 +409,7 @@ xtable::xtable(LiggetiderUtraume, digits=0, align=c('l', rep('r', ncol(Liggetide
 \begin{figure}[ht]
 \centering
 \includegraphics[scale=0.35]{DagerTilRehab_t_ja.pdf}
-\caption{Antall dager på sykehus før rehabilitering for traumatiske skader}
+\caption{Antall dager på sykehus før rehabilitering for pasienter med traumatisk ryggmargsskade}
 \end{figure}
 \end{frame}
 
@@ -417,7 +417,7 @@ xtable::xtable(LiggetiderUtraume, digits=0, align=c('l', rep('r', ncol(Liggetide
 \begin{figure}[ht]
 \centering
 \includegraphics[scale=0.35]{DagerTilRehab_t_nei.pdf}
-\caption{Antall dager på sykehus før rehabilitering for ikke-traumatiske skader}
+\caption{Antall dager på sykehus før rehabilitering for pasienter med ikke-traumatisk ryggmargsskade}
 \end{figure}
 \end{frame}
 

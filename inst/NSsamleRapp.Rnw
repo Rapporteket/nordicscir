@@ -115,7 +115,7 @@ Der har du også mulighet for å lage egne figurer og tabeller.
 \section{Data og nøkkeltall}
 
 <<'Variabeldef og utvalg', results='asis', echo=FALSE>>=
-NSdata <- NSPreprosesser(RegData=NSdata)
+NSdata <- HovedSkjema #NSPreprosesser(RegData=NSdata)
 NSdata$Aar <- lubridate::year(NSdata$InnDato) #NSdata$InnDato$year+1900
 ShNavn <- as.character(NSdata$ShNavn[match(reshID, NSdata$ReshId)])
 '%i%' <- intersect

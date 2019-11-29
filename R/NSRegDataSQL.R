@@ -63,6 +63,7 @@ varHoved <- c("
       h.PlaceDis,
       h.PPlacedis,
       h.RehabDy,
+      h.RecCtrl,
       h.Scietiol,
       h.SkjemaGUID,
 --      h.SkjemaGUID AS SkjemaGUIDhoved,
@@ -164,6 +165,7 @@ varUrin <- c("
 ,Urin.Ilvscs
 ,Urin.IlvscsDt
 ,Urin.Incontnc
+,Urin.Incontnc2
 ,Urin.LastUpdate
 ,Urin.LutfxnDt
 ,Urin.MajorVersion
@@ -221,6 +223,7 @@ varTarm <- c('
  ,Tarm.Deffrq
  ,Tarm.DrugUse
  ,Tarm.Fcincfrq
+ ,Tarm.Fcincfrq2
  ,Tarm.Fissures
  ,Tarm.FormDate
  ,Tarm.FormTypeId

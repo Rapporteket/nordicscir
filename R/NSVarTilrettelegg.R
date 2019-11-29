@@ -442,7 +442,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
             gr <- c(1:4,7:9)
             RegData <- RegData[RegData$Fcincfrq2 %in% gr,]
             grtxt <- c('Daglig', '1-6 ganger/uke', '1-4 ganger/måned',
-                       'Mindre enn månedlig', 'Aldri', 'Ikke relevant', 'Ukjent' )
+                       'Sjeldnere enn månedlig', 'Aldri', 'Ikke relevant', 'Ukjent' )
             RegData$VariabelGr <- factor(RegData$Fcincfrq2, levels = gr, labels = grtxt)
       }
       if (valgtVar=='TarmKirInngrep') {
