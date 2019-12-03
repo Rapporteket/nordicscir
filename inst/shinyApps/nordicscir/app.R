@@ -66,6 +66,7 @@ ui <- tagList(
                ),
                mainPanel(width = 8,
                          shinyalert::useShinyalert(),
+                         tags$head(tags$link(rel="shortcut icon", href="rap/favicon.ico")),
                          if (paaServer){ 
                             rapbase::appNavbarUserWidget(user = uiOutput("appUserName"),
                                                       organization = uiOutput("appOrgName"),
