@@ -48,8 +48,12 @@
 NSFigAndeler <- function(RegData, outfile='', valgtVar='Alder', 
                          datoFra='2010-01-01', datoTil=Sys.Date(), AIS='',
                          minald=0, maxald=130, erMann=99, traume='alle',nivaaUt=99,
-                         enhetsUtvalg=0, reshID=0, hentData=0, preprosess=1, datoUt=0) {
-      
+                         enhetsUtvalg=0, reshID=0, hentData=0, preprosess=1, datoUt=0,
+                         ...) {
+   
+   if ("session" %in% names(list(...))) {
+      raplog::repLogger(session = list(...)[["session"]], msg = "Fordelingsfigur")
+   }
       if (hentData == 1) {
             RegData <- NSRegDataSQL(valgtVar=valgtVar)
       }

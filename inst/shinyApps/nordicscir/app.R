@@ -40,9 +40,9 @@ ui <- tagList(
             #title = div(img(src="rap/logo.svg", alt="Rapporteket", height="26px"), regTitle),
       title = div(a(includeHTML(system.file('www/logo.svg', package='rapbase'))),
                   regTitle),
-            # sett inn tittle ogsÃ¥ i browser-vindu
+            # sett inn tittel også i browser-vindu
       windowTitle = regTitle,
-            # velg css (forelÃ¸pig den eneste bortsett fra "naken" utgave)
+            # velg css (foreløpig den eneste bortsett fra "naken" utgave)
       theme = "rap/bootstrap.css",
 #----startside--------            
       tabPanel("Startside",
@@ -126,20 +126,20 @@ ui <- tagList(
                )
       ), #tab
 
-#--------Fordelinger-----------            
+#--------Fordelinger-----------
       tabPanel("Fordelinger",
                sidebarPanel(width = 3,
                             selectInput(
                                   inputId = "valgtVar", label="Velg variabel",
-                                  choices = c('Alder' = 'Alder', 
+                                  choices = c('Alder' = 'Alder',
                                               'Ais ved innleggelse' = 'AAis' ,
-                                              'Ais ved utskriving' = 'FAis', 
+                                              'Ais ved utskriving' = 'FAis',
                                               'Anbefalt tid til kontroll' = 'AnbefTidKtr',
-                                              'Lengde på rehab.opphold' = 'DagerRehab', 
+                                              'Lengde på rehab.opphold' = 'DagerRehab',
                                               'Planlagt utskrevet til' = 'PPlaceDis',
-                                              'Tid fra skade til oppstart rehab.' = 'DagerTilRehab', 
+                                              'Tid fra skade til oppstart rehab.' = 'DagerTilRehab',
                                               'Tid med rehabilitering' = 'DagerRehab',
-                                              'Opphold, totalt antall dager' = 'OpphTot', 
+                                              'Opphold, totalt antall dager' = 'OpphTot',
                                               #'Fjern? Permisjon (ant. døgn ute av sykehus) ' = 'Permisjon',
                                               'Utskrevet til' = 'UtTil',
                                               'Registreringsforsinkelse' = 'RegForsinkelse',
@@ -157,8 +157,8 @@ ui <- tagList(
                                               'Livskval.: Tilfredshet med livet' = 'LivsGen',
                                               'Livskval.: Tilfredshet med fysisk helse' = 'LivsFys',
                                               'Livskval.: Tilfredshet med psykisk helse' = 'LivsPsyk',
-                                              'Urin: Ufrivillig urinlekkasje (fra 2019)' = 'UrinInkontinens', 
-                                              'Urin: Ufrivillig urinlekkasje (t.o.m. 2018)' = 'UrinInkontinensTom2018', 
+                                              'Urin: Ufrivillig urinlekkasje (fra 2019)' = 'UrinInkontinens',
+                                              'Urin: Ufrivillig urinlekkasje (t.o.m. 2018)' = 'UrinInkontinensTom2018',
                                               'Urin: Kirurgiske inngrep' = 'UrinKirInngr',
                                               'Urin: Legemiddelbruk (fra 2019)' = 'UrinLegemidler',
                                               'Urin: Legemiddelbruk (t.o.m. 2018)' = 'UrinLegemidlerTom2018',
@@ -186,8 +186,8 @@ ui <- tagList(
                                         max = 110, value = c(0, 110)
                             ),
                             selectInput(inputId = 'enhetsUtvalg', label='Egen enhet og/eller landet',
-                                        choices = c("Egen mot resten av landet"=1, 
-                                                    "Hele landet"=0, 
+                                        choices = c("Egen mot resten av landet"=1,
+                                                    "Hele landet"=0,
                                                     "Egen enhet"=2)
                             ),
                             selectInput(inputId = 'AIS', label='AIS-grad ved utreise',
@@ -196,7 +196,7 @@ ui <- tagList(
                              ),
                             selectInput(inputId = 'traume', label='Traume',
                                         choices = c("Alle"=' ', #'ikke'
-                                                    "Traume"='ja', 
+                                                    "Traume"='ja',
                                                     "Ikke traume"='nei')
                             ),
                             selectInput(inputId = 'nivaaUt', label='Nivå ved utreise',
@@ -237,17 +237,17 @@ ui <- tagList(
                                       )
                          )) #mainPanel
       ), #tab Fordelinger
-   
-         
+
+
 #------------Sykehusvise resultater------------
       tabPanel("Sykehusvise resultater",
                sidebarPanel(width = 3,
                             selectInput(
                                   inputId = "valgtVarGjsnGrVar", label="Velg variabel",
-                                  choices = c('Alder' = 'Alder', 
-                                              'Lengde på rehab.opphold' = 'DagerRehab', 
-                                              'Tid fra skade til oppstart rehab.' = 'DagerTilRehab', 
-                                              'Opphold, totalt antall dager' = 'OpphTot', 
+                                  choices = c('Alder' = 'Alder',
+                                              'Lengde på rehab.opphold' = 'DagerRehab',
+                                              'Tid fra skade til oppstart rehab.' = 'DagerTilRehab',
+                                              'Opphold, totalt antall dager' = 'OpphTot',
                                               'Registreringsforsinkelse' = 'RegForsinkelse',
                                               'Livskval.: Tilfredshet med livet' = 'LivsGen',
                                               'Livskval.: Tilfredshet med fysisk helse' = 'LivsFys',
@@ -268,18 +268,18 @@ ui <- tagList(
                             ),
                             selectInput(inputId = 'traumeGjsnGrVar', label='Traume',
                                         choices = c("Alle"=' ', #'ikke'
-                                                    "Traume"='ja', 
+                                                    "Traume"='ja',
                                                     "Ikke traume"='nei')
                             ),
                             selectInput(inputId = 'paratetraGjsnGrVar', label='Nivå ved utreise',
                                         choices = c("Alle" = 99,
-                                                    "Paraplegi" = 0, 
+                                                    "Paraplegi" = 0,
                                                     "Tetraplegi" = 1,
                                                     "Ukjent" = 9)
                             ),
                             selectInput(inputId = "sentralmaal", label="Velg gjennomsnitt/median ",
                                                                choices = c("Gjennomsnitt"='gjsn', "Median"='med'))
-                            
+
                ),
                mainPanel(
                      tabsetPanel(
@@ -299,8 +299,8 @@ ui <- tagList(
                            )
                      )
                )
-               
-), #GjsnGrVar 
+
+), #GjsnGrVar
 
 
 
@@ -325,7 +325,7 @@ tabPanel("Registreringsoversikter",
                             condition = "input.ark == 'Antall personer med ryggmargsskade'",
                             selectInput(inputId = 'traumeReg', label='Traume',
                                         choices = c("Alle"=' ', #'ikke'
-                                                    "Traume"='ja', 
+                                                    "Traume"='ja',
                                                     "Ikke traume"='nei'))
                       ),
                       conditionalPanel(
@@ -335,7 +335,7 @@ tabPanel("Registreringsoversikter",
                                            label = "Tidsperiode", separator="t.o.m.", language="nb")
                       )
          ),
-         
+
          mainPanel(
                tabsetPanel(id='ark',
                            tabPanel('Antall personer med ryggmargsskade',
@@ -347,7 +347,7 @@ tabPanel("Registreringsoversikter",
                                              downloadButton(outputId = 'lastNed_tabAntOpph', label='Last ned')
                                     )
                                     #                                          br(),
-                                    # h3("Belegg FJERNES! på rehabiliteringsavdelinga - ønskes flere/andre variable?"), 
+                                    # h3("Belegg FJERNES! på rehabiliteringsavdelinga - ønskes flere/andre variable?"),
                                     # #uiOutput("undertittelBelegg"),
                                     # fluidRow( tableOutput("tabLiggetider"))
                            ),
@@ -359,7 +359,7 @@ tabPanel("Registreringsoversikter",
                                     h3("Andel (%) hovedskjema med tilknyttede skjema"),
                                     tableOutput("tabAndelTilknyttedeHovedSkjema"),
                                     downloadButton(outputId = 'lastNed_tabOppfHovedPst', label='Last ned')
-                           ), 
+                           ),
                            tabPanel('Antall kontrollskjema med tilknyttede skjema',
                                     h3("Antall kontrollskjema med tilknyttede skjema"),
                                     tableOutput('tabAntTilknyttedeKtrSkjema'),
@@ -369,7 +369,7 @@ tabPanel("Registreringsoversikter",
                                     tableOutput("tabAndelTilknyttedeKtrSkjema"),
                                     downloadButton(outputId = 'lastNed_tabOppfKtrPst', label='Last ned')
                            )
-                                    
+
                ))
 ), #tab Registreringsoversikter
 
@@ -381,7 +381,7 @@ tabPanel("Registeradministrasjon",
                        dateRangeInput(inputId = 'datovalgSamleRapp', start = startDato-150, end = Sys.Date(),
                                      label = "Tidsperiode", separator="t.o.m.", language="nb")
          ),
-         
+
          mainPanel(
             tabsetPanel(id='ark',
                         tabPanel('Samlerapporter',
@@ -389,12 +389,12 @@ tabPanel("Registeradministrasjon",
                                  br(),
                                  br(),
                                  h3("Resultater, hele landet"), #),
-                                 #shinydashboard::infoBox("Resultater hele landet ", 
-                                 downloadButton(outputId = 'samleRappLand.pdf', 
+                                 #shinydashboard::infoBox("Resultater hele landet ",
+                                 downloadButton(outputId = 'samleRappLand.pdf',
                                                 label='Last ned samlerapport, hele landet', class = "butt"),
                                  br(),
                                  h3("Resultater eget sykehus"), #),
-                                 downloadButton(outputId = 'samleRappEgen.pdf', 
+                                 downloadButton(outputId = 'samleRappEgen.pdf',
                                                 label='Last ned egen samlerapport', class = "butt"),
                                  br(),
                                  br()
@@ -426,7 +426,7 @@ tabPanel(p("Abonnement",
          )
 ) #Tab abonnement
 
-
+#-----------------slutt-----------------------------
 ) #navbar
 ) #tagList
 
@@ -721,7 +721,8 @@ server <- function(input, output, session) {
                                minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]), 
                                erMann=as.numeric(input$erMann), 
                                enhetsUtvalg=as.numeric(input$enhetsUtvalg),
-                               datoUt=as.numeric(input$datoUt))
+                               datoUt=as.numeric(input$datoUt),
+                               session=session)
             }, height=800, width=800 #height = function() {session$clientData$output_fordelinger_width}
             )
             
@@ -731,7 +732,8 @@ server <- function(input, output, session) {
                                        AIS=input$AIS, traume=input$traume, nivaaUt=as.numeric(input$nivaaUt),
                                        minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]), 
                                        erMann=as.numeric(input$erMann), 
-                                       enhetsUtvalg=as.numeric(input$enhetsUtvalg))
+                                       enhetsUtvalg=as.numeric(input$enhetsUtvalg),
+                                       session=session)
             
             output$tittelFord <- renderUI({
                tagList(
@@ -764,7 +766,8 @@ server <- function(input, output, session) {
                                AIS=input$AIS, traume=input$traume, nivaaUt=as.numeric(input$nivaaUt),
                                minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]), 
                                erMann=as.numeric(input$erMann), 
-                               datoUt=as.numeric(input$datoUt))
+                               datoUt=as.numeric(input$datoUt),
+                               session=session)
             }, height=800, width=800 #height = function() {session$clientData$output_fordelinger_width}
             )
             UtDataFordSh <- NSFigAndelerSh(RegData=RegData, preprosess = 0, valgtVar=input$valgtVar,
@@ -772,7 +775,8 @@ server <- function(input, output, session) {
                                        AIS=input$AIS, traume=input$traume, nivaaUt=as.numeric(input$nivaaUt),
                                        minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]), 
                                        erMann=as.numeric(input$erMann), 
-                                       datoUt=as.numeric(input$datoUt))
+                                       datoUt=as.numeric(input$datoUt),
+                                       session=session)
             
              tabFordSh <- lagTabavFigAndelerSh(UtDataFraFig = UtDataFordSh)
              
@@ -797,18 +801,31 @@ server <- function(input, output, session) {
       observe({ #Sykehusvise gjennomsnitt, figur og tabell
             RegData <- finnRegData(valgtVar = input$valgtVarGjsnGrVar, Data = AlleTab)
             output$gjsnGrVar <- renderPlot(
-                  NSFigGjsnGrVar(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarGjsnGrVar,
-                                 datoFra=input$datovalgGjsnGrVar[1], datoTil=input$datovalgGjsnGrVar[2], 
-                                 AIS=input$AISGjsnGrVar, traume=input$traumeGjsnGrVar, nivaaUt=as.numeric(input$paratetraGjsnGrVar),
-                                 minald=as.numeric(input$alderGjsnGrVar[1]), maxald=as.numeric(input$alderGjsnGrVar[2]), 
-                                 erMann=as.numeric(input$erMannGjsnGrVar), valgtMaal = input$sentralmaal
+                  NSFigGjsnGrVar(RegData=RegData, preprosess = 0, 
+                                 valgtVar=input$valgtVarGjsnGrVar,
+                                 datoFra=input$datovalgGjsnGrVar[1], 
+                                 datoTil=input$datovalgGjsnGrVar[2], 
+                                 AIS=input$AISGjsnGrVar, 
+                                 traume=input$traumeGjsnGrVar, 
+                                 nivaaUt=as.numeric(input$paratetraGjsnGrVar),
+                                 minald=as.numeric(input$alderGjsnGrVar[1]), 
+                                 maxald=as.numeric(input$alderGjsnGrVar[2]), 
+                                 erMann=as.numeric(input$erMannGjsnGrVar), 
+                                 valgtMaal = input$sentralmaal, session=session
                   ),
                   width = 800, height = 600)
-            UtDataGjsnGrVar <- NSFigGjsnGrVar(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarGjsnGrVar,
-                                              datoFra=input$datovalgGjsnGrVar[1], datoTil=input$datovalgGjsnGrVar[2], 
-                                              AIS=input$AISGjsnGrVar, traume=input$traumeGjsnGrVar, nivaaUt=as.numeric(input$paratetraGjsnGrVar),
-                                              minald=as.numeric(input$alderGjsnGrVar[1]), maxald=as.numeric(input$alderGjsnGrVar[2]), 
-                                              erMann=as.numeric(input$erMannGjsnGrVar), valgtMaal = input$sentralmaal)
+            UtDataGjsnGrVar <- NSFigGjsnGrVar(RegData=RegData, preprosess = 0, 
+                                              valgtVar=input$valgtVarGjsnGrVar,
+                                              datoFra=input$datovalgGjsnGrVar[1], 
+                                              datoTil=input$datovalgGjsnGrVar[2], 
+                                              AIS=input$AISGjsnGrVar, 
+                                              traume=input$traumeGjsnGrVar, 
+                                              nivaaUt=as.numeric(input$paratetraGjsnGrVar),
+                                              minald=as.numeric(input$alderGjsnGrVar[1]), 
+                                              maxald=as.numeric(input$alderGjsnGrVar[2]), 
+                                              erMann=as.numeric(input$erMannGjsnGrVar), 
+                                              valgtMaal = input$sentralmaal,
+                                              session=session)
             tabGjsnGrVar <- lagTabavFigGjsnGrVar(UtDataFraFig = UtDataGjsnGrVar)
             
             output$tittelGjsnGrVar <- renderUI({

@@ -19,10 +19,13 @@
 NSFigAndelStabel <- function(RegData, outfile='', valgtVar,
                            datoFra='2010-01-01', datoTil='3000-01-01',minald=0,
                            maxald=130, erMann='', traume=99, preprosess=1,
-                           enhetsUtvalg=enhetsUtvalg , reshID, hentData=0)
+                           enhetsUtvalg=enhetsUtvalg , reshID, hentData=0,...)
 {
 
-      if (hentData == 1) {
+  if ("session" %in% names(list(...))) {
+    raplog::repLogger(session = list(...)[["session"]], msg = "Fordelingsfigur")
+  }
+  if (hentData == 1) {
             RegData <- NSRegDataSQL()
       }
       if (preprosess == 1) {
