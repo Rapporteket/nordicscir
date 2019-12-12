@@ -14,9 +14,9 @@
 #' @return RegData data frame
 #' @export
 
-NSRegDataSQL <- function(valgtVar='Alder') {
+NSRegDataSQL_Jasper <- function(valgtVar='Alder') {
       
-registryName <- 'nordicscir' #"nordicscir"
+registryName <- "nordicscir"
 dbType <- "mysql"
    
 #HovedSkjema: MainFormDataContract
@@ -29,7 +29,7 @@ dbType <- "mysql"
 
 
    
-varHoved <- c("
+varHoved <- paste0("
       h.AAis,
       h.AdmitDt,
       h.AdmitRehDt,
@@ -39,7 +39,6 @@ varHoved <- c("
       h.ANeuNoMeasure,
       h.ASensLvlAreaL,
       h.ASensLvlAreaR,
-      h.ASensLvlLC,
       h.BeforeRehDy,
       h.DischgDt,
       h.FAis,
@@ -63,25 +62,21 @@ varHoved <- c("
       h.PlaceDis,
       h.PPlacedis,
       h.RehabDy,
-      h.RecCtrl,
+      h.UnitId AS ReshId,
       h.Scietiol,
       h.SkjemaGUID,
---      h.SkjemaGUID AS SkjemaGUIDhoved,
-      h.UnitId,
       h.VentAssi
 ")
 #h.PasientGUID,
-#h.UnitId AS ReshId,
 
 varLivs <- c('
 ,Livs.FormDate
-,UPPER(Livs.HovedskjemaGUID) AS HovedskjemaGUID
+,Livs.HovedskjemaGUID
 ,Livs.QolDt
 ,Livs.SatGenrl
 ,Livs.SatPhys
 ,Livs.SatPsych
--- ,Livs.SkjemaGUID AS SkjemaGUID
--- ,Livs.SkjemaGUID AS SkjemaGUIDLivs
+,Livs.SkjemaGUID
 ')
 #,Livs.PasientGUID
 
@@ -90,10 +85,9 @@ varFunk <- c('
 ,Funk.Dreslbdy	
 ,Funk.Feeding	
 ,Funk.FirstTimeClosed
-,UPPER(Funk.HovedskjemaGUID) AS HovedskjemaGUID
+,Funk.HovedskjemaGUID
 ,Funk.Mobilmod	
--- ,Funk.SkjemaGUID
--- ,Funk.SkjemaGUID AS SkjemaGUIDFunk
+,Funk.SkjemaGUID	
 ,Funk.Toiletin	
 ')
 
@@ -102,18 +96,15 @@ varTilf <- c('
 ,Tilf.DreslbdyS	
 ,Tilf.FeedingS	
 ,Tilf.FirstTimeClosed
--- ,UPPER(Tilf.HovedskjemaGUID) AS HovedskjemaGUID
-,Tilf.MobilmodS
-,UPPER(Funk.HovedskjemaGUID) AS HovedskjemaGUID
--- ,Tilf.SkjemaGUID
--- ,Tilf.SkjemaGUID AS SkjemaGUIDTilf
+,Tilf.HovedskjemaGUID
+,Tilf.MobilmodS	
+,Tilf.SkjemaGUID	
 ,Tilf.ToiletinS	
 ')
 varUrin <- c("
 ,Urin.Antiprop
 ,Urin.Antiuti
 ,Urin.AnyDrugs
-,Urin.AnyDrugs2
 ,Urin.Artsph
 ,Urin.ArtsphDt
 ,Urin.Avbladem
@@ -159,13 +150,12 @@ varUrin <- c("
 ,Urin.FormDate
 ,Urin.HealthUnitId
 ,Urin.HealthUnitName
-,UPPER(Urin.HovedskjemaGUID) AS HovedskjemaGUID
+,Urin.HovedskjemaGUID
 ,Urin.Ilurts
 ,Urin.IlurtsDt
 ,Urin.Ilvscs
 ,Urin.IlvscsDt
 ,Urin.Incontnc
-,Urin.Incontnc2
 ,Urin.LastUpdate
 ,Urin.LutfxnDt
 ,Urin.MajorVersion
@@ -177,8 +167,7 @@ varUrin <- c("
 ,Urin.OthsrgDt
 ,Urin.Sarstm
 ,Urin.SarstmDt
--- ,Urin.SkjemaGUID
--- ,Urin.SkjemaGUID AS SkjemaGUIDUrin
+,Urin.SkjemaGUID
 ,Urin.Spcath
 ,Urin.SpcathDt
 ,Urin.Spncrelx
@@ -196,7 +185,6 @@ varUrin <- c("
 varTarm <- c('
 ,Tarm.Antichol
 ,Tarm.Apndec
- ,Tarm.Apndic
  ,Tarm.ApndecDt
  ,Tarm.ApndecDtUnknown
  ,Tarm.Avdeftm
@@ -218,19 +206,16 @@ varTarm <- c('
  ,Tarm.DefcmthM7
  ,Tarm.DefcmthM8
  ,Tarm.DefcmthM9
- ,Tarm.DefcmthNa
  ,Tarm.DefcmthUn
  ,Tarm.Deffrq
  ,Tarm.DrugUse
  ,Tarm.Fcincfrq
- ,Tarm.Fcincfrq2
  ,Tarm.Fissures
  ,Tarm.FormDate
  ,Tarm.FormTypeId
  ,Tarm.Gifxnun
- ,Tarm.Hemec 
  ,Tarm.Hemrhoid
- ,UPPER(Tarm.HovedskjemaGUID) AS HovedskjemaGUID
+ ,Tarm.HovedskjemaGUID
  ,Tarm.Ileost
  ,Tarm.IleostDt
  ,Tarm.IleostDtUnknown
@@ -260,54 +245,11 @@ varTarm <- c('
  ,Tarm.PerianalProblems
  ,Tarm.Prokinet
  ,Tarm.Recprlps
--- ,Tarm.SkjemaGUID
--- ,Tarm.SkjemaGUID AS SkjemaGUIDTarm
+ ,Tarm.SkjemaGUID
  ,Tarm.SurgicalIntervention
  ,Tarm.Wrpadplg
  ')
 # ,Tarm.PasientGUID
-
-varKont <- c('
-      ,Kont.CAis
-,Kont.CMtrLvlAreaL
-,Kont.CMtrLvlAreaR
-,Kont.CMtrLvlLC
-,Kont.CMtrLvlLL
-,Kont.CMtrLvlLS
-,Kont.CMtrLvlLT
-,Kont.CMtrLvlRC
-,Kont.CMtrLvlRL            
-,Kont.CMtrLvlRS
-,Kont.CMtrLvlRT
-,Kont.CNeuExmDt
-,Kont.CNeuNoMeasure
-,Kont.CNum                 
-,Kont.CPlaceDis
-,Kont.CSensLvlAreaL
-,Kont.CSensLvlAreaR
-,Kont.CSensLvlLC
-,Kont.CSensLvlLL
-,Kont.CSensLvlLS
-,Kont.CSensLvlLT
-,Kont.CSensLvlRC
-,Kont.CSensLvlRL
-,Kont.CSensLvlRS           
-,Kont.CSensLvlRT
-,Kont.CVentAssi
-,Kont.FirstTimeClosed
-,Kont.FormDate      
-,Kont.FormStatus
-,Kont.FormTypeId
-,UPPER(Kont.HovedskjemaGUID) AS HovedskjemaGUID
-,Kont.LastUpdate
-,Kont.NoControl
-,Kont.NoControlReason      
-,Kont.ProceedingID
--- ,Kont.SkjemaGUID
--- ,Kont.SkjemaGUID AS SkjemaGUIDKont
-,Kont.UnitId
-')
-#"HealthUnitId","HealthUnitName","HealthUnitShortName","HF" ,"Hospital","RHF"          
 
 
 valgtSkjema <- substr(valgtVar,1,4)
@@ -322,13 +264,13 @@ if (valgtSkjema %in% c('Livs', 'Urin', 'Tarm', 'Tilf', 'Funk', 'Kont')) {
                          Funk = varFunk,
                          Tilf = varTilf,
                          Kont = varKont)
-
+      
       qSkjema <- paste0(switch(valgtSkjema, #Dette vil bare fungere hvis konsekvent med navngiving i valgtVar
            Livs = 'INNER JOIN LifeQualityFormDataContract Livs ',
            Urin = 'INNER JOIN UrinaryTractFunctionFormDataContract Urin ',
            Tarm = 'INNER JOIN BowelFunctionFormDataContract Tarm ',
            Funk = 'INNER JOIN ActivityAndParticipationPerformanceFormDataContract Funk ',
-           Kont = 'INNER JOIN ControlFormDataContract Kont '
+           Kont = 'INNER JOIN ControlFormDataContract k '
            ),
            'ON UPPER(h.SkjemaGUID) = UPPER(',valgtSkjema , '.HovedskjemaGUID) ')
       #qSkjema er NULL hvis ingen treff 
@@ -340,7 +282,6 @@ if (valgtSkjema %in% c('Livs', 'Urin', 'Tarm', 'Tilf', 'Funk', 'Kont')) {
                   }
       }
 
-
 query <- paste0('SELECT ',
                varHoved,
                variable,
@@ -348,16 +289,6 @@ query <- paste0('SELECT ',
             MainFormDataContract h ',
             qSkjema
             )
-
-
-#print(query)
-#Test av spørring på server:
-# SELECT 
-# h.SkjemaGUID AS SkjemaGUIDh,h.UnitId, h.VentAssi 
-# ,Tilf.DataClDtS ,Tilf.DreslbdyS ,Tilf.FeedingS ,Tilf.FirstTimeClosed ,Tilf.HovedskjemaGUID ,Tilf.MobilmodS ,Tilf.SkjemaGUID ,Tilf.ToiletinS  
-# FROM             MainFormDataContract h 
-# INNER JOIN ActivityAndParticipationPerformanceFormDataContract Funk  ON UPPER(h.SkjemaGUID) = UPPER(Funk.HovedskjemaGUID)  
-# INNER JOIN ActivityAndParticipationSatisfactionFormDataContract Tilf ON UPPER(Funk.SkjemaGUID) = UPPER(Tilf.HovedskjemaGUID)
 
 
 RegData <- rapbase::LoadRegData(registryName, query, dbType)

@@ -10,8 +10,6 @@
 #'
 NSPreprosesser <- function(RegData)
       {
-      #Kun ferdigstilte registreringer:
-      # Rapporteket får kun levert ferdigstilte registreringer fra MRS/NHN.
       
   #   RegData$ShNavn <- factor(RegData$ReshId, levels=c(105593, 106896, 107627), 
   #                                        labels=c('Haukeland', 'Sunnaas', 'St.Olavs'))
@@ -43,11 +41,8 @@ NSPreprosesser <- function(RegData)
           (RegData$FMtrLvlAreaL==-1) & (RegData$FMtrLvlAreaR==-1)]  <- 9
       
       # Endre variabelnavn:
-      #Riktig navn på regions-variabel:
-      #Ingen ønsketregionsinndeling!
-      #RegData$Region <- RegData$RHF
-      
       names(RegData)[which(names(RegData) == 'UnitId')] <- 'ReshId'
+      names(RegData)[which(names(RegData) == 'PatientInRegistryGuid')] <- 'PasientID'
       names(RegData)[which(names(RegData) == 'HealthUnitShortName')] <- 'ShNavn'
       names(RegData)[which(names(RegData) == 'PatientAge')] <- 'Alder'
       names(RegData)[which(names(RegData) == 'PlaceDis')] <- 'UtTil' 
@@ -59,25 +54,41 @@ NSPreprosesser <- function(RegData)
       #names(RegData)[which(names(RegData) == 'OutOfHosptlDy')] <- 'Permisjon'
       #RegData$Permisjon <- with(RegData, OutOfHosptlDy+OutOfHosptlDy2+OutOfRehabDy)
       
-      # Riktig format
-      #	RegData$alder <- as.numeric(RegData$decimalAge)	#
-      
       #Riktig format på datovariable:
       RegData$InnDato <- as.Date(RegData$AdmitDt, tz= 'UTC', format="%Y-%m-%d") #as.POSIXlt(RegData$AdmitDt, format="%Y-%m-%d")
-      RegData$Aar <- as.POSIXlt(RegData$AdmitDt, format="%Y-%m-%d")$year +1900
+      RegData$AdmitDt <- strptime(RegData$AdmitDt, format="%Y-%m-%d")
+
+      #Kun ferdigstilte registreringer:
+      # Rapporteket får kun levert ferdigstilte registreringer fra MRS/NHN.Men det kan dukke opp ufullstendige registreringer.
+      #Fjerner de som mangler sykehus og eller AdmitDt:
+      RegData <- RegData[which(RegData$ReshId %in% c(105593, 106896, 107627)), ] #dplyr::filter(RegData, ReshId %in% c(105593, 106896, 107627))
+      #RegData <- RegData[-which(is.na(RegData$AdmitDt)), ]
       
-      #Konvertere boolske variable fra tekst til boolske variable...
-      TilLogiskeVar <- function(Skjema){
-            verdiGML <- c('True','False')
-            verdiNY <- c(TRUE,FALSE)
-            mapping <- data.frame(verdiGML,verdiNY)
-            LogVar <- names(Skjema)[which(Skjema[1,] %in% verdiGML)]
-            if (length(LogVar)>0) {
-                  for (k in 1:length(LogVar)) {
-                        Skjema[,LogVar[k]] <- mapping$verdiNY[match(Skjema[,LogVar[k]], mapping$verdiGML)]
-                  }}
-            return(Skjema)
-      }
+            # Riktig format
+      #	RegData$alder <- as.numeric(RegData$decimalAge)	#
+      RegData$ShNavn <- as.factor(RegData$ShNavn)
+      
+
+      # Nye variable:
+      RegData$MndNum <- RegData$AdmitDt$mon +1
+      head(format(RegData$AdmitDt, '%b'))
+      RegData$MndAar <- format(RegData$AdmitDt, '%b%y')
+      RegData$Kvartal <- ceiling(RegData$MndNum/3)
+      RegData$Halvaar <- ceiling(RegData$MndNum/6)
+      RegData$Aar <- 1900 + RegData$AdmitDt$year #strptime(RegData$Innleggelsestidspunkt, format="%Y")$year
+      
+      # #Konvertere boolske variable fra tekst til boolske variable...
+      # TilLogiskeVar <- function(Skjema){
+      #       verdiGML <- c('True','False')
+      #       verdiNY <- c(TRUE,FALSE)
+      #       mapping <- data.frame(verdiGML,verdiNY)
+      #       LogVar <- names(Skjema)[which(Skjema[1,] %in% verdiGML)]
+      #       if (length(LogVar)>0) {
+      #             for (k in 1:length(LogVar)) {
+      #                   Skjema[,LogVar[k]] <- mapping$verdiNY[match(Skjema[,LogVar[k]], mapping$verdiGML)]
+      #             }}
+      #       return(Skjema)
+      # }
       
       RegData <- TilLogiskeVar(RegData)
       

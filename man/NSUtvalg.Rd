@@ -4,13 +4,12 @@
 \alias{NSUtvalg}
 \title{Funksjon som gjør utvalg av data basert på brukervalg.}
 \usage{
-NSUtvalg(RegData, datoFra = "2010-01-01", datoTil = "3000-05-25",
-  minald = 0, maxald = 130, erMann = 99, traume = "", AIS = "",
-  enhetsUtvalg = 0, paratetra = 99, reshID = 0, fargepalett = "BlaaOff")
+NSUtvalg(RegData, datoFra = "2010-01-01", datoTil = Sys.Date(),
+  minald = 0, maxald = 110, erMann = 99, traume = "alle",
+  AIS = "", enhetsUtvalg = 0, nivaaUt = 99, reshID = 0,
+  fargepalett = "BlaaOff", datoUt = 0)
 }
 \arguments{
-\item{RegData}{- ei dataramme med alle nødvendige variable fra registeret.}
-
 \item{datoFra}{<- '2010-01-01'    # min og max dato i utvalget vises alltid i figuren.}
 
 \item{datoTil}{<- '2013-05-25'}
@@ -21,15 +20,13 @@ NSUtvalg(RegData, datoFra = "2010-01-01", datoTil = "3000-05-25",
 
 \item{erMann}{- kjønn, 1-menn, 0-kvinner, standard: '' (alt annet enn 0 og 1), dvs. begge}
 
-\item{traume}{- 'ja','nei', standard: ikke valgt}
+\item{traume}{- 'ja','nei', 'alle' standard: ikke valgt}
 
 \item{AIS}{- AISgrad ved innleggelse alle(''), velge en eller flere fra A,B,C,D,E,U}
 
 \item{enhetsUtvalg}{- 1:eget sykehus, 0:hele landet (standard)}
 
-\item{paratetra}{- Nivå ved utreise, flervalgs tetraplegi, paraplegi, ukjent}
-
-\item{reshID}{- avdelingsid for egen avdeling, standard: 0-hele landet.}
+\item{nivaaUt}{- Nivå ved utreise, flervalgs tetraplegi, paraplegi, C1-4, C5-8, ukjent}
 }
 \description{
 Funksjon som gjør utvalg av dataene, returnerer det reduserte datasettet og

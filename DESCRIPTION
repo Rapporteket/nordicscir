@@ -1,24 +1,31 @@
 Package: nordicscir
+Type: Package
 Title: R-pakke for å generere resultater fra NordicScir
-Version: 1.1.0
-Date: 2017-01-19
-Authors: Authors@R: c(
-  person("Olsen", "Lena Ringstad", email = "Lena.Ringstad.Olsen@unn.no",
-  role = c("cre", "aut")),
-  person("Edvardsen", "Are", email =  "are.edvardsen@helsenord.no",
-  role = "aut")
-  )
+Version: 2.0
+Author: Lena Ringstad Olsen
+Maintainer: Lena Ringstad Olen <lena.olsen@skde.no>
 Description: An implemetation of all R related resources for NordicScir at
     Rapporteket, including R-functions for analysis and plotting, noweb-files and
     even artwork needed for producing R-dependent reports
 License: GPL-2
 Encoding: UTF-8
-LazyData: true
+LazyData: false
 Depends:
-    R (>= 3.0.2),
-    rapbase (>= 1.0.0)
-Suggests:
+    R (>= 3.5.0)
+Imports:
+    kableExtra,
     knitr,
+    lubridate,
+    rapbase,
+    rapFigurer,
+    raplog,
+    shiny,
+    shinyjs,
     xtable
+Remotes: 
+    Rapporteket/rapbase@rel,
+    Rapporteket/rapFigurer,
+    Rapporteket/raplog,
+Suggests:
 VignetteBuilder: knitr
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1

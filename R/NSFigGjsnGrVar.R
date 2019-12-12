@@ -14,15 +14,19 @@
 #'    }
 #'    
 #' @inheritParams NSFigAndeler
+#' @inheritParams NSUtvalg
 #' @param valgtMaal - 'med' = median. Alt annet gir gjennomsnitt
 #'
 #' @export
 
 NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='gjsn', grVar='ShNavn',
                               datoFra='2010-01-01', datoTil='2050-12-31', 
-					AIS='', minald=0, maxald=130, erMann='', traume='', paratetra=99, 
-					preprosess=1, outfile='', hentData=0) {
-
+					AIS='', minald=0, maxald=130, erMann='', traume='alle', nivaaUt=99, 
+					preprosess=1, outfile='', hentData=0, ...) {
+  
+  if ("session" %in% names(list(...))) {
+    raplog::repLogger(session = list(...)[["session"]], msg = "Sentralmaal per sykehus, figur")
+  }
       if (hentData == 1) {
             RegData <- NSRegDataSQL(valgtVar=valgtVar)
       }
@@ -36,7 +40,7 @@ NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='gjsn', grVar='ShNavn',
       
       #------- Gjøre utvalg
       Utvalg <- NSUtvalg(RegData=RegData, datoFra=datoFra, datoTil=datoTil, minald=minald, maxald=maxald,
-                         erMann=erMann, traume=traume, AIS=AIS, paratetra=paratetra)
+                         erMann=erMann, traume=traume, AIS=AIS, nivaaUt=nivaaUt)
       RegData <- Utvalg$RegData
       utvalgTxt <- Utvalg$utvalgTxt
             
@@ -132,6 +136,10 @@ NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='gjsn', grVar='ShNavn',
                   RegForsinkelse = 'dager')
   
   #Se NSFigSoyler for forklaring av innhold i lista gjsnGrVarData
+  SentralmaalTxt <- switch(valgtMaal,
+                     med = 'Median',
+                     gjsn = 'Gjennomsnitt')
+  
   GjsnGrVarData <- list(AggVerdier=AggVerdier, #Endres til Soyleverdi? Evt. AggVerdier
                         AggTot=MidtHele, #Til AggVerdiTot?
                         N=list(Hoved=N), 
@@ -143,6 +151,7 @@ NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='gjsn', grVar='ShNavn',
                         grtxt=GrNavnSort,
                         valgtMaal=valgtMaal,
                         tittel=tittel,    #NSVarSpes$tittel, 
+                        SentralmaalTxt = SentralmaalTxt,
                         #yAkseTxt=yAkseTxt, 
                         retn='H', 
                         xAkseTxt=NSVarSpes$xAkseTxt,
@@ -168,7 +177,7 @@ NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='gjsn', grVar='ShNavn',
 #--------------------------FIGUR---------------------------------------------------
 
     if 	( max(Ngr) < Ngrense)	{#Dvs. hvis ALLE er mindre enn grensa.
-          rapbase::figtype(outfile)
+          rapFigurer::figtype(outfile)
           plot.new()
           if (dim(RegData)[1]>0) {
                 tekst <- paste0('Færre enn ', Ngrense, ' registreringer ved hvert av sykehusene')
@@ -182,7 +191,7 @@ NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='gjsn', grVar='ShNavn',
           #--------------------------------------------------------
           
           #Plottspesifikke parametre:
-    FigTypUt <- rapbase::figtype(outfile, fargepalett=Utvalg$fargepalett)
+    FigTypUt <- rapFigurer::figtype(outfile, fargepalett=Utvalg$fargepalett)
     farger <- FigTypUt$farger
     cexleg <- 1.1	#Størrelse på legendtekst
     cexgr <- 1.1
@@ -228,5 +237,6 @@ NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='gjsn', grVar='ShNavn',
     par('fig'=c(0, 1, 0, 1))
     if ( outfile != '') {dev.off()}
     #----------------------------------------------------------------------------------
-  }
+    }
+  return(invisible(GjsnGrVarData))
 }

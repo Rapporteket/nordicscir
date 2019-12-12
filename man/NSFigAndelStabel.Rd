@@ -4,10 +4,10 @@
 \alias{NSFigAndelStabel}
 \title{Søylediagram som sammenligner fordeling (vha. stablede søyler) av valgt variabel}
 \usage{
-NSFigAndelStabel(RegData, outfile = "", valgtVar, datoFra = "2010-01-01",
-  datoTil = "3000-01-01", minald = 0, maxald = 130, erMann = "",
-  traume = "", preprosess = 1, enhetsUtvalg = enhetsUtvalg, reshID,
-  hentData = 0)
+NSFigAndelStabel(RegData, outfile = "", valgtVar,
+  datoFra = "2010-01-01", datoTil = "3000-01-01", minald = 0,
+  maxald = 130, erMann = "", traume = 99, preprosess = 1,
+  enhetsUtvalg = enhetsUtvalg, reshID, hentData = 0)
 }
 \arguments{
 \item{RegData}{- ei dataramme med alle nødvendige variable fra registeret.}
@@ -26,7 +26,7 @@ NSFigAndelStabel(RegData, outfile = "", valgtVar, datoFra = "2010-01-01",
 
 \item{erMann}{- kjønn, 1-menn, 0-kvinner, standard: '' (alt annet enn 0 og 1), dvs. begge}
 
-\item{traume}{- 'ja','nei', standard: ikke valgt}
+\item{traume}{- 'ja','nei', 'alle' standard: ikke valgt}
 
 \item{preprosess}{Preprosesser data
 0: Nei

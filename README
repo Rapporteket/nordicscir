@@ -15,18 +15,7 @@ To install the current package, first time or at any future upgrade, do:
 
 
 NOTE: Communicating through a proxy might cause the above install command to
-fail. If so, try the following prior to the above install command:
-  
-  library(httr)
-  set_config(
-    use_proxy(url="18.91.12.23", port=8080, username="user",password="passwd")
-  )
-
-replacing the example parameter values with whatever applies for the
-system the package is being installed on
-
-
-
+fail.
 # Develop
 Contributors submit their code to the rel (release) branch which is
 subject to testing at Rapporteket. Upon acceptance rel will me merged to

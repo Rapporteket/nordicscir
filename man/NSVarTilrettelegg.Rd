@@ -26,8 +26,21 @@ Her kan mye hentes til analysebok
 \details{
 Argumentet \emph{valgtVar} har følgende valgmuligheter:
    \itemize{
-    \item alder: Aldersfordeling, 10-årige grupper 
+    \item Alder: Aldersfordeling, 10-årige grupper 
    }
+   
+NB: valgtVar må komponeres slik at den henspeiler på hvilken 
+tabell variabelen kommer fra. Dette for å senere kunne hente og koble dataene riktig.
+valgtSkjema <- substr(valgtVar,1,4) 
+Prefixet til  \emph{valgtVar} skal være følgende:
+   \itemize{
+   \item Livs - LifeQuality, 
+   \item Urin - UrinaryTractFunction
+   \item Tarm - BowelFunction
+   \item Kont - Control
+   \item Funk - ActivityAndParticipationPerformance
+   \item Tilf - ActivityAndParticipationSatisfaction
+        }
 Argumentet \emph{enhetsUtvalg} har følgende valgmuligheter:
    \itemize{
     \item 0: Hele landet

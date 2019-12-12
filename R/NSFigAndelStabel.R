@@ -12,16 +12,20 @@
 #' Eget / resten av landet (Velge: Inn eller Ut)
 #'
 #' @inheritParams NSFigAndeler 
+#' @inheritParams NSUtvalg
 #' @param enhetsUtvalg - 1:eget sykehus, 0:hele landet (standard) Kun for valgtVar=='NevrNivaaInnUt'
 #' @export
 
 NSFigAndelStabel <- function(RegData, outfile='', valgtVar,
                            datoFra='2010-01-01', datoTil='3000-01-01',minald=0,
-                           maxald=130, erMann='', traume='',preprosess=1,
-                           enhetsUtvalg=enhetsUtvalg , reshID, hentData=0)
+                           maxald=130, erMann='', traume=99, preprosess=1,
+                           enhetsUtvalg=enhetsUtvalg , reshID, hentData=0,...)
 {
 
-      if (hentData == 1) {
+  if ("session" %in% names(list(...))) {
+    raplog::repLogger(session = list(...)[["session"]], msg = "Fordelingsfigur")
+  }
+  if (hentData == 1) {
             RegData <- NSRegDataSQL()
       }
       if (preprosess == 1) {
@@ -130,7 +134,7 @@ NSFigAndelStabel <- function(RegData, outfile='', valgtVar,
 
   #-----------Hvis få observasjoner---------------------------------------
   if (sum(N) < 10) {
-    FigTypUt <- rapbase::figtype(outfile)
+    FigTypUt <- rapFigurer::figtype(outfile)
     plot.new()
     title(tittel)   #, line=-6)
     legend('topleft',utvalgTxt, bty='n', cex=0.9, text.col=FigTypUt$farger[1])
@@ -153,7 +157,7 @@ NSFigAndelStabel <- function(RegData, outfile='', valgtVar,
     #-----------Figur---------------------------------------
     #Inn parametre: subtxt, grtxt1, grtxt2, tittel, libkat, AndelStabel
     #Plottspesifikke parametre:
-    FigTypUt <- rapbase::figtype(outfile, fargepalett=Utvalg$fargepalett)
+    FigTypUt <- rapFigurer::figtype(outfile, fargepalett=Utvalg$fargepalett)
     #Tilpasse marger for å kunne skrive utvalgsteksten
     NutvTxt <- length(utvalgTxt)
     par('fig'=c(0, 1, 0, 1-0.02*(NutvTxt-1)))       #Har alltid datoutvalg med

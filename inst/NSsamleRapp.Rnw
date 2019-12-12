@@ -97,7 +97,8 @@ options(replace.assign=TRUE, width=90) #, warnings=FALSE, echo=FALSE, fig.align=
 
 <<LasteData, echo=FALSE, eval=T>>=
 if (!exists('NSdata')){
-      NSdata <- nordicscir::NSRegDataSQL()
+      #NSdata <- nordicscir::NSRegDataSQL()
+      NSdata <- HovedSkjema
 }
 @
 
@@ -114,8 +115,8 @@ Der har du også mulighet for å lage egne figurer og tabeller.
 \section{Data og nøkkeltall}
 
 <<'Variabeldef og utvalg', results='asis', echo=FALSE>>=
-NSdata <- NSPreprosesser(RegData=NSdata)
-NSdata$Aar <- NSdata$InnDato$year+1900
+NSdata <- HovedSkjema #NSPreprosesser(RegData=NSdata)
+NSdata$Aar <- lubridate::year(NSdata$InnDato) #NSdata$InnDato$year+1900
 ShNavn <- as.character(NSdata$ShNavn[match(reshID, NSdata$ReshId)])
 '%i%' <- intersect
 
@@ -125,8 +126,8 @@ maxald <- 130
 erMann <- ''	#...
 traume <- ''	#'ja','nei', standard: ikke utvalgt (
 AIS <- ''
-datoFra <- '2011-01-01'	#Standard: 0, dvs. alle år
-datoTil <- '2050-05-25'
+datoFra <- ifelse(exists('datoFra'), datoFra,'2015-01-01')	#Standard: 0, dvs. alle år
+datoTil <- ifelse(exists('datoTil'), datoTil, Sys.Date())
 #reshID - gis fra Jasper	##105593-Haukeland, 106896-Sunnaas sykehus, 107627-St.Olavs, standard: 'Alle'
 s1 <- 0.8	#Skaleringsparameter for enkeltfigurer
 #s2 <- 0.7	#Skaleringsparameter for "dobbeltfigurer"
