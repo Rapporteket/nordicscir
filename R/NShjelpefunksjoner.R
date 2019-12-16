@@ -148,6 +148,10 @@ TilLogiskeVar <- function(Skjema){
 abonnement <- function(rnwFil, brukernavn='ukjent', reshID=0, 
                        datoFra=Sys.Date()-400, datoTil=Sys.Date()) {
   
+  raplog::subLogger(author = brukernavn, registryName = 'NorScir',
+                    reshId = reshID[[1]],
+                    msg = paste0("Abonnement: ", rnwFil))
+  
   HovedSkjema <- NSRegDataSQL() 
   LivskvalH <- NSRegDataSQL(valgtVar='LivsXX')
   KontrollH <- NSRegDataSQL(valgtVar='KontXX')
@@ -171,12 +175,12 @@ abonnement <- function(rnwFil, brukernavn='ukjent', reshID=0,
   filbase <- substr(rnwFil[[1]], 1, nchar(rnwFil[[1]])-4)
   tmpFile <- paste0(filbase, Sys.Date(),'_',digest::digest(brukernavn)[[1]], '.Rnw')
   src <- normalizePath(system.file(rnwFil[[1]], package='nordicscir'))
-  owd <- setwd(tempdir()) # gå til tempdir. Har ikke skriverettigheter i arbeidskatalog
+  setwd(tempdir()) # gå til tempdir. Har ikke skriverettigheter i arbeidskatalog
   file.copy(src, tmpFile, overwrite = TRUE)
   knitr::knit2pdf(input=tmpFile) #, output = paste0(filbase, digest::digest(brukernavn),'.tex'))
   
   #gc() #Opprydning gc-"garbage collection"
-  utfil <- paste0(owd, '/', substr(tmpFile, 1, nchar(tmpFile)-3), 'pdf')
+  utfil <- paste0( getwd(), '/', substr(tmpFile, 1, nchar(tmpFile)-3), 'pdf') #
   #utfil <- file.copy(from = paste0(substr(tmpFile, 1, nchar(tmpFile)-3), 'pdf'), 
   #         to = paste0(filbase, digest::digest(brukernavn),'.pdf')) #filnavn)
   return(utfil)

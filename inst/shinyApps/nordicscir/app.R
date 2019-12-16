@@ -911,7 +911,7 @@ server <- function(input, output, session) {
          
          fun <- "abonnement"  #"henteSamlerapporter"
          paramNames <- c('rnwFil', 'brukernavn', "reshID", "datoFra", 'datoTil')
-         paramValues <- c(rnwFil, brukernavn(), reshID(), startDato, Sys.Date()) #input$subscriptionFileFormat)
+         paramValues <- c(rnwFil, brukernavn(), reshID(), as.character(startDato), as.character(Sys.Date())) #input$subscriptionFileFormat)
          #paramValues <- c(rnwFil, AlleTab, 'toill', 107627, '2018-01-01', as.character(Sys.Date())) #input$subscriptionFileFormat)
          
          #TESTING:
@@ -920,8 +920,8 @@ server <- function(input, output, session) {
          #parametre <- as.list(parametre)
          # abonnement(rnwFil=rnwFil, AlleTabeller=AlleTab, brukernavn='toillbokk', reshID=107627,
          #            datoFra=as.Date('2018-01-01'), datoTil=Sys.Date())
-         #abonnement(list(rnwFil=rnwFil), list(AlleTabeller=AlleTab), list(brukernavn='toillbokk'), list(reshID=107627),
-         #          list(datoFra=as.Date('2018-01-01')), list(datoTil=Sys.Date()))
+         #test <- abonnement(list(rnwFil=rnwFil), list(brukernavn='toillbokk'), list(reshID=107627),
+         #          list(datoFra=as.Date('2018-01-01')), list(datoTil=as.character(Sys.Date())) ) 
          
          rapbase::createAutoReport(synopsis = synopsis, package = package,
                                    fun = fun, paramNames = paramNames,

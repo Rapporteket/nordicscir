@@ -1,7 +1,8 @@
 Package: nordicscir
 Type: Package
 Title: R-pakke for å generere resultater fra NordicScir
-Version: 2.0
+Version: 2.0.0
+Date: '2019-12-16'
 Author: Lena Ringstad Olsen
 Maintainer: Lena Ringstad Olen <lena.olsen@skde.no>
 Description: An implemetation of all R related resources for NordicScir at
@@ -20,6 +21,7 @@ Imports:
     rapFigurer,
     raplog,
     shiny,
+    shinyalert,
     shinyjs,
     xtable
 Remotes: 
