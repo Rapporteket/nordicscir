@@ -920,7 +920,7 @@ server <- function(input, output, session) {
          #parametre <- as.list(parametre)
          # abonnement(rnwFil=rnwFil, AlleTabeller=AlleTab, brukernavn='toillbokk', reshID=107627,
          #            datoFra=as.Date('2018-01-01'), datoTil=Sys.Date())
-         #abonnement(list(rnwFil=rnwFil), list(AlleTabeller=AlleTab), list(brukernavn='toillbokk'), list(reshID=107627),
+         #test <- abonnement(list(rnwFil=rnwFil), list(brukernavn='toillbokk'), list(reshID=107627),
          #          list(datoFra=as.Date('2018-01-01')), list(datoTil=Sys.Date()))
          
          rapbase::createAutoReport(synopsis = synopsis, package = package,
