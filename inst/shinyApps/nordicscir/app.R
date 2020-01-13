@@ -870,6 +870,9 @@ server <- function(input, output, session) {
       rv <- reactiveValues(
          subscriptionTab = rapbase::makeUserSubscriptionTab(session))
       
+      print(rapbase::getUserGroups(session))
+      
+      
       ## lag tabell over gjeldende status for abonnement
       output$activeSubscriptions <- DT::renderDataTable(
          rv$subscriptionTab, server = FALSE, escape = FALSE, selection = 'none',
