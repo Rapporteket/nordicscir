@@ -230,7 +230,7 @@ ui <- tagList(
                                          br(),
                                          br(),
                                          #hr(),
-                                         #conditionalPanel(condition = (rolle()=='SC'),
+                                         #conditionalPanel(condition = (rolle=='SC'),
                                          tableOutput('fordelingShTab'),
                                          downloadButton(outputId = 'lastNed_tabFordSh', label='Last ned')
                                          #)
@@ -443,11 +443,11 @@ server <- function(input, output, session) {
    
       #hospitalName <-getHospitalName(rapbase::getUserReshId(session))
       reshID <- reactive({ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 107627)}) 
-      rolle <- reactive({ifelse(paaServer, rapbase::getUserRole(shinySession=session), 'SC')})
+      rolle <- ifelse(paaServer, rapbase::getUserRole(shinySession=session), 'SC') #reactive({})
       brukernavn <- reactive({ifelse(paaServer, rapbase::getUserName(shinySession=session), 'tullebukk')})
       #output$reshID <- renderText({ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 105460)}) #evt renderUI
       
-      observe({if (rolle() != 'SC') {
+      observe({if (rolle != 'SC') {
             
       #NB: Må aktiveres i ui-del også OK
             shinyjs::hide(id = 'samleRappLand.pdf')
@@ -463,7 +463,7 @@ server <- function(input, output, session) {
       # widget
       if (paaServer) {
          output$appUserName <- renderText(rapbase::getUserFullName(session))
-         output$appOrgName <- renderText(paste0('rolle: ', rolle(), '<br> ReshID: ', reshID()) )}
+         output$appOrgName <- renderText(paste0('rolle: ', rolle, '<br> ReshID: ', reshID()) )}
       
       # User info in widget
       userInfo <- rapbase::howWeDealWithPersonalData(session)
@@ -484,10 +484,6 @@ server <- function(input, output, session) {
                   TarmH <- NSRegDataSQL(valgtVar='TarmXX')
                   AktivFunksjonH <- NSRegDataSQL(valgtVar='FunkXX')
                   AktivTilfredshetH <- NSRegDataSQL(valgtVar='TilfXX')
-                  
-                  # widget
-                  output$appUserName <- renderText(rapbase::getUserFullName(session))
-                  output$appOrgName <- renderText(rapbase::getUserReshId(session))
       } 
 
       if (!exists('HovedSkjema')){
@@ -870,8 +866,9 @@ server <- function(input, output, session) {
       rv <- reactiveValues(
          subscriptionTab = rapbase::makeUserSubscriptionTab(session))
       
-      print(rapbase::getUserGroups(session))
-      
+      #print(rapbase::getUserGroups(session))
+      #print(session)
+      #print(rapbase::shinySessionInfo(session, entity = "groups"))
       
       ## lag tabell over gjeldende status for abonnement
       output$activeSubscriptions <- DT::renderDataTable(
