@@ -4,10 +4,24 @@
 \alias{NSFigGjsnGrVar}
 \title{Funksjon som genererer en figur med gjennomsnitt/median}
 \usage{
-NSFigGjsnGrVar(RegData, valgtVar, valgtMaal = "gjsn", grVar = "ShNavn",
-  datoFra = "2010-01-01", datoTil = "2050-12-31", AIS = "",
-  minald = 0, maxald = 130, erMann = "", traume = "alle",
-  nivaaUt = 99, preprosess = 1, outfile = "", hentData = 0)
+NSFigGjsnGrVar(
+  RegData,
+  valgtVar,
+  valgtMaal = "gjsn",
+  grVar = "ShNavn",
+  datoFra = "2010-01-01",
+  datoTil = "2050-12-31",
+  AIS = "",
+  minald = 0,
+  maxald = 130,
+  erMann = "",
+  traume = "alle",
+  nivaaUt = 99,
+  preprosess = 1,
+  outfile = "",
+  hentData = 0,
+  ...
+)
 }
 \arguments{
 \item{RegData}{- ei dataramme med alle nødvendige variable fra registeret.}

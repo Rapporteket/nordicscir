@@ -99,6 +99,15 @@ ui <- tagList(
                          br('(Mer informasjon om registreringsstatus finner du på sidene "Registreringsoversikter")'),
                          br(),
                          br(),
+                         column(width=6,
+                                h3('Nevrologisk klassifikasjon.', align='center'),
+                                br(),
+                                tableOutput('tabNevrKlass')),
+                         column(width=6,
+                                h3('Nevrologisk klassifikasjon for pasienter med liggetid over 28 dager i
+                                   ryggmargsskadeavdeling.', align='center'),
+                                tableOutput('tabNevrKlass28')
+                         ),
                          h4('Oversikt over registerets kvalitetsindikatorer og resultater finner du på www.kvalitetsregistre.no:', #helpText
                                   a("NorSCIR", href="https://www.kvalitetsregistre.no/registers/561/resultater"),
                                   target="_blank", align='center'),
@@ -112,17 +121,6 @@ ui <- tagList(
                          #h4('Mer informasjon om selve registeret finnes på NorSCIRs hjemmeside: ', align='center',
                          #         a("www.norscir.no", href="http://www.norscir.no", target="_blank")) #target gjør at lenken åpnes i ny fane
            
-                         
-                                       
-                         # column(width=6,
-                         #        h3('Nevrologisk klassifikasjon.', align='center'),
-                         #        br(),
-                         #        tableOutput('tabNevrKlass')),
-                         # column(width=6,
-                         #        h3('Nevrologisk klassifikasjon for pasienter med liggetid over 28 dager i
-                         #           ryggmargsskadeavdeling.', align='center'),
-                         #        tableOutput('tabNevrKlass28')
-                         #        ),
                )
       ), #tab
 
@@ -594,23 +592,23 @@ server <- function(input, output, session) {
       output$tabAntOpphShMnd12startside <- renderTable({tabAntOpphShMnd(RegData=HovedSkjema, antMnd=12)}, 
                                                        rownames = T, digits=0, spacing="xs")
       
-      # output$tabNevrKlass <- renderTable(
-      #       lagTabNevrKlass(HovedSkjema, datoFra = input$datovalgDash[1], datoTil = input$datovalgDash[2]),
-      #       rownames=T
-      # )
-      # 
-      # output$tabNevrKlass28 <- renderTable({
-      #       HovedSkjema28 <- HovedSkjema[which(HovedSkjema$DagerRehab >28),]
-      #       lagTabNevrKlass(HovedSkjema28, datoFra = input$datovalgDash[1], datoTil = input$datovalgDash[2])},
-      #       rownames=T
-      # )
-      # 
+      output$tabNevrKlass <- renderTable(
+            lagTabNevrKlass(HovedSkjema, datoFra = input$datovalgDash[1], datoTil = input$datovalgDash[2]),
+            rownames=T
+      )
+
+      output$tabNevrKlass28 <- renderTable({
+            HovedSkjema28 <- HovedSkjema[which(HovedSkjema$DagerRehab >28),]
+            lagTabNevrKlass(HovedSkjema28, datoFra = input$datovalgDash[1], datoTil = input$datovalgDash[2])},
+            rownames=T
+      )
+
       # output$tabLiggetider <- renderTable({
       #       tabLiggetider(RegData = HovedSkjema, datoFra = input$datovalgDash[1], datoTil = input$datovalgDash[2])},
       #       rownames=T,
       #       digits = 0
       # )
-      # output$tabLiggetider <- function() { 
+      # output$tabLiggetider <- function() {
       #       tabLigget <- tabLiggetider(RegData = HovedSkjema, datoFra = input$datovalgDash[1], datoTil = input$datovalgDash[2])
       #       kableExtra::kable(tabLigget, format = 'html'
       #                         , full_width=F

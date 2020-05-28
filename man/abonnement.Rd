@@ -2,27 +2,30 @@
 % Please edit documentation in R/NShjelpefunksjoner.R
 \name{abonnement}
 \alias{abonnement}
-\title{Funksjon som produserer rapporten som skal sendes til mottager.
-(The actual call to this function is made through do.call and 
-has the effect of providing the parameters as class
-\emph{list}. Verdier gis inn som listeparametre}
+\title{Gererere månedsrapport for abonnement}
 \usage{
-abonnement(rnwFil, brukernavn = "tullebukk", reshID = 0,
-  datoFra = Sys.Date() - 400, datoTil = Sys.Date())
+abonnement(
+  rnwFil,
+  brukernavn = "ukjent",
+  reshID = 0,
+  datoFra = Sys.Date() - 400,
+  datoTil = Sys.Date()
+)
 }
 \arguments{
-\item{reshID}{Aktuell reshid}
+\item{rnwFil}{navn på Rnw-fila som skal kjøres ('mndRapp.Rnw')}
 
-\item{datoFra}{dato}
+\item{brukernavn}{abonnentens brukernavn ved bestilling}
 
-\item{parametre}{Liste med valgfrie parametre, avhengig av type rapport}
+\item{reshID}{- reshID som abonnenten var logget inn med ved bestilling}
+
+\item{datoFra}{- startdato for data som hentes til bruk i rapporten}
+
+\item{datoTil}{- sluttdato for data som hentes til bruk i rapporten}
 }
 \value{
-Full path of file produced
+
 }
 \description{
-Funksjon som produserer rapporten som skal sendes til mottager.
-(The actual call to this function is made through do.call and 
-has the effect of providing the parameters as class
-\emph{list}. Verdier gis inn som listeparametre
+Gererere månedsrapport for abonnement
 }

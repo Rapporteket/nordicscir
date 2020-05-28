@@ -4,8 +4,7 @@
 \alias{lagTabNevrKlass}
 \title{Nevrologisk klassifikasjon}
 \usage{
-lagTabNevrKlass(HovedSkjema, datoFra = "2018-01-01",
-  datoTil = Sys.Date())
+lagTabNevrKlass(HovedSkjema, datoFra = "2018-01-01", datoTil = Sys.Date())
 }
 \arguments{
 \item{datoFra}{<- '2010-01-01'    # min og max dato i utvalget vises alltid i figuren.}

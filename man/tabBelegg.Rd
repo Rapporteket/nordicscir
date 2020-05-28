@@ -4,8 +4,13 @@
 \alias{tabBelegg}
 \title{Funksjoner for å lage tabeller Group of functions page title}
 \usage{
-tabBelegg(RegData, tidsenhet = "Mnd", datoTil = Sys.Date(),
-  enhetsUtvalg = 0, reshID = 0)
+tabBelegg(
+  RegData,
+  tidsenhet = "Mnd",
+  datoTil = Sys.Date(),
+  enhetsUtvalg = 0,
+  reshID = 0
+)
 }
 \arguments{
 \item{RegData}{data}

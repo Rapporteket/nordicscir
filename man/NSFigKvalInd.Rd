@@ -4,10 +4,23 @@
 \alias{NSFigKvalInd}
 \title{Søylediagram som viser flere kvalitetsindikatorer}
 \usage{
-NSFigKvalInd(NSdata, outfile = "", valgtVar, datoFra = "2010-01-01",
-  datoTil = "2050-01-01", AIS = "", minald = 0, maxald = 130,
-  erMann = 99, traume = "", nivaaUt = 99, enhetsUtvalg = 1, reshID,
-  hentData = 0, preprosess = 1)
+NSFigKvalInd(
+  NSdata,
+  outfile = "",
+  valgtVar,
+  datoFra = "2010-01-01",
+  datoTil = "2050-01-01",
+  AIS = "",
+  minald = 0,
+  maxald = 130,
+  erMann = 99,
+  traume = "",
+  nivaaUt = 99,
+  enhetsUtvalg = 1,
+  reshID,
+  hentData = 0,
+  preprosess = 1
+)
 }
 \arguments{
 \item{NSdata}{- Alle nødvendige variable fra hvert skjema.}
