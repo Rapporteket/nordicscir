@@ -62,7 +62,12 @@ ui <- tagList(
                             br('NB: Nedlasting tar litt tid. I mellomtida får man ikke sett på andre resultater.'),
                             br(),
                             br('Hvis du ønsker månedsrapporten regelmessig tilsendt på e-post, 
-                               kan du gå til fanen "Abonnement" og bestille dette.')
+                               kan du gå til fanen "Abonnement" og bestille dette.'),
+                            br(),
+                            br(),
+                            h4('Datovalg for nevrologisk klassifikasjon'),
+                            dateRangeInput(inputId = 'datovalgDash', start = startDato, end = Sys.Date(),
+                                           label = "Tidsperiode", separator="t.o.m.", language="nb")
                ),
                mainPanel(width = 8,
                          shinyalert::useShinyalert(),
@@ -73,41 +78,57 @@ ui <- tagList(
                                                       addUserInfo = TRUE)},
                          h2('Velkommen til Rapporteket - Norsk Ryggmargsskaderegister!', align='center'),
                          br(),
+                         tabsetPanel(
+                            tabPanel('Status',
                          h4('Du er nå inne på Rapporteket for NorSCIR. Rapporteket er registerets resultattjeneste. 
                             Disse sidene inneholder en samling av figurer og tabeller som viser resultater fra registeret. 
                             På hver av sidene kan man gjøre utvalg i menyene til venstre. Alle resultater er basert 
                             på ferdigstilte registreringer. Merk at data er hentet direkte fra registerets database. 
                             Dette medfører at nyere data ikke er kvalitetssikret ennå.'),
-                         h4('Du kan se på resultater for eget sykehus, nasjonale data og eget sykehus sett opp mot landet for øvrig.
-                            Resultatene som vises er 
-                              basert på AdmitDt, altså dato for første akutte innleggelse. Alle figurer og 
-                            tabeller kan lastes ned.'),
-                         br(),
-                         h4(tags$b(tags$u('Innhold i de ulike fanene:'))),
-                         h4(tags$b('Fordelinger '), 'viser fordelinger (figur/tabell) av ulike variable. 
-                              Man kan velge hvilken variabel man vil se på, og man kan gjøre ulike filtreringer.'),
-                         h4(tags$b('Sykehusvise resultater '), 'viser gjennomsnittsverdier per sykehus. 
-                            Man kan velge hvilken variabel man vil se på og om man vil se gjennomsnitt eller median. 
-                            Man kan også velge å filtrere data.'),
-                         h4(tags$b('Registreringsoversikter '), 'viser aktivitet i registeret. Også her kan man gjøre filtreringer.'),
-                         h4(tags$b('Abonnement'), 'inneholder oversikt over rapporter du abbonerer på. Her kan du også bestille abonnement, 
-                            dvs. rapporter tilsendt på e-post.'),
-                         br(),
+                         h4('For mer info og veiledning, se neste fane "Brukerveiledning"'),
+                          br(),
                          h4('Antall registreringer siste år:'),
-                         fluidRow(tableOutput("tabAntOpphShMnd12startside")),
+                         #fluidRow(
+                            tableOutput("tabAntOpphShMnd12startside"), #),
                          #         downloadButton(outputId = 'lastNed_tabAntOpph', label='Last ned'))
-                         br('(Mer informasjon om registreringsstatus finner du på sidene "Registreringsoversikter")'),
+                         h5('(Mer informasjon om registreringsstatus finner du under fanen "Registreringsoversikter")'),
                          br(),
                          br(),
+                         fluidRow(
                          column(width=6,
-                                h3('Nevrologisk klassifikasjon.', align='center'),
+                                h3('Nevrologisk klassifikasjon', align='center'),
+                                h4('alle pasienter', align = 'center'),
                                 br(),
                                 tableOutput('tabNevrKlass')),
                          column(width=6,
-                                h3('Nevrologisk klassifikasjon for pasienter med liggetid over 28 dager i
-                                   ryggmargsskadeavdeling.', align='center'),
+                                h3('Nevrologisk klassifikasjon', align = 'center'),
+                                h4('pasienter med liggetid over 28 dager i
+                                   ryggmargsskadeavdeling', align='center'),
                                 tableOutput('tabNevrKlass28')
-                         ),
+                         )),
+                         
+                         fluidRow( 
+                         h3('Liggetider, egen avdeling', align = 'left'),
+                            tableOutput("tabLiggetider")),
+                         br(),
+                            ),
+                         
+                         tabPanel('Brukerveiledning',
+                                  h4('Du kan se på resultater for eget sykehus, nasjonale data og eget sykehus sett opp mot landet for øvrig.
+                            Resultatene som vises er 
+                              basert på AdmitDt, altså dato for første akutte innleggelse. Alle figurer og 
+                            tabeller kan lastes ned.'),
+                                  br(),
+                                  h4(tags$b(tags$u('Innhold i de ulike fanene:'))),
+                                  h4(tags$b('Fordelinger '), 'viser fordelinger (figur/tabell) av ulike variable. 
+                              Man kan velge hvilken variabel man vil se på, og man kan gjøre ulike filtreringer.'),
+                                  h4(tags$b('Sykehusvise resultater '), 'viser gjennomsnittsverdier per sykehus. 
+                            Man kan velge hvilken variabel man vil se på og om man vil se gjennomsnitt eller median. 
+                            Man kan også velge å filtrere data.'),
+                                  h4(tags$b('Registreringsoversikter '), 'viser aktivitet i registeret. Også her kan man gjøre filtreringer.'),
+                                  h4(tags$b('Abonnement'), 'inneholder oversikt over rapporter du abbonerer på. Her kan du også bestille abonnement, 
+                            dvs. rapporter tilsendt på e-post.'),
+                                  
                          h4('Oversikt over registerets kvalitetsindikatorer og resultater finner du på www.kvalitetsregistre.no:', #helpText
                                   a("NorSCIR", href="https://www.kvalitetsregistre.no/registers/561/resultater"),
                                   target="_blank", align='center'),
@@ -121,7 +142,8 @@ ui <- tagList(
                          #h4('Mer informasjon om selve registeret finnes på NorSCIRs hjemmeside: ', align='center',
                          #         a("www.norscir.no", href="http://www.norscir.no", target="_blank")) #target gjør at lenken åpnes i ny fane
            
-               )
+               ))
+               ) #main
       ), #tab
 
 #--------Fordelinger-----------
@@ -343,11 +365,11 @@ tabPanel("Registreringsoversikter",
                                     br(),
                                     fluidRow(tableOutput("tabAntOpphShMnd12"),
                                              downloadButton(outputId = 'lastNed_tabAntOpph', label='Last ned')
-                                    )
+                                    ),
                                     #                                          br(),
                                     # h3("Belegg FJERNES! på rehabiliteringsavdelinga - ønskes flere/andre variable?"),
                                     # #uiOutput("undertittelBelegg"),
-                                    # fluidRow( tableOutput("tabLiggetider"))
+ 
                            ),
                            tabPanel('Antall hovedskjema med tilknyttede skjema',
                                     h3("Antall hovedskjema med tilknyttede skjema"),
@@ -440,7 +462,8 @@ server <- function(input, output, session) {
       #system.file('NSsamleRapp.Rnw', package='nordicscir')
    
       #hospitalName <-getHospitalName(rapbase::getUserReshId(session))
-      reshID <- reactive({ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 107627)}) 
+      #reshID <- reactive({ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 107627)}) 
+      reshID <- ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 107627)
       rolle <- ifelse(paaServer, rapbase::getUserRole(shinySession=session), 'SC') #reactive({})
       brukernavn <- reactive({ifelse(paaServer, rapbase::getUserName(shinySession=session), 'tullebukk')})
       #output$reshID <- renderText({ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 105460)}) #evt renderUI
@@ -461,7 +484,7 @@ server <- function(input, output, session) {
       # widget
       if (paaServer) {
          output$appUserName <- renderText(rapbase::getUserFullName(session))
-         output$appOrgName <- renderText(paste0('rolle: ', rolle, '<br> ReshID: ', reshID()) )}
+         output$appOrgName <- renderText(paste0('rolle: ', rolle, '<br> ReshID: ', reshID) )}
       
       # User info in widget
       userInfo <- rapbase::howWeDealWithPersonalData(session)
@@ -566,13 +589,13 @@ server <- function(input, output, session) {
          filename = function(){ paste0('MndRapp', Sys.time(), '.pdf')}, #'MndRapp.pdf',
          content = function(file){
             contentFile(file, srcFil="NSmndRapp.Rnw", tmpFile="tmpNSmndRapp.Rnw",
-                        reshID = reshID()) #, datoFra = startDato, datoTil = Sys.Date())
+                        reshID = reshID) #, datoFra = startDato, datoTil = Sys.Date())
          })
       output$samleRappLand.pdf <- downloadHandler(
             filename = function(){'NorScirSamleRapportLand.pdf'}, # downloadFilename('NorScirSamleRapport')
             content = function(file){
                   contentFile(file, srcFil="NSsamleRappLand.Rnw", tmpFile="tmpNSsamleRappLand.Rnw",
-                              reshID=reshID(), 
+                              reshID=reshID, 
                               datoFra = as.Date(input$datovalgSamleRapp[1]), 
                               datoTil = as.Date(input$datovalgSamleRapp[2]))
             })
@@ -580,7 +603,7 @@ server <- function(input, output, session) {
          filename = function(){'NorScirSamleRapportEgen.pdf'}, # downloadFilename('NorScirSamleRapport')
          content = function(file){
             contentFile(file, srcFil="NSsamleRapp.Rnw", tmpFile="tmpNSsamleRapp.Rnw",
-                        reshID=reshID(), 
+                        reshID=reshID, 
                         datoFra = as.Date(input$datovalgSamleRapp[1]), 
                         datoTil = as.Date(input$datovalgSamleRapp[2]))
          })
@@ -603,11 +626,13 @@ server <- function(input, output, session) {
             rownames=T
       )
 
-      # output$tabLiggetider <- renderTable({
-      #       tabLiggetider(RegData = HovedSkjema, datoFra = input$datovalgDash[1], datoTil = input$datovalgDash[2])},
-      #       rownames=T,
-      #       digits = 0
-      # )
+      output$tabLiggetider <- renderTable({
+            tabLiggetider(RegData = HovedSkjema, datoFra = input$datovalgDash[1], datoTil = input$datovalgDash[2],
+                          enhetsUtvalg=2, reshID=reshID)
+         },
+            rownames=T,
+            digits = 0
+      )
       # output$tabLiggetider <- function() {
       #       tabLigget <- tabLiggetider(RegData = HovedSkjema, datoFra = input$datovalgDash[1], datoTil = input$datovalgDash[2])
       #       kableExtra::kable(tabLigget, format = 'html'
@@ -710,7 +735,7 @@ server <- function(input, output, session) {
             output$fordelinger <- renderPlot({
                   NSFigAndeler(RegData=RegData, valgtVar=input$valgtVar, preprosess = 0,
                                datoFra=input$datovalg[1], datoTil=input$datovalg[2], 
-                               reshID = reshID(), 
+                               reshID = reshID, 
                                AIS=input$AIS, traume=input$traume, nivaaUt=as.numeric(input$nivaaUt),
                                minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]), 
                                erMann=as.numeric(input$erMann), 
@@ -722,7 +747,7 @@ server <- function(input, output, session) {
             
             UtDataFord <- NSFigAndeler(RegData=RegData, preprosess = 0, valgtVar=input$valgtVar,
                                        datoFra=input$datovalg[1], datoTil=input$datovalg[2], 
-                                       reshID = reshID(), 
+                                       reshID = reshID, 
                                        AIS=input$AIS, traume=input$traume, nivaaUt=as.numeric(input$nivaaUt),
                                        minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]), 
                                        erMann=as.numeric(input$erMann), 
@@ -909,7 +934,7 @@ server <- function(input, output, session) {
          
          fun <- "abonnement"  #"henteSamlerapporter"
          paramNames <- c('rnwFil', 'brukernavn', "reshID", "datoFra", 'datoTil')
-         paramValues <- c(rnwFil, brukernavn(), reshID(), as.character(startDato), as.character(Sys.Date())) #input$subscriptionFileFormat)
+         paramValues <- c(rnwFil, brukernavn(), reshID, as.character(startDato), as.character(Sys.Date())) #input$subscriptionFileFormat)
          #paramValues <- c(rnwFil, AlleTab, 'toill', 107627, '2018-01-01', as.character(Sys.Date())) #input$subscriptionFileFormat)
          
          #TESTING:
