@@ -65,7 +65,7 @@ ui <- tagList(
                                kan du gå til fanen "Abonnement" og bestille dette.'),
                             br(),
                             br(),
-                            h4('Datovalg for nevrologisk klassifikasjon'),
+                            h4('Velg tidsperiode for nevrologisk klassifikasjon og liggetider'),
                             dateRangeInput(inputId = 'datovalgDash', start = startDato, end = Sys.Date(),
                                            label = "Tidsperiode", separator="t.o.m.", language="nb")
                ),
@@ -614,7 +614,7 @@ server <- function(input, output, session) {
       output$lenkeNorScir <- renderUI({tagList("www.norscir.no", www.norscir.no)})
       output$tabAntOpphShMnd12startside <- renderTable({tabAntOpphShMnd(RegData=HovedSkjema, antMnd=12)}, 
                                                        rownames = T, digits=0, spacing="xs")
-      
+      observe({
       output$tabNevrKlass <- renderTable(
             lagTabNevrKlass(HovedSkjema, datoFra = input$datovalgDash[1], datoTil = input$datovalgDash[2]),
             rownames=T
@@ -629,6 +629,7 @@ server <- function(input, output, session) {
       output$tabLiggetider <- renderTable({
             tabLiggetider(RegData = HovedSkjema, datoFra = input$datovalgDash[1], datoTil = input$datovalgDash[2],
                           enhetsUtvalg=2, reshID=reshID)
+         #tabLiggetider(RegData = HovedSkjema, datoFra = '2019-01-01', enhetsUtvalg=0, reshID=105593)
          },
             rownames=T,
             digits = 0
@@ -639,7 +640,7 @@ server <- function(input, output, session) {
       #                         , full_width=F
       #                         , digits = c(0,0,0,1,0)
       #       )}
-      
+      })
       
  #----------Tabeller, registreringsoversikter ----------------------           
             # output$tabLiggetider <- renderTable(
