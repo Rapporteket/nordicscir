@@ -121,10 +121,10 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
       
       if (valgtVar == 'AnbefTidKtr') {
             tittel <- 'Anbefalt tid til kontroll'
-            gr <- 1:7 
+            gr <- 1:8
             #1:5  Innen 1:5 år, 6 = Ikke aktuelt, 7 = Ikke avtalt kontroll, -1 = Velg verdi
             #grtxt <- c(paste0('Innen ', 1:5, ' år'),'Ikke aktuelt', 'Ikke avtalt kontroll')
-            grtxt <- c(paste0(c('Innen: 1', 2:5), ' år'),'Ikke aktuelt', 'Ikke avtalt')
+            grtxt <- c(paste0(c('Innen: 1', 2:5), ' år'),'Ikke aktuelt', 'Ikke avtalt', 'Ikke relevant')
             RegData <- RegData[RegData$RecCtrl %in% gr,]
             RegData$VariabelGr <- factor(as.numeric(RegData$RecCtrl), levels=gr, labels = grtxt)
       }
@@ -321,7 +321,8 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
                           'Ilurts', 'Ccathv', 'Sarstm', 'Othsrg')
             grtxt <- c('Innsatt suprapubiskateter', 'Fjernet blærestein', 'Fjernet andre stein', 'Blæreforstørrelse', 
                        'Sfinkterotomi', 'Botulinumtoksininjeksjon', 'Kunstig sfinkter', 'Ilovesikostomi', 'Ileoureterostomi',
-                       'Kateteriserbar urostomi', 'Sakralnervestimulator', 'Annet')
+                       'Kateteriserbar urostomi', #'Sakralnervestimulator', - Fjernet fra 01.01.2020
+                       'Annet')
             #as.Date(RegData$SpcathDt, format="%Y-%m-%d") > '2017-06-01'
             indDato <- cbind(Spcath = as.Date(RegData$SpcathDt, format="%Y-%m-%d") >= RegData$InnDato,
                              Bstnrm = as.Date(RegData$BstnrmDt, format="%Y-%m-%d") >= RegData$InnDato,
@@ -333,7 +334,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
                              Ilvscs = as.Date(RegData$IlvscsDt, format="%Y-%m-%d") >= RegData$InnDato,
                              Ilurts = as.Date(RegData$IlurtsDt, format="%Y-%m-%d") >= RegData$InnDato,
                              Ccathv = as.Date(RegData$CcathvDt, format="%Y-%m-%d") >= RegData$InnDato,
-                             Sarstm = as.Date(RegData$SarstmDt, format="%Y-%m-%d") >= RegData$InnDato,
+                             #Sarstm = as.Date(RegData$SarstmDt, format="%Y-%m-%d") >= RegData$InnDato,
                              Othsrg = as.Date(RegData$OthsrgDt, format="%Y-%m-%d") >= RegData$InnDato)
             ind1 <- which(RegData[,variable]==TRUE & indDato==TRUE, arr.ind=T)
             RegData[ ,variable] <- 0
@@ -436,14 +437,22 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
                        'Månedlig', 'Mindre enn månedlig', 'Aldri', 'Ukjent')
             RegData$VariabelGr <- factor(RegData$Fcincfrq, levels = gr, labels = grtxt)
       }
-      if (valgtVar=='TarmInkontinensFra2019') {
+      if (valgtVar=='TarmInkontinensFra2019') { 
             retn <- 'H'
             tittel <- 'Hyppighet av fekal inkontinens'
-            gr <- c(1:4,7:9)
-            RegData <- RegData[RegData$Fcincfrq2 %in% gr,]
+            # gr <- c(1:4,7:9)
+            # grtxt <- c('Daglig', '1-6 ganger/uke', '1-4 ganger/måned',
+            #            'Sjeldnere enn månedlig', 'Aldri', 'Ikke relevant', 'Ukjent' )
+            # RegData <- RegData[RegData$Fcincfrq2 %in% gr,]
+            #RegData$VariabelGr <- factor(RegData$Fcincfrq2, levels = gr, labels = grtxt)
+    
+            RegData$Fcincfrq2[RegData$Fcincfrq2 %in% c(4,7)] <- 4
+            RegData$Fcincfrq3[RegData$Fcincfrq2 != -1] <- RegData$Fcincfrq2[RegData$Fcincfrq2 != -1]
+            gr <- c(1:4,8:9)
+            RegData <- RegData[RegData$Fcincfrq3 %in% gr,]
             grtxt <- c('Daglig', '1-6 ganger/uke', '1-4 ganger/måned',
-                       'Sjeldnere enn månedlig', 'Aldri', 'Ikke relevant', 'Ukjent' )
-            RegData$VariabelGr <- factor(RegData$Fcincfrq2, levels = gr, labels = grtxt)
+                       'Sjeldnere enn månedlig / Aldri', 'Ikke relevant', 'Ukjent' )
+            RegData$VariabelGr <- factor(RegData$Fcincfrq3, levels = gr, labels = grtxt)
       }
       if (valgtVar=='TarmKirInngrep') {
             tittel <- 'Kirurgisk inngrep i mage/–tarm kanalen'
