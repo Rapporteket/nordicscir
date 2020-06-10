@@ -79,41 +79,15 @@ ui <- tagList(
                          h2('Velkommen til Rapporteket - Norsk Ryggmargsskaderegister!', align='center'),
                          br(),
                          tabsetPanel(
-                            tabPanel('Status',
-                         h4('Du er nå inne på Rapporteket for NorSCIR. Rapporteket er registerets resultattjeneste. 
+                            
+                         tabPanel('Brukerveiledning',
+                                  h4('Du er nå inne på Rapporteket for NorSCIR. Rapporteket er registerets resultattjeneste. 
                             Disse sidene inneholder en samling av figurer og tabeller som viser resultater fra registeret. 
                             På hver av sidene kan man gjøre utvalg i menyene til venstre. Alle resultater er basert 
                             på ferdigstilte registreringer. Merk at data er hentet direkte fra registerets database. 
                             Dette medfører at nyere data ikke er kvalitetssikret ennå.'),
-                         h4('For mer info og veiledning, se neste fane "Brukerveiledning"'),
-                          br(),
-                         h4('Antall registreringer siste år:'),
-                         #fluidRow(
-                            tableOutput("tabAntOpphShMnd12startside"), #),
-                         #         downloadButton(outputId = 'lastNed_tabAntOpph', label='Last ned'))
-                         h5('(Mer informasjon om registreringsstatus finner du under fanen "Registreringsoversikter")'),
-                         br(),
-                         br(),
-                         fluidRow(
-                         column(width=6,
-                                h3('Nevrologisk klassifikasjon', align='center'),
-                                h4('alle pasienter', align = 'center'),
-                                br(),
-                                tableOutput('tabNevrKlass')),
-                         column(width=6,
-                                h3('Nevrologisk klassifikasjon', align = 'center'),
-                                h4('pasienter med liggetid over 28 dager i
-                                   ryggmargsskadeavdeling', align='center'),
-                                tableOutput('tabNevrKlass28')
-                         )),
-                         
-                         fluidRow( 
-                         h3('Liggetider, egen avdeling', align = 'left'),
-                            tableOutput("tabLiggetider")),
-                         br(),
-                            ),
-                         
-                         tabPanel('Brukerveiledning',
+                                  #h4('For mer info og veiledning, se neste fane "Brukerveiledning"'),
+                                  #br(),
                                   h4('Du kan se på resultater for eget sykehus, nasjonale data og eget sykehus sett opp mot landet for øvrig.
                             Resultatene som vises er 
                               basert på AdmitDt, altså dato for første akutte innleggelse. Alle figurer og 
@@ -142,6 +116,33 @@ ui <- tagList(
                          #h4('Mer informasjon om selve registeret finnes på NorSCIRs hjemmeside: ', align='center',
                          #         a("www.norscir.no", href="http://www.norscir.no", target="_blank")) #target gjør at lenken åpnes i ny fane
            
+               ),
+               tabPanel('Status',
+                        
+                        h4('Antall registreringer siste år:'),
+                        #fluidRow(
+                        tableOutput("tabAntOpphShMnd12startside"), #),
+                        #         downloadButton(outputId = 'lastNed_tabAntOpph', label='Last ned'))
+                        h5('(Mer informasjon om registreringsstatus finner du under fanen "Registreringsoversikter")'),
+                        br(),
+                        br(),
+                        fluidRow(
+                           column(width=6,
+                                  h3('Nevrologisk klassifikasjon', align='center'),
+                                  h4('alle pasienter', align = 'center'),
+                                  br(),
+                                  tableOutput('tabNevrKlass')),
+                           column(width=6,
+                                  h3('Nevrologisk klassifikasjon', align = 'center'),
+                                  h4('pasienter med liggetid over 28 dager i
+                                   ryggmargsskadeavdeling', align='center'),
+                                  tableOutput('tabNevrKlass28')
+                           )),
+                        
+                        fluidRow( 
+                           h3('Liggetider, egen avdeling', align = 'left'),
+                           tableOutput("tabLiggetider")),
+                        br(),
                ))
                ) #main
       ), #tab
