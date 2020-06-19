@@ -65,9 +65,11 @@ ui <- tagList(
                                kan du gå til fanen "Abonnement" og bestille dette.'),
                             br(),
                             br(),
-                            h4('Velg tidsperiode for nevrologisk klassifikasjon og liggetider'),
-                            dateRangeInput(inputId = 'datovalgDash', start = startDato, end = Sys.Date(),
-                                           label = "Tidsperiode", separator="t.o.m.", language="nb")
+                            conditionalPanel(
+                               condition = "input.startside == 'Status'",
+                               h4('Velg tidsperiode for nevrologisk klassifikasjon og liggetider'),
+                               dateRangeInput(inputId = 'datovalgDash', start = startDato, end = Sys.Date(),
+                                           label = "Tidsperiode", separator="t.o.m.", language="nb"))
                ),
                mainPanel(width = 8,
                          shinyalert::useShinyalert(),
@@ -79,6 +81,7 @@ ui <- tagList(
                          h2('Velkommen til Rapporteket - Norsk Ryggmargsskaderegister!', align='center'),
                          br(),
                          tabsetPanel(
+                            id = 'startside',
                             
                          tabPanel('Brukerveiledning',
                                   h4('Du er nå inne på Rapporteket for NorSCIR. Rapporteket er registerets resultattjeneste. 

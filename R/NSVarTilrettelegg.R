@@ -318,7 +318,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
             RegData <- RegData[which((RegData$Surgicalpr==1) & (RegData$InnDato >= as.Date('2015-01-01'))), ]
             #For Surgicalpr=='ja' Ta med egen kolonne for nei? Nei, for mange	
             variable <- c('Spcath', 'Bstnrm', 'Ustnrm', 'Bladag', 'Ustent', 'Botox', 'Artsph','Ilvscs', 
-                          'Ilurts', 'Ccathv', 'Sarstm', 'Othsrg')
+                          'Ilurts', 'Ccathv',  'Othsrg') #'Sarstm',
             grtxt <- c('Innsatt suprapubiskateter', 'Fjernet blærestein', 'Fjernet andre stein', 'Blæreforstørrelse', 
                        'Sfinkterotomi', 'Botulinumtoksininjeksjon', 'Kunstig sfinkter', 'Ilovesikostomi', 'Ileoureterostomi',
                        'Kateteriserbar urostomi', #'Sakralnervestimulator', - Fjernet fra 01.01.2020
