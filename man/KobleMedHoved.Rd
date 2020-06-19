@@ -4,8 +4,7 @@
 \alias{KobleMedHoved}
 \title{Koble med aktuell hovedtabell}
 \usage{
-KobleMedHoved(HovedSkjema, Skjema2, alleHovedskjema = F,
-  alleSkjema2 = F)
+KobleMedHoved(HovedSkjema, Skjema2, alleHovedskjema = F, alleSkjema2 = F)
 }
 \arguments{
 \item{HovedSkjema}{hvilket skjema skal oppfølgingsskjemaet kobles til? De fleste kobles til Hovedskjema. 

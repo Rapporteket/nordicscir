@@ -154,9 +154,14 @@ tabSkjemaTilknyttet <- function(Data=AlleTab, moderSkjema='Hoved', datoFra='2017
       ModerSkjema <- switch(moderSkjema,
                             'Hoved' = Data$HovedSkjema,
                             'Ktr' = Data$KontrollH)
-      if (moderSkjema == 'Ktr') {ModerSkjema <- ModerSkjema[!is.na(ModerSkjema$CNum), ] }
-      ModerSkjema <- NSUtvalg(RegData=ModerSkjema, datoFra = datoFra, datoTil = datoTil)$RegData
-      
+      if (moderSkjema == 'Ktr') {
+         ModerSkjema <- ModerSkjema[!is.na(ModerSkjema$CNum), ] 
+         indDato <- which(as.Date(ModerSkjema$CNeuExmDt) >= datoFra & 
+                          as.Date(ModerSkjema$CNeuExmDt) <= datoTil)
+         ModerSkjema <- ModerSkjema[indDato, ]
+         } else {
+            ModerSkjema <- NSUtvalg(RegData=ModerSkjema, datoFra = datoFra, 
+                              datoTil = datoTil)$RegData}
       RaaTab <- data.frame(Sykehus = ModerSkjema$ShNavn,
                            #Aar = as.POSIXlt(Hskjema$AdmitDt, format="%Y-%m-%d")$year +1900,
                            Livskvalitet = ModerSkjema$SkjemaGUID %in% Data$LivskvalH$HovedskjemaGUID,

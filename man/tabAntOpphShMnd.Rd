@@ -7,8 +7,7 @@
 -tabAntOpphSh5Aar:Antall opphold per år og enhet siste 5 år (inkl. inneværende år) fram til datoTil. 
 RegData må inneholde Aar.}
 \usage{
-tabAntOpphShMnd(RegData, datoTil = Sys.Date(), traume = "",
-  antMnd = 12)
+tabAntOpphShMnd(RegData, datoTil = Sys.Date(), traume = "", antMnd = 12)
 }
 \arguments{
 \item{datoTil}{<- '2013-05-25'}

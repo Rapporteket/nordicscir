@@ -4,8 +4,12 @@
 \alias{tabSkjemaTilknyttet}
 \title{Tabell: Antall og andel moder"skjema som har ulike typer registreringsskjema}
 \usage{
-tabSkjemaTilknyttet(Data = AlleTab, moderSkjema = "Hoved",
-  datoFra = "2017-01-01", datoTil = Sys.Date())
+tabSkjemaTilknyttet(
+  Data = AlleTab,
+  moderSkjema = "Hoved",
+  datoFra = "2017-01-01",
+  datoTil = Sys.Date()
+)
 }
 \arguments{
 \item{moderSkjema}{Hvilket skjema man skal knytte oppfølgingene til}

@@ -25,5 +25,6 @@ Despite its location, this actually comes after the function section.
 Fil som inneholder hjelpefunksjoner. 
 SorterOgNavngiTidsEnhet Legger til tidsenhetene Aar, Halvaar, Mnd og Kvartal
 
+
 Tilrettelegge tidsenhetvariabel:
 }

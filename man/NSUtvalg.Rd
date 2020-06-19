@@ -4,10 +4,21 @@
 \alias{NSUtvalg}
 \title{Funksjon som gjør utvalg av data basert på brukervalg.}
 \usage{
-NSUtvalg(RegData, datoFra = "2010-01-01", datoTil = Sys.Date(),
-  minald = 0, maxald = 110, erMann = 99, traume = "alle",
-  AIS = "", enhetsUtvalg = 0, nivaaUt = 99, reshID = 0,
-  fargepalett = "BlaaOff", datoUt = 0)
+NSUtvalg(
+  RegData,
+  datoFra = "2010-01-01",
+  datoTil = Sys.Date(),
+  minald = 0,
+  maxald = 110,
+  erMann = 99,
+  traume = "alle",
+  AIS = "",
+  enhetsUtvalg = 0,
+  nivaaUt = 99,
+  reshID = 0,
+  fargepalett = "BlaaOff",
+  datoUt = 0
+)
 }
 \arguments{
 \item{datoFra}{<- '2010-01-01'    # min og max dato i utvalget vises alltid i figuren.}

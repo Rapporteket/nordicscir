@@ -224,6 +224,7 @@ varTarm <- c('
  ,Tarm.DrugUse
  ,Tarm.Fcincfrq
  ,Tarm.Fcincfrq2
+ ,Tarm.Fcincfrq3
  ,Tarm.Fissures
  ,Tarm.FormDate
  ,Tarm.FormTypeId

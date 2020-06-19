@@ -4,8 +4,7 @@
 \alias{tabAntSkjema}
 \title{Tabell: Antall av ulike typer skjema}
 \usage{
-tabAntSkjema(Data = AlleTab, datoFra = "2017-01-01",
-  datoTil = Sys.Date())
+tabAntSkjema(Data = AlleTab, datoFra = "2017-01-01", datoTil = Sys.Date())
 }
 \description{
 Tabell: Antall av ulike typer skjema

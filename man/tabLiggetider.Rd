@@ -5,8 +5,14 @@
 \title{Liggetider. Liggetid tot.(OpphTot), Liggetid rehab.(DagerRehab), Liggetid før rehab (DagerTilRehab): 
 min/max, gjsn, median}
 \usage{
-tabLiggetider(RegData, datoFra = "2018-01-01", datoTil = Sys.Date(),
-  enhetsUtvalg = 0, reshID = 0, traume = "")
+tabLiggetider(
+  RegData,
+  datoFra = "2018-01-01",
+  datoTil = Sys.Date(),
+  enhetsUtvalg = 0,
+  reshID = 0,
+  traume = ""
+)
 }
 \arguments{
 \item{RegData}{data}
