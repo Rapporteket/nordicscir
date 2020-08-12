@@ -176,15 +176,15 @@ library(nordicscir)
 setwd("C:/Registerinfo og historie/NordicScir/Figurer/")
 load('A:/NordicScir/NordicScirData.RData')
 reshID <- 107627             ##105593-Haukeland, 106896-Sunnaas, 107627-St.Olavs, standard i funksj: 0 dvs. 'Alle'. Standard i rapporten skal v?re at man f?r opp eget sykehus.
-enhetsUtvalg <- 1
+enhetsUtvalg <- 2
 minald <- 0
 maxald <- 130
 erMann <- 9                      #1-menn, 0-kvinner, Standard: '', dvs. begge
 traume <- 'alle'    #'ja','nei', standard: ikke valgt
-AIS <- 99 # as.character(c(1,4))	#AISgrad ved innleggelse alle(''), velge en eller flere fra 1:5
+AIS <- '' # as.character(c(1,4))	#AISgrad ved innleggelse alle(''), velge en eller flere fra 1:5
 nivaaUt <- 99
-datoFra <- '2018-01-01'             #Standard: bør være minste registrerte verdi ? min og max dato i utvalget vises alltid i figuren.
-datoTil <- '2019-12-31'
+datoFra <- '2019-01-01'             #Standard: bør være minste registrerte verdi ? min og max dato i utvalget vises alltid i figuren.
+datoTil <- Sys.Date()
 valgtMaal='gjsn'	#'Med'-median, 'Gjsn' gjennomsnitt
 tidsenhet <- 'Mnd'
 grVar <- 'ShNavn'
@@ -192,9 +192,9 @@ datoUt=0 #Velge ut-dato som filtrering
 outfile <- ''
 valgtVar <- 'Alder'
 
-NSFigGjsnTid(RegData, valgtVar='alder', datoFra='2011-01-01', datoTil='3000-12-31',
-                         tidsenhet='Mnd', minald=0, maxald=110, erMann='', reshID=107627,
-                         outfile='',enhetsUtvalg=1, valgtMaal='Gjsn',
+NSFigGjsnTid(RegData, valgtVar='Alder', datoFra='2019-01-01', datoTil='3000-12-31',
+                         tidsenhet='Mnd', minald=0, maxald=110, erMann=9, reshID=107627,
+                         outfile='',enhetsUtvalg=1, valgtMaal='gjsn', hentData = 1,
                          AIS='', traume='alle', nivaaUt=99)
 
 UtDataFraFig <- NSFigAndelerSh(preprosess = 1, hentData = 1, valgtVar = valgtVar, datoFra='2018-01-01')

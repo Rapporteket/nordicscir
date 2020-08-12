@@ -32,6 +32,9 @@ names(valgAIS) <- c("Alle","A","B","C","D","E")
 valgNivaaUt <- c(99,0,1,2,3,9)
 names(valgNivaaUt) <- c("Alle", "Paraplegi", "Tetraplegi", "C1-4", "C5-8", "Ukjent")
 
+tidsenheter <- rev(c('År'= 'Aar', 'Halvår' = 'Halvaar',
+                     'Kvartal'='Kvartal', 'Måned'='Mnd'))
+
 ui <- tagList(
    shinyjs::useShinyjs(),
    navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
@@ -99,7 +102,7 @@ ui <- tagList(
                                   h4(tags$b(tags$u('Innhold i de ulike fanene:'))),
                                   h4(tags$b('Fordelinger '), 'viser fordelinger (figur/tabell) av ulike variable. 
                               Man kan velge hvilken variabel man vil se på, og man kan gjøre ulike filtreringer.'),
-                                  h4(tags$b('Sykehusvise resultater '), 'viser gjennomsnittsverdier per sykehus. 
+                                  h4(tags$b('Gjennomsnitt per sykehus og over tid'), 'viser gjennomsnittsverdier per sykehus. 
                             Man kan velge hvilken variabel man vil se på og om man vil se gjennomsnitt eller median. 
                             Man kan også velge å filtrere data.'),
                                   h4(tags$b('Registreringsoversikter '), 'viser aktivitet i registeret. Også her kan man gjøre filtreringer.'),
@@ -263,8 +266,8 @@ ui <- tagList(
       ), #tab Fordelinger
 
 
-#------------Sykehusvise resultater------------
-      tabPanel("Sykehusvise resultater",
+#------------ Gjennomsnitt ------------
+      tabPanel("Gjennomsnitt per sykehus og over tid",
                sidebarPanel(width = 3,
                             selectInput(
                                   inputId = "valgtVarGjsnGrVar", label="Velg variabel",
@@ -302,7 +305,16 @@ ui <- tagList(
                                                     "Ukjent" = 9)
                             ),
                             selectInput(inputId = "sentralmaal", label="Velg gjennomsnitt/median ",
-                                                               choices = c("Gjennomsnitt"='gjsn', "Median"='med'))
+                                                               choices = c("Gjennomsnitt"='gjsn', "Median"='med')),
+                            br(),
+                            p(em('Følgende utvalg gjelder bare figuren/tabellen som viser utvikling over tid')),
+                            selectInput(inputId = 'enhetsUtvalgGjsn', label='Egen enhet og/eller landet',
+                                        choices = c("Egen mot resten av landet"=1, "Hele landet"=0, "Egen enhet"=2)
+                            ),
+                            selectInput(inputId = "tidsenhetGjsn", label="Velg tidsenhet",
+                                        choices = tidsenheter
+                            )
+                            
 
                ),
                mainPanel(
@@ -312,7 +324,10 @@ ui <- tagList(
                                  br(),
                                  em('(Høyreklikk på figuren for å laste den ned)'),
                                  br(),
+                                 h3(em("Utvikling over tid")),
+                                 plotOutput("gjsnTid", height = 'auto'),
                                  br(),
+                                 h3(em("Sykehusvise resultater")),
                                  plotOutput('gjsnGrVar')),
                            tabPanel(
                                  'Tabell',
@@ -886,7 +901,69 @@ server <- function(input, output, session) {
                   )}) #, align='center'
             
             
-      }) #observe gjsnGrVar
+            
+            
+            #------gjsnTid
+            
+            output$gjsnTid <- renderPlot(
+               NSFigGjsnTid(RegData=RegData, reshID= reshID, preprosess = 0, valgtVar=input$valgtVarGjsn,
+                              datoFra=input$datovalgGjsn[1], datoTil=input$datovalgGjsn[2],
+                              minald=as.numeric(input$alderGjsn[1]), maxald=as.numeric(input$alderGjsn[2]),
+                            AIS=input$AISGjsnGrVar, 
+                            traume=input$traumeGjsnGrVar, 
+                            nivaaUt=as.numeric(input$paratetraGjsnGrVar),
+                            valgtMaal = input$sentralmaal, 
+                            enhetsUtvalg =  as.numeric(input$enhetsUtvalgGjsn),
+                              tidsenhet = input$tidsenhetGjsn,
+                              session = session
+               ),
+               width = 1000, height = 300)
+            UtDataGjsnTid <- NSFigGjsnTid(RegData=RegData, reshID= reshID, preprosess = 0,
+                                            valgtVar=input$valgtVarGjsn,
+                                            datoFra=input$datovalgGjsn[1], datoTil=input$datovalgGjsn[2],
+                                            minald=as.numeric(input$alderGjsn[1]),
+                                            maxald=as.numeric(input$alderGjsn[2]),
+                                          AIS=input$AISGjsnGrVar, 
+                                          traume=input$traumeGjsnGrVar, 
+                                          nivaaUt=as.numeric(input$paratetraGjsnGrVar),
+                                          valgtMaal = input$sentralmaal,
+                                            enhetsUtvalg =  as.numeric(input$enhetsUtvalgGjsn),
+                                            session = session)
+            
+            tabGjsnTid <- t(UtDataGjsnTid$AggVerdier)
+            grtxt <-UtDataGjsnTid$grtxt
+            if ((min(nchar(grtxt)) == 5) & (max(nchar(grtxt)) == 5)) {
+               grtxt <- paste(substr(grtxt, 1,3), substr(grtxt, 4,5))}
+            rownames(tabGjsnTid) <- grtxt
+            
+            antKol <- ncol(tabGjsnTid)
+            navnKol <- colnames(tabGjsnTid)
+            if (antKol==6) {colnames(tabGjsnTid) <- c(navnKol[1:3], navnKol[1:3])}
+            
+            output$gjsnTidTab <- function() {
+               kableExtra::kable(tabGjsnTid, format = 'html'
+                                 , full_width=F
+                                 , digits = 1 #c(0,1,1,1)[1:antKol]
+               ) %>%
+                  add_header_above(c(" "=1, 'Egen enhet/gruppe' = 3, 'Resten' = 3)[1:(antKol/3+1)]) %>%
+                  #add_header_above(c(" "=1, 'Egen enhet/gruppe' = 3, 'Resten' = 3)[1:(antKol/3+1)]) %>%
+                  column_spec(column = 1, width_min = '7em') %>%
+                  column_spec(column = 2:(antKol+1), width = '7em') %>%
+                  row_spec(0, bold = T)
+            }
+            
+            output$lastNed_gjsnTidTab <- downloadHandler(
+               filename = function(){
+                  paste0(input$valgtVarGjsn, '_tabGjsnTid .csv')
+               },
+               content = function(file, filename){
+                  write.csv2(tabGjsnTid, file, row.names = T, na = '')
+               })
+            
+            
+            
+            
+      }) #observe gjsn
       
       
       #------------------ Abonnement ----------------------------------------------

@@ -11,7 +11,7 @@
 #' @param traume - 'ja','nei', 'alle' standard: ikke valgt
 #' @param AIS - AISgrad ved innleggelse alle(''), velge en eller flere fra A,B,C,D,E,U
 #' @param nivaaUt - Nivå ved utreise, flervalgs tetraplegi, paraplegi, C1-4, C5-8, ukjent
-#' @param enhetsUtvalg - 1:eget sykehus, 0:hele landet (standard) 
+#' @param enhetsUtvalg - 1:eget sykehus sml med resten, 2:eget sykehus, 0:hele landet (standard) 
 
 #' @export
 
@@ -35,26 +35,8 @@ NSUtvalg <- function(RegData, datoFra='2010-01-01', datoTil=Sys.Date(), minald=0
                            }
       
 
-	  Ninn <- dim(RegData)[1]
-      # indAldUt <- which(RegData$Alder < minald | RegData$Alder > maxald)
-      # indDatoUt <- setdiff(1:Ninn,
-      #                      which(RegData$InnDato >= datoFra & RegData$InnDato <= datoTil)) #Får bort NA
-      # traumeValgBort <- switch(traume, ja = c(6,9) , nei = c(1:5,9), alle = 99) #6 ikke-tr, 1:5 traumer, 9 ukjent
-      # indTrUt <-  which(RegData$SkadeArsak %in% traumeValgBort)
-      # indKjUt <- if (erMann %in% 0:1) {which(RegData$erMann != erMann)} else {indKjUt <- NULL}
-      # AIS <- as.numeric(AIS)
-      # indAISut <- if (length(which(as.numeric(AIS) %in% 1:5))>0) {
-      #       setdiff(1:Ninn, which(RegData$FAis %in% AIS))} else {NULL}
-      # #indPTbort <- if (nivaaUt %in% c(0,1,9)) {which(RegData$TetraplegiUt != nivaaUt)} else {NULL}
-      # indPTbort <- if (nivaaUt %in% c(0:3,9)) {switch(nivaaUt,
-      #                                                   '0' = which(RegData$TetraplegiUt != as.numeric(nivaaUt)),
-      #                                                   '1' = which(RegData$TetraplegiUt != nivaaUt),
-      #                                                   '2' = which(!(RegData$ASensLvlLC %in% 1:4)),
-      #                                                   '3' = which(!(RegData$ASensLvlLC %in% 5:8)),
-      #                                                 '9' = which(RegData$TetraplegiUt != as.numeric(nivaaUt)))
-      #       } else {NULL}
-      #indMedGml <- setdiff(1:Ninn, unique(c(indAldUt, indDatoUt,traumeValgBort,indTrUt,indAISut,indPTbort)))
-      
+	Ninn <- dim(RegData)[1]
+
 	indAld <- which(RegData$Alder >= minald & RegData$Alder <= maxald)
       indDato <- which(RegData$InnDato >= datoFra & RegData$InnDato <= datoTil) #Får bort NA
       #traumeValgBort <- switch(traume, ja = c(6,9) , nei = c(1:5,9), alle = 99) #6 ikke-tr, 1:5 traumer, 9 ukjent

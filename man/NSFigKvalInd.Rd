@@ -45,7 +45,7 @@ NSFigKvalInd(
 
 \item{nivaaUt}{- Nivå ved utreise, flervalgs tetraplegi, paraplegi, C1-4, C5-8, ukjent}
 
-\item{enhetsUtvalg}{- 1:eget sykehus, 0:hele landet (standard)}
+\item{enhetsUtvalg}{- 1:eget sykehus sml med resten, 2:eget sykehus, 0:hele landet (standard)}
 
 \item{reshID}{- avdelingsid for egen avdeling, standard: 0-hele landet.}
 

@@ -20,7 +20,7 @@
 #' @export
 NSFigGjsnTid <- function(RegData, valgtVar='Alder', datoFra='2011-01-01', datoTil='3000-12-31',
                            tidsenhet='Aar', minald=0, maxald=110, erMann='', reshID=0,
-                           enhetsUtvalg=0, valgtMaal='Gjsn',
+                           enhetsUtvalg=0, valgtMaal='gjsn',
                          AIS='', traume='alle', nivaaUt=99,
                          preprosess=1, outfile='', hentData=0,
                            lagFigur=1,...){
@@ -29,7 +29,7 @@ NSFigGjsnTid <- function(RegData, valgtVar='Alder', datoFra='2011-01-01', datoTi
     raplog::repLogger(session = list(...)[["session"]], msg = paste0('FigGjsnTid: ',valgtVar))
   }
   if (hentData == 1) {
-    RegData <- NSRegDataSQL(datoFra, datoTil)
+    RegData <- NSRegDataSQL(valgtVar = valgtVar)
   }
 
   # Hvis RegData ikke har blitt preprosessert. (I samledokument gjøre dette i samledokumentet)
@@ -40,12 +40,12 @@ NSFigGjsnTid <- function(RegData, valgtVar='Alder', datoFra='2011-01-01', datoTi
 
   #--------------- Definere variable ------------------------------
 
-  NSVarSpes <- NSVarTilrettelegg(RegData=RegData, valgtVar=valgtVar, figurtype='gjsnGrVar')
+  NSVarSpes <- NSVarTilrettelegg(RegData=RegData, valgtVar=valgtVar, figurtype='gjsnTid')
   RegData <- NSVarSpes$RegData
 
 
   NSUtvalg <- NSUtvalg(RegData=RegData, datoFra=datoFra, datoTil=datoTil,
-                       minald=minald, maxald=maxald, erMann=erMann,
+                       minald=minald, maxald=maxald, erMann=erMann, reshID=reshID,
                        traume=traume, AIS=AIS, nivaaUt=nivaaUt, enhetsUtvalg = enhetsUtvalg)
   RegData <- NSUtvalg$RegData
   utvalgTxt <- NSUtvalg$utvalgTxt
@@ -65,7 +65,8 @@ NSFigGjsnTid <- function(RegData, valgtVar='Alder', datoFra='2011-01-01', datoTi
     Ngr <- list(Hoved = length(ind$Hoved), Rest =length(ind$Rest))
 
     #Resultat for hovedgruppe
-    N <- tapply(RegData[ind$Hoved ,'Variabel'], RegData[ind$Hoved, 'TidsEnhet'], length)
+    N <- tapply(X = RegData[ind$Hoved ,'Variabel'], INDEX = RegData[ind$Hoved, 'TidsEnhet'], FUN = length)
+    Ngr$Hoved <- tapply(X = RegData[ind$Hoved ,'Variabel'], INDEX = RegData[ind$Hoved, 'TidsEnhet'], FUN = length)
     if (valgtMaal=='med') {
       MedIQR <- plot(RegData$TidsEnhet[ind$Hoved],RegData$Variabel[ind$Hoved],  notch=TRUE, plot=FALSE)
       Midt <- as.numeric(MedIQR$stats[3, ])	#as.numeric(MedIQR$stats[3, sortInd])
@@ -172,7 +173,7 @@ if (lagFigur==1) {
     fargeRestRes <- farger[4]
     #
     plot(tidNum,Midt, xlim= c(xmin, xmax), ylim=c(ymin, ymax), #ylim=c(ymin-0.05*ymax, ymax),
-         type='l', frame.plot=FALSE, col = fargeHovedRes,
+         type='n', frame.plot=FALSE, col = farger[3],
          #cex=0.8, cex.lab=0.9, cex.axis=0.9,
          ylab=c(ytxt,'med 95% konfidensintervall'),
          xlab='Innleggelsestidspunkt', xaxt='n',

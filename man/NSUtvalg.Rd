@@ -35,7 +35,7 @@ NSUtvalg(
 
 \item{AIS}{- AISgrad ved innleggelse alle(''), velge en eller flere fra A,B,C,D,E,U}
 
-\item{enhetsUtvalg}{- 1:eget sykehus, 0:hele landet (standard)}
+\item{enhetsUtvalg}{- 1:eget sykehus sml med resten, 2:eget sykehus, 0:hele landet (standard)}
 
 \item{nivaaUt}{- Nivå ved utreise, flervalgs tetraplegi, paraplegi, C1-4, C5-8, ukjent}
 }

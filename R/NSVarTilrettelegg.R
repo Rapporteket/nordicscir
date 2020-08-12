@@ -79,8 +79,10 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
       
  tittel <- '' #I AndelerGrVar og gjsnGrVar genereres tittel i beregningsfunksjonen
 
-      if (valgtVar=='Alder') { #Fordeling, gjsnGrVar
-            tittel <- 'Alder ved innleggelse'
+      if (valgtVar=='Alder') { #Fordeling, gjsnGrVar, gjsnTid
+            tittel <- ifelse(figurtype == 'andeler', 
+                             'Alder ved innleggelse',
+                             'alder ved innleggelse')
             gr <- c(0,15,30,45,60,75,200)	#c(seq(0, 90, 15), 120)
             RegData$Variabel <- RegData$Alder   #til gjsnGrVar
             RegData$VariabelGr <- cut(RegData$Alder, breaks=gr, include.lowest=TRUE, right=FALSE)
@@ -88,7 +90,8 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
             cexgr <- 0.9
             xAkseTxt <- switch(figurtype,
                                andeler= 'Aldersgrupper (år)',
-                               gjsnGrVar = 'alder (år)')
+                               gjsnGrVar = 'alder (år)', 
+                               gjsnTid = 'alder (år)')
       }
 
       if (valgtVar %in% c('AAis', 'FAis')) {
