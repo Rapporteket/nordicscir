@@ -33,7 +33,7 @@ NSUtvalg(
 
 \item{traume}{- 'ja','nei', 'alle' standard: ikke valgt}
 
-\item{AIS}{- AISgrad ved innleggelse alle(''), velge en eller flere fra A,B,C,D,E,U}
+\item{AIS}{- AISgrad ved innleggelse alle(''), velge en eller flere fra 1:5, mappes til: A,B,C,D,E}
 
 \item{enhetsUtvalg}{- 1:eget sykehus sml med resten, 2:eget sykehus, 0:hele landet (standard)}
 

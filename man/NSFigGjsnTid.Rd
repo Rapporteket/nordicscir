@@ -15,7 +15,7 @@ NSFigGjsnTid(
   erMann = "",
   reshID = 0,
   enhetsUtvalg = 0,
-  valgtMaal = "Gjsn",
+  valgtMaal = "gjsn",
   AIS = "",
   traume = "alle",
   nivaaUt = 99,

@@ -1,61 +1,54 @@
-# Må det kanskje komme en overornet tittel her?
+# Hjelpefunksjoner for NorSCIR
 #---------------------------------------------
 
-#' Hjelpefunksjoner. Group of functions page title
-#' 
-#' Fil med div hjelpefunksjoner.Group of functions Description section
-#' 
-#' Detaljer. kommer senereGroup of functions Details paragraph.
-#'
-#' Finne reinnleggelser After function section:
-#' Despite its location, this actually comes after the function section.
-#' Fil som inneholder hjelpefunksjoner. 
-#' SorterOgNavngiTidsEnhet Legger til tidsenhetene Aar, Halvaar, Mnd og Kvartal
-#' 
-#' 
+
 #' Tilrettelegge tidsenhetvariabel:
-#' @param RegData data
-#' @param PasientID Variabelen som angir pasientidentifikasjon
-# @inheritParams NIRFigAndeler
-#' @return Div hjelpefunksjoner
+#' @param RegData dataramme
 #' @export
-SorterOgNavngiTidsEnhet <- function(RegData, tidsenhet='Aar') {
+SorterOgNavngiTidsEnhet <- function(RegData, tidsenhet='Aar', tab=0) {
       #Lager sorteringsvariabel for tidsenhet:
-      RegData$TidsEnhetSort <- switch(tidsenhet,
-                                      Aar = RegData$Aar-min(RegData$Aar)+1,
-                                      Mnd = RegData$MndNum-min(RegData$MndNum[RegData$Aar==min(RegData$Aar)])+1
-                                          +(RegData$Aar-min(RegData$Aar))*12, #format(RegData$InnDato, '%b%y'), #
-                                      Kvartal = RegData$Kvartal-min(RegData$Kvartal[RegData$Aar==min(RegData$Aar)])+1+
-                                            (RegData$Aar-min(RegData$Aar))*4,
-                                      Halvaar = RegData$Halvaar-min(RegData$Halvaar[RegData$Aar==min(RegData$Aar)])+1+
-                                            (RegData$Aar-min(RegData$Aar))*2
-      )
-      
-     # format(seq.Date(lubridate::floor_date(ymd('2017-03-09'), 'month'), as.Date('2018-06-01'), by = "month"), 
-      #                format = "%b%y")
-      #as.factor(format(RegData$InnDato, '%b%y')) #
+  #Lager sorteringsvariabel for tidsenhet:
+  RegData$TidsEnhetSort <- switch(tidsenhet,
+                                  Aar = RegData$Aar-min(RegData$Aar)+1,
+                                  Mnd = RegData$MndNum-min(RegData$MndNum[RegData$Aar==min(RegData$Aar)])+1
+                                  +(RegData$Aar-min(RegData$Aar))*12, #format(RegData$InnDato, '%b%y'), #
+                                  Kvartal = RegData$Kvartal-min(RegData$Kvartal[RegData$Aar==min(RegData$Aar)])+1+
+                                    (RegData$Aar-min(RegData$Aar))*4,
+                                  Halvaar = RegData$Halvaar-min(RegData$Halvaar[RegData$Aar==min(RegData$Aar)])+1+
+                                    (RegData$Aar-min(RegData$Aar))*2
+  )
+  
       tidtxt <- switch(tidsenhet,
-                       Mnd = format(seq.Date(as.Date(lubridate::floor_date(min(RegData$InnDato), 'month')), max(RegData$InnDato),
-                                             by = "month"), format = "%b%y"),
+                       # Mnd = format(seq.Date(as.Date(lubridate::floor_date(min(RegData$InnDato), 'month')), max(RegData$InnDato),
+                       #                       by = "month"), format = "%b%y"),
+                       Mnd = format.Date(seq(from=lubridate::floor_date(as.Date(min(as.Date(RegData$InnDato), na.rm = T)), 'month'),
+                                             to=max(as.Date(RegData$InnDato), na.rm = T), by='month'), format = '%B%y'), #Hele måneden
                        Kvartal = lubridate::quarter(seq.Date(as.Date(lubridate::floor_date(min(RegData$InnDato), 'month')), 
                                                              max(RegData$InnDato), 
                                                  by = "quarter"), with_year = T),
-                       #Kvartal = lubridate::quarter(RegData$InnDato, with_year = T),
-                       Halvaar = lubridate::semester(RegData$InnDato, with_year = T),
+                       #NGER: Kvartal = paste(substr(RegData$Aar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)], 3,4),
+                       #                sprintf('%01.0f', RegData$Kvartal[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)]), sep='-'),
+                       #Halvaar = lubridate::semester(RegData$InnDato, with_year = T),
+                       Halvaar = paste(substr(RegData$Aar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)], 3,4),
+                                       sprintf('%01.0f', RegData$Halvaar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)]), sep='-'),
                        Aar = min(RegData$Aar):max(RegData$Aar) #lubridate::year(min(RegData$InnDato)):year(max(RegData$InnDato))
+                       #NGER: Aar = as.character(RegData$Aar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)]))
       )
       
+      substrRight <- function(x, n){substr(x, nchar(x)-n+1, nchar(x))}
+      if (tidsenhet=='Mnd') {tidtxt <- paste0(substr(tidtxt, 1,3), ' '[tab], substrRight(tidtxt, 2))}
       
       RegData$TidsEnhet <- factor(RegData$TidsEnhetSort, ordered = TRUE, 
                                   levels = min(RegData$TidsEnhetSort):max(RegData$TidsEnhetSort),
                                   labels=tidtxt)
-      RegData$TidsEnhetSort <- factor(RegData$TidsEnhetSort, levels=1:max(RegData$TidsEnhetSort))
+      #RegData$TidsEnhetSort <- factor(RegData$TidsEnhetSort, levels=1:max(RegData$TidsEnhetSort))
+      RegData$TidsEnhet <- factor(RegData$TidsEnhetSort, levels=1:max(RegData$TidsEnhetSort), labels=tidtxt)
       
-      #RegData$TidsEnhet <- RegData$TidsEnhetSort
-      #levels(RegData$TidsEnhet) <- tidtxt
       UtData <- list('RegData'=RegData, 'tidtxt'=tidtxt)
       return(UtData)
 }
+
+
 
 #' Lage tulledata (simulerte data). Takler ikke posixlt- type data.
 #' @export

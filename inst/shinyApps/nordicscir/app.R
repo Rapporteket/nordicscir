@@ -98,8 +98,9 @@ ui <- tagList(
                             Resultatene som vises er 
                               basert på AdmitDt, altså dato for første akutte innleggelse. Alle figurer og 
                             tabeller kan lastes ned.'),
+                                  h4(paste0('Se "nabofanen" Status for å se på nøkkeltall.')),
                                   br(),
-                                  h4(tags$b(tags$u('Innhold i de ulike fanene:'))),
+                                  h4(tags$b(tags$u('Innhold i de ulike hovedfanene:'))),
                                   h4(tags$b('Fordelinger '), 'viser fordelinger (figur/tabell) av ulike variable. 
                               Man kan velge hvilken variabel man vil se på, og man kan gjøre ulike filtreringer.'),
                                   h4(tags$b('Gjennomsnitt per sykehus og over tid'), 'viser gjennomsnittsverdier per sykehus. 
@@ -270,7 +271,7 @@ ui <- tagList(
       tabPanel("Gjennomsnitt per sykehus og over tid",
                sidebarPanel(width = 3,
                             selectInput(
-                                  inputId = "valgtVarGjsnGrVar", label="Velg variabel",
+                                  inputId = "valgtVarGjsn", label="Velg variabel",
                                   choices = c('Alder' = 'Alder',
                                               'Lengde på rehab.opphold' = 'DagerRehab',
                                               'Tid fra skade til oppstart rehab.' = 'DagerTilRehab',
@@ -281,24 +282,24 @@ ui <- tagList(
                                               'Livskval.: Tilfredshet med psykisk helse' = 'LivsPsyk'
                                              )
                             ),
-                            dateRangeInput(inputId = 'datovalgGjsnGrVar', start = startDato, end = Sys.Date(),
+                            dateRangeInput(inputId = 'datovalgGjsn', start = startDato, end = Sys.Date(),
                                            label = "Tidsperiode", separator="t.o.m.", language="nb"),
-                            selectInput(inputId = "erMannGjsnGrVar", label="Kjønn",
+                            selectInput(inputId = "erMannGjsn", label="Kjønn",
                                         choices = c("Begge"=2, "Menn"=1, "Kvinner"=0)
                             ),
-                            sliderInput(inputId="alderGjsnGrVar", label = "Alder", min = 0,
+                            sliderInput(inputId="alderGjsn", label = "Alder", min = 0,
                                         max = 110, value = c(0, 110)
                             ),
-                            selectInput(inputId = 'AISGjsnGrVar', label='AIS-grad ved utreise',
+                            selectInput(inputId = 'AISGjsn', label='AIS-grad ved utreise',
                                         multiple = T, #selected=0,
                                          choices = valgAIS
                             ),
-                            selectInput(inputId = 'traumeGjsnGrVar', label='Traume',
+                            selectInput(inputId = 'traumeGjsn', label='Traume',
                                         choices = c("Alle"=' ', #'ikke'
                                                     "Traume"='ja',
                                                     "Ikke traume"='nei')
                             ),
-                            selectInput(inputId = 'paratetraGjsnGrVar', label='Nivå ved utreise',
+                            selectInput(inputId = 'paratetraGjsn', label='Nivå ved utreise',
                                         choices = c("Alle" = 99,
                                                     "Paraplegi" = 0,
                                                     "Tetraplegi" = 1,
@@ -339,7 +340,7 @@ ui <- tagList(
                      )
                )
 
-), #GjsnGrVar
+), #Gjsn
 
 
 
@@ -757,7 +758,7 @@ server <- function(input, output, session) {
                   NSFigAndeler(RegData=RegData, valgtVar=input$valgtVar, preprosess = 0,
                                datoFra=input$datovalg[1], datoTil=input$datovalg[2], 
                                reshID = reshID, 
-                               AIS=input$AIS, traume=input$traume, nivaaUt=as.numeric(input$nivaaUt),
+                               AIS=as.numeric(input$AIS), traume=input$traume, nivaaUt=as.numeric(input$nivaaUt),
                                minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]), 
                                erMann=as.numeric(input$erMann), 
                                enhetsUtvalg=as.numeric(input$enhetsUtvalg),
@@ -769,7 +770,7 @@ server <- function(input, output, session) {
             UtDataFord <- NSFigAndeler(RegData=RegData, preprosess = 0, valgtVar=input$valgtVar,
                                        datoFra=input$datovalg[1], datoTil=input$datovalg[2], 
                                        reshID = reshID, 
-                                       AIS=input$AIS, traume=input$traume, nivaaUt=as.numeric(input$nivaaUt),
+                                       AIS=as.numeric(input$AIS), traume=input$traume, nivaaUt=as.numeric(input$nivaaUt),
                                        minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]), 
                                        erMann=as.numeric(input$erMann), 
                                        enhetsUtvalg=as.numeric(input$enhetsUtvalg),
@@ -803,7 +804,7 @@ server <- function(input, output, session) {
             output$fordelingPrSh <- renderPlot({
                   NSFigAndelerSh(RegData=RegData, valgtVar=input$valgtVar, preprosess = 0,
                                datoFra=input$datovalg[1], datoTil=input$datovalg[2], 
-                               AIS=input$AIS, traume=input$traume, nivaaUt=as.numeric(input$nivaaUt),
+                               AIS=as.numeric(input$AIS), traume=input$traume, nivaaUt=as.numeric(input$nivaaUt),
                                minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]), 
                                erMann=as.numeric(input$erMann), 
                                datoUt=as.numeric(input$datoUt),
@@ -812,7 +813,7 @@ server <- function(input, output, session) {
             )
             UtDataFordSh <- NSFigAndelerSh(RegData=RegData, preprosess = 0, valgtVar=input$valgtVar,
                                        datoFra=input$datovalg[1], datoTil=input$datovalg[2], 
-                                       AIS=input$AIS, traume=input$traume, nivaaUt=as.numeric(input$nivaaUt),
+                                       AIS=as.numeric(input$AIS), traume=input$traume, nivaaUt=as.numeric(input$nivaaUt),
                                        minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]), 
                                        erMann=as.numeric(input$erMann), 
                                        datoUt=as.numeric(input$datoUt),
@@ -839,31 +840,31 @@ server <- function(input, output, session) {
       }) #observe Fordeling
       
       observe({ #Sykehusvise gjennomsnitt, figur og tabell
-            RegData <- finnRegData(valgtVar = input$valgtVarGjsnGrVar, Data = AlleTab)
+            RegData <- finnRegData(valgtVar = input$valgtVarGjsn, Data = AlleTab)
             output$gjsnGrVar <- renderPlot(
                   NSFigGjsnGrVar(RegData=RegData, preprosess = 0, 
-                                 valgtVar=input$valgtVarGjsnGrVar,
-                                 datoFra=input$datovalgGjsnGrVar[1], 
-                                 datoTil=input$datovalgGjsnGrVar[2], 
-                                 AIS=input$AISGjsnGrVar, 
-                                 traume=input$traumeGjsnGrVar, 
-                                 nivaaUt=as.numeric(input$paratetraGjsnGrVar),
-                                 minald=as.numeric(input$alderGjsnGrVar[1]), 
-                                 maxald=as.numeric(input$alderGjsnGrVar[2]), 
-                                 erMann=as.numeric(input$erMannGjsnGrVar), 
+                                 valgtVar=input$valgtVarGjsn,
+                                 datoFra=input$datovalgGjsn[1], 
+                                 datoTil=input$datovalgGjsn[2], 
+                                 AIS=as.numeric(input$AISGjsn), 
+                                 traume=input$traumeGjsn, 
+                                 nivaaUt=as.numeric(input$paratetraGjsn),
+                                 minald=as.numeric(input$alderGjsn[1]), 
+                                 maxald=as.numeric(input$alderGjsn[2]), 
+                                 erMann=as.numeric(input$erMannGjsn), 
                                  valgtMaal = input$sentralmaal, session=session
                   ),
                   width = 800, height = 600)
             UtDataGjsnGrVar <- NSFigGjsnGrVar(RegData=RegData, preprosess = 0, 
-                                              valgtVar=input$valgtVarGjsnGrVar,
-                                              datoFra=input$datovalgGjsnGrVar[1], 
-                                              datoTil=input$datovalgGjsnGrVar[2], 
-                                              AIS=input$AISGjsnGrVar, 
-                                              traume=input$traumeGjsnGrVar, 
-                                              nivaaUt=as.numeric(input$paratetraGjsnGrVar),
-                                              minald=as.numeric(input$alderGjsnGrVar[1]), 
-                                              maxald=as.numeric(input$alderGjsnGrVar[2]), 
-                                              erMann=as.numeric(input$erMannGjsnGrVar), 
+                                              valgtVar=input$valgtVarGjsn,
+                                              datoFra=input$datovalgGjsn[1], 
+                                              datoTil=input$datovalgGjsn[2], 
+                                              AIS=as.numeric(input$AISGjsn), 
+                                              traume=input$traumeGjsn, 
+                                              nivaaUt=as.numeric(input$paratetraGjsn),
+                                              minald=as.numeric(input$alderGjsn[1]), 
+                                              maxald=as.numeric(input$alderGjsn[2]), 
+                                              erMann=as.numeric(input$erMannGjsn), 
                                               valgtMaal = input$sentralmaal,
                                               session=session)
             tabGjsnGrVar <- lagTabavFigGjsnGrVar(UtDataFraFig = UtDataGjsnGrVar)
@@ -904,14 +905,13 @@ server <- function(input, output, session) {
             
             
             #------gjsnTid
-            
             output$gjsnTid <- renderPlot(
                NSFigGjsnTid(RegData=RegData, reshID= reshID, preprosess = 0, valgtVar=input$valgtVarGjsn,
                               datoFra=input$datovalgGjsn[1], datoTil=input$datovalgGjsn[2],
                               minald=as.numeric(input$alderGjsn[1]), maxald=as.numeric(input$alderGjsn[2]),
-                            AIS=input$AISGjsnGrVar, 
-                            traume=input$traumeGjsnGrVar, 
-                            nivaaUt=as.numeric(input$paratetraGjsnGrVar),
+                            AIS=as.numeric(input$AISGjsn),  
+                            traume=input$traumeGjsn, 
+                            nivaaUt=as.numeric(input$paratetraGjsn),
                             valgtMaal = input$sentralmaal, 
                             enhetsUtvalg =  as.numeric(input$enhetsUtvalgGjsn),
                               tidsenhet = input$tidsenhetGjsn,
@@ -923,9 +923,9 @@ server <- function(input, output, session) {
                                             datoFra=input$datovalgGjsn[1], datoTil=input$datovalgGjsn[2],
                                             minald=as.numeric(input$alderGjsn[1]),
                                             maxald=as.numeric(input$alderGjsn[2]),
-                                          AIS=input$AISGjsnGrVar, 
-                                          traume=input$traumeGjsnGrVar, 
-                                          nivaaUt=as.numeric(input$paratetraGjsnGrVar),
+                                          AIS=as.numeric(input$AISGjsn), 
+                                          traume=input$traumeGjsn, 
+                                          nivaaUt=as.numeric(input$paratetraGjsn),
                                           valgtMaal = input$sentralmaal,
                                             enhetsUtvalg =  as.numeric(input$enhetsUtvalgGjsn),
                                             session = session)

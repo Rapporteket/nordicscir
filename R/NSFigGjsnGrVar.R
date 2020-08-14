@@ -35,8 +35,12 @@ NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='gjsn', grVar='ShNavn',
       }
 
       #------- Tilrettelegge variable
-      NSVarSpes <- NSVarTilrettelegg(RegData=RegData, valgtVar=valgtVar, figurtype='gjsnGrVar')
+      NSVarSpes <- NSVarTilrettelegg(RegData=RegData, valgtVar=valgtVar, figurtype='gjsn')
       RegData <- NSVarSpes$RegData
+      t1 <- switch(valgtMaal,
+                   med = 'Median ',
+                   gjsn = 'Gjennomsnittlig ')
+      tittel <- paste0(t1, NSVarSpes$tittel) 
       
       #------- Gjøre utvalg
       Utvalg <- NSUtvalg(RegData=RegData, datoFra=datoFra, datoTil=datoTil, minald=minald, maxald=maxald,
@@ -59,22 +63,6 @@ NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='gjsn', grVar='ShNavn',
   Ngrtxt[indGrUt] <- paste0(' (<', Ngrense,')')	
   indGrUt <- which(Ngr < Ngrense)
 
-  vt <- switch(valgtVar, 
-               Alder='alder ved innleggelse',
-               DagerRehab='antall dager med rehabilitering',
-               DagerTilRehab='antall dager før rehabilitering',
-               OpphTot= 'totalt opphold',
-               RegForsinkelse= 'registreringsforsinkelse',
-               LivsGen= 'tilfredshet med livet',
-            LivsFys = 'tilfredshet, fysisk helse',
-            LivsPsyk = 'tilfredshet, psykisk helse'
-               )
-  
-  
-  t1 <- switch(valgtMaal,
-               med = 'Median ',
-               gjsn = 'Gjennomsnittlig ')
-  tittel <- paste0(t1, vt)
 
   KIHele <- c(0,0)    
   KIned <- c(0,0)

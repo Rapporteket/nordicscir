@@ -40,7 +40,7 @@ NSFigGjsnTid <- function(RegData, valgtVar='Alder', datoFra='2011-01-01', datoTi
 
   #--------------- Definere variable ------------------------------
 
-  NSVarSpes <- NSVarTilrettelegg(RegData=RegData, valgtVar=valgtVar, figurtype='gjsnTid')
+  NSVarSpes <- NSVarTilrettelegg(RegData=RegData, valgtVar=valgtVar, figurtype='gjsn')
   RegData <- NSVarSpes$RegData
 
 
@@ -175,7 +175,7 @@ if (lagFigur==1) {
     plot(tidNum,Midt, xlim= c(xmin, xmax), ylim=c(ymin, ymax), #ylim=c(ymin-0.05*ymax, ymax),
          type='n', frame.plot=FALSE, col = farger[3],
          #cex=0.8, cex.lab=0.9, cex.axis=0.9,
-         ylab=c(ytxt,'med 95% konfidensintervall'),
+         ylab=c(ytxt,'med 95% konf.int.'),
          xlab='Innleggelsestidspunkt', xaxt='n',
          sub='(Tall i boksene angir antall innleggelser)', cex.sub=cexgr)	#, axes=F)
     axis(side=1, at = tidNum, labels = levels(RegData$TidsEnhet))
