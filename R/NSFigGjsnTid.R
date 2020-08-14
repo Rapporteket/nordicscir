@@ -53,7 +53,7 @@ NSFigGjsnTid <- function(RegData, valgtVar='Alder', datoFra='2011-01-01', datoTi
   #------------------------Klargjøre tidsenhet--------------
   N <- list(Hoved = dim(RegData)[1], Rest=0)
   #N <- list(Hoved = 0, Rest =0)
-  if (N$Hoved>9) {
+  #if (N$Hoved>9) {
     RegDataFunk <- SorterOgNavngiTidsEnhet(RegData=RegData, tidsenhet = tidsenhet)
     RegData <- RegDataFunk$RegData
     #tidtxt <- RegDataFunk$tidtxt
@@ -108,7 +108,7 @@ NSFigGjsnTid <- function(RegData, valgtVar='Alder', datoFra='2011-01-01', datoTi
       }
     }
 
-  }
+  #}
   t1 <- switch(valgtMaal,
                med = 'Median ',
                gjsn = 'Gjennomsnittlig ')
@@ -182,12 +182,20 @@ if (lagFigur==1) {
     #Sammenlikning:
     if (medSml==1) {
       AntTidsenh <- max(which(!is.na(KonfRest[1,])))
-      polygon( c(tidNum[1]-0.01,tidNum[1:AntTidsenh], tidNum[AntTidsenh]+0.012,
-                 tidNum[AntTidsenh]+0.012, tidNum[AntTidsenh:1], tidNum[1]-0.01),
-               c(KonfRest[1,c(1,1:AntTidsenh, AntTidsenh)], KonfRest[2,c(AntTidsenh,AntTidsenh:1,1)]),
-               col=fargeRestRes, border=NA)
+      # start <- min(which(!is.na(KonfRest[1,])))
+      # slutt <- max(which(!is.na(KonfRest[1,])))
+      tidspkt <- c(tidNum[1]-0.01,tidNum[1:AntTidsenh], tidNum[AntTidsenh]+0.012,
+                   tidNum[AntTidsenh]+0.012, tidNum[AntTidsenh:1], tidNum[1]-0.01)
+      minmaks <- c(KonfRest[1,c(1,1:AntTidsenh, AntTidsenh)], KonfRest[2,c(AntTidsenh,AntTidsenh:1,1)])
+      ind <- which(is.na(minmaks))
+      dummy <- c(0.9*MidtRest[c(1,1:AntTidsenh, AntTidsenh)], 1.1*MidtRest[c(AntTidsenh,AntTidsenh:1,1)]) 
+      minmaks[ind] <- dummy[ind] 
+      if (sum(is.na(minmaks))==0) {
+      polygon(x = tidspkt, y = minmaks, col=fargeRestRes, border=NA)
+      
       legend('top', bty='n', fill=fargeRestRes, border=fargeRestRes, cex=cexgr,
              paste0('95% konfidensintervall for ', NSUtvalg$smltxt, ', N=', sum(Nrest, na.rm=T)))
+      }
     }
     h <- strheight(1, cex=cexgr)*0.7	#,  units='figure',
     b <- 1.1*strwidth(max(N, na.rm=T), cex=cexgr)/2	#length(tidNum)/30

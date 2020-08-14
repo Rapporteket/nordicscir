@@ -10,7 +10,7 @@
 #' @param maxald - alder, til og med
 #' @param traume - 'ja','nei', 'alle' standard: ikke valgt
 #' @param AIS - AISgrad ved innleggelse alle(''), velge en eller flere fra 1:5, mappes til: A,B,C,D,E
-#' @param nivaaUt - Nivå ved utreise, flervalgs tetraplegi, paraplegi, C1-4, C5-8, ukjent
+#' @param nivaaUt - Nivå ved utreise, flervalgs 0:tetraplegi, 1:paraplegi, 2:C1-4, 3:C5-8, 9:ukjent
 #' @param enhetsUtvalg - 1:eget sykehus sml med resten, 2:eget sykehus, 0:hele landet (standard) 
 
 #' @export

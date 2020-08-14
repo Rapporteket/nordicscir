@@ -182,20 +182,20 @@ maxald <- 130
 erMann <- 9                      #1-menn, 0-kvinner, Standard: '', dvs. begge
 traume <- 'alle'    #'ja','nei', standard: ikke valgt
 AIS <- '' # as.character(c(1,4))	#AISgrad ved innleggelse alle(''), velge en eller flere fra 1:5
-nivaaUt <- 99
+nivaaUt <- 1       #Nivå ved utreise, flervalgs 0:tetraplegi, 1:paraplegi, 2:C1-4, 3:C5-8, 9:ukjent
 datoFra <- '2019-01-01'             #Standard: bør være minste registrerte verdi ? min og max dato i utvalget vises alltid i figuren.
 datoTil <- Sys.Date()
 valgtMaal='gjsn'	#'Med'-median, 'Gjsn' gjennomsnitt
-tidsenhet <- 'Halvaar'
+tidsenhet <- 'Mnd'
 grVar <- 'ShNavn'
 datoUt=0 #Velge ut-dato som filtrering
 outfile <- ''
 valgtVar <- 'Alder'
 
-NSFigGjsnTid(RegData, valgtVar='Alder', datoFra='2019-01-01', datoTil='3000-12-31',
-                         tidsenhet='Halvaar', minald=0, maxald=110, erMann=9, reshID=107627,
+NSFigGjsnTid(RegData, valgtVar='Alder', datoFra='2019-01-01', datoTil='2020-12-31',
+                         tidsenhet='Mnd', minald=0, maxald=110, erMann=9, reshID=107627,
                          outfile='',enhetsUtvalg=1, valgtMaal='gjsn', hentData = 1,
-                         AIS='', traume='alle', nivaaUt=99)
+                         AIS='', traume='alle', nivaaUt=1)
 
 UtDataFraFig <- NSFigAndelerSh(preprosess = 1, hentData = 1, valgtVar = valgtVar, datoFra='2018-01-01')
 
