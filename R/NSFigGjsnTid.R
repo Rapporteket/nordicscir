@@ -166,7 +166,8 @@ if (lagFigur==1) {
     FigTypUt <- rapFigurer::figtype(outfile, fargepalett=NSUtvalg$fargepalett)
     #Tilpasse marger for å kunne skrive utvalgsteksten
     NutvTxt <- length(utvalgTxt)
-    par('fig'=c(0, 1, 0, 1-0.02*(max((NutvTxt-1),0))))
+    #par('fig'=c(0, 1, 0, 1-0.025*(max((NutvTxt-1),0))))
+    par('fig'=c(0, 1, 0, 1-0.025*NutvTxt))
 
     farger <- FigTypUt$farger
     fargeHovedRes <- farger[1]

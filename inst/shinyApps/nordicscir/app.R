@@ -911,6 +911,7 @@ server <- function(input, output, session) {
                NSFigGjsnTid(RegData=RegData, reshID= reshID, preprosess = 0, valgtVar=input$valgtVarGjsn,
                               datoFra=input$datovalgGjsn[1], datoTil=input$datovalgGjsn[2],
                               minald=as.numeric(input$alderGjsn[1]), maxald=as.numeric(input$alderGjsn[2]),
+                            erMann=as.numeric(input$erMannGjsn),
                             AIS=as.numeric(input$AISGjsn),  
                             traume=input$traumeGjsn, 
                             nivaaUt=as.numeric(input$paratetraGjsn),
@@ -919,12 +920,13 @@ server <- function(input, output, session) {
                               tidsenhet = input$tidsenhetGjsn,
                               session = session
                ),
-               width = 1000, height = 300)
+               width = 1000, height = 350)
             UtDataGjsnTid <- NSFigGjsnTid(RegData=RegData, reshID= reshID, preprosess = 0,
                                             valgtVar=input$valgtVarGjsn,
                                             datoFra=input$datovalgGjsn[1], datoTil=input$datovalgGjsn[2],
                                             minald=as.numeric(input$alderGjsn[1]),
                                             maxald=as.numeric(input$alderGjsn[2]),
+                                          erMann=as.numeric(input$erMannGjsn),
                                           AIS=as.numeric(input$AISGjsn), 
                                           traume=input$traumeGjsn, 
                                           nivaaUt=as.numeric(input$paratetraGjsn),
