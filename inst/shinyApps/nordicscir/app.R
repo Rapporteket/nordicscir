@@ -334,6 +334,8 @@ ui <- tagList(
                                  'Tabell',
                                  uiOutput("tittelGjsnGrVar"),
                                  br(),
+                                 tableOutput('gjsnTidTab'),
+                                 br(),
                                  tableOutput('gjsnGrVarTab'),
                                  downloadButton(outputId = 'lastNed_tabGjsnGrVar', label='Last ned') # , class = "butt"))
                            )
@@ -928,7 +930,8 @@ server <- function(input, output, session) {
                                           nivaaUt=as.numeric(input$paratetraGjsn),
                                           valgtMaal = input$sentralmaal,
                                             enhetsUtvalg =  as.numeric(input$enhetsUtvalgGjsn),
-                                            session = session)
+                                          tidsenhet = input$tidsenhetGjsn,
+                                          session = session)
             
             tabGjsnTid <- t(UtDataGjsnTid$AggVerdier)
             grtxt <-UtDataGjsnTid$grtxt
