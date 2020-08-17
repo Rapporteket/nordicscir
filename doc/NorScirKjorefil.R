@@ -199,6 +199,67 @@ NSFigGjsnTid(RegData, valgtVar='Alder', datoFra='2019-01-01', datoTil='2020-12-3
 
 UtDataFraFig <- NSFigAndelerSh(preprosess = 1, hentData = 1, valgtVar = valgtVar, datoFra='2018-01-01')
 
+#--------Utvikling av livskvalitet------------------
+#Forslag til figurvisning for utvikling av livskvalitet over tid, personnivå.
+Ei linje for hver pasient. x-akse: Antall dager/uker fra utskriving til målt livskvalitet
+y-akse Livskvalitetsverdi fra innleggelse og senere kontroller
+
+Andel pasienter som har minst X% forbedring siden sist. 
+Andel pasienter som har minst Y kategorier (eks. 2 poeng) forbedring.
+Problem: Randeffekter: Lav livskvalitet i utgangspunktet - stort forbedringspotensiale,
+Andel som har over Z (eks 6) i livskvalitet ved ulike tidspunkt.
+
+#Hovedskjema påkoblet livskvalitet
+RegDataRaa <- NSRegDataSQL(valgtVar = 'LivsXX')
+RegData <- NSPreprosesser(RegData = RegDataRaa)
+#Datovariable: InnDato, DischgDt, QolDt
+#Livskvalitetsvar: SatGenrl, SatPhys, SatPsych
+
+RegData$TidInnLiv <- difftime(time1 = RegData$QolDt, time2 = RegData$InnDato, units = 'days')
+RegData$TidUtLiv <- difftime(time1 = RegData$QolDt, time2 = RegData$DischgDt, units = 'days')
+plot(RegData$TidInnLiv)
+median(RegData$TidInnLiv)
+median(RegData$TidUtLiv)
+hist(RegData$SatGenrl)
+
+#Livskvalitetsskjema
+query <- 'select * FROM LifeQualityFormDataContract Livs'
+LivskvalData <- rapbase::LoadRegData(registryName = 'nordicscir', query)
+LivskvalData <- LivskvalData[order(LivskvalData$FormDate), ]
+LivskvalData$FormDate <- as.Date(LivskvalData$FormDate)
+
+pas <- table(LivskvalData$PatientInRegistryGuid)
+table(pas)
+  1   2   3   4   8 
+514 270  68  11   1
+LivskvalData[LivskvalData$PatientInRegistryGuid %in% names(which(pas>5)), c("FormDate", "QolDt")]
+
+#Grupper på PatientInRegistryGuid
+PasID <- names(pas[pas>=3]) #unique(LivskvalData$PatientInRegistryGuid)
+plot(unique(LivskvalData$FormDate), rep(5, length(unique(LivskvalData$FormDate))), 
+     ylim = c(0,10), col = 'white', xlab = 'Svardato', ylab = 'Livskvalitet',
+     main = 'SatGenrl',
+     type = 'l')
+farger <- colors()
+for (k in 1:length(PasID)) {
+      lines(LivskvalData[LivskvalData$PatientInRegistryGuid == PasID[k], c("FormDate", 'SatGenrl')],
+            col = farger[k+10])
+}
+
+# #Ser ut til å trenge fullstendige data
+# interaction.plot(x.factor = as.factor(LivskvalData$FormDate),
+#                  trace.factor = LivskvalData$PatientInRegistryGuid, 
+#                  response = LivskvalData$SatGenrl, 
+#                  #lty = 'l',
+#                  xlab="kontrolltidspkt", ylab="Livskval", legend=F)
+# help("interaction.plot")
+# 
+# CorrMixed::Spaghetti.Plot(Dataset = LivskvalData, Outcome = SatGenrl, 
+#                           Time = as.Date(FormDate), Id = PatientInRegistryGuid, 
+#                           Add.Profiles=TRUE, Add.Mean=FALSE, 
+#                Add.Median=FALSE) #, Col=8, Lwd.Me=3, xlim, ylim, ...)
+
+
 #------------------------------ Fordelinger --------------------------
 RegData <- HovedSkjema
 valgtVar <- 'UtTil'	#AAis, FAis, Alder, DagerRehab, DagerTilRehab, NivaaInn, Ntsci,
@@ -215,6 +276,7 @@ valgtVar <- 'TarmInkontinensFra2019'   #'TarmAvfHoved','TarmAvfTillegg', TarmAvf
 
 #Livskvalitet
 RegData <- KobleMedHoved(RegData,Livskval)
+RegData <- NSRegDataSQL(valgtVar = 'LivsXX')
 valgtVar <- 'LivsPsyk'                #LivsGen, LivsFys, LivsPsyk
 
 #Funksjon (Aktivitet og deltagelse)
