@@ -77,10 +77,12 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
       # Definer og gjør utvalg for variabelen
       # tittel, xAkseTxt, sortAvtagende (standard: TRUE)
       
- tittel <- '' #I AndelerGrVar og gjsnGrVar genereres tittel i beregningsfunksjonen
+ tittel <- '' #I AndelerGrVar genereres tittel i beregningsfunksjonen
 
-      if (valgtVar=='Alder') { #Fordeling, gjsnGrVar
-            tittel <- 'Alder ved innleggelse'
+      if (valgtVar=='Alder') { #Fordeling, gjsn
+            tittel <- ifelse(figurtype == 'andeler', 
+                             'Alder ved innleggelse',
+                             'alder ved innleggelse')
             gr <- c(0,15,30,45,60,75,200)	#c(seq(0, 90, 15), 120)
             RegData$Variabel <- RegData$Alder   #til gjsnGrVar
             RegData$VariabelGr <- cut(RegData$Alder, breaks=gr, include.lowest=TRUE, right=FALSE)
@@ -88,7 +90,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
             cexgr <- 0.9
             xAkseTxt <- switch(figurtype,
                                andeler= 'Aldersgrupper (år)',
-                               gjsnGrVar = 'alder (år)')
+                               gjsn = 'alder (år)')
       }
 
       if (valgtVar %in% c('AAis', 'FAis')) {
@@ -129,7 +131,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
             RegData$VariabelGr <- factor(as.numeric(RegData$RecCtrl), levels=gr, labels = grtxt)
       }
 
-            if (valgtVar %in% c('DagerRehab', 'DagerTilRehab', 'OpphTot')) {
+            if (valgtVar %in% c('DagerRehab', 'DagerTilRehab', 'OpphTot')) { #andeler, gjsn
             dato <- switch(valgtVar, 
                           DagerRehab = '2015-01-01',
                           DagerTilRehab = '2015-01-01',
@@ -147,15 +149,24 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
             RegData$Variabel <- RegData[,valgtVar]
             grtxt <- c(levels(RegData$VariabelGr)[1:(length(gr)-2)], grmax)
             tittel <- switch(valgtVar, 
-                             DagerRehab='Tid innlagt på ryggmargsskadeavdeling', 
-                             DagerTilRehab = 'Tid fra akuttinnleggelse til innleggelse på ryggmargsskadeavd.',
-                             OpphTot = 'Total tid innlagt på sykehus')
+                             DagerRehab=ifelse(figurtype == 'gjsn',
+                                               'antall dager med rehabilitering',
+                                               'Tid innlagt på ryggmargsskadeavdeling'), 
+                             DagerTilRehab = ifelse(figurtype == 'gjsn', 
+                                                    'antall dager før rehabilitering', 
+                                                    'Tid fra akuttinnleggelse til innl. på ryggmargsskadeavd.'),
+                             OpphTot = ifelse(figurtype == 'gjsn',
+                                              'totalt opphold',
+                                              'Total tid innlagt på sykehus')
+            )
             cexgr <- 0.9
             txtretn <- 2
             xAkseTxt <- 'Antall dager'
       }	#Variable med antall dager
       
-
+      
+      
+      
       if (valgtVar == 'NivaaInn') {
             tittel <- 'Nivå ved innleggelse'
             #gr <- (1:6,9) - Kodene som registereres
@@ -218,7 +229,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
             RegData$VariabelGr <- factor(as.numeric(RegData$PPlacedis), levels=1:5, labels = grtxt)
             retn <- 'H'
       }
-      if (valgtVar == 'RegForsinkelse') {  #Andeler, GjsnGrVar
+      if (valgtVar == 'RegForsinkelse') {  #Andeler, gjsn
             #Verdier: 0-3402
             RegData$Diff <- as.numeric(as.Date(as.POSIXct(RegData$FirstTimeClosed, format="%Y-%m-%d")) - 
                                              as.Date(as.POSIXct(RegData$DischgDt, format="%Y-%m-%d"))) #difftime(RegData$InnDato, RegData$Leveringsdato) #
@@ -228,7 +239,8 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
             RegData <- RegData[which(RegData$Diff > -1), ]
             tittel <- switch(figurtype,
                              andeler='Tid fra utskriving til ferdigstilt registrering',
-                             andelGrVar = 'Mer enn 30 dager fra utskriving til ferdig registrering') #
+                             andelGrVar = 'Mer enn 30 dager fra utskriving til ferdig registrering',
+                             gjsn = 'registreringsforsinkelse') #
             #RegData$Variabel[RegData$Diff > 2*7] <- 1
             RegData$Variabel <- RegData$Diff
             subtxt <- 'døgn'
@@ -258,7 +270,9 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
       }
       
       if (valgtVar == 'LivsGen') {
-            tittel <- 'Tilfredshet med livet'
+            tittel <- ifelse(figurtype == 'andeler',
+                             'Tilfredshet med livet',
+                             'tilfredshet med livet')
             RegData <- RegData[RegData$SatGenrl %in% 0:10, ]
             grtxt <- 0:10
             RegData$VariabelGr <- factor(as.numeric(RegData$SatGenrl), levels=0:10, labels = grtxt)
@@ -266,7 +280,9 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
             sortAvtagende <- TRUE
       }
       if (valgtVar == 'LivsFys') {
-            tittel <- 'Tilfredshet med fysisk helse'
+            tittel <- ifelse(figurtype == 'andeler',
+                             'Tilfredshet med fysisk helse',
+                             'tilfredshet med fysisk helse')
             RegData <- RegData[RegData$SatPhys %in% 0:10, ]
             grtxt <- 0:10
             RegData$VariabelGr <- factor(as.numeric(RegData$SatPhys), levels=0:10, labels = grtxt)
@@ -275,14 +291,16 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
       }
 
       if (valgtVar == 'LivsPsyk') {
-            tittel <- 'Tilfredshet med psykisk helse'
+            tittel <- ifelse(figurtype == 'andeler',
+                             'Tilfredshet med psykisk helse',
+                             'tilfredshet med psykisk helse')
             RegData <- RegData[RegData$SatPsych %in% 0:10, ]
             grtxt <- 0:10
             RegData$VariabelGr <- factor(as.numeric(RegData$SatPsych), levels=0:10, labels = grtxt)
             RegData$Variabel <- as.numeric(RegData$SatPsych)
             sortAvtagende <- TRUE
       }
-   
+      
 #----------------URIN-skjema (start 01.01.2015):
       if (substr(valgtVar,1,4)=='Urin') {
        RegData <- RegData[which(RegData$InnDato >= as.Date('2015-01-01') & 

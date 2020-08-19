@@ -21,7 +21,7 @@ tabLiggetider(
 
 \item{datoTil}{til og med dato}
 
-\item{enhetsUtvalg}{- 1:eget sykehus, 0:hele landet (standard)}
+\item{enhetsUtvalg}{- 1:eget sykehus sml med resten, 2:eget sykehus, 0:hele landet (standard)}
 
 \item{traume}{- 'ja','nei', 'alle' standard: ikke valgt}
 

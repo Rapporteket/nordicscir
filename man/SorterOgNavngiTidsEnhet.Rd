@@ -2,29 +2,13 @@
 % Please edit documentation in R/NShjelpefunksjoner.R
 \name{SorterOgNavngiTidsEnhet}
 \alias{SorterOgNavngiTidsEnhet}
-\title{Hjelpefunksjoner. Group of functions page title}
+\title{Tilrettelegge tidsenhetvariabel:}
 \usage{
-SorterOgNavngiTidsEnhet(RegData, tidsenhet = "Aar")
+SorterOgNavngiTidsEnhet(RegData, tidsenhet = "Aar", tab = 0)
 }
 \arguments{
-\item{RegData}{data}
-
-\item{PasientID}{Variabelen som angir pasientidentifikasjon}
-}
-\value{
-Div hjelpefunksjoner
+\item{RegData}{dataramme}
 }
 \description{
-Fil med div hjelpefunksjoner.Group of functions Description section
-}
-\details{
-Detaljer. kommer senereGroup of functions Details paragraph.
-
-Finne reinnleggelser After function section:
-Despite its location, this actually comes after the function section.
-Fil som inneholder hjelpefunksjoner. 
-SorterOgNavngiTidsEnhet Legger til tidsenhetene Aar, Halvaar, Mnd og Kvartal
-
-
 Tilrettelegge tidsenhetvariabel:
 }

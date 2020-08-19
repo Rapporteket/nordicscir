@@ -34,7 +34,7 @@ NSFigGjsnGrVar(
 
 \item{datoTil}{<- '2013-05-25'}
 
-\item{AIS}{- AISgrad ved innleggelse alle(''), velge en eller flere fra A,B,C,D,E,U}
+\item{AIS}{- AISgrad ved innleggelse alle(''), velge en eller flere fra 1:5, mappes til: A,B,C,D,E}
 
 \item{minald}{- alder, fra og med}
 

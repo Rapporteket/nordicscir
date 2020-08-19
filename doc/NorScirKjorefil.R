@@ -114,6 +114,16 @@ save(AktivTilfredshet, file='AktivTilfredshet.RData')
 #       NyTab = AktivFunksjon.SkjemaGUID <-> Satisfaction. HovedskjemaGUID  
 # Main.SkjemaGUID <-> NyTab. HovedskjemaGUID  
 
+# På Server
+      HovedSkjema <- NSRegDataSQL() #datoFra = datoFra, datoTil = datoTil)
+      LivskvalH <- NSRegDataSQL(valgtVar='LivsXX')
+      KontrollH <- NSRegDataSQL(valgtVar='KontXX')
+      UrinH <- NSRegDataSQL(valgtVar='UrinXX')
+      TarmH <- NSRegDataSQL(valgtVar='TarmXX')
+      AktivFunksjonH <- NSRegDataSQL(valgtVar='FunkXX')
+      AktivTilfredshetH <- NSRegDataSQL(valgtVar='TilfXX')
+
+
 #------------------------ TESTE DATA -------------------------------------
 
 #---Oppsummering/test av andel som har fått oppfølging---
@@ -166,22 +176,89 @@ library(nordicscir)
 setwd("C:/Registerinfo og historie/NordicScir/Figurer/")
 load('A:/NordicScir/NordicScirData.RData')
 reshID <- 107627             ##105593-Haukeland, 106896-Sunnaas, 107627-St.Olavs, standard i funksj: 0 dvs. 'Alle'. Standard i rapporten skal v?re at man f?r opp eget sykehus.
-enhetsUtvalg <- 0
+enhetsUtvalg <- 1
 minald <- 0
 maxald <- 130
 erMann <- 9                      #1-menn, 0-kvinner, Standard: '', dvs. begge
 traume <- 'alle'    #'ja','nei', standard: ikke valgt
-AIS <- 99 # as.character(c(1,4))	#AISgrad ved innleggelse alle(''), velge en eller flere fra 1:5
-nivaaUt <- 99
-datoFra <- '2018-01-01'             #Standard: bør være minste registrerte verdi ? min og max dato i utvalget vises alltid i figuren.
-datoTil <- '2019-12-31'
+AIS <- '' # as.character(c(1,4))	#AISgrad ved innleggelse alle(''), velge en eller flere fra 1:5
+nivaaUt <- 1       #Nivå ved utreise, flervalgs 0:tetraplegi, 1:paraplegi, 2:C1-4, 3:C5-8, 9:ukjent
+datoFra <- '2019-01-01'             #Standard: bør være minste registrerte verdi ? min og max dato i utvalget vises alltid i figuren.
+datoTil <- Sys.Date()
 valgtMaal='gjsn'	#'Med'-median, 'Gjsn' gjennomsnitt
+tidsenhet <- 'Mnd'
 grVar <- 'ShNavn'
 datoUt=0 #Velge ut-dato som filtrering
 outfile <- ''
-valgtVar <- 'TarmKirInngrepHvilke'
+valgtVar <- 'Alder'
+
+NSFigGjsnTid(RegData, valgtVar='Alder', datoFra='2019-01-01', datoTil='2020-12-31',
+                         tidsenhet='Mnd', minald=0, maxald=110, erMann=9, reshID=107627,
+                         outfile='',enhetsUtvalg=1, valgtMaal='gjsn', hentData = 1,
+                         AIS='', traume='alle', nivaaUt=1)
 
 UtDataFraFig <- NSFigAndelerSh(preprosess = 1, hentData = 1, valgtVar = valgtVar, datoFra='2018-01-01')
+
+#--------Utvikling av livskvalitet------------------
+#Forslag til figurvisning for utvikling av livskvalitet over tid, personnivå.
+Ei linje for hver pasient. x-akse: Antall dager/uker fra utskriving til målt livskvalitet
+y-akse Livskvalitetsverdi fra innleggelse og senere kontroller
+
+Andel pasienter som har minst X% forbedring siden sist. 
+Andel pasienter som har minst Y kategorier (eks. 2 poeng) forbedring.
+Problem: Randeffekter: Lav livskvalitet i utgangspunktet - stort forbedringspotensiale,
+Andel som har over Z (eks 6) i livskvalitet ved ulike tidspunkt.
+
+#Hovedskjema påkoblet livskvalitet
+RegDataRaa <- NSRegDataSQL(valgtVar = 'LivsXX')
+RegData <- NSPreprosesser(RegData = RegDataRaa)
+#Datovariable: InnDato, DischgDt, QolDt
+#Livskvalitetsvar: SatGenrl, SatPhys, SatPsych
+
+RegData$TidInnLiv <- difftime(time1 = RegData$QolDt, time2 = RegData$InnDato, units = 'days')
+RegData$TidUtLiv <- difftime(time1 = RegData$QolDt, time2 = RegData$DischgDt, units = 'days')
+plot(RegData$TidInnLiv)
+median(RegData$TidInnLiv)
+median(RegData$TidUtLiv)
+hist(RegData$SatGenrl)
+
+#Livskvalitetsskjema
+query <- 'select * FROM LifeQualityFormDataContract Livs'
+LivskvalData <- rapbase::LoadRegData(registryName = 'nordicscir', query)
+LivskvalData <- LivskvalData[order(LivskvalData$FormDate), ]
+LivskvalData$FormDate <- as.Date(LivskvalData$FormDate)
+
+pas <- table(LivskvalData$PatientInRegistryGuid)
+table(pas)
+  1   2   3   4   8 
+514 270  68  11   1
+LivskvalData[LivskvalData$PatientInRegistryGuid %in% names(which(pas>5)), c("FormDate", "QolDt")]
+
+#Grupper på PatientInRegistryGuid
+PasID <- names(pas[pas>=3]) #unique(LivskvalData$PatientInRegistryGuid)
+plot(unique(LivskvalData$FormDate), rep(5, length(unique(LivskvalData$FormDate))), 
+     ylim = c(0,10), col = 'white', xlab = 'Svardato', ylab = 'Livskvalitet',
+     main = 'SatGenrl',
+     type = 'l')
+farger <- colors()
+for (k in 1:length(PasID)) {
+      lines(LivskvalData[LivskvalData$PatientInRegistryGuid == PasID[k], c("FormDate", 'SatGenrl')],
+            col = farger[k+10])
+}
+
+# #Ser ut til å trenge fullstendige data
+# interaction.plot(x.factor = as.factor(LivskvalData$FormDate),
+#                  trace.factor = LivskvalData$PatientInRegistryGuid, 
+#                  response = LivskvalData$SatGenrl, 
+#                  #lty = 'l',
+#                  xlab="kontrolltidspkt", ylab="Livskval", legend=F)
+# help("interaction.plot")
+# 
+# CorrMixed::Spaghetti.Plot(Dataset = LivskvalData, Outcome = SatGenrl, 
+#                           Time = as.Date(FormDate), Id = PatientInRegistryGuid, 
+#                           Add.Profiles=TRUE, Add.Mean=FALSE, 
+#                Add.Median=FALSE) #, Col=8, Lwd.Me=3, xlim, ylim, ...)
+
 
 #------------------------------ Fordelinger --------------------------
 RegData <- HovedSkjema
@@ -199,6 +276,7 @@ valgtVar <- 'TarmInkontinensFra2019'   #'TarmAvfHoved','TarmAvfTillegg', TarmAvf
 
 #Livskvalitet
 RegData <- KobleMedHoved(RegData,Livskval)
+RegData <- NSRegDataSQL(valgtVar = 'LivsXX')
 valgtVar <- 'LivsPsyk'                #LivsGen, LivsFys, LivsPsyk
 
 #Funksjon (Aktivitet og deltagelse)

@@ -33,7 +33,7 @@ NSFigKvalInd(
 
 \item{datoTil}{<- '2013-05-25'}
 
-\item{AIS}{- AISgrad ved innleggelse alle(''), velge en eller flere fra A,B,C,D,E,U}
+\item{AIS}{- AISgrad ved innleggelse alle(''), velge en eller flere fra 1:5, mappes til: A,B,C,D,E}
 
 \item{minald}{- alder, fra og med}
 
@@ -45,7 +45,7 @@ NSFigKvalInd(
 
 \item{nivaaUt}{- Nivå ved utreise, flervalgs tetraplegi, paraplegi, C1-4, C5-8, ukjent}
 
-\item{enhetsUtvalg}{- 1:eget sykehus, 0:hele landet (standard)}
+\item{enhetsUtvalg}{- 1:eget sykehus sml med resten, 2:eget sykehus, 0:hele landet (standard)}
 
 \item{reshID}{- avdelingsid for egen avdeling, standard: 0-hele landet.}
 
