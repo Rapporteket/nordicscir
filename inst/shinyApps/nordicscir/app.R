@@ -164,15 +164,15 @@ ui <- tagList(
                                               'Ais ved utskriving' = 'FAis',
                                               'Anbefalt tid til kontroll' = 'AnbefTidKtr',
                                               'Lengde på rehab.opphold' = 'DagerRehab',
-                                              'Planlagt utskrevet til' = 'PPlaceDis',
-                                              'Tid fra skade til oppstart rehab.' = 'DagerTilRehab',
-                                              'Tid med rehabilitering' = 'DagerRehab',
                                               'Opphold, totalt antall dager' = 'OpphTot',
+                                              'Planlagt utskrevet til' = 'PPlaceDis',
                                               #'Fjern? Permisjon (ant. døgn ute av sykehus) ' = 'Permisjon',
-                                              'Utskrevet til' = 'UtTil',
                                               'Registreringsforsinkelse' = 'RegForsinkelse',
                                               'Skadeårsak ' = 'SkadeArsak',
                                               'Skadeårsak, ikke-traumatisk' = 'Ntsci',
+                                              'Tid fra skade til oppstart rehab.' = 'DagerTilRehab',
+                                              'Tid med rehabilitering' = 'DagerRehab',
+                                              'Utskrevet til' = 'UtTil',
                                               #'Fjern? Pustehjelp' = 'Pustehjelp[VentAssi]',
                                               'A&D Funksjon: Mobilitet' = 'FunkMob',
                                               'A&D Funksjon: Påkledning' = 'FunkKler',
@@ -201,7 +201,8 @@ ui <- tagList(
                                               'Tarm: Fekal inkontinens (t.o.m. 2018)' = 'TarmInkontinensTom2018',
                                               'Tarm: Kirurgisk inngrep' = 'TarmKirInngrep',
                                               'Tarm: Kirurgiske inngrep, hvilke' = 'TarmKirInngrepHvilke'
-                                  )
+                                  ),
+                                  selected = c('Registreringsforsinkelse' = 'RegForsinkelse')
                             ),
                             dateRangeInput(inputId = 'datovalg', start = startDato, end = Sys.Date(),
                                            label = "Tidsperiode", separator="t.o.m.", language="nb"),
@@ -274,13 +275,14 @@ ui <- tagList(
                                   inputId = "valgtVarGjsn", label="Velg variabel",
                                   choices = c('Alder' = 'Alder',
                                               'Lengde på rehab.opphold' = 'DagerRehab',
-                                              'Tid fra skade til oppstart rehab.' = 'DagerTilRehab',
                                               'Opphold, totalt antall dager' = 'OpphTot',
                                               'Registreringsforsinkelse' = 'RegForsinkelse',
+                                              'Tid fra skade til oppstart rehab.' = 'DagerTilRehab',
                                               'Livskval.: Tilfredshet med livet' = 'LivsGen',
                                               'Livskval.: Tilfredshet med fysisk helse' = 'LivsFys',
                                               'Livskval.: Tilfredshet med psykisk helse' = 'LivsPsyk'
-                                             )
+                                             ),
+                                  selected = c('Registreringsforsinkelse' = 'RegForsinkelse')
                             ),
                             dateRangeInput(inputId = 'datovalgGjsn', start = startDato, end = Sys.Date(),
                                            label = "Tidsperiode", separator="t.o.m.", language="nb"),
