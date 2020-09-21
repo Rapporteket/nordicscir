@@ -192,10 +192,10 @@ datoUt=0 #Velge ut-dato som filtrering
 outfile <- ''
 valgtVar <- 'Alder'
 
-NSFigGjsnTid(RegData, valgtVar='Alder', datoFra='2019-01-01', datoTil='2020-12-31',
+NSFigGjsnTid(valgtVar='RegForsinkelse', datoFra='2019-01-01', datoTil='2020-12-31', #RegData, 
                          tidsenhet='Mnd', minald=0, maxald=110, erMann=9, reshID=107627,
                          outfile='',enhetsUtvalg=1, valgtMaal='gjsn', hentData = 1,
-                         AIS='', traume='alle', nivaaUt=1)
+                         AIS='', traume='alle', nivaaUt=99)
 
 UtDataFraFig <- NSFigAndelerSh(preprosess = 1, hentData = 1, valgtVar = valgtVar, datoFra='2018-01-01')
 

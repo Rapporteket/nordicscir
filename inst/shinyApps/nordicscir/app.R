@@ -201,8 +201,8 @@ ui <- tagList(
                                               'Tarm: Fekal inkontinens (t.o.m. 2018)' = 'TarmInkontinensTom2018',
                                               'Tarm: Kirurgisk inngrep' = 'TarmKirInngrep',
                                               'Tarm: Kirurgiske inngrep, hvilke' = 'TarmKirInngrepHvilke'
-                                  ),
-                                  selected = c('Registreringsforsinkelse' = 'RegForsinkelse')
+                                  )
+                                  , selected = c('Registreringsforsinkelse' = 'RegForsinkelse')
                             ),
                             dateRangeInput(inputId = 'datovalg', start = startDato, end = Sys.Date(),
                                            label = "Tidsperiode", separator="t.o.m.", language="nb"),
@@ -281,8 +281,8 @@ ui <- tagList(
                                               'Livskval.: Tilfredshet med livet' = 'LivsGen',
                                               'Livskval.: Tilfredshet med fysisk helse' = 'LivsFys',
                                               'Livskval.: Tilfredshet med psykisk helse' = 'LivsPsyk'
-                                             ),
-                                  selected = c('Registreringsforsinkelse' = 'RegForsinkelse')
+                                             )
+                                  #, selected = c('Registreringsforsinkelse' = 'RegForsinkelse')
                             ),
                             dateRangeInput(inputId = 'datovalgGjsn', start = startDato, end = Sys.Date(),
                                            label = "Tidsperiode", separator="t.o.m.", language="nb"),
