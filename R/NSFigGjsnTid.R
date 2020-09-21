@@ -119,23 +119,12 @@ NSFigGjsnTid <- function(RegData, valgtVar='Alder', datoFra='2011-01-01', datoTi
   ResData <- round(rbind(Midt, Konf, MidtRest, KonfRest), 1)
   rownames(ResData) <- c(maaltxt, 'KImin', 'KImaks',
                          paste0(maaltxt, 'Resten'), 'KImin, Resten', 'KImaks, Resten')[1:(3*(medSml+1))]
-  #UtData <- list(paste0(toString(NSVarSpes$tittel),'.'), ResData )
-  #names(UtData) <- c('tittel', 'Data')
-
+  
   FigDataParam <- list(AggVerdier=ResData,
                        N=N,
                        Ngr=Ngr,
-                       #KImaal <- KImaal,
-                       #KImaaltxt <- KImaaltxt,
-                       #soyletxt=soyletxt,
                        grtxt=levels(RegData$TidsEnhet),
-                       #grtxt2=grtxt2,
-                       #varTxt=varTxt,
-                       #tidtxt=tidtxt, #NSVarSpes$grtxt,
                        tittel=NSVarSpes$tittel,
-                       #retn='V',
-                       # xAkseTxt=xAkseTxt,
-                       #yAkseTxt=yAkseTxt,
                        utvalgTxt=utvalgTxt,
                        fargepalett=NSUtvalg$fargepalett,
                        medSml=medSml,
