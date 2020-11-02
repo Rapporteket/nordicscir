@@ -16,9 +16,6 @@
 
 NSRegDataSQL <- function(valgtVar='Alder') {
       
-registryName <- 'nordicscir' #"nordicscir"
-dbType <- "mysql"
-   
 #HovedSkjema: MainFormDataContract
 #Livs: LifeQualityFormDataContract
 #Urin: UrinaryTractFunctionFormDataContract
@@ -351,16 +348,9 @@ query <- paste0('SELECT ',
             )
 
 
-#print(query)
-#Test av spørring på server:
-# SELECT 
-# h.SkjemaGUID AS SkjemaGUIDh,h.UnitId, h.VentAssi 
-# ,Tilf.DataClDtS ,Tilf.DreslbdyS ,Tilf.FeedingS ,Tilf.FirstTimeClosed ,Tilf.HovedskjemaGUID ,Tilf.MobilmodS ,Tilf.SkjemaGUID ,Tilf.ToiletinS  
-# FROM             MainFormDataContract h 
-# INNER JOIN ActivityAndParticipationPerformanceFormDataContract Funk  ON UPPER(h.SkjemaGUID) = UPPER(Funk.HovedskjemaGUID)  
-# INNER JOIN ActivityAndParticipationSatisfactionFormDataContract Tilf ON UPPER(Funk.SkjemaGUID) = UPPER(Tilf.HovedskjemaGUID)
+#query <- 'select * from MainFormDataContract'
 
 
-RegData <- rapbase::LoadRegData(registryName, query, dbType)
+RegData <- rapbase::loadRegData(registryName = 'nordicscir', query=query, dbType="mysql")
 return(RegData)
 }
