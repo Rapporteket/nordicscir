@@ -30,6 +30,9 @@ NSUtvalg <- function(RegData, datoFra='2010-01-01', datoTil=Sys.Date(), minald=0
       #trengs ikke data for hele landet:
       reshID <- as.numeric(reshID)
       indEgen1 <- match(reshID, RegData$ReshId)
+      
+      enhetsUtvalg <- ifelse(reshID==0 | is.na(indEgen1), 0, enhetsUtvalg )
+      
       if (enhetsUtvalg == 2) {	
 				RegData <- RegData[which(RegData$ReshId == reshID),]	#kun egen enhet
                            }
