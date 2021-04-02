@@ -19,11 +19,9 @@
 #'
 #' @export
 NSFigGjsnTid <- function(RegData, valgtVar='Alder', datoFra='2011-01-01', datoTil='3000-12-31',
-                           tidsenhet='Aar', minald=0, maxald=110, erMann='', reshID=0,
-                           enhetsUtvalg=0, valgtMaal='gjsn',
-                         AIS='', traume='alle', nivaaUt=99,
-                         preprosess=1, outfile='', hentData=0,
-                           lagFigur=1,...){
+                         datoUt = 0, tidsenhet='Aar', minald=0, maxald=110, erMann='', reshID=0,
+                           enhetsUtvalg=0, valgtMaal='gjsn', AIS='', traume='alle', nivaaUt=99,
+                         preprosess=1, outfile='', hentData=0, lagFigur=1,...){
 
   if ("session" %in% names(list(...))) {
     raplog::repLogger(session = list(...)[["session"]], msg = paste0('FigGjsnTid: ',valgtVar))
@@ -44,7 +42,7 @@ NSFigGjsnTid <- function(RegData, valgtVar='Alder', datoFra='2011-01-01', datoTi
   RegData <- NSVarSpes$RegData
 
 
-  NSUtvalg <- NSUtvalg(RegData=RegData, datoFra=datoFra, datoTil=datoTil,
+  NSUtvalg <- NSUtvalg(RegData=RegData, datoFra=datoFra, datoTil=datoTil, datoUt = datoUt,
                        minald=minald, maxald=maxald, erMann=erMann, reshID=reshID,
                        traume=traume, AIS=AIS, nivaaUt=nivaaUt, enhetsUtvalg = enhetsUtvalg)
   RegData <- NSUtvalg$RegData

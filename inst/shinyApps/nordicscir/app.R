@@ -230,10 +230,12 @@ ui <- tagList(
                             ),
                             selectInput(inputId = 'nivaaUt', label='Nivå ved utreise',
                                         choices = valgNivaaUt
-                            )
-                            #sliderInput(inputId="aar", label = "Årstall", min = 2012,  #min(RegData$Aar),
-                            #           max = as.numeric(format(Sys.Date(), '%Y')), value = )
-               ),
+                            ),
+                            selectInput(inputId = "bildeformatFord",
+                                        label = "Velg format for nedlasting av figur",
+                                        choices = c('pdf', 'png', 'jpg', 'bmp', 'tif', 'svg')
+                                        )
+                            ),
                mainPanel(width = 6,
                          tabsetPanel( id='fordeling',
                                       tabPanel(
@@ -242,18 +244,20 @@ ui <- tagList(
                                          em('(Høyreklikk på figuren for å laste den ned)'),
                                          br(),
                                          br(),
-                                         plotOutput('fordelinger'),
+                                         plotOutput('fordelinger', height = 'auto'),
+                                         downloadButton(outputId = 'lastNed_figFord', label='Last ned figur'),
                                          hr()
                                       ) ,
                                       tabPanel(
                                          'Figur, alle sykehus',
-                                         plotOutput('fordelingPrSh')),
+                                         plotOutput('fordelingPrSh', height = 'auto'),
+                                         downloadButton(outputId = 'lastNed_figFordSh', label='Last ned figur')),
                                       tabPanel(
                                          'Tabell',
                                          uiOutput("tittelFord"),
                                          br(),
                                          tableOutput('fordelingTab'),
-                                         downloadButton(outputId = 'lastNed_tabFord', label='Last ned'),
+                                         downloadButton(outputId = 'lastNed_tabFord', label='Last ned tabell'),
                                          br(),
                                          br(),
                                          br(),
@@ -282,10 +286,12 @@ ui <- tagList(
                                               'Livskval.: Tilfredshet med fysisk helse' = 'LivsFys',
                                               'Livskval.: Tilfredshet med psykisk helse' = 'LivsPsyk'
                                              )
-                                  #, selected = c('Registreringsforsinkelse' = 'RegForsinkelse')
+                                  , selected = c('Registreringsforsinkelse' = 'RegForsinkelse')
                             ),
                             dateRangeInput(inputId = 'datovalgGjsn', start = startDato, end = Sys.Date(),
                                            label = "Tidsperiode", separator="t.o.m.", language="nb"),
+                            radioButtons(inputId = 'datoUtGjsn', 'Bruk utskrivingsdato til datofiltrering?',
+                                         choiceNames = c('nei','ja'), choiceValues = 0:1, selected = 0),
                             selectInput(inputId = "erMannGjsn", label="Kjønn",
                                         choices = c("Begge"=2, "Menn"=1, "Kvinner"=0)
                             ),
@@ -316,22 +322,24 @@ ui <- tagList(
                             ),
                             selectInput(inputId = "tidsenhetGjsn", label="Velg tidsenhet",
                                         choices = tidsenheter
+                            ),
+                            selectInput(inputId = "bildeformatGjsn",
+                                        label = "Velg format for nedlasting av figur",
+                                        choices = c('pdf', 'png', 'jpg', 'bmp', 'tif', 'svg')
                             )
-                            
-
                ),
                mainPanel(
                      tabsetPanel(
                            tabPanel(
                                  'Figur',
                                  br(),
-                                 em('(Høyreklikk på figuren for å laste den ned)'),
-                                 br(),
                                  h3(em("Utvikling over tid")),
                                  plotOutput("gjsnTid", height = 'auto'),
+                                 downloadButton(outputId = 'lastNed_figGjsnTid', label='Last ned figur'),
                                  br(),
                                  h3(em("Sykehusvise resultater")),
-                                 plotOutput('gjsnGrVar')),
+                                 plotOutput('gjsnGrVar', height = 'auto'),
+                                 downloadButton(outputId = 'lastNed_figGjsnGrVar', label='Last ned figur')),
                            tabPanel(
                                  'Tabell',
                                  uiOutput("tittelGjsnGrVar"),
@@ -571,30 +579,6 @@ server <- function(input, output, session) {
                       AktivTilfredshetH = AktivTilfredshetH)
       
 #-------Samlerapporter--------------------      
-      # funksjon for å kjøre Rnw-filer (render file funksjon)
-      # filename function for re-use - i dette tilfellet vil det funke fint å hardkode det samme..
-      # downloadFilename <- function(fileBaseName) {
-      #       paste0(fileBaseName, as.character(as.integer(as.POSIXct(Sys.time()))), '.pdf')
-      # }
-      # 
-      # contentFile <- function(file, srcFil, tmpFil, package,
-      #                         reshID=0) {
-      #       src <- normalizePath(system.file(srcFil, package=package))
-      #       dev.off()
-      #       
-      #       # gå til tempdir. Har ikke skriverettigheter i arbeidskatalog
-      #       owd <- setwd(tempdir())
-      #       on.exit(setwd(owd))
-      #       file.copy(src, tmpFil, overwrite = TRUE)
-      #       
-      #       texfil <- knitr::knit(tmpFil, encoding = 'UTF-8')
-      #       tools::texi2pdf(texfil, clean = TRUE)
-      #       
-      #       #gc() #Opprydning gc-"garbage collection"
-      #       file.rename(stringr::str_replace(texfil,'tex','pdf'), file)
-      # }
-      
-      
       contentFile <- function(file, srcFil, tmpFile, 
                               reshID=0, datoFra=startDato, datoTil=Sys.Date()) {
          src <- normalizePath(system.file(srcFil, package="nordicscir"))
@@ -768,11 +752,30 @@ server <- function(input, output, session) {
                                enhetsUtvalg=as.numeric(input$enhetsUtvalg),
                                datoUt=as.numeric(input$datoUt),
                                session=session)
-            }, height=800, width=800 #height = function() {session$clientData$output_fordelinger_width}
+            }, height=800, width=800 #height = function() 
             )
+            
+            output$lastNed_figFord <- downloadHandler(
+               filename = function(){
+                  paste0('Fordeling_', valgtVar=input$valgtVar, '_', Sys.time(), '.', input$bildeformatFord)
+               },
+               content = function(file){
+                  NSFigAndeler(RegData=RegData, valgtVar=input$valgtVar, preprosess = 0,
+                               datoFra=input$datovalg[1], datoTil=input$datovalg[2], 
+                               datoUt=as.numeric(input$datoUt),
+                               reshID = reshID, 
+                               AIS=as.numeric(input$AIS), traume=input$traume, nivaaUt=as.numeric(input$nivaaUt),
+                               minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]), 
+                               erMann=as.numeric(input$erMann), 
+                               enhetsUtvalg=as.numeric(input$enhetsUtvalg),
+                               session=session,
+                                   outfile = file)
+               })
+            
             
             UtDataFord <- NSFigAndeler(RegData=RegData, preprosess = 0, valgtVar=input$valgtVar,
                                        datoFra=input$datovalg[1], datoTil=input$datovalg[2], 
+                                       datoUt=as.numeric(input$datoUt),
                                        reshID = reshID, 
                                        AIS=as.numeric(input$AIS), traume=input$traume, nivaaUt=as.numeric(input$nivaaUt),
                                        minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]), 
@@ -807,20 +810,36 @@ server <- function(input, output, session) {
             
             output$fordelingPrSh <- renderPlot({
                   NSFigAndelerSh(RegData=RegData, valgtVar=input$valgtVar, preprosess = 0,
-                               datoFra=input$datovalg[1], datoTil=input$datovalg[2], 
-                               AIS=as.numeric(input$AIS), traume=input$traume, nivaaUt=as.numeric(input$nivaaUt),
+                               datoFra=input$datovalg[1], datoTil=input$datovalg[2], datoUt=input$datoUt,
+                               AIS=as.numeric(input$AIS), traume=input$traume, nivaaUt=as.numeric(dinput$nivaaUt),
                                minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]), 
                                erMann=as.numeric(input$erMann), 
-                               datoUt=as.numeric(input$datoUt),
                                session=session)
             }, height=800, width=800 #height = function() {session$clientData$output_fordelinger_width}
             )
-            UtDataFordSh <- NSFigAndelerSh(RegData=RegData, preprosess = 0, valgtVar=input$valgtVar,
+
+            output$lastNed_figFordSh <- downloadHandler(
+               filename = function(){
+                  paste0('FordelingPrSh_', valgtVar=input$valgtVar, '_', Sys.time(), '.', input$bildeformatFord)
+               },
+               
+               content = function(file){
+                  NSFigAndelerSh(RegData=RegData, valgtVar=input$valgtVar, preprosess = 0,
+                                 datoFra=input$datovalg[1], datoTil=input$datovalg[2], datoUt=input$datoUt,
+                                 AIS=as.numeric(input$AIS), traume=input$traume, nivaaUt=as.numeric(input$nivaaUt),
+                                 minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]), 
+                                 erMann=as.numeric(input$erMann), 
+                                 session=session,
+                               outfile = file)
+               }
+            )
+            
+                        UtDataFordSh <- NSFigAndelerSh(RegData=RegData, preprosess = 0, valgtVar=input$valgtVar,
                                        datoFra=input$datovalg[1], datoTil=input$datovalg[2], 
+                                       datoUt=input$datoUt,
                                        AIS=as.numeric(input$AIS), traume=input$traume, nivaaUt=as.numeric(input$nivaaUt),
                                        minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]), 
                                        erMann=as.numeric(input$erMann), 
-                                       datoUt=as.numeric(input$datoUt),
                                        session=session)
             
              tabFordSh <- lagTabavFigAndelerSh(UtDataFraFig = UtDataFordSh)
@@ -843,13 +862,15 @@ server <- function(input, output, session) {
             
       }) #observe Fordeling
       
-      observe({ #Sykehusvise gjennomsnitt, figur og tabell
+      #------------------Sykehusvise gjennomsnitt, figur og tabell-------------------
+      observe({ 
             RegData <- finnRegData(valgtVar = input$valgtVarGjsn, Data = AlleTab)
             output$gjsnGrVar <- renderPlot(
                   NSFigGjsnGrVar(RegData=RegData, preprosess = 0, 
                                  valgtVar=input$valgtVarGjsn,
                                  datoFra=input$datovalgGjsn[1], 
                                  datoTil=input$datovalgGjsn[2], 
+                                 datoUt=input$datoUtGjsn,
                                  AIS=as.numeric(input$AISGjsn), 
                                  traume=input$traumeGjsn, 
                                  nivaaUt=as.numeric(input$paratetraGjsn),
@@ -859,10 +880,32 @@ server <- function(input, output, session) {
                                  valgtMaal = input$sentralmaal, session=session
                   ),
                   width = 800, height = 600)
-            UtDataGjsnGrVar <- NSFigGjsnGrVar(RegData=RegData, preprosess = 0, 
+
+            output$lastNed_figGjsnGrVar <- downloadHandler(
+               filename = function(){
+                  paste0('FigGjsn_', valgtVar=input$valgtVarGjsn, '_', Sys.time(), '.', input$bildeformatGjsn)
+               },
+               content = function(file){
+                  NSFigGjsnGrVar(RegData=RegData, preprosess = 0, 
+                                 valgtVar=input$valgtVarGjsn,
+                                 datoFra=input$datovalgGjsn[1], 
+                                 datoTil=input$datovalgGjsn[2], 
+                                 datoUt=input$datoUtGjsn,
+                                 AIS=as.numeric(input$AISGjsn), 
+                                 traume=input$traumeGjsn, 
+                                 nivaaUt=as.numeric(input$paratetraGjsn),
+                                 minald=as.numeric(input$alderGjsn[1]), 
+                                 maxald=as.numeric(input$alderGjsn[2]), 
+                                 erMann=as.numeric(input$erMannGjsn), 
+                                 valgtMaal = input$sentralmaal, session=session,
+                               outfile = file)
+               })
+            
+                        UtDataGjsnGrVar <- NSFigGjsnGrVar(RegData=RegData, preprosess = 0, 
                                               valgtVar=input$valgtVarGjsn,
                                               datoFra=input$datovalgGjsn[1], 
                                               datoTil=input$datovalgGjsn[2], 
+                                              datoUt=input$datoUtGjsn,
                                               AIS=as.numeric(input$AISGjsn), 
                                               traume=input$traumeGjsn, 
                                               nivaaUt=as.numeric(input$paratetraGjsn),
@@ -912,6 +955,7 @@ server <- function(input, output, session) {
             output$gjsnTid <- renderPlot(
                NSFigGjsnTid(RegData=RegData, reshID= reshID, preprosess = 0, valgtVar=input$valgtVarGjsn,
                               datoFra=input$datovalgGjsn[1], datoTil=input$datovalgGjsn[2],
+                            datoUt=input$datoUtGjsn,
                               minald=as.numeric(input$alderGjsn[1]), maxald=as.numeric(input$alderGjsn[2]),
                             erMann=as.numeric(input$erMannGjsn),
                             AIS=as.numeric(input$AISGjsn),  
@@ -923,10 +967,32 @@ server <- function(input, output, session) {
                               session = session
                ),
                width = 1000, height = 350)
+            
+            output$lastNed_figGjsnTid <- downloadHandler(
+               filename = function(){
+                  paste0('FigGjsnTid_', valgtVar=input$valgtVarGjsn, '_', Sys.time(), '.', input$bildeformatGjsn)
+               },
+               content = function(file){
+                  NSFigGjsnTid(RegData=RegData, reshID= reshID, preprosess = 0, valgtVar=input$valgtVarGjsn,
+                               datoFra=input$datovalgGjsn[1], datoTil=input$datovalgGjsn[2],
+                               datoUt=input$datoUtGjsn,
+                               minald=as.numeric(input$alderGjsn[1]), maxald=as.numeric(input$alderGjsn[2]),
+                               erMann=as.numeric(input$erMannGjsn),
+                               AIS=as.numeric(input$AISGjsn),  
+                               traume=input$traumeGjsn, 
+                               nivaaUt=as.numeric(input$paratetraGjsn),
+                               valgtMaal = input$sentralmaal, 
+                               enhetsUtvalg =  as.numeric(input$enhetsUtvalgGjsn),
+                               tidsenhet = input$tidsenhetGjsn,
+                               session = session,
+                                 outfile = file)
+               })
+            
             UtDataGjsnTid <- NSFigGjsnTid(RegData=RegData, reshID= reshID, preprosess = 0,
                                             valgtVar=input$valgtVarGjsn,
                                             datoFra=input$datovalgGjsn[1], datoTil=input$datovalgGjsn[2],
-                                            minald=as.numeric(input$alderGjsn[1]),
+                                          datoUt=input$datoUtGjsn,
+                                          minald=as.numeric(input$alderGjsn[1]),
                                             maxald=as.numeric(input$alderGjsn[2]),
                                           erMann=as.numeric(input$erMannGjsn),
                                           AIS=as.numeric(input$AISGjsn), 
