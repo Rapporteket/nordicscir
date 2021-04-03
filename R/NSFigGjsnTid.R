@@ -52,7 +52,7 @@ NSFigGjsnTid <- function(RegData, valgtVar='Alder', datoFra='2011-01-01', datoTi
   N <- list(Hoved = dim(RegData)[1], Rest=0)
   #N <- list(Hoved = 0, Rest =0)
   #if (N$Hoved>9) {
-    RegDataFunk <- SorterOgNavngiTidsEnhet(RegData=RegData, tidsenhet = tidsenhet)
+    RegDataFunk <- SorterOgNavngiTidsEnhet(RegData=RegData, tidsenhet = tidsenhet, datoUt=datoUt)
     RegData <- RegDataFunk$RegData
     #tidtxt <- RegDataFunk$tidtxt
     tidNum <- min(as.numeric(RegData$TidsEnhetSort), na.rm=T):max(as.numeric(RegData$TidsEnhetSort), na.rm = T) #as.numeric(levels(RegData$TidsEnhetSort))
@@ -164,7 +164,7 @@ if (lagFigur==1) {
          type='n', frame.plot=FALSE, col = farger[3],
          #cex=0.8, cex.lab=0.9, cex.axis=0.9,
          ylab=c(ytxt,'med 95% konf.int.'),
-         xlab='Innleggelsestidspunkt', xaxt='n',
+         xlab=c('Innleggelsestidspunkt', 'Utskrivingstidspunkt')[datoUt+1], xaxt='n',
          sub='(Tall i boksene angir antall innleggelser)', cex.sub=cexgr)	#, axes=F)
     axis(side=1, at = tidNum, labels = levels(RegData$TidsEnhet))
     #Sammenlikning:

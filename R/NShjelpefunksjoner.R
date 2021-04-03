@@ -5,8 +5,18 @@
 #' Tilrettelegge tidsenhetvariabel:
 #' @param RegData dataramme
 #' @export
-SorterOgNavngiTidsEnhet <- function(RegData, tidsenhet='Aar', tab=0) {
-      #Lager sorteringsvariabel for tidsenhet:
+SorterOgNavngiTidsEnhet <- function(RegData, tidsenhet='Aar', tab=0, datoUt=0) {
+  
+  #Basere på utskrivingsdato. Hvis datoUt==1, er innholdet i InnDato endret til å være utskrivingsdato
+  if (datoUt == 1) {
+    RegData$DischgDt <- strptime(RegData$DischgDt, format="%Y-%m-%d")
+  RegData$MndNum <- RegData$DischgDt$mon +1
+  head(format(RegData$DischgDt, '%b'))
+  RegData$MndAar <- format(RegData$DischgDt, '%b%y')
+  RegData$Kvartal <- ceiling(RegData$MndNum/3)
+  RegData$Halvaar <- ceiling(RegData$MndNum/6)
+  RegData$Aar <- 1900 + RegData$DischgDt$year #strptime(RegData$Innleggelsestidspunkt, format="%Y")$year
+  }
   #Lager sorteringsvariabel for tidsenhet:
   RegData$TidsEnhetSort <- switch(tidsenhet,
                                   Aar = RegData$Aar-min(RegData$Aar)+1,

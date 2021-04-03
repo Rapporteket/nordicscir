@@ -810,7 +810,7 @@ server <- function(input, output, session) {
             
             output$fordelingPrSh <- renderPlot({
                   NSFigAndelerSh(RegData=RegData, valgtVar=input$valgtVar, preprosess = 0,
-                               datoFra=input$datovalg[1], datoTil=input$datovalg[2], datoUt=input$datoUt,
+                               datoFra=input$datovalg[1], datoTil=input$datovalg[2], datoUt=as.numeric(input$datoUt),
                                AIS=as.numeric(input$AIS), traume=input$traume, nivaaUt=as.numeric(dinput$nivaaUt),
                                minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]), 
                                erMann=as.numeric(input$erMann), 
@@ -825,7 +825,7 @@ server <- function(input, output, session) {
                
                content = function(file){
                   NSFigAndelerSh(RegData=RegData, valgtVar=input$valgtVar, preprosess = 0,
-                                 datoFra=input$datovalg[1], datoTil=input$datovalg[2], datoUt=input$datoUt,
+                                 datoFra=input$datovalg[1], datoTil=input$datovalg[2], datoUt=as.numeric(input$datoUt),
                                  AIS=as.numeric(input$AIS), traume=input$traume, nivaaUt=as.numeric(input$nivaaUt),
                                  minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]), 
                                  erMann=as.numeric(input$erMann), 
@@ -836,7 +836,7 @@ server <- function(input, output, session) {
             
                         UtDataFordSh <- NSFigAndelerSh(RegData=RegData, preprosess = 0, valgtVar=input$valgtVar,
                                        datoFra=input$datovalg[1], datoTil=input$datovalg[2], 
-                                       datoUt=input$datoUt,
+                                       datoUt=as.numeric(input$datoUt),
                                        AIS=as.numeric(input$AIS), traume=input$traume, nivaaUt=as.numeric(input$nivaaUt),
                                        minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]), 
                                        erMann=as.numeric(input$erMann), 
@@ -870,7 +870,7 @@ server <- function(input, output, session) {
                                  valgtVar=input$valgtVarGjsn,
                                  datoFra=input$datovalgGjsn[1], 
                                  datoTil=input$datovalgGjsn[2], 
-                                 datoUt=input$datoUtGjsn,
+                                 datoUt=as.numeric(input$datoUtGjsn),
                                  AIS=as.numeric(input$AISGjsn), 
                                  traume=input$traumeGjsn, 
                                  nivaaUt=as.numeric(input$paratetraGjsn),
@@ -890,7 +890,7 @@ server <- function(input, output, session) {
                                  valgtVar=input$valgtVarGjsn,
                                  datoFra=input$datovalgGjsn[1], 
                                  datoTil=input$datovalgGjsn[2], 
-                                 datoUt=input$datoUtGjsn,
+                                 datoUt=as.numeric(input$datoUtGjsn),
                                  AIS=as.numeric(input$AISGjsn), 
                                  traume=input$traumeGjsn, 
                                  nivaaUt=as.numeric(input$paratetraGjsn),
@@ -905,7 +905,7 @@ server <- function(input, output, session) {
                                               valgtVar=input$valgtVarGjsn,
                                               datoFra=input$datovalgGjsn[1], 
                                               datoTil=input$datovalgGjsn[2], 
-                                              datoUt=input$datoUtGjsn,
+                                              datoUt=as.numeric(input$datoUtGjsn),
                                               AIS=as.numeric(input$AISGjsn), 
                                               traume=input$traumeGjsn, 
                                               nivaaUt=as.numeric(input$paratetraGjsn),
@@ -955,7 +955,7 @@ server <- function(input, output, session) {
             output$gjsnTid <- renderPlot(
                NSFigGjsnTid(RegData=RegData, reshID= reshID, preprosess = 0, valgtVar=input$valgtVarGjsn,
                               datoFra=input$datovalgGjsn[1], datoTil=input$datovalgGjsn[2],
-                            datoUt=input$datoUtGjsn,
+                            datoUt=as.numeric(input$datoUtGjsn),
                               minald=as.numeric(input$alderGjsn[1]), maxald=as.numeric(input$alderGjsn[2]),
                             erMann=as.numeric(input$erMannGjsn),
                             AIS=as.numeric(input$AISGjsn),  
@@ -975,7 +975,7 @@ server <- function(input, output, session) {
                content = function(file){
                   NSFigGjsnTid(RegData=RegData, reshID= reshID, preprosess = 0, valgtVar=input$valgtVarGjsn,
                                datoFra=input$datovalgGjsn[1], datoTil=input$datovalgGjsn[2],
-                               datoUt=input$datoUtGjsn,
+                               datoUt=as.numeric(input$datoUtGjsn),
                                minald=as.numeric(input$alderGjsn[1]), maxald=as.numeric(input$alderGjsn[2]),
                                erMann=as.numeric(input$erMannGjsn),
                                AIS=as.numeric(input$AISGjsn),  
@@ -991,7 +991,7 @@ server <- function(input, output, session) {
             UtDataGjsnTid <- NSFigGjsnTid(RegData=RegData, reshID= reshID, preprosess = 0,
                                             valgtVar=input$valgtVarGjsn,
                                             datoFra=input$datovalgGjsn[1], datoTil=input$datovalgGjsn[2],
-                                          datoUt=input$datoUtGjsn,
+                                          datoUt=as.numeric(input$datoUtGjsn),
                                           minald=as.numeric(input$alderGjsn[1]),
                                             maxald=as.numeric(input$alderGjsn[2]),
                                           erMann=as.numeric(input$erMannGjsn),
