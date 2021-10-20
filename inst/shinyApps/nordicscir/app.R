@@ -429,31 +429,43 @@ tabPanel("Registreringsoversikter",
 #----------------------Registeradministrasjon--------------------------------
 
 tabPanel("Registeradministrasjon",
-         sidebarPanel(width=3,
-                      h3('Utvalg'),
-                       dateRangeInput(inputId = 'datovalgSamleRapp', start = startDato-150, end = Sys.Date(),
-                                     label = "Tidsperiode", separator="t.o.m.", language="nb")
-         ),
-
-         mainPanel(
-            tabsetPanel(id='ark',
-                        tabPanel('Samlerapporter',
-                                 h2('Her kan vi samle div som bare SC-bruker skal se...'),
-                                 br(),
-                                 br(),
-                                 h3("Resultater, hele landet"), #),
-                                 #shinydashboard::infoBox("Resultater hele landet ",
-                                 downloadButton(outputId = 'samleRappLand.pdf',
-                                                label='Last ned samlerapport, hele landet', class = "butt"),
-                                 br(),
-                                 h3("Resultater eget sykehus"), #),
-                                 downloadButton(outputId = 'samleRappEgen.pdf',
-                                                label='Last ned egen samlerapport', class = "butt"),
-                                 br(),
-                                 br()
-                        )
-            ))
-), #tab Registeradministrasjon
+         tabsetPanel(id='ark',
+                     tabPanel('Samlerapporter',
+                              sidebarPanel(width=3,
+                                           h3('Utvalg'),
+                                           dateRangeInput(inputId = 'datovalgSamleRapp', start = startDato-150, end = Sys.Date(),
+                                                          label = "Tidsperiode", separator="t.o.m.", language="nb")
+                              ),
+                              
+                              mainPanel(
+                                    h2('Her kan vi samle div som bare SC-bruker skal se...'),
+                                    br(),
+                                    br(),
+                                    h3("Resultater, hele landet"), #),
+                                    #shinydashboard::infoBox("Resultater hele landet ",
+                                    downloadButton(outputId = 'samleRappLand.pdf',
+                                                   label='Last ned samlerapport, hele landet', class = "butt"),
+                                    br(),
+                                    h3("Resultater eget sykehus"), #),
+                                    downloadButton(outputId = 'samleRappEgen.pdf',
+                                                   label='Last ned egen samlerapport', class = "butt"),
+                                    br(),
+                                    br()
+                              )
+                     ),
+                     shiny::tabPanel(
+                           "Eksport",
+                           #shiny::sidebarLayout(
+                           shiny::sidebarPanel(
+                                 rapbase::exportUCInput("nordicscirExport")
+                           ),
+                           shiny::mainPanel(
+                                 rapbase::exportGuideUI("nordicscirExportGuide")
+                           )
+                           #)
+                     ) #Eksport-tab
+         ) #tabsetPanel
+), #Registeradm-tab
 
 #------------------Abonnement------------------------
 tabPanel(p("Abonnement",
@@ -617,6 +629,14 @@ server <- function(input, output, session) {
                         datoTil = as.Date(input$datovalgSamleRapp[2]))
          })
 
+      #----------- Eksport ----------------
+      registryName <- "nordicscir"
+      ## brukerkontroller
+      rapbase::exportUCServer("nordicscirExport", registryName)
+      ## veileding
+      rapbase::exportGuideServer("nordicscirExportGuide", registryName)
+      
+      
  
 #--------------Startside------------------------------
       
