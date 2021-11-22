@@ -20,7 +20,7 @@
 #' @export
 
 NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='gjsn', grVar='ShNavn',
-                              datoFra='2010-01-01', datoTil='2050-12-31', 
+                              datoFra='2010-01-01', datoTil='2050-12-31', datoUt=0,
 					AIS='', minald=0, maxald=130, erMann='', traume='alle', nivaaUt=99, 
 					preprosess=1, outfile='', hentData=0, ...) {
   
@@ -43,7 +43,8 @@ NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='gjsn', grVar='ShNavn',
       tittel <- paste0(t1, NSVarSpes$tittel) 
       
       #------- Gjøre utvalg
-      Utvalg <- NSUtvalg(RegData=RegData, datoFra=datoFra, datoTil=datoTil, minald=minald, maxald=maxald,
+      Utvalg <- NSUtvalg(RegData=RegData, datoFra=datoFra, datoTil=datoTil, datoUt = datoUt, 
+                         minald=minald, maxald=maxald,
                          erMann=erMann, traume=traume, AIS=AIS, nivaaUt=nivaaUt)
       RegData <- Utvalg$RegData
       utvalgTxt <- Utvalg$utvalgTxt

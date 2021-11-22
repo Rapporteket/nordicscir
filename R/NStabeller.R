@@ -268,7 +268,7 @@ lagTabNevrKlass <- function(HovedSkjema, datoFra='2018-01-01', datoTil=Sys.Date(
       Utvalg <- NSUtvalg(HovedSkjema, datoFra = datoFra, datoTil = datoTil)
       HovedSkjema <- Utvalg$RegData
       Ant <- addmargins(table(HovedSkjema$ShNavn))
-      AntKlassInnUt <- addmargins(table(HovedSkjema$ShNavn[(HovedSkjema$AAis %in% 1:5) & (HovedSkjema$FAis %in% 1:5)]))
+      AntKlassInnUt <- addmargins(table(HovedSkjema$ShNavn[(HovedSkjema$AAis %in% c(1:5,9)) & (HovedSkjema$FAis %in% c(1:5,9))]))
       
 NevrKlass <- rbind(
       'Utført og klassifiserbar, innkomst: ' = 
@@ -284,7 +284,7 @@ NevrKlass <- rbind(
                                                      & HovedSkjema$FAis == -1])),
       'Utført, men ikke klassifiserbar, utreise: ' =
             addmargins(table(HovedSkjema$ShNavn[HovedSkjema$FAis==9])),
-      'Klassifisert ved både inn- og utreise: ' = 
+      'Utført ved både inn- og utreise: ' = 
             paste0(sprintf('%.0f',AntKlassInnUt/Ant*100), '%')
 )
 colnames(NevrKlass)[dim(NevrKlass)[2] ]<- 'Hele landet'

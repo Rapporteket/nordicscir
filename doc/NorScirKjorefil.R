@@ -339,6 +339,16 @@ for (valgtVar in variable) {
 	               valgtMaal=valgtMaal, minald=minald, maxald=maxald, erMann=erMann, traume=traume,
 	               AIS=AIS, nivaaUt = nivaaUt)
 }
+
+RegData <- NSRegDataSQL()
+valgtVar <- 'Alder'
+datoFra <- '2020-01-01'
+datoTil <- '2020-12-31'
+datoUt <- 1
+tidsenhet <- 'Mnd'
+NSFigGjsnTid(RegData, valgtVar='Alder', datoFra='2020-01-01', datoTil='2020-12-31',
+                         datoUt = 1, tidsenhet='Mnd')
+
 #------------------------------ Nevrologisk kategori --------------------------
 rm(list=ls())
 

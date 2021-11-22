@@ -3,8 +3,9 @@
 #' Funksjon som gjør utvalg av dataene, returnerer det reduserte datasettet og
 #' utvalgsteksten.
 #'
-#' @param datoFra <- '2010-01-01'    # min og max dato i utvalget vises alltid i figuren.
-#' @param datoTil <- '2013-05-25'
+#' @param datoFra startdato, fra og med Eks. '2010-01-01'    # min og max dato i utvalget vises alltid i figuren.
+#' @param datoTil sluttdato, fra og med Eks. '2013-05-25'
+#' @param datoUt datofiltrering basert på innleggelse (0), utskriving (1)
 #' @param erMann - kjønn, 1-menn, 0-kvinner, standard: '' (alt annet enn 0 og 1), dvs. begge
 #' @param minald - alder, fra og med
 #' @param maxald - alder, til og med
@@ -16,11 +17,11 @@
 #' @export
 
 
-NSUtvalg <- function(RegData, datoFra='2010-01-01', datoTil=Sys.Date(), minald=0, maxald=110,
-                     erMann=99, traume='alle', AIS='', enhetsUtvalg=0, nivaaUt=99,
-                     reshID=0, fargepalett='BlaaOff', datoUt=0) {
+NSUtvalg <- function(RegData, datoFra='2010-01-01', datoTil=Sys.Date(), datoUt=0, 
+                     minald=0, maxald=110, erMann=99, traume='alle', AIS='', enhetsUtvalg=0, 
+                     nivaaUt=99, reshID=0, fargepalett='BlaaOff') {
       
-      
+      datoUt <- as.numeric(datoUt)
      # Definer intersect-operator
       "%i%" <- intersect
       if (datoUt==1) {RegData$InnDato <- as.Date(RegData$DischgDt)}
@@ -30,6 +31,9 @@ NSUtvalg <- function(RegData, datoFra='2010-01-01', datoTil=Sys.Date(), minald=0
       #trengs ikke data for hele landet:
       reshID <- as.numeric(reshID)
       indEgen1 <- match(reshID, RegData$ReshId)
+      
+      enhetsUtvalg <- ifelse(reshID==0 | is.na(indEgen1), 0, enhetsUtvalg )
+      
       if (enhetsUtvalg == 2) {	
 				RegData <- RegData[which(RegData$ReshId == reshID),]	#kun egen enhet
                            }
@@ -59,7 +63,7 @@ NSUtvalg <- function(RegData, datoFra='2010-01-01', datoTil=Sys.Date(), minald=0
       RegData <- RegData[indMed,]
       N <- length(indMed)
       
-      utvalgTxt <- c(paste0('Innleggelsesperiode: ',
+      utvalgTxt <- c(paste0(c('Innleggelsesperiode: ', 'Utskrivingsperiode: ')[datoUt+1],
                            if (N>0) {min(RegData$InnDato, na.rm=T)} else {datoFra},
                            ' til ', if (N>0) {max(RegData$InnDato, na.rm=T)} else {datoTil}),
                      if ((minald>0) | (maxald<110)) {paste0('Pasienter fra og med ', if (N>0) {min(RegData$Alder, na.rm=T)} else {minald},
