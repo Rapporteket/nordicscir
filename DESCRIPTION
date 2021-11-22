@@ -1,8 +1,8 @@
 Package: nordicscir
 Type: Package
 Title: R-pakke for å generere resultater fra NordicScir
-Version: 2.2.1
-Date: '2020-09-21'
+Version: 2.3.0
+Date: '2021-04-08'
 Author: Lena Ringstad Olsen
 Maintainer: Lena Ringstad Olen <lena.olsen@skde.no>
 Description: An implemetation of all R related resources for NordicScir at
