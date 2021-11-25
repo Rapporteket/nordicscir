@@ -8,6 +8,7 @@ NSUtvalg(
   RegData,
   datoFra = "2010-01-01",
   datoTil = Sys.Date(),
+  datoUt = 0,
   minald = 0,
   maxald = 110,
   erMann = 99,
@@ -16,14 +17,15 @@ NSUtvalg(
   enhetsUtvalg = 0,
   nivaaUt = 99,
   reshID = 0,
-  fargepalett = "BlaaOff",
-  datoUt = 0
+  fargepalett = "BlaaOff"
 )
 }
 \arguments{
-\item{datoFra}{<- '2010-01-01'    # min og max dato i utvalget vises alltid i figuren.}
+\item{datoFra}{startdato, fra og med Eks. '2010-01-01'    # min og max dato i utvalget vises alltid i figuren.}
 
-\item{datoTil}{<- '2013-05-25'}
+\item{datoTil}{sluttdato, fra og med Eks. '2013-05-25'}
+
+\item{datoUt}{datofiltrering basert på innleggelse (0), utskriving (1)}
 
 \item{minald}{- alder, fra og med}
 
@@ -37,7 +39,7 @@ NSUtvalg(
 
 \item{enhetsUtvalg}{- 1:eget sykehus sml med resten, 2:eget sykehus, 0:hele landet (standard)}
 
-\item{nivaaUt}{- Nivå ved utreise, flervalgs tetraplegi, paraplegi, C1-4, C5-8, ukjent}
+\item{nivaaUt}{- Nivå ved utreise, flervalgs 0:tetraplegi, 1:paraplegi, 2:C1-4, 3:C5-8, 9:ukjent}
 }
 \description{
 Funksjon som gjør utvalg av dataene, returnerer det reduserte datasettet og

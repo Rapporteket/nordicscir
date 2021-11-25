@@ -29,9 +29,9 @@ NSFigKvalInd(
 
 \item{valgtVar}{- variabelen det skal genereres resultat for}
 
-\item{datoFra}{<- '2010-01-01'    # min og max dato i utvalget vises alltid i figuren.}
+\item{datoFra}{startdato, fra og med Eks. '2010-01-01'    # min og max dato i utvalget vises alltid i figuren.}
 
-\item{datoTil}{<- '2013-05-25'}
+\item{datoTil}{sluttdato, fra og med Eks. '2013-05-25'}
 
 \item{AIS}{- AISgrad ved innleggelse alle(''), velge en eller flere fra 1:5, mappes til: A,B,C,D,E}
 
@@ -43,7 +43,7 @@ NSFigKvalInd(
 
 \item{traume}{- 'ja','nei', 'alle' standard: ikke valgt}
 
-\item{nivaaUt}{- Nivå ved utreise, flervalgs tetraplegi, paraplegi, C1-4, C5-8, ukjent}
+\item{nivaaUt}{- Nivå ved utreise, flervalgs 0:tetraplegi, 1:paraplegi, 2:C1-4, 3:C5-8, 9:ukjent}
 
 \item{enhetsUtvalg}{- 1:eget sykehus sml med resten, 2:eget sykehus, 0:hele landet (standard)}
 

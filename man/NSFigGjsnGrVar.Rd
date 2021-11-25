@@ -11,6 +11,7 @@ NSFigGjsnGrVar(
   grVar = "ShNavn",
   datoFra = "2010-01-01",
   datoTil = "2050-12-31",
+  datoUt = 0,
   AIS = "",
   minald = 0,
   maxald = 130,
@@ -30,9 +31,11 @@ NSFigGjsnGrVar(
 
 \item{valgtMaal}{- 'med' = median. Alt annet gir gjennomsnitt}
 
-\item{datoFra}{<- '2010-01-01'    # min og max dato i utvalget vises alltid i figuren.}
+\item{datoFra}{startdato, fra og med Eks. '2010-01-01'    # min og max dato i utvalget vises alltid i figuren.}
 
-\item{datoTil}{<- '2013-05-25'}
+\item{datoTil}{sluttdato, fra og med Eks. '2013-05-25'}
+
+\item{datoUt}{Om man skal velge inn eller ut-dato som grunnlag for datofiltrering}
 
 \item{AIS}{- AISgrad ved innleggelse alle(''), velge en eller flere fra 1:5, mappes til: A,B,C,D,E}
 
@@ -44,7 +47,7 @@ NSFigGjsnGrVar(
 
 \item{traume}{- 'ja','nei', 'alle' standard: ikke valgt}
 
-\item{nivaaUt}{- Nivå ved utreise, flervalgs tetraplegi, paraplegi, C1-4, C5-8, ukjent}
+\item{nivaaUt}{- Nivå ved utreise, flervalgs 0:tetraplegi, 1:paraplegi, 2:C1-4, 3:C5-8, 9:ukjent}
 
 \item{preprosess}{Preprosesser data
 0: Nei

@@ -9,6 +9,7 @@ NSFigGjsnTid(
   valgtVar = "Alder",
   datoFra = "2011-01-01",
   datoTil = "3000-12-31",
+  datoUt = 0,
   tidsenhet = "Aar",
   minald = 0,
   maxald = 110,
@@ -30,6 +31,8 @@ NSFigGjsnTid(
 \item{RegData}{- ei dataramme med alle nødvendige variable fra registeret.}
 
 \item{valgtVar}{Hvilken variabel som skal visualiseres}
+
+\item{datoUt}{Om man skal velge inn eller ut-dato som grunnlag for datofiltrering}
 
 \item{reshID}{- avdelingsid for egen avdeling, standard: 0-hele landet.}
 
