@@ -7,7 +7,7 @@
 tabAntOpphSh5Aar(RegData, datoTil = Sys.Date(), traume = "")
 }
 \arguments{
-\item{datoTil}{<- '2013-05-25'}
+\item{datoTil}{sluttdato, fra og med Eks. '2013-05-25'}
 
 \item{traume}{- 'ja','nei', 'alle' standard: ikke valgt}
 }

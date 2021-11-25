@@ -165,8 +165,8 @@ varUrin <- c("
 ,Urin.Incontnc2
 ,Urin.LastUpdate
 ,Urin.LutfxnDt
-,Urin.MajorVersion
-,Urin.MinorVersion
+-- ,Urin.MajorVersion #Fjernet nov. 2021?
+-- ,Urin.MinorVersion #Fjernet nov. 2021?
 ,Urin.Ostmybag
 ,Urin.Othcolap
 ,Urin.Othdrg

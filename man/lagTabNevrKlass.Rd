@@ -7,9 +7,9 @@
 lagTabNevrKlass(HovedSkjema, datoFra = "2018-01-01", datoTil = Sys.Date())
 }
 \arguments{
-\item{datoFra}{<- '2010-01-01'    # min og max dato i utvalget vises alltid i figuren.}
+\item{datoFra}{startdato, fra og med Eks. '2010-01-01'    # min og max dato i utvalget vises alltid i figuren.}
 
-\item{datoTil}{<- '2013-05-25'}
+\item{datoTil}{sluttdato, fra og med Eks. '2013-05-25'}
 
 \item{HovedSkjema-}{hovedskjema}
 }

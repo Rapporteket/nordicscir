@@ -831,7 +831,7 @@ server <- function(input, output, session) {
             output$fordelingPrSh <- renderPlot({
                   NSFigAndelerSh(RegData=RegData, valgtVar=input$valgtVar, preprosess = 0,
                                datoFra=input$datovalg[1], datoTil=input$datovalg[2], datoUt=as.numeric(input$datoUt),
-                               AIS=as.numeric(input$AIS), traume=input$traume, nivaaUt=as.numeric(dinput$nivaaUt),
+                               AIS=as.numeric(input$AIS), traume=input$traume, nivaaUt=as.numeric(input$nivaaUt),
                                minald=as.numeric(input$alder[1]), maxald=as.numeric(input$alder[2]), 
                                erMann=as.numeric(input$erMann), 
                                session=session)
