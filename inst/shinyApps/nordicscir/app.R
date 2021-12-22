@@ -1158,14 +1158,14 @@ server <- function(input, output, session) {
                   synopsis = "Månedsrapport",
                   fun = "abonnement", 
                   paramNames = c('rnwFil', "reshID"),
-                  paramValues = c('NSmndRapp', 0)
+                  paramValues = c('NSmndRapp.Rnw', 0)
             ),
             #abonnement <- function(rnwFil, reshID=0
             SamleRapp = list(
                   synopsis = "Rapport med samling av div. resultater",
                   fun = "abonnement",
                   paramNames = c('rnwFil', "reshID"),
-                  paramValues = c('NSsamleRapp', 'Alle')
+                  paramValues = c('NSsamleRapp.Rnw', 'Alle')
             )
       )
       
