@@ -50,7 +50,7 @@ NSFigAndelerSh <- function(RegData, outfile='', valgtVar='Alder', hentData=0, pr
                          minald=0, maxald=130, erMann=99, traume='alle',nivaaUt=99, ...) {
       
    if ("session" %in% names(list(...))) {
-      raplog::repLogger(session = list(...)[["session"]], msg = "Andeler per sykehus, figur")
+      rapbase::repLogger(session = list(...)[["session"]], msg = "Andeler per sykehus, figur")
    }
    if (hentData == 1) {
             RegData <- NSRegDataSQL(valgtVar=valgtVar)

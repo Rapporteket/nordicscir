@@ -23,7 +23,7 @@ NSFigAndelStabel <- function(RegData, outfile='', valgtVar,
 {
 
   if ("session" %in% names(list(...))) {
-    raplog::repLogger(session = list(...)[["session"]], msg = "Fordelingsfigur")
+    rapbase::repLogger(session = list(...)[["session"]], msg = "Fordelingsfigur")
   }
   if (hentData == 1) {
             RegData <- NSRegDataSQL()
