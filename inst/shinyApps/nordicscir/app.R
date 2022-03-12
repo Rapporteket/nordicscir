@@ -75,6 +75,7 @@ ui <- tagList(
                                            label = "Tidsperiode", separator="t.o.m.", language="nb"))
                ),
                mainPanel(width = 8,
+                         shinyalert::useShinyalert(),
                          tags$head(tags$link(rel="shortcut icon", href="rap/favicon.ico")),
                          if (paaServer){ 
                             rapbase::appNavbarUserWidget(user = uiOutput("appUserName"),
@@ -513,7 +514,7 @@ tabPanel(p("Abonnement",
 server <- function(input, output, session) {
       
    #-----------Div serveroppstart------------------  
-   rapbase::appLogger(session = session, msg = "Starter nordicscir-app'en. Data fra NorSCIR vil bli hentet")
+   raplog::appLogger(session = session, msg = "Starter nordicscir-app'en. Data fra NorSCIR vil bli hentet")
       #system.file('NSmndRapp.Rnw', package='nordicscir')
       #system.file('NSsamleRapp.Rnw', package='nordicscir')
    
@@ -1068,7 +1069,7 @@ server <- function(input, output, session) {
       ## reaktive verdier for å holde rede på endringer som skjer mens
       ## applikasjonen kjører
       rv <- reactiveValues(
-         subscriptionTab = rapbase::makeAutoReportTab(session)) 
+         subscriptionTab = rapbase::makeAutoReportTab(session)) #makeUserSubscriptionTab(session))
       
       #print(rapbase::getUserGroups(session))
       #print(session)
@@ -1133,14 +1134,14 @@ server <- function(input, output, session) {
                                    email = email, organization = organization,
                                    runDayOfYear = runDayOfYear, interval = interval,
                                    intervalName = intervalName)
-         rv$subscriptionTab <- rapbase::makeAutoReportTab(session)
+         rv$subscriptionTab <- rapbase::makeUserSubscriptionTab(session)
       })
       
       ## slett eksisterende abonnement
       observeEvent(input$del_button, {
          selectedRepId <- strsplit(input$del_button, "_")[[1]][2]
          rapbase::deleteAutoReport(selectedRepId)
-         rv$subscriptionTab <- rapbase::makeAutoReportTab(session)
+         rv$subscriptionTab <- rapbase::makeUserSubscriptionTab(session)
       })
       
 #---Utsendinger---------------
