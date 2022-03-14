@@ -65,7 +65,6 @@ ui <- tagList(
                                kan du gå til fanen "Abonnement" og bestille dette.'),
                ),
                mainPanel(width = 8,
-                         shinyalert::useShinyalert(),
                          if (paaServer){ 
                             rapbase::appNavbarUserWidget(user = uiOutput("appUserName"),
                                                       organization = uiOutput("appOrgName"),
