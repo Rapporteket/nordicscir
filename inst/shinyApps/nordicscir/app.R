@@ -1107,7 +1107,7 @@ server <- function(input, output, session) {
          )
          email <- rapbase::getUserEmail(session)
          if (input$subscriptionRep == "Månedsrapport") {
-            synopsis <- "NordicSCIR/Rapporteket: månedsrapport"
+            synopsis <- "Rapporteket-NorSCIR: månedsrapport, abonnement"
             rnwFil <- "NSmndRapp.Rnw" #Navn på fila
             #print(rnwFil)
          }
@@ -1154,14 +1154,14 @@ server <- function(input, output, session) {
       ## liste med metadata for rapport
       reports <- list(
             MndRapp = list(
-                  synopsis = "Månedsrapport",
+                  synopsis = "Rapporteket-NorSCIR: Månedsrapport",
                   fun = "abonnement", 
                   paramNames = c('rnwFil', "reshID"),
                   paramValues = c('NSmndRapp.Rnw', 0)
             ),
             #abonnement <- function(rnwFil, reshID=0
             SamleRapp = list(
-                  synopsis = "Rapport med samling av div. resultater",
+                  synopsis = "Rapporteket-NorSCIR: Rapport, div. resultater",
                   fun = "abonnement",
                   paramNames = c('rnwFil', "reshID"),
                   paramValues = c('NSsamleRapp.Rnw', 'Alle')
