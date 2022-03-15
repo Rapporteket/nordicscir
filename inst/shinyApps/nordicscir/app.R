@@ -627,21 +627,9 @@ server <- function(input, output, session) {
             rownames=T,
             digits = 0
       )
-      # output$tabLiggetider <- function() {
-      #       tabLigget <- tabLiggetider(RegData = HovedSkjema, datoFra = input$datovalgDash[1], datoTil = input$datovalgDash[2])
-      #       kableExtra::kable(tabLigget, format = 'html'
-      #                         , full_width=F
-      #                         , digits = c(0,0,0,1,0)
-      #       )}
       })
-      
  #----------Tabeller, registreringsoversikter ----------------------           
-            # output$tabLiggetider <- renderTable(
-            # tabLiggetider(RegData = HovedSkjema, datoTil=input$sluttDatoReg, tidsenhet=input$tidsenhetReg, 
-            #           enhetsUtvalg=as.numeric(input$enhetsNivaa), reshID=reshID)
-            # , rownames = T, digits=0, spacing="xs"
-            # )
-
+ 
             output$undertittelReg <- renderUI({
                   br()
                   t1 <- 'Tabellen viser innleggelser '
@@ -934,7 +922,6 @@ server <- function(input, output, session) {
             
             
             
-            
             #------gjsnTid
             output$gjsnTid <- renderPlot(
                NSFigGjsnTid(RegData=RegData, reshID= reshID, preprosess = 0, valgtVar=input$valgtVarGjsn,
@@ -1017,9 +1004,6 @@ server <- function(input, output, session) {
                   write.csv2(tabGjsnTid, file, row.names = T, na = '')
                })
             
-            
-            
-            
       }) #observe gjsn
       
       
@@ -1070,10 +1054,6 @@ server <- function(input, output, session) {
       rv <- reactiveValues(
          subscriptionTab = rapbase::makeAutoReportTab(session)) #makeUserSubscriptionTab(session))
       
-      #print(rapbase::getUserGroups(session))
-      #print(session)
-      #print(rapbase::shinySessionInfo(session, entity = "groups"))
-      
       ## lag tabell over gjeldende status for abonnement
       output$activeSubscriptions <- DT::renderDataTable(
          rv$subscriptionTab, server = FALSE, escape = FALSE, selection = 'none',
@@ -1109,23 +1089,15 @@ server <- function(input, output, session) {
          if (input$subscriptionRep == "Månedsrapport") {
             synopsis <- "Rapporteket-NorSCIR: månedsrapport, abonnement"
             rnwFil <- "NSmndRapp.Rnw" #Navn på fila
-            #print(rnwFil)
          }
          
          
-         fun <- "abonnement"  #"henteSamlerapporter"
+         fun <- "abonnement"  
          paramNames <- c('rnwFil', 'brukernavn', "reshID", "datoFra", 'datoTil')
          paramValues <- c(rnwFil, brukernavn(), reshID, as.character(startDato), as.character(Sys.Date())) #input$subscriptionFileFormat)
-         #paramValues <- c(rnwFil, AlleTab, 'toill', 107627, '2018-01-01', as.character(Sys.Date())) #input$subscriptionFileFormat)
          
-         #TESTING:
-         #parametre <- paramValues
-         #names(parametre) <- paramNames
-         #parametre <- as.list(parametre)
-         # abonnement(rnwFil=rnwFil, AlleTabeller=AlleTab, brukernavn='toillbokk', reshID=107627,
-         #            datoFra=as.Date('2018-01-01'), datoTil=Sys.Date())
-         #test <- abonnement(list(rnwFil=rnwFil), list(brukernavn='toillbokk'), list(reshID=107627),
-         #          list(datoFra=as.Date('2018-01-01')), list(datoTil=as.character(Sys.Date())) ) 
+         # test <- nordicscir::abonnement(rnwFil="NSmndRapp.Rnw", brukernavn='toillbokk', reshID=107627,
+         #          datoFra=as.Date('2018-01-01'), datoTil=as.character(Sys.Date()) )
          
          rapbase::createAutoReport(synopsis = synopsis, package = package,
                                    fun = fun, paramNames = paramNames,
