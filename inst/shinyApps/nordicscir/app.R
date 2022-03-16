@@ -7,7 +7,6 @@ library(lubridate)
 library(dplyr)
 #ibrary(shinyBS) # Additional Bootstrap Controls
 library(kableExtra)
-#library(zoo)
 
 
 startDato <- as.Date(paste0(as.numeric(format(Sys.Date()-400, "%Y")), '-01-01')) #Sys.Date()-400
@@ -49,9 +48,6 @@ ui <- tagList(
       theme = "rap/bootstrap.css",
 #----startside--------            
       tabPanel("Startside",
-               #fluidRow(
-               #column(width=5,
-               #shinyjs::useShinyjs(),
                br(),
                tags$head(tags$style(".butt{background-color:#6baed6;} .butt{color: white;}")), # background color and font color
                
@@ -126,7 +122,6 @@ ui <- tagList(
                tabPanel('Status',
                         
                         h4('Antall registreringer siste år:'),
-                        #fluidRow(
                         tableOutput("tabAntOpphShMnd12startside"), #),
                         #         downloadButton(outputId = 'lastNed_tabAntOpph', label='Last ned'))
                         h5('(Mer informasjon om registreringsstatus finner du under fanen "Registreringsoversikter")'),
@@ -261,8 +256,6 @@ ui <- tagList(
                                          br(),
                                          br(),
                                          br(),
-                                         #hr(),
-                                         #conditionalPanel(condition = (rolle=='SC'),
                                          tableOutput('fordelingShTab'),
                                          downloadButton(outputId = 'lastNed_tabFordSh', label='Last ned')
                                          #)
@@ -514,26 +507,17 @@ server <- function(input, output, session) {
       
    #-----------Div serveroppstart------------------  
    rapbase::appLogger(session = session, msg = "Starter nordicscir-app'en. Data fra NorSCIR vil bli hentet")
-      #system.file('NSmndRapp.Rnw', package='nordicscir')
-      #system.file('NSsamleRapp.Rnw', package='nordicscir')
-   
-      #hospitalName <-getHospitalName(rapbase::getUserReshId(session))
-      #reshID <- reactive({ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 107627)}) 
       reshID <- ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 107627)
       rolle <- ifelse(paaServer, rapbase::getUserRole(shinySession=session), 'SC') #reactive({})
       brukernavn <- reactive({ifelse(paaServer, rapbase::getUserName(shinySession=session), 'tullebukk')})
-      #output$reshID <- renderText({ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 105460)}) #evt renderUI
-      
+
       observe({if (rolle != 'SC') {
-            
       #NB: Må aktiveres i ui-del også OK
             shinyjs::hide(id = 'samleRappLand.pdf')
          hideTab(inputId = "toppPaneler", target = "Registeradministrasjon")
          hideTab(inputId = "fordeling", target = "Figur, alle sykehus")
          shinyjs::hide(id = 'fordelingShTab')
          shinyjs::hide(id = 'lastNed_tabFordSh')
-         #shinyjs::hide(id = 'fordelingPrSh')
-            #hideTab(inputId = "tabs_andeler", target = "Figur, sykehusvisning")
       }
       })
       
@@ -552,7 +536,6 @@ server <- function(input, output, session) {
       })
       
  #NB: Skal bare forholde oss til oppfølgingsskjema som er tilknyttet et gyldig Hovedskjema
-      #paaServer <- (context == "TEST" | context == "QA" | context == "PRODUCTION")
       if (paaServer) {
                   HovedSkjema <- NSRegDataSQL() #datoFra = datoFra, datoTil = datoTil)
                   LivskvalH <- NSRegDataSQL(valgtVar='LivsXX')
@@ -987,10 +970,9 @@ server <- function(input, output, session) {
             output$gjsnTidTab <- function() {
                kableExtra::kable(tabGjsnTid, format = 'html'
                                  , full_width=F
-                                 , digits = 1 #c(0,1,1,1)[1:antKol]
+                                 , digits = 1 
                ) %>%
                   add_header_above(c(" "=1, 'Egen enhet/gruppe' = 3, 'Resten' = 3)[1:(antKol/3+1)]) %>%
-                  #add_header_above(c(" "=1, 'Egen enhet/gruppe' = 3, 'Resten' = 3)[1:(antKol/3+1)]) %>%
                   column_spec(column = 1, width_min = '7em') %>%
                   column_spec(column = 2:(antKol+1), width = '7em') %>%
                   row_spec(0, bold = T)
