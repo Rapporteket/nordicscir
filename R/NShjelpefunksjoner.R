@@ -151,9 +151,9 @@ TilLogiskeVar <- function(Skjema){
 abonnement <- function(rnwFil, brukernavn='ukjent', reshID=0, 
                        datoFra=Sys.Date()-400, datoTil=Sys.Date()) {
   
-  raplog::subLogger(author = brukernavn, registryName = 'NorScir',
-                    reshId = reshID[[1]],
-                    msg = paste0("Abonnement: ", rnwFil))
+      # raplog::subLogger(author = brukernavn, registryName = 'NorScir',
+      #               reshId = reshID[[1]],
+      #               msg = paste0("Abonnement: ", rnwFil))
   
   HovedSkjema <- NSRegDataSQL() 
   LivskvalH <- NSRegDataSQL(valgtVar='LivsXX')

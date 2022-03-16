@@ -7,7 +7,6 @@ library(lubridate)
 library(dplyr)
 #ibrary(shinyBS) # Additional Bootstrap Controls
 library(kableExtra)
-#library(zoo)
 
 
 startDato <- as.Date(paste0(as.numeric(format(Sys.Date()-400, "%Y")), '-01-01')) #Sys.Date()-400
@@ -49,9 +48,6 @@ ui <- tagList(
       theme = "rap/bootstrap.css",
 #----startside--------            
       tabPanel("Startside",
-               #fluidRow(
-               #column(width=5,
-               #shinyjs::useShinyjs(),
                br(),
                tags$head(tags$style(".butt{background-color:#6baed6;} .butt{color: white;}")), # background color and font color
                
@@ -75,7 +71,6 @@ ui <- tagList(
                                            label = "Tidsperiode", separator="t.o.m.", language="nb"))
                ),
                mainPanel(width = 8,
-                         shinyalert::useShinyalert(),
                          tags$head(tags$link(rel="shortcut icon", href="rap/favicon.ico")),
                          if (paaServer){ 
                             rapbase::appNavbarUserWidget(user = uiOutput("appUserName"),
@@ -127,7 +122,6 @@ ui <- tagList(
                tabPanel('Status',
                         
                         h4('Antall registreringer siste år:'),
-                        #fluidRow(
                         tableOutput("tabAntOpphShMnd12startside"), #),
                         #         downloadButton(outputId = 'lastNed_tabAntOpph', label='Last ned'))
                         h5('(Mer informasjon om registreringsstatus finner du under fanen "Registreringsoversikter")'),
@@ -262,8 +256,6 @@ ui <- tagList(
                                          br(),
                                          br(),
                                          br(),
-                                         #hr(),
-                                         #conditionalPanel(condition = (rolle=='SC'),
                                          tableOutput('fordelingShTab'),
                                          downloadButton(outputId = 'lastNed_tabFordSh', label='Last ned')
                                          #)
@@ -429,6 +421,8 @@ tabPanel("Registreringsoversikter",
 #----------------------Registeradministrasjon--------------------------------
 
 tabPanel("Registeradministrasjon",
+         h2('Fane som bare er synlig for SC-bruker.'),
+         
          tabsetPanel(id='ark',
                      tabPanel('Samlerapporter',
                               sidebarPanel(width=3,
@@ -438,7 +432,6 @@ tabPanel("Registeradministrasjon",
                               ),
                               
                               mainPanel(
-                                    h2('Her kan vi samle div som bare SC-bruker skal se...'),
                                     br(),
                                     br(),
                                     h3("Resultater, hele landet"), #),
@@ -453,8 +446,19 @@ tabPanel("Registeradministrasjon",
                                     br()
                               )
                      ),
-                     shiny::tabPanel(
-                           "Eksport",
+                     tabPanel("Utsendinger",
+                              title = "Utsending av rapporter",
+                              sidebarLayout(
+                                    sidebarPanel(
+                                          rapbase::autoReportOrgInput("NSuts"),
+                                          rapbase::autoReportInput("NSuts")
+                                          ),
+                                    mainPanel(
+                                          rapbase::autoReportUI("NSuts")
+                                          )
+                                    )
+                              ),
+                     tabPanel("Eksport, krypterte data",
                            #shiny::sidebarLayout(
                            shiny::sidebarPanel(
                                  rapbase::exportUCInput("nordicscirExport")
@@ -502,27 +506,18 @@ tabPanel(p("Abonnement",
 server <- function(input, output, session) {
       
    #-----------Div serveroppstart------------------  
-   raplog::appLogger(session = session, msg = "Starter nordicscir-app'en. Data fra NorSCIR vil bli hentet")
-      #system.file('NSmndRapp.Rnw', package='nordicscir')
-      #system.file('NSsamleRapp.Rnw', package='nordicscir')
-   
-      #hospitalName <-getHospitalName(rapbase::getUserReshId(session))
-      #reshID <- reactive({ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 107627)}) 
+   rapbase::appLogger(session = session, msg = "Starter nordicscir-app'en. Data fra NorSCIR vil bli hentet")
       reshID <- ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 107627)
       rolle <- ifelse(paaServer, rapbase::getUserRole(shinySession=session), 'SC') #reactive({})
       brukernavn <- reactive({ifelse(paaServer, rapbase::getUserName(shinySession=session), 'tullebukk')})
-      #output$reshID <- renderText({ifelse(paaServer, as.numeric(rapbase::getUserReshId(session)), 105460)}) #evt renderUI
-      
+
       observe({if (rolle != 'SC') {
-            
       #NB: Må aktiveres i ui-del også OK
             shinyjs::hide(id = 'samleRappLand.pdf')
          hideTab(inputId = "toppPaneler", target = "Registeradministrasjon")
          hideTab(inputId = "fordeling", target = "Figur, alle sykehus")
          shinyjs::hide(id = 'fordelingShTab')
          shinyjs::hide(id = 'lastNed_tabFordSh')
-         #shinyjs::hide(id = 'fordelingPrSh')
-            #hideTab(inputId = "tabs_andeler", target = "Figur, sykehusvisning")
       }
       })
       
@@ -541,7 +536,6 @@ server <- function(input, output, session) {
       })
       
  #NB: Skal bare forholde oss til oppfølgingsskjema som er tilknyttet et gyldig Hovedskjema
-      #paaServer <- (context == "TEST" | context == "QA" | context == "PRODUCTION")
       if (paaServer) {
                   HovedSkjema <- NSRegDataSQL() #datoFra = datoFra, datoTil = datoTil)
                   LivskvalH <- NSRegDataSQL(valgtVar='LivsXX')
@@ -590,53 +584,6 @@ server <- function(input, output, session) {
                       AktivFunksjonH = AktivFunksjonH, 
                       AktivTilfredshetH = AktivTilfredshetH)
       
-#-------Samlerapporter--------------------      
-      contentFile <- function(file, srcFil, tmpFile, 
-                              reshID=0, datoFra=startDato, datoTil=Sys.Date()) {
-         src <- normalizePath(system.file(srcFil, package="nordicscir"))
-         #dev.off()
-         # gå til tempdir. Har ikke skriverettigheter i arbeidskatalog
-         owd <- setwd(tempdir())
-         on.exit(setwd(owd))
-         file.copy(src, tmpFile, overwrite = TRUE)
-         knitr::knit2pdf(tmpFile)
-         
-         gc() #Opprydning gc-"garbage collection"
-         file.copy(paste0(substr(tmpFile, 1, nchar(tmpFile)-3), 'pdf'), file)
-         # file.rename(paste0(substr(tmpFile, 1, nchar(tmpFile)-3), 'pdf'), file)
-      }
-      
-      output$mndRapp.pdf <- downloadHandler(
-         filename = function(){ paste0('MndRapp', Sys.time(), '.pdf')}, #'MndRapp.pdf',
-         content = function(file){
-            contentFile(file, srcFil="NSmndRapp.Rnw", tmpFile="tmpNSmndRapp.Rnw",
-                        reshID = reshID) #, datoFra = startDato, datoTil = Sys.Date())
-         })
-      output$samleRappLand.pdf <- downloadHandler(
-            filename = function(){'NorScirSamleRapportLand.pdf'}, # downloadFilename('NorScirSamleRapport')
-            content = function(file){
-                  contentFile(file, srcFil="NSsamleRappLand.Rnw", tmpFile="tmpNSsamleRappLand.Rnw",
-                              reshID=reshID, 
-                              datoFra = as.Date(input$datovalgSamleRapp[1]), 
-                              datoTil = as.Date(input$datovalgSamleRapp[2]))
-            })
-      output$samleRappEgen.pdf <- downloadHandler(
-         filename = function(){'NorScirSamleRapportEgen.pdf'}, # downloadFilename('NorScirSamleRapport')
-         content = function(file){
-            contentFile(file, srcFil="NSsamleRapp.Rnw", tmpFile="tmpNSsamleRapp.Rnw",
-                        reshID=reshID, 
-                        datoFra = as.Date(input$datovalgSamleRapp[1]), 
-                        datoTil = as.Date(input$datovalgSamleRapp[2]))
-         })
-
-      #----------- Eksport ----------------
-      registryName <- "nordicscir"
-      ## brukerkontroller
-      rapbase::exportUCServer("nordicscirExport", registryName)
-      ## veileding
-      rapbase::exportGuideServer("nordicscirExportGuide", registryName)
-      
-      
  
 #--------------Startside------------------------------
       
@@ -663,21 +610,9 @@ server <- function(input, output, session) {
             rownames=T,
             digits = 0
       )
-      # output$tabLiggetider <- function() {
-      #       tabLigget <- tabLiggetider(RegData = HovedSkjema, datoFra = input$datovalgDash[1], datoTil = input$datovalgDash[2])
-      #       kableExtra::kable(tabLigget, format = 'html'
-      #                         , full_width=F
-      #                         , digits = c(0,0,0,1,0)
-      #       )}
       })
-      
  #----------Tabeller, registreringsoversikter ----------------------           
-            # output$tabLiggetider <- renderTable(
-            # tabLiggetider(RegData = HovedSkjema, datoTil=input$sluttDatoReg, tidsenhet=input$tidsenhetReg, 
-            #           enhetsUtvalg=as.numeric(input$enhetsNivaa), reshID=reshID)
-            # , rownames = T, digits=0, spacing="xs"
-            # )
-
+ 
             output$undertittelReg <- renderUI({
                   br()
                   t1 <- 'Tabellen viser innleggelser '
@@ -970,7 +905,6 @@ server <- function(input, output, session) {
             
             
             
-            
             #------gjsnTid
             output$gjsnTid <- renderPlot(
                NSFigGjsnTid(RegData=RegData, reshID= reshID, preprosess = 0, valgtVar=input$valgtVarGjsn,
@@ -1036,10 +970,9 @@ server <- function(input, output, session) {
             output$gjsnTidTab <- function() {
                kableExtra::kable(tabGjsnTid, format = 'html'
                                  , full_width=F
-                                 , digits = 1 #c(0,1,1,1)[1:antKol]
+                                 , digits = 1 
                ) %>%
                   add_header_above(c(" "=1, 'Egen enhet/gruppe' = 3, 'Resten' = 3)[1:(antKol/3+1)]) %>%
-                  #add_header_above(c(" "=1, 'Egen enhet/gruppe' = 3, 'Resten' = 3)[1:(antKol/3+1)]) %>%
                   column_spec(column = 1, width_min = '7em') %>%
                   column_spec(column = 2:(antKol+1), width = '7em') %>%
                   row_spec(0, bold = T)
@@ -1053,21 +986,55 @@ server <- function(input, output, session) {
                   write.csv2(tabGjsnTid, file, row.names = T, na = '')
                })
             
-            
-            
-            
       }) #observe gjsn
       
       
-      #------------------ Abonnement ----------------------------------------------
+
+#-------Samlerapporter--------------------      
+      contentFile <- function(file, srcFil, tmpFile, 
+                              reshID=0, datoFra=startDato, datoTil=Sys.Date()) {
+            src <- normalizePath(system.file(srcFil, package="nordicscir"))
+            #dev.off()
+            # gå til tempdir. Har ikke skriverettigheter i arbeidskatalog
+            owd <- setwd(tempdir())
+            on.exit(setwd(owd))
+            file.copy(src, tmpFile, overwrite = TRUE)
+            knitr::knit2pdf(tmpFile)
+            
+            gc() #Opprydning gc-"garbage collection"
+            file.copy(paste0(substr(tmpFile, 1, nchar(tmpFile)-3), 'pdf'), file)
+            # file.rename(paste0(substr(tmpFile, 1, nchar(tmpFile)-3), 'pdf'), file)
+      }
+      
+      output$mndRapp.pdf <- downloadHandler(
+            filename = function(){ paste0('MndRapp', Sys.time(), '.pdf')}, #'MndRapp.pdf',
+            content = function(file){
+                  contentFile(file, srcFil="NSmndRapp.Rnw", tmpFile="tmpNSmndRapp.Rnw",
+                              reshID = reshID) #, datoFra = startDato, datoTil = Sys.Date())
+            })
+      output$samleRappLand.pdf <- downloadHandler(
+            filename = function(){'NorScirSamleRapportLand.pdf'}, # downloadFilename('NorScirSamleRapport')
+            content = function(file){
+                  contentFile(file, srcFil="NSsamleRappLand.Rnw", tmpFile="tmpNSsamleRappLand.Rnw",
+                              reshID=reshID, 
+                              datoFra = as.Date(input$datovalgSamleRapp[1]), 
+                              datoTil = as.Date(input$datovalgSamleRapp[2]))
+            })
+      output$samleRappEgen.pdf <- downloadHandler(
+            filename = function(){'NorScirSamleRapportEgen.pdf'}, # downloadFilename('NorScirSamleRapport')
+            content = function(file){
+                  contentFile(file, srcFil="NSsamleRapp.Rnw", tmpFile="tmpNSsamleRapp.Rnw",
+                              reshID=reshID, 
+                              datoFra = as.Date(input$datovalgSamleRapp[1]), 
+                              datoTil = as.Date(input$datovalgSamleRapp[2]))
+            })
+      
+      
+#------------------ Abonnement ----------------------------------------------
       ## reaktive verdier for å holde rede på endringer som skjer mens
       ## applikasjonen kjører
       rv <- reactiveValues(
-         subscriptionTab = rapbase::makeUserSubscriptionTab(session))
-      
-      #print(rapbase::getUserGroups(session))
-      #print(session)
-      #print(rapbase::shinySessionInfo(session, entity = "groups"))
+         subscriptionTab = rapbase::makeAutoReportTab(session)) #makeUserSubscriptionTab(session))
       
       ## lag tabell over gjeldende status for abonnement
       output$activeSubscriptions <- DT::renderDataTable(
@@ -1102,25 +1069,17 @@ server <- function(input, output, session) {
          )
          email <- rapbase::getUserEmail(session)
          if (input$subscriptionRep == "Månedsrapport") {
-            synopsis <- "NordicSCIR/Rapporteket: månedsrapport"
+            synopsis <- "Rapporteket-NorSCIR: månedsrapport, abonnement"
             rnwFil <- "NSmndRapp.Rnw" #Navn på fila
-            #print(rnwFil)
          }
          
          
-         fun <- "abonnement"  #"henteSamlerapporter"
+         fun <- "abonnement"  
          paramNames <- c('rnwFil', 'brukernavn', "reshID", "datoFra", 'datoTil')
          paramValues <- c(rnwFil, brukernavn(), reshID, as.character(startDato), as.character(Sys.Date())) #input$subscriptionFileFormat)
-         #paramValues <- c(rnwFil, AlleTab, 'toill', 107627, '2018-01-01', as.character(Sys.Date())) #input$subscriptionFileFormat)
          
-         #TESTING:
-         #parametre <- paramValues
-         #names(parametre) <- paramNames
-         #parametre <- as.list(parametre)
-         # abonnement(rnwFil=rnwFil, AlleTabeller=AlleTab, brukernavn='toillbokk', reshID=107627,
-         #            datoFra=as.Date('2018-01-01'), datoTil=Sys.Date())
-         #test <- abonnement(list(rnwFil=rnwFil), list(brukernavn='toillbokk'), list(reshID=107627),
-         #          list(datoFra=as.Date('2018-01-01')), list(datoTil=as.character(Sys.Date())) ) 
+         # test <- nordicscir::abonnement(rnwFil="NSmndRapp.Rnw", brukernavn='toillbokk', reshID=107627,
+         #          datoFra=as.Date('2018-01-01'), datoTil=as.character(Sys.Date()) )
          
          rapbase::createAutoReport(synopsis = synopsis, package = package,
                                    fun = fun, paramNames = paramNames,
@@ -1128,15 +1087,62 @@ server <- function(input, output, session) {
                                    email = email, organization = organization,
                                    runDayOfYear = runDayOfYear, interval = interval,
                                    intervalName = intervalName)
-         rv$subscriptionTab <- rapbase::makeUserSubscriptionTab(session)
+         rv$subscriptionTab <- rapbase::makeAutoReportTab(session)
       })
       
       ## slett eksisterende abonnement
       observeEvent(input$del_button, {
          selectedRepId <- strsplit(input$del_button, "_")[[1]][2]
          rapbase::deleteAutoReport(selectedRepId)
-         rv$subscriptionTab <- rapbase::makeUserSubscriptionTab(session)
+         rv$subscriptionTab <- rapbase::makeAutoReportTab(session)
       })
+      
+#---Utsendinger---------------
+## liste med orgnr og navn
+      
+      sykehusNavn <- sort(unique(as.character(HovedSkjema$ShNavn)), index.return=T)
+      orgs <- c(0, unique(HovedSkjema$ReshId)[sykehusNavn$ix])
+      names(orgs) <- c('Alle',sykehusNavn$x)
+      orgs <- as.list(orgs)
+
+      ## liste med metadata for rapport
+      reports <- list(
+            MndRapp = list(
+                  synopsis = "Rapporteket-NorSCIR: Månedsrapport",
+                  fun = "abonnement", 
+                  paramNames = c('rnwFil', "reshID"),
+                  paramValues = c('NSmndRapp.Rnw', 0)
+            ),
+            #abonnement <- function(rnwFil, reshID=0
+            SamleRapp = list(
+                  synopsis = "Rapporteket-NorSCIR: Rapport, div. resultater",
+                  fun = "abonnement",
+                  paramNames = c('rnwFil', "reshID"),
+                  paramValues = c('NSsamleRapp.Rnw', 'Alle')
+            )
+      )
+      
+      org <- rapbase::autoReportOrgServer("NSuts", orgs)
+      
+      # oppdatere reaktive parametre, for å få inn valgte verdier (overskrive de i report-lista)
+      paramNames <- shiny::reactive("reshID")
+      paramValues <- shiny::reactive(org$value())
+      
+      rapbase::autoReportServer(
+            id = "NSuts", registryName = "nordicscir", type = "dispatchment",
+            org = org$value, paramNames = paramNames, paramValues = paramValues,
+            reports = reports, orgs = orgs, eligible = TRUE
+      )
+
+
+      
+      #----------- Eksport ----------------
+      registryName <- "nordicscir"
+      ## brukerkontroller
+      rapbase::exportUCServer("nordicscirExport", registryName)
+      ## veileding
+      rapbase::exportGuideServer("nordicscirExportGuide", registryName)
+      
       
       
       
