@@ -1,11 +1,9 @@
 #Resultattjeneste for NordicScir
 library(nordicscir)
 library(shiny)
-#library(shinyjs)
 library(knitr)
 library(lubridate)
 library(dplyr)
-#ibrary(shinyBS) # Additional Bootstrap Controls
 library(kableExtra)
 
 
@@ -87,9 +85,7 @@ ui <- tagList(
                             På hver av sidene kan man gjøre utvalg i menyene til venstre. Alle resultater er basert 
                             på ferdigstilte registreringer. Merk at data er hentet direkte fra registerets database. 
                             Dette medfører at nyere data ikke er kvalitetssikret ennå.'),
-                                  #h4('For mer info og veiledning, se neste fane "Brukerveiledning"'),
-                                  #br(),
-                                  h4('Du kan se på resultater for eget sykehus, nasjonale data og eget sykehus sett opp mot landet for øvrig.
+                                 h4('Du kan se på resultater for eget sykehus, nasjonale data og eget sykehus sett opp mot landet for øvrig.
                             Resultatene som vises er 
                               basert på AdmitDt, altså dato for første akutte innleggelse. Alle figurer og 
                             tabeller kan lastes ned.'),
@@ -115,8 +111,6 @@ ui <- tagList(
                             har til hensikt å sikre og forbedre ryggmargsskadeomsorgen i Norge. Mer informasjon 
                             om selve registeret finnes på NorSCIRs hjemmeside: ', align='center',
                                      a("www.norscir.no", href="http://www.norscir.no", target="_blank"))
-                         #h4('Mer informasjon om selve registeret finnes på NorSCIRs hjemmeside: ', align='center',
-                         #         a("www.norscir.no", href="http://www.norscir.no", target="_blank")) #target gjør at lenken åpnes i ny fane
            
                ),
                tabPanel('Status',
@@ -360,11 +354,6 @@ tabPanel("Registreringsoversikter",
                             condition = "input.ark == 'Antall personer med ryggmargsskade'",
                             selectInput(inputId = "tidsenhetReg", label="Velg tidsenhet",
                                         choices = rev(c('År'= 'Aar', 'Måned'='Mnd')))),
-                      # conditionalPanel(
-                      #       condition = "input.ark == 'Antall personer med ryggmargsskade'",
-                      #       selectInput(inputId = 'enhetsNivaa', label='Enhetsnivå',
-                      #                   choices = c("Hele landet" = 0, "Egen enhet" = 2))
-                      # ),
                       conditionalPanel(
                             condition = "input.ark == 'Antall personer med ryggmargsskade'",
                             selectInput(inputId = 'traumeReg', label='Traume',
@@ -390,10 +379,6 @@ tabPanel("Registreringsoversikter",
                                     fluidRow(tableOutput("tabAntOpphShMnd12"),
                                              downloadButton(outputId = 'lastNed_tabAntOpph', label='Last ned')
                                     ),
-                                    #                                          br(),
-                                    # h3("Belegg FJERNES! på rehabiliteringsavdelinga - ønskes flere/andre variable?"),
-                                    # #uiOutput("undertittelBelegg"),
- 
                            ),
                            tabPanel('Antall hovedskjema med tilknyttede skjema',
                                     h3("Antall hovedskjema med tilknyttede skjema"),
@@ -414,7 +399,6 @@ tabPanel("Registreringsoversikter",
                                     tableOutput("tabAndelTilknyttedeKtrSkjema"),
                                     downloadButton(outputId = 'lastNed_tabOppfKtrPst', label='Last ned')
                            )
-
                ))
 ), #tab Registreringsoversikter
 
@@ -435,7 +419,6 @@ tabPanel("Registeradministrasjon",
                                     br(),
                                     br(),
                                     h3("Resultater, hele landet"), #),
-                                    #shinydashboard::infoBox("Resultater hele landet ",
                                     downloadButton(outputId = 'samleRappLand.pdf',
                                                    label='Last ned samlerapport, hele landet', class = "butt"),
                                     br(),
@@ -683,19 +666,11 @@ server <- function(input, output, session) {
              
       })
  
-      #Antall skjema av hver type
-      # output$AntallSkjema <- renderTable(
-      #       t(tabAntSkjema(Data=AlleTab, datoFra=input$datovalgReg[1], datoTil=input$datovalgReg[2]))
-      #       ,rownames = T, digits=0, spacing="xs" )
-     
 
 #---------Fordelinger------------
             observe({   #Fordelingsfigurer og tabeller
-            #RegData <- finnRegData(Data = AlleTab, valgtVar <-'UrinLegemidlerHvilke')
             RegData <- finnRegData(valgtVar = input$valgtVar, Data = AlleTab)
             RegData <- TilLogiskeVar(RegData)
-            
-            #NSFigAndeler(RegData=RegData, valgtVar='UrinLegemidlerHvilke', preprosess = 0)
             
             output$fordelinger <- renderPlot({
                   NSFigAndeler(RegData=RegData, valgtVar=input$valgtVar, preprosess = 0,
@@ -876,8 +851,6 @@ server <- function(input, output, session) {
                         h3(UtDataGjsnGrVar$tittel),
                         h5(HTML(paste0(UtDataGjsnGrVar$utvalgTxt, '<br />')))
                   )}) #, align='center'
-            # output$gjsnGrVarTab <- renderTable(
-            #       tabGjsnGrVar, rownames = T)
             
             output$gjsnGrVarTab <- function() { 
                   antKol <- ncol(tabGjsnGrVar)
@@ -994,7 +967,6 @@ server <- function(input, output, session) {
       contentFile <- function(file, srcFil, tmpFile, 
                               reshID=0, datoFra=startDato, datoTil=Sys.Date()) {
             src <- normalizePath(system.file(srcFil, package="nordicscir"))
-            #dev.off()
             # gå til tempdir. Har ikke skriverettigheter i arbeidskatalog
             owd <- setwd(tempdir())
             on.exit(setwd(owd))
@@ -1003,7 +975,6 @@ server <- function(input, output, session) {
             
             gc() #Opprydning gc-"garbage collection"
             file.copy(paste0(substr(tmpFile, 1, nchar(tmpFile)-3), 'pdf'), file)
-            # file.rename(paste0(substr(tmpFile, 1, nchar(tmpFile)-3), 'pdf'), file)
       }
       
       output$mndRapp.pdf <- downloadHandler(
