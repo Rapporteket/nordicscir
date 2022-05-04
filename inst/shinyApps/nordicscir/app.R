@@ -136,8 +136,7 @@ ui <- tagList(
                         
                         fluidRow( 
                            h3('Liggetider, egen avdeling', align = 'left'),
-                           tableOutput("tabLiggetider")),
-                        br(),
+                           tableOutput("tabLiggetider"))
                ))
                ) #main
       ), #tab
@@ -378,7 +377,7 @@ tabPanel("Registreringsoversikter",
                                     br(),
                                     fluidRow(tableOutput("tabAntOpphShMnd12"),
                                              downloadButton(outputId = 'lastNed_tabAntOpph', label='Last ned')
-                                    ),
+                                    )
                            ),
                            tabPanel('Antall hovedskjema med tilknyttede skjema',
                                     h3("Antall hovedskjema med tilknyttede skjema"),
@@ -453,7 +452,7 @@ tabPanel("Registeradministrasjon",
                      ) #Eksport-tab
          ) #tabsetPanel
 ), #Registeradm-tab
-
+ 
 #------------------Abonnement------------------------
 tabPanel(p("Abonnement",
            title='Bestill automatisk utsending av månedsrapport på e-post'),
