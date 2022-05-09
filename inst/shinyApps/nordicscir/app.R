@@ -92,34 +92,33 @@ ui <- function() {
               )
                             
             ),
-            shiny::tabPanel('Status',
-                            
-                            shiny::h4('Antall registreringer siste år:'),
-                            shiny::tableOutput("tabAntOpphShMnd12startside"), #),
-                            #         downloadButton(outputId = 'lastNed_tabAntOpph', label='Last ned'))
-                            shiny::h5('(Mer informasjon om registreringsstatus finner du under fanen "Registreringsoversikter")'),
-                            shiny::br(),
-                            shiny::br(),
-                            shiny::fluidRow(
-                              column(width = 6,
-                                     shiny::h3('Nevrologisk klassifikasjon', align='center'),
-                                     shiny::h4('alle pasienter', align = 'center'),
-                                     shiny::br(),
-                                     shiny::tableOutput('tabNevrKlass')),
-                              column(width = 6,
-                                     shiny::h3('Nevrologisk klassifikasjon', align = 'center'),
-                                     shiny::h4('pasienter med liggetid over 28 dager i
+            shiny::tabPanel(
+              "Status",
+              shiny::h4("Antall registreringer siste år:"),
+              shiny::tableOutput("tabAntOpphShMnd12startside"), #),
+              shiny::h5('(Mer informasjon om registreringsstatus finner du under fanen "Registreringsoversikter")'),
+              shiny::br(),
+              shiny::br(),
+              shiny::fluidRow(
+                column(width = 6,
+                       shiny::h3('Nevrologisk klassifikasjon', align='center'),
+                       shiny::h4('alle pasienter', align = 'center'),
+                       shiny::br(),
+                       shiny::tableOutput('tabNevrKlass')),
+                column(width = 6,
+                       shiny::h3('Nevrologisk klassifikasjon', align = 'center'),
+                       shiny::h4('pasienter med liggetid over 28 dager i
                                    ryggmargsskadeavdeling', align='center'),
-                                     shiny::tableOutput('tabNevrKlass28')
-                              )),
-                            
-                            shiny::fluidRow( 
-                              shiny::h3('Liggetider, egen avdeling', align = 'left'),
-                              shiny::tableOutput("tabLiggetider"))
+                       shiny::tableOutput('tabNevrKlass28')
+                )),
+              
+              shiny::fluidRow( 
+                shiny::h3('Liggetider, egen avdeling', align = 'left'),
+                shiny::tableOutput("tabLiggetider"))
             ))
         ) #main
       ), #tab
-
+      
 #--------Fordelinger-----------
       tabPanel("Fordelinger",
                sidebarPanel(width = 3,
