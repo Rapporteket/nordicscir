@@ -8,7 +8,7 @@ Maintainer: Lena Ringstad Olen <lena.olsen@skde.no>
 Description: An implemetation of all R related resources for NordicScir at
     Rapporteket, including R-functions for analysis and plotting, noweb-files and
     even artwork needed for producing R-dependent reports
-License: GPL-2
+License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: false
 Depends:
