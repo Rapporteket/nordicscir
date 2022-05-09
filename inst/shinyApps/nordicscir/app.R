@@ -482,10 +482,12 @@ tabPanel(p("Abonnement",
 ) #tagList
 
 
-
+server <- function(input, output, session) {
+      
+}
 
 #----- Define server logic required to draw a histogram-------
-server <- function(input, output, session) {
+server_wait <- function(input, output, session) {
       
    #-----------Div serveroppstart------------------  
    rapbase::appLogger(session = session, msg = "Starter nordicscir-app'en. Data fra NorSCIR vil bli hentet")
