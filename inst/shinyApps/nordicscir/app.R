@@ -86,37 +86,10 @@ ui <- function() {
             
             shiny::tabPanel(
               "Brukerveiledning",
-                            shiny::h4('Du er nå inne på Rapporteket for NorSCIR. Rapporteket er registerets resultattjeneste. 
-                            Disse sidene inneholder en samling av figurer og tabeller som viser resultater fra registeret. 
-                            På hver av sidene kan man gjøre utvalg i menyene til venstre. Alle resultater er basert 
-                            på ferdigstilte registreringer. Merk at data er hentet direkte fra registerets database. 
-                            Dette medfører at nyere data ikke er kvalitetssikret ennå.'),
-                            shiny::h4('Du kan se på resultater for eget sykehus, nasjonale data og eget sykehus sett opp mot landet for øvrig.
-                            Resultatene som vises er 
-                              basert på AdmitDt, altså dato for første akutte innleggelse. Alle figurer og 
-                            tabeller kan lastes ned.'),
-                            shiny::h4(paste0('Se "nabofanen" Status for å se på nøkkeltall.')),
-                            shiny::br(),
-                            shiny::h4(tags$b(tags$u('Innhold i de ulike hovedfanene:'))),
-                            shiny::h4(tags$b('Fordelinger '), 'viser fordelinger (figur/tabell) av ulike variable. 
-                              Man kan velge hvilken variabel man vil se på, og man kan gjøre ulike filtreringer.'),
-                            shiny::h4(tags$b('Gjennomsnitt per sykehus og over tid'), 'viser gjennomsnittsverdier per sykehus. 
-                            Man kan velge hvilken variabel man vil se på og om man vil se gjennomsnitt eller median. 
-                            Man kan også velge å filtrere data.'),
-                            shiny::h4(tags$b('Registreringsoversikter '), 'viser aktivitet i registeret. Også her kan man gjøre filtreringer.'),
-                            shiny::h4(tags$b('Abonnement'), 'inneholder oversikt over rapporter du abbonerer på. Her kan du også bestille abonnement, 
-                            dvs. rapporter tilsendt på e-post.'),
-                            
-                            shiny::h4('Oversikt over registerets kvalitetsindikatorer og resultater finner du på www.kvalitetsregistre.no:', #helpText
-                                      a("NorSCIR", href="https://www.kvalitetsregistre.no/registers/561/resultater"),
-                                      target="_blank", align='center'),
-                            shiny::br(),
-                            shiny::h4('Alle pasienter med nyervervet ryggmargsskade eller Cauda equina syndrom som legges 
-                            inn til spesialisert rehabilitering ved en ryggmargsskadeavdeling, blir forespurt 
-                            om samtykke til å bli registrert i Norsk ryggmargsskaderegister. Dette registeret 
-                            har til hensikt å sikre og forbedre ryggmargsskadeomsorgen i Norge. Mer informasjon 
-                            om selve registeret finnes på NorSCIRs hjemmeside: ', align='center',
-                                      a("www.norscir.no", href="http://www.norscir.no", target="_blank"))
+              rapbase::renderRmd(
+                system.file("brukerveiledning.Rmd", package = "nordicscir"),
+                outputType = "html_fragment"
+              )
                             
             ),
             shiny::tabPanel('Status',
