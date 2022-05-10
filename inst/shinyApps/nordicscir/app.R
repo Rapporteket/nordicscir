@@ -6,141 +6,119 @@ library(lubridate)
 library(dplyr)
 library(kableExtra)
 
-
-startDato <- as.Date(paste0(as.numeric(format(Sys.Date()-400, "%Y")), '-01-01')) #Sys.Date()-400
-
-# gjør Rapportekets www-felleskomponenter tilgjengelig for applikasjonen
-addResourcePath('rap', system.file('www', package='rapbase'))
-
-context <- Sys.getenv("R_RAP_INSTANCE") #Blir tom hvis jobber lokalt
-paaServer <- context %in% c("DEV", "TEST", "QA", "PRODUCTION") #rapbase::isRapContext()
-
-
-regTitle = ifelse(paaServer,'Norsk ryggmargsskaderegister',
-                  'Norsk ryggmargsskaderegister med FIKTIVE data')
-
-#----Valg
-
-valgAIS <- 0:5
-names(valgAIS) <- c("Alle","A","B","C","D","E")
-#valgAIS <- as.character(0:5),
-#names(valgAIS) <- c('Alle', LETTERS[1:5]),
-
-valgNivaaUt <- c(99,0,1,2,3,9)
-names(valgNivaaUt) <- c("Alle", "Paraplegi", "Tetraplegi", "C1-4", "C5-8", "Ukjent")
-
-tidsenheter <- rev(c('År'= 'Aar', 'Halvår' = 'Halvaar',
-                     'Kvartal'='Kvartal', 'Måned'='Mnd'))
-
-ui <- tagList(
+ui <- function() {
+  
+  shiny::addResourcePath("rap", system.file("www", package = "rapbase"))
+  
+  startDato <- as.Date(paste0(as.numeric(format(Sys.Date()-400, "%Y")), '-01-01')) #Sys.Date()-400
+  
+  context <- Sys.getenv("R_RAP_INSTANCE") #Blir tom hvis jobber lokalt
+  paaServer <- context %in% c("DEV", "TEST", "QA", "PRODUCTION")
+  
+  
+  regTitle = ifelse(paaServer,'Norsk ryggmargsskaderegister',
+                    'Norsk ryggmargsskaderegister med FIKTIVE data')
+  
+  #----Valg
+  
+  valgAIS <- 0:5
+  names(valgAIS) <- c("Alle","A","B","C","D","E")
+  #valgAIS <- as.character(0:5),
+  #names(valgAIS) <- c('Alle', LETTERS[1:5]),
+  
+  valgNivaaUt <- c(99,0,1,2,3,9)
+  names(valgNivaaUt) <- c("Alle", "Paraplegi", "Tetraplegi", "C1-4", "C5-8", "Ukjent")
+  
+  tidsenheter <- rev(c('År'= 'Aar', 'Halvår' = 'Halvaar',
+                       'Kvartal'='Kvartal', 'Måned'='Mnd'))
+  
+  shiny::tagList(
    shinyjs::useShinyjs(),
-   navbarPage( #fluidPage( #"Hoved"Layout for alt som vises på skjermen
-      id='toppPaneler',
-            # lag logo og tittel som en del av navbar
-            #title = div(img(src="rap/logo.svg", alt="Rapporteket", height="26px"), regTitle),
-      title = div(a(includeHTML(system.file('www/logo.svg', package='rapbase'))),
-                  regTitle),
-            # sett inn tittel også i browser-vindu
+   shiny::navbarPage(
+      id = "toppPaneler",
+      title = shiny::div(
+        shiny::a(
+          shiny::includeHTML(
+            system.file('www/logo.svg', package='rapbase')
+          )
+        ),
+        regTitle),
+      # sett inn tittel også i browser-vindu
       windowTitle = regTitle,
-            # velg css (foreløpig den eneste bortsett fra "naken" utgave)
+      # velg css (foreløpig den eneste bortsett fra "naken" utgave)
       theme = "rap/bootstrap.css",
-#----startside--------            
-      tabPanel("Startside",
-               br(),
-               tags$head(tags$style(".butt{background-color:#6baed6;} .butt{color: white;}")), # background color and font color
-               
-               sidebarPanel(width = 3,
-                            br(),
-                            #h2('Nedlastbare dokumenter med samling av resultater'),
-                            
-                            h3("Månedsrapport"), #),
-                            downloadButton(outputId = "mndRapp.pdf", label='Last ned MÅNEDSRAPPORT', class = "butt"),
-                            br(),
-                            br('NB: Nedlasting tar litt tid. I mellomtida får man ikke sett på andre resultater.'),
-                            br(),
-                            br('Hvis du ønsker månedsrapporten regelmessig tilsendt på e-post, 
-                               kan du gå til fanen "Abonnement" og bestille dette.'),
-                            br(),
-                            br(),
-                            conditionalPanel(
-                               condition = "input.startside == 'Status'",
-                               h4('Velg tidsperiode for nevrologisk klassifikasjon og liggetider'),
-                               dateRangeInput(inputId = 'datovalgDash', start = startDato, end = Sys.Date(),
-                                           label = "Tidsperiode", separator="t.o.m.", language="nb"))
-               ),
-               mainPanel(width = 8,
-                         tags$head(tags$link(rel="shortcut icon", href="rap/favicon.ico")),
-                         if (paaServer){ 
-                            rapbase::appNavbarUserWidget(user = uiOutput("appUserName"),
-                                                      organization = uiOutput("appOrgName"),
-                                                      addUserInfo = TRUE)},
-                         h2('Velkommen til Rapporteket - Norsk Ryggmargsskaderegister!', align='center'),
-                         br(),
-                         tabsetPanel(
-                            id = 'startside',
-                            
-                         tabPanel('Brukerveiledning',
-                                  h4('Du er nå inne på Rapporteket for NorSCIR. Rapporteket er registerets resultattjeneste. 
-                            Disse sidene inneholder en samling av figurer og tabeller som viser resultater fra registeret. 
-                            På hver av sidene kan man gjøre utvalg i menyene til venstre. Alle resultater er basert 
-                            på ferdigstilte registreringer. Merk at data er hentet direkte fra registerets database. 
-                            Dette medfører at nyere data ikke er kvalitetssikret ennå.'),
-                                 h4('Du kan se på resultater for eget sykehus, nasjonale data og eget sykehus sett opp mot landet for øvrig.
-                            Resultatene som vises er 
-                              basert på AdmitDt, altså dato for første akutte innleggelse. Alle figurer og 
-                            tabeller kan lastes ned.'),
-                                  h4(paste0('Se "nabofanen" Status for å se på nøkkeltall.')),
-                                  br(),
-                                  h4(tags$b(tags$u('Innhold i de ulike hovedfanene:'))),
-                                  h4(tags$b('Fordelinger '), 'viser fordelinger (figur/tabell) av ulike variable. 
-                              Man kan velge hvilken variabel man vil se på, og man kan gjøre ulike filtreringer.'),
-                                  h4(tags$b('Gjennomsnitt per sykehus og over tid'), 'viser gjennomsnittsverdier per sykehus. 
-                            Man kan velge hvilken variabel man vil se på og om man vil se gjennomsnitt eller median. 
-                            Man kan også velge å filtrere data.'),
-                                  h4(tags$b('Registreringsoversikter '), 'viser aktivitet i registeret. Også her kan man gjøre filtreringer.'),
-                                  h4(tags$b('Abonnement'), 'inneholder oversikt over rapporter du abbonerer på. Her kan du også bestille abonnement, 
-                            dvs. rapporter tilsendt på e-post.'),
-                                  
-                         h4('Oversikt over registerets kvalitetsindikatorer og resultater finner du på www.kvalitetsregistre.no:', #helpText
-                                  a("NorSCIR", href="https://www.kvalitetsregistre.no/registers/561/resultater"),
-                                  target="_blank", align='center'),
-                         br(),
-                         h4('Alle pasienter med nyervervet ryggmargsskade eller Cauda equina syndrom som legges 
-                            inn til spesialisert rehabilitering ved en ryggmargsskadeavdeling, blir forespurt 
-                            om samtykke til å bli registrert i Norsk ryggmargsskaderegister. Dette registeret 
-                            har til hensikt å sikre og forbedre ryggmargsskadeomsorgen i Norge. Mer informasjon 
-                            om selve registeret finnes på NorSCIRs hjemmeside: ', align='center',
-                                     a("www.norscir.no", href="http://www.norscir.no", target="_blank"))
-           
-               ),
-               tabPanel('Status',
-                        
-                        h4('Antall registreringer siste år:'),
-                        tableOutput("tabAntOpphShMnd12startside"), #),
-                        #         downloadButton(outputId = 'lastNed_tabAntOpph', label='Last ned'))
-                        h5('(Mer informasjon om registreringsstatus finner du under fanen "Registreringsoversikter")'),
-                        br(),
-                        br(),
-                        fluidRow(
-                           column(width=6,
-                                  h3('Nevrologisk klassifikasjon', align='center'),
-                                  h4('alle pasienter', align = 'center'),
-                                  br(),
-                                  tableOutput('tabNevrKlass')),
-                           column(width=6,
-                                  h3('Nevrologisk klassifikasjon', align = 'center'),
-                                  h4('pasienter med liggetid over 28 dager i
-                                   ryggmargsskadeavdeling', align='center'),
-                                  tableOutput('tabNevrKlass28')
-                           )),
-                        
-                        fluidRow( 
-                           h3('Liggetider, egen avdeling', align = 'left'),
-                           tableOutput("tabLiggetider"))
-               ))
-               ) #main
-      ), #tab
 
+      #----startside--------            
+      shiny::tabPanel(
+        "Startside",
+        shiny::br(),
+        shiny::tags$head(shiny::tags$style(".butt{background-color:#6baed6;} .butt{color: white;}")), # background color and font color
+        shiny::sidebarPanel(
+          width = 3,
+          shiny::br(),
+          #h2('Nedlastbare dokumenter med samling av resultater'),
+          
+          shiny::h3("Månedsrapport"), #),
+          shiny::downloadButton(outputId = "mndRapp.pdf", label = "Last ned MÅNEDSRAPPORT", class = "butt"),
+          shiny::br(),
+          shiny::br("NB: Nedlasting tar litt tid. I mellomtida får man ikke sett på andre resultater."),
+          shiny::br(),
+          shiny::br("Hvis du ønsker månedsrapporten regelmessig tilsendt på e-post, 
+                               kan du gå til fanen 'Abonnement' og bestille dette."),
+          shiny::br(),
+          shiny::br(),
+          shiny::conditionalPanel(
+            condition = "input.startside == 'Status'",
+            shiny::h4('Velg tidsperiode for nevrologisk klassifikasjon og liggetider'),
+            shiny::dateRangeInput(inputId = "datovalgDash", start = startDato, end = Sys.Date(),
+                                  label = "Tidsperiode", separator = "t.o.m.", language = "nb"))
+        ),
+        shiny::mainPanel(
+          width = 8,
+          #tags$head(tags$link(rel="shortcut icon", href="rap/favicon.ico")),
+          if (paaServer) { 
+            rapbase::navbarWidgetInput("navbar-widget")
+          },
+          shiny::h2('Velkommen til Rapporteket - Norsk Ryggmargsskaderegister!', align='center'),
+          shiny::br(),
+          shiny::tabsetPanel(
+            id = 'startside',
+            
+            shiny::tabPanel(
+              "Brukerveiledning",
+              rapbase::renderRmd(
+                system.file("brukerveiledning.Rmd", package = "nordicscir"),
+                outputType = "html_fragment"
+              )
+                            
+            ),
+            shiny::tabPanel(
+              "Status",
+              shiny::h4("Antall registreringer siste år:"),
+              shiny::tableOutput("tabAntOpphShMnd12startside"), #),
+              shiny::h5('(Mer informasjon om registreringsstatus finner du under fanen "Registreringsoversikter")'),
+              shiny::br(),
+              shiny::br(),
+              shiny::fluidRow(
+                column(width = 6,
+                       shiny::h3('Nevrologisk klassifikasjon', align='center'),
+                       shiny::h4('alle pasienter', align = 'center'),
+                       shiny::br(),
+                       shiny::tableOutput('tabNevrKlass')),
+                column(width = 6,
+                       shiny::h3('Nevrologisk klassifikasjon', align = 'center'),
+                       shiny::h4('pasienter med liggetid over 28 dager i
+                                   ryggmargsskadeavdeling', align='center'),
+                       shiny::tableOutput('tabNevrKlass28')
+                )),
+              
+              shiny::fluidRow( 
+                shiny::h3('Liggetider, egen avdeling', align = 'left'),
+                shiny::tableOutput("tabLiggetider"))
+            ))
+        ) #main
+      ), #tab
+      
 #--------Fordelinger-----------
       tabPanel("Fordelinger",
                sidebarPanel(width = 3,
@@ -480,12 +458,18 @@ tabPanel(p("Abonnement",
 #-----------------slutt-----------------------------
 ) #navbar
 ) #tagList
+}
 
-
-
+server <- function(input, output, session) {
+  
+  rapbase::navbarWidgetServer(
+    id = "navbar-widget", orgName = "nordicscir", caller = "nordicscir"
+  )
+      
+}
 
 #----- Define server logic required to draw a histogram-------
-server <- function(input, output, session) {
+server_wait <- function(input, output, session) {
       
    #-----------Div serveroppstart------------------  
    rapbase::appLogger(session = session, msg = "Starter nordicscir-app'en. Data fra NorSCIR vil bli hentet")

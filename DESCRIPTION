@@ -1,14 +1,24 @@
 Package: nordicscir
 Type: Package
 Title: R-pakke for å generere resultater fra NordicScir
-Version: 2.4.0
-Date: '2022-03-16'
+Version: 2.4.0.9000
+Authors@R: c(
+     person(given = "Lena Ringstad",
+           family = "Olsen",
+           role = c("aut", "cre"),
+           email = "lena.olsen@skde.no"),
+    person(given = "Are",
+           family = "Edvardsen",
+           role = c("aut", "cre"),
+           email = "biorakel@gmail.com",
+           comment = c(ORCID = "0000-0002-5210-3656"))
+    )
 Author: Lena Ringstad Olsen
 Maintainer: Lena Ringstad Olen <lena.olsen@skde.no>
 Description: An implemetation of all R related resources for NordicScir at
     Rapporteket, including R-functions for analysis and plotting, noweb-files and
     even artwork needed for producing R-dependent reports
-License: GPL-2
+License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: false
 Depends:
