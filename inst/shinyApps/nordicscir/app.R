@@ -96,11 +96,7 @@ ui <- function() {
             id = "startside",
             shiny::tabPanel(
               "Brukerveiledning",
-              rapbase::renderRmd(
-                system.file("brukerveiledning.Rmd", package = "nordicscir"),
-                outputType = "html_fragment",
-              )
-
+              shiny::htmlOutput("guide", inline = TRUE)
             ),
             shiny::tabPanel(
               "Status",
@@ -637,6 +633,13 @@ server <- function(input, output, session) {
   )
 
   #--------------Startside------------------------------
+  output$guide <- shiny::renderText(
+    rapbase::renderRmd(
+      system.file("brukerveiledning.Rmd", package = "nordicscir"),
+      outputType = "html_fragment",
+      params = list(isRealData = isRealData)
+    )
+  )
   if (isRealData) {
     output$tabAntOpphShMnd12startside <-
       shiny::renderTable(
