@@ -607,6 +607,31 @@ ui <- function() {
 
 server <- function(input, output, session) {
 
+  rapbase::appLogger(
+    session = session,
+    msg = "Starter nordicscir-app'en. Data fra NorSCIR vil bli hentet"
+  )
+
+
+  # session persistent objects
+  if (rapbase::isRapContext()) {
+    reshId <- as.numeric(rapbase::getUserReshId(session))
+    rolle <- rapbase::getUserRole(session)
+    brukernavn <- rapbase::getUserName(session)
+  } else {
+    # whatever, if needed anymore
+  }
+
+  isRealData <- TRUE
+  AlleData <- getRealData()
+  if (is.null(AlleData)) {
+    warning("Not able to get real data. Applying fake data instead!")
+    isRealData <- FALSE
+    AlleData <- getFakeData()
+  }
+  attach(AlleData)
+
+  # modules
   rapbase::navbarWidgetServer(
     id = "navbar-widget", orgName = "nordicscir", caller = "nordicscir"
   )
