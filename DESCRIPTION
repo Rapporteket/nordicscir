@@ -9,7 +9,7 @@ Authors@R: c(
            email = "lena.olsen@skde.no"),
     person(given = "Are",
            family = "Edvardsen",
-           role = c("aut", "cre"),
+           role = c("aut"),
            email = "biorakel@gmail.com",
            comment = c(ORCID = "0000-0002-5210-3656"))
     )
@@ -27,9 +27,11 @@ Imports:
     kableExtra,
     knitr,
     lubridate,
+    magrittr,
     rapbase,
     rapFigurer,
     raplog,
+    rlang,
     shiny,
     shinyalert,
     shinyjs,
