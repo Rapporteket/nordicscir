@@ -1,8 +1,14 @@
 ---
+params:
+  isRealData: true
 title: "Brukerveiledning for NordicScir"
 author: "nordicscir"
 date: '`r format(Sys.time(), "%d. %B %Y")`'
 ---
+
+```{r isRealData, eval=!params$isRealData, echo=FALSE, results='asis'}
+cat('<div class="alert alert-danger"><strong>Advarsel!</strong> Data kunne ikke lastes. Noe kan være alvorlig feil.</div>')
+```
 
 Du er nå inne på Rapporteket for NorSCIR. Rapporteket er registerets resultattjeneste. Disse sidene inneholder en samling av figurer og tabeller som viser resultater fra registeret. På hver av sidene kan man gjøre utvalg i menyene til venstre. Alle resultater er basert på ferdigstilte registreringer. Merk at data er hentet direkte fra registerets database. Dette medfører at nyere data ikke er kvalitetssikret ennå.
                             
