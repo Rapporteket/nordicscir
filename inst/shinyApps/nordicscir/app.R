@@ -98,7 +98,7 @@ ui <- function() {
               "Brukerveiledning",
               rapbase::renderRmd(
                 system.file("brukerveiledning.Rmd", package = "nordicscir"),
-                outputType = "html_fragment"
+                outputType = "html_fragment",
               )
 
             ),
@@ -635,6 +635,56 @@ server <- function(input, output, session) {
   rapbase::navbarWidgetServer(
     id = "navbar-widget", orgName = "nordicscir", caller = "nordicscir"
   )
+
+  #--------------Startside------------------------------
+  if (isRealData) {
+    output$tabAntOpphShMnd12startside <-
+      shiny::renderTable(
+        tabAntOpphShMnd(RegData = HovedSkjema, antMnd = 12),
+        rownames = T, digits=0, spacing="xs"
+      )
+  } else {
+    output$tabAntOpphShMnd12startside <- NULL
+  }
+  observe({
+    if (isRealData) {
+      output$tabNevrKlass <- shiny::renderTable(
+        lagTabNevrKlass(
+          HovedSkjema,
+          datoFra = input$datovalgDash[1],
+          datoTil = input$datovalgDash[2]
+        ),
+        rownames = TRUE
+      )
+      output$tabNevrKlass28 <- shiny::renderTable({
+        HovedSkjema28 <- HovedSkjema[which(HovedSkjema$DagerRehab > 28), ]
+        lagTabNevrKlass(
+          HovedSkjema28,
+          datoFra = input$datovalgDash[1],
+          datoTil = input$datovalgDash[2]
+        )
+      },
+      rownames = TRUE
+      )
+      output$tabLiggetider <- shiny::renderTable({
+        tabLiggetider(
+          RegData = HovedSkjema,
+          datoFra = input$datovalgDash[1],
+          datoTil = input$datovalgDash[2],
+          enhetsUtvalg=2,
+          reshID=reshID
+        )
+      },
+      rownames = TRUE,
+      digits = 0
+      )
+    } else {
+      output$tabNevrKlass <- NULL
+      output$tabNevrKlass28 <- NULL
+      output$tabLiggetider <- NULL
+    }
+  })
+
 
 }
 
