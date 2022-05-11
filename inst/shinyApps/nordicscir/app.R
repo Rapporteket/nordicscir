@@ -618,13 +618,20 @@ server <- function(input, output, session) {
     # whatever, if needed anymore
   }
 
-  isRealData <- TRUE
+  isGetDataOk <- TRUE
+  isProcessDataOk <- TRUE
   AlleData <- getRealData()
   if (is.null(AlleData)) {
     warning("Not able to get real data. Applying fake data instead!")
-    isRealData <- FALSE
+    isGetDataOk <- FALSE
     AlleData <- getFakeData()
   }
+  AlleData <- processData(AlleData)
+  if (is.null(AlleData)) {
+    warning("Not able to process data.")
+    isProcessDataOk <- FALSE
+  }
+  isDataOk <- all(c(isGetDataOk, isProcessDataOk))
   attach(AlleData)
 
   # modules
@@ -637,10 +644,10 @@ server <- function(input, output, session) {
     rapbase::renderRmd(
       system.file("brukerveiledning.Rmd", package = "nordicscir"),
       outputType = "html_fragment",
-      params = list(isRealData = isRealData)
+      params = list(isDataOk = isDataOk)
     )
   )
-  if (isRealData) {
+  if (isDataOk) {
     output$tabAntOpphShMnd12startside <-
       shiny::renderTable(
         tabAntOpphShMnd(RegData = HovedSkjema, antMnd = 12),
@@ -650,7 +657,7 @@ server <- function(input, output, session) {
     output$tabAntOpphShMnd12startside <- NULL
   }
   observe({
-    if (isRealData) {
+    if (isDataOk) {
       output$tabNevrKlass <- shiny::renderTable(
         lagTabNevrKlass(
           HovedSkjema,
