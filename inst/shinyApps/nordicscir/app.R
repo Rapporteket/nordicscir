@@ -820,6 +820,182 @@ server <- function(input, output, session) {
   })
 
 
+  #---------Fordelinger:--fordelingsfigurer og tabeller----------
+  shiny::observe({
+    if (isDataOk) {
+      RegData <- finnRegData(valgtVar = input$valgtVar, Data = AlleTab)
+      RegData <- TilLogiskeVar(RegData)
+
+      output$fordelinger <- shiny::renderPlot({
+        NSFigAndeler(
+          RegData = RegData, valgtVar = input$valgtVar, preprosess = 0,
+          datoFra = input$datovalg[1], datoTil = input$datovalg[2],
+          reshID = reshID,
+          AIS = as.numeric(input$AIS), traume = input$traume,
+          nivaaUt = as.numeric(input$nivaaUt),
+          minald = as.numeric(input$alder[1]),
+          maxald = as.numeric(input$alder[2]),
+          erMann = as.numeric(input$erMann),
+          enhetsUtvalg = as.numeric(input$enhetsUtvalg),
+          datoUt = as.numeric(input$datoUt),
+          session = session
+        )},
+        height = 800, width = 800
+      )
+
+      output$lastNed_figFord <- shiny::downloadHandler(
+        filename = function() {
+          paste0("Fordeling_", valgtVar = input$valgtVar, "_", Sys.time(), ".",
+                 input$bildeformatFord)
+        },
+        content = function(file) {
+          NSFigAndeler(
+            RegData = RegData, valgtVar = input$valgtVar, preprosess = 0,
+            datoFra = input$datovalg[1], datoTil = input$datovalg[2],
+            datoUt = as.numeric(input$datoUt), reshID = reshID,
+            AIS = as.numeric(input$AIS), traume = input$traume,
+            nivaaUt = as.numeric(input$nivaaUt),
+            minald = as.numeric(input$alder[1]),
+            maxald = as.numeric(input$alder[2]),
+            erMann = as.numeric(input$erMann),
+            enhetsUtvalg = as.numeric(input$enhetsUtvalg),
+            session = session,
+            outfile = file
+          )
+        }
+      )
+
+      UtDataFord <- NSFigAndeler(
+        RegData = RegData, preprosess = 0, valgtVar = input$valgtVar,
+        datoFra = input$datovalg[1], datoTil = input$datovalg[2],
+        datoUt = as.numeric(input$datoUt),
+        reshID = reshID,
+        AIS = as.numeric(input$AIS), traume = input$traume,
+        nivaaUt = as.numeric(input$nivaaUt),
+        minald = as.numeric(input$alder[1]), maxald = as.numeric(input$alder[2]),
+        erMann = as.numeric(input$erMann),
+        enhetsUtvalg = as.numeric(input$enhetsUtvalg),
+        session = session
+      )
+
+      output$tittelFord <- shiny::renderUI({
+        shiny::tagList(
+          shiny::h3(UtDataFord$tittel),
+          shiny::h5(shiny::HTML(paste0(UtDataFord$utvalgTxt, "<br />")))
+        )
+      })
+
+      tabFord <- lagTabavFigAndeler(UtDataFraFig = UtDataFord)
+
+      output$fordelingTab <- function() {
+        antKol <- ncol(tabFord)
+        kableExtra::kable(
+          tabFord, format = "html",
+          full_width = FALSE,
+          digits = c(0, 1, 0, 1)[1:antKol]
+        ) %>%
+          kableExtra::add_header_above(
+            c(" " = 1, "Egen enhet/gruppe" = 2, "Resten" = 2)[1:(antKol/2 + 1)]
+          ) %>%
+          kableExtra::column_spec(column = 1, width_min = "7em") %>%
+          kableExtra::column_spec(
+            column = 2:(ncol(tabFord) + 1), width = "7em"
+          ) %>%
+          kableExtra::row_spec(0, bold = TRUE)
+      }
+      output$lastNed_tabFord <- shiny::downloadHandler(
+        filename = function() {paste0(input$valgtVar, '_fordeling.csv')},
+        content = function(file, filename) {
+          write.csv2(tabFord, file, row.names = FALSE, na = "")
+        }
+      )
+
+      output$fordelingPrSh <- shiny::renderPlot({
+        NSFigAndelerSh(
+          RegData = RegData, valgtVar = input$valgtVar, preprosess = 0,
+          datoFra = input$datovalg[1], datoTil = input$datovalg[2],
+          datoUt = as.numeric(input$datoUt),
+          AIS = as.numeric(input$AIS), traume = input$traume,
+          nivaaUt = as.numeric(input$nivaaUt),
+          minald = as.numeric(input$alder[1]),
+          maxald = as.numeric(input$alder[2]),
+          erMann = as.numeric(input$erMann),
+          session = session
+        )},
+        height = 800, width = 800
+      )
+
+      output$lastNed_figFordSh <- shiny::downloadHandler(
+        filename = function() {
+          paste0("FordelingPrSh_", valgtVar = input$valgtVar, "_", Sys.time(),
+                 ".", input$bildeformatFord)
+        },
+        content = function(file) {
+          NSFigAndelerSh(
+            RegData = RegData, valgtVar = input$valgtVar, preprosess = 0,
+            datoFra = input$datovalg[1], datoTil = input$datovalg[2],
+            datoUt = as.numeric(input$datoUt),
+            AIS = as.numeric(input$AIS), traume = input$traume,
+            nivaaUt = as.numeric(input$nivaaUt),
+            minald = as.numeric(input$alder[1]),
+            maxald = as.numeric(input$alder[2]),
+            erMann = as.numeric(input$erMann),
+            session = session,
+            outfile = file
+          )
+        }
+      )
+
+      UtDataFordSh <- NSFigAndelerSh(
+        RegData = RegData, preprosess = 0, valgtVar = input$valgtVar,
+        datoFra = input$datovalg[1], datoTil = input$datovalg[2],
+        datoUt = as.numeric(input$datoUt),
+        AIS = as.numeric(input$AIS), traume = input$traume,
+        nivaaUt = as.numeric(input$nivaaUt),
+        minald = as.numeric(input$alder[1]), maxald = as.numeric(input$alder[2]),
+        erMann = as.numeric(input$erMann),
+        session = session
+      )
+
+      tabFordSh <- lagTabavFigAndelerSh(UtDataFraFig = UtDataFordSh)
+
+      output$fordelingShTab <- function() {
+        antKol <- ncol(tabFordSh)
+        kableExtra::kable(
+          tabFordSh,
+          format = "html",
+          full_width = FALSE,
+          digits = c(0, 0, 0, 1, 1, 1)[1:antKol]
+        ) %>%
+          kableExtra::add_header_above(
+            header = c(" " = 1, "Antall" = 3, "Andel" = 3)
+          ) %>%
+          kableExtra::column_spec(column = 1, width_min = "7em") %>%
+          kableExtra::column_spec(
+            column = 2:(ncol(tabFordSh) + 1), width = "7em"
+          ) %>%
+          kableExtra::row_spec(0, bold = TRUE)
+      }
+      output$lastNed_tabFordSh <- shiny::downloadHandler(
+        filename = function() {paste0(input$valgtVar, "_fordelingSh.csv")},
+        content = function(file, filename) {
+          write.csv2(tabFordSh, file, row.names = FALSE, na = "")
+        }
+      )
+    } else {
+      output$fordelinger <- NULL
+      output$lastNed_figFord <- NULL
+      output$tittelFord <- NULL
+      output$fordelingTab <- NULL
+      output$lastNed_tabFord <- NULL
+      output$fordelingPrSh <- NULL
+      output$lastNed_figFordSh <- NULL
+      output$fordelingShTab <- NULL
+      output$lastNed_tabFordSh <- NULL
+    }
+  }) #observe Fordeling
+
+
 }
 
 #----- Define server logic required to draw a histogram-------
