@@ -70,15 +70,19 @@ ui <- function() {
             class = "butt"
           ),
           shiny::br(),
-          shiny::br("NB: Nedlasting tar litt tid. I mellomtida får man ikke sett på andre resultater."),
+          shiny::br(paste("NB: Nedlasting tar litt tid. I mellomtida får man",
+                          "ikke sett på andre resultater.")),
           shiny::br(),
-          shiny::br("Hvis du ønsker månedsrapporten regelmessig tilsendt på e-post,
-                               kan du gå til fanen 'Abonnement' og bestille dette."),
+          shiny::br(paste("Hvis du ønsker månedsrapporten regelmessig tilsendt",
+                          "på e-post, kan du gå til fanen 'Abonnement' og",
+                          "bestille dette.")),
           shiny::br(),
           shiny::br(),
           shiny::conditionalPanel(
             condition = "input.startside == 'Status'",
-            shiny::h4('Velg tidsperiode for nevrologisk klassifikasjon og liggetider'),
+            shiny::h4(
+              "Velg tidsperiode for nevrologisk klassifikasjon og liggetider"
+            ),
             shiny::dateRangeInput(
               inputId = "datovalgDash", start = startDato, end = Sys.Date(),
               label = "Tidsperiode", separator = "t.o.m.", language = "nb")
@@ -101,26 +105,29 @@ ui <- function() {
             shiny::tabPanel(
               "Status",
               shiny::h4("Antall registreringer siste år:"),
-              shiny::tableOutput("tabAntOpphShMnd12startside"), #),
-              shiny::h5('(Mer informasjon om registreringsstatus finner du under fanen "Registreringsoversikter")'),
+              shiny::tableOutput("tabAntOpphShMnd12startside"),
+              shiny::h5(paste("(Mer informasjon om registreringsstatus finner",
+                              "du under fanen 'Registreringsoversikter')")),
               shiny::br(),
               shiny::br(),
               shiny::fluidRow(
-                column(width = 6,
-                       shiny::h3('Nevrologisk klassifikasjon', align='center'),
-                       shiny::h4('alle pasienter', align = 'center'),
-                       shiny::br(),
-                       shiny::tableOutput('tabNevrKlass')),
-                column(width = 6,
-                       shiny::h3('Nevrologisk klassifikasjon', align = 'center'),
-                       shiny::h4('pasienter med liggetid over 28 dager i
-                                   ryggmargsskadeavdeling', align='center'),
-                       shiny::tableOutput('tabNevrKlass28')
+                shiny::column(
+                  width = 6,
+                  shiny::h3("Nevrologisk klassifikasjon", align = "center"),
+                  shiny::h4("alle pasienter", align = "center"),
+                  shiny::br(),
+                  shiny::tableOutput("tabNevrKlass")),
+                shiny::column(
+                  width = 6,
+                  shiny::h3("Nevrologisk klassifikasjon", align = "center"),
+                  shiny::h4("pasienter med liggetid over 28 dager i
+                                   ryggmargsskadeavdeling", align = "center"),
+                  shiny::tableOutput("tabNevrKlass28")
                 )
               ),
 
               shiny::fluidRow(
-                shiny::h3('Liggetider, egen avdeling', align = 'left'),
+                shiny::h3("Liggetider, egen avdeling", align = "left"),
                 shiny::tableOutput("tabLiggetider")
               )
             )
@@ -202,8 +209,12 @@ ui <- function() {
             label = "Kjønn",
             choices = c("Begge" = 2, "Menn" = 1, "Kvinner" = 0)
           ),
-          shiny::sliderInput(inputId = "alder", label = "Alder", min = 0, max = 110,
-                             value = c(0, 110)
+          shiny::sliderInput(
+            inputId = "alder",
+            label = "Alder",
+            min = 0,
+            max = 110,
+            value = c(0, 110)
           ),
           shiny::selectInput(
             inputId = "enhetsUtvalg",
@@ -350,7 +361,8 @@ ui <- function() {
           ),
           shiny::br(),
           shiny::p(
-            shiny::em("Følgende utvalg gjelder bare figuren/tabellen som viser utvikling over tid")
+            shiny::em(paste("Følgende utvalg gjelder bare figuren/tabellen som",
+                            "viser utvikling over tid"))
           ),
           shiny::selectInput(
             inputId = "enhetsUtvalgGjsn",
@@ -456,9 +468,9 @@ ui <- function() {
             id = "ark",
             shiny::tabPanel(
               "Antall personer med ryggmargsskade",
-              #p('Tabellen viser registreringer siste 12 måneder eller siste 5 år'),
               shiny::uiOutput("undertittelReg"),
-              shiny::p("Velg tidsperiode ved å velge sluttdato/tidsenhet i menyen til venstre"), #em(
+              shiny::p(paste("Velg tidsperiode ved å velge sluttdato/tidsenhet",
+                             "i menyen til venstre")),
               shiny::br(),
               shiny::fluidRow(
                 shiny::tableOutput("tabAntOpphShMnd12"),
@@ -569,34 +581,18 @@ ui <- function() {
 
       #------------------Abonnement------------------------
       shiny::tabPanel(
-        shiny::p("Abonnement",
-                 title="Bestill automatisk utsending av månedsrapport på e-post"),
+        shiny::p(
+          "Abonnement",
+          title="Bestill automatisk utsending av månedsrapport på e-post"),
         shiny::sidebarLayout(
           shiny::sidebarPanel(
-            width = 3,
-            shiny::selectInput("subscriptionRep", "Rapport:", c("Månedsrapport")),
-            shiny::selectInput(
-              "subscriptionFreq",
-              "Frekvens:",
-              list(Årlig = "Årlig-year",
-                    Kvartalsvis = "Kvartalsvis-quarter",
-                    Månedlig = "Månedlig-month",
-                    Ukentlig = "Ukentlig-week",
-                    Daglig = "Daglig-DSTday"
-              ),
-              selected = "Månedlig-month"
-            ),
-            #selectInput("subscriptionFileFormat", "Format:",
-            #            c("html", "pdf")),
-            shiny::actionButton("subscribe", "Bestill!")
+            rapbase::autoReportInput("ns-subscription")
           ),
           shiny::mainPanel(
-            shiny::uiOutput("subscriptionContent")
+            rapbase::autoReportUI("ns-subscription")
           )
         )
-      ) #Tab abonnement
-
-      #-----------------slutt-----------------------------
+      )
     ) #navbar
   ) #tagList
 }
@@ -605,13 +601,13 @@ server <- function(input, output, session) {
 
   rapbase::appLogger(
     session = session,
-    msg = "Starter nordicscir-app'en. Data fra NorSCIR vil bli hentet"
+    msg = "Starter nordicscir-app'en"
   )
 
 
   # session persistent objects
   if (rapbase::isRapContext()) {
-    reshId <- as.numeric(rapbase::getUserReshId(session))
+    reshID <- as.numeric(rapbase::getUserReshId(session))
     rolle <- rapbase::getUserRole(session)
     brukernavn <- rapbase::getUserName(session)
   } else {
@@ -1253,6 +1249,27 @@ server <- function(input, output, session) {
     output$samleRappLand.pdf <- NULL
     output$samleRappEgen.pdf <- NULL
   }
+
+  #------------------ Abonnement -----------------------------------------------
+  reports <- list(
+    `Månedsrapport` = list(
+      synopsis = "Rapporteket-NorSCIR: månedsrapport, abonnement",
+      fun = "abonnement",
+      paramNames = c("rnwFil", "brukernavn", "reshID", "datoTil"),
+      paramValues = c("NSmndRapp.Rnw", brukernavn, reshID, datoTil=Sys.Date())
+    )
+  )
+
+  rapbase::autoReportServer(
+    id = "ns-subscription",
+    registryName = "nordicscir",
+    type = "subscription",
+    paramNames = paramNames,
+    paramValues = paramValues,
+    reports = reports
+  )
+
+
 }
 
 #----- Define server logic required to draw a histogram-------
