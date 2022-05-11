@@ -32,8 +32,7 @@ getRealData <- function() {
         AktivTilfredshetH = AktivTilfredshetH
       )
     )
-  },
-  error = function(e) {
+  }, error = function(e) {
     warning(paste("Could not get real data:", e))
     return(NULL)
   })
@@ -79,21 +78,28 @@ getFakeData <- function() {
 #' @export
 processData <- function(data) {
 
-  HovedSkjema <- NSPreprosesser(data$HovedSkjema)
-  LivskvalH <- NSPreprosesser(data$LivskvalH)
-  KontrollH <- NSPreprosesser(data$KontrollH)
-  UrinH <- NSPreprosesser(data$UrinH)
-  TarmH <- NSPreprosesser(data$TarmH)
-  AktivFunksjonH <- NSPreprosesser(data$AktivFunksjonH)
-  AktivTilfredshetH <- NSPreprosesser(data$AktivTilfredshetH)
+  tryCatch({
+    HovedSkjema <- NSPreprosesser(data$HovedSkjema)
+    LivskvalH <- NSPreprosesser(data$LivskvalH)
+    KontrollH <- NSPreprosesser(data$KontrollH)
+    UrinH <- NSPreprosesser(data$UrinH)
+    TarmH <- NSPreprosesser(data$TarmH)
+    AktivFunksjonH <- NSPreprosesser(data$AktivFunksjonH)
+    AktivTilfredshetH <- NSPreprosesser(data$AktivTilfredshetH)
 
-  list(
-    HovedSkjema = HovedSkjema,
-    LivskvalH = LivskvalH,
-    KontrollH = KontrollH,
-    UrinH = UrinH,
-    TarmH = TarmH,
-    AktivFunksjonH = AktivFunksjonH,
-    AktivTilfredshetH = AktivTilfredshetH
-  )
+    return(
+      list(
+        HovedSkjema = HovedSkjema,
+        LivskvalH = LivskvalH,
+        KontrollH = KontrollH,
+        UrinH = UrinH,
+        TarmH = TarmH,
+        AktivFunksjonH = AktivFunksjonH,
+        AktivTilfredshetH = AktivTilfredshetH
+      )
+    )
+  }, error = function(e) {
+    warning("Something went wrong processing the data:", e)
+    return(NULL)
+  })
 }
