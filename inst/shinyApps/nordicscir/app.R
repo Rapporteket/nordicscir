@@ -996,6 +996,212 @@ server <- function(input, output, session) {
   }) #observe Fordeling
 
 
+  #-----------------Sykehusvise gjennomsnitt, figur og tabell-------------------
+  observe({
+    if (isDataOk) {
+      RegData <- finnRegData(valgtVar = input$valgtVarGjsn, Data = AlleTab)
+      output$gjsnGrVar <- shiny::renderPlot(
+        NSFigGjsnGrVar(RegData = RegData, preprosess = 0,
+                       valgtVar = input$valgtVarGjsn,
+                       datoFra = input$datovalgGjsn[1],
+                       datoTil = input$datovalgGjsn[2],
+                       datoUt = as.numeric(input$datoUtGjsn),
+                       AIS = as.numeric(input$AISGjsn),
+                       traume = input$traumeGjsn,
+                       nivaaUt = as.numeric(input$paratetraGjsn),
+                       minald = as.numeric(input$alderGjsn[1]),
+                       maxald = as.numeric(input$alderGjsn[2]),
+                       erMann = as.numeric(input$erMannGjsn),
+                       valgtMaal = input$sentralmaal, session=session
+        ),
+        width = 800, height = 600
+      )
+
+      output$lastNed_figGjsnGrVar <- shiny::downloadHandler(
+        filename = function() {
+          paste0("FigGjsn_", valgtVar = input$valgtVarGjsn, "_", Sys.time(),
+                 ".", input$bildeformatGjsn)
+        },
+        content = function(file) {
+          NSFigGjsnGrVar(RegData = RegData, preprosess = 0,
+                         valgtVar = input$valgtVarGjsn,
+                         datoFra = input$datovalgGjsn[1],
+                         datoTil = input$datovalgGjsn[2],
+                         datoUt = as.numeric(input$datoUtGjsn),
+                         AIS = as.numeric(input$AISGjsn),
+                         traume = input$traumeGjsn,
+                         nivaaUt = as.numeric(input$paratetraGjsn),
+                         minald = as.numeric(input$alderGjsn[1]),
+                         maxald = as.numeric(input$alderGjsn[2]),
+                         erMann = as.numeric(input$erMannGjsn),
+                         valgtMaal = input$sentralmaal, session=session,
+                         outfile = file)
+        })
+
+      UtDataGjsnGrVar <- NSFigGjsnGrVar(
+        RegData = RegData, preprosess = 0,
+        valgtVar = input$valgtVarGjsn,
+        datoFra = input$datovalgGjsn[1],
+        datoTil = input$datovalgGjsn[2],
+        datoUt = as.numeric(input$datoUtGjsn),
+        AIS = as.numeric(input$AISGjsn),
+        traume = input$traumeGjsn,
+        nivaaUt = as.numeric(input$paratetraGjsn),
+        minald = as.numeric(input$alderGjsn[1]),
+        maxald = as.numeric(input$alderGjsn[2]),
+        erMann = as.numeric(input$erMannGjsn),
+        valgtMaal = input$sentralmaal,
+        session = session
+      )
+
+      tabGjsnGrVar <- lagTabavFigGjsnGrVar(UtDataFraFig = UtDataGjsnGrVar)
+
+      output$tittelGjsnGrVar <- shiny::renderUI({
+        shiny::tagList(
+          shiny::h3(UtDataGjsnGrVar$tittel),
+          shiny::h5(shiny::HTML(paste0(UtDataGjsnGrVar$utvalgTxt, "<br />")))
+        )
+      })
+
+      output$gjsnGrVarTab <- function() {
+        antKol <- ncol(tabGjsnGrVar)
+        kableExtra::kable(tabGjsnGrVar, format = "html", digits = c(0, 1)) %>%
+          kableExtra::column_spec(column = 1, width_min = "5em") %>%
+          kableExtra::column_spec(column = 2:(antKol + 1), width = "4em") %>%
+          kableExtra::row_spec(0, bold = TRUE)
+      }
+      output$lastNed_tabGjsnGrVar <- shiny::downloadHandler(
+        filename = function() {
+          paste0(input$valgtVar, "_tabGjsnSh.csv")
+        },
+        content = function(file, filename) {
+          write.csv2(tabGjsnGrVar, file, row.names = TRUE, na = "")
+        }
+      )
+
+      output$titteltabGjsnGrVar <- shiny::renderUI({
+        shiny::tagList(
+          shiny::h3(tabGjsnGrVar$tittel),
+          shiny::h5(shiny::HTML(paste0(tabGjsnGrVar$utvalgTxt, "<br />")))
+        )
+      })
+
+      #------gjsnTid
+      output$gjsnTid <- shiny::renderPlot(
+        NSFigGjsnTid(
+          RegData = RegData, reshID = reshID, preprosess = 0,
+          valgtVar = input$valgtVarGjsn,
+          datoFra = input$datovalgGjsn[1], datoTil = input$datovalgGjsn[2],
+          datoUt = as.numeric(input$datoUtGjsn),
+          minald = as.numeric(input$alderGjsn[1]),
+          maxald = as.numeric(input$alderGjsn[2]),
+          erMann = as.numeric(input$erMannGjsn),
+          AIS = as.numeric(input$AISGjsn),
+          traume = input$traumeGjsn,
+          nivaaUt = as.numeric(input$paratetraGjsn),
+          valgtMaal = input$sentralmaal,
+          enhetsUtvalg = as.numeric(input$enhetsUtvalgGjsn),
+          tidsenhet = input$tidsenhetGjsn,
+          session = session
+        ),
+        width = 1000, height = 350
+      )
+
+      output$lastNed_figGjsnTid <- shiny::downloadHandler(
+        filename = function() {
+          paste0("FigGjsnTid_", valgtVar = input$valgtVarGjsn, "_", Sys.time(),
+                 ".'", input$bildeformatGjsn)
+        },
+        content = function(file) {
+          NSFigGjsnTid(
+            RegData = RegData, reshID = reshID, preprosess = 0,
+            valgtVar = input$valgtVarGjsn,
+            datoFra = input$datovalgGjsn[1], datoTil = input$datovalgGjsn[2],
+            datoUt = as.numeric(input$datoUtGjsn),
+            minald = as.numeric(input$alderGjsn[1]),
+            maxald = as.numeric(input$alderGjsn[2]),
+            erMann = as.numeric(input$erMannGjsn),
+            AIS = as.numeric(input$AISGjsn),
+            traume = input$traumeGjsn,
+            nivaaUt = as.numeric(input$paratetraGjsn),
+            valgtMaal = input$sentralmaal,
+            enhetsUtvalg = as.numeric(input$enhetsUtvalgGjsn),
+            tidsenhet = input$tidsenhetGjsn,
+            session = session,
+            outfile = file
+          )
+        }
+      )
+
+      UtDataGjsnTid <- NSFigGjsnTid(
+        RegData = RegData, reshID = reshID, preprosess = 0,
+        valgtVar = input$valgtVarGjsn,
+        datoFra = input$datovalgGjsn[1], datoTil = input$datovalgGjsn[2],
+        datoUt = as.numeric(input$datoUtGjsn),
+        minald = as.numeric(input$alderGjsn[1]),
+        maxald = as.numeric(input$alderGjsn[2]),
+        erMann = as.numeric(input$erMannGjsn),
+        AIS = as.numeric(input$AISGjsn),
+        traume = input$traumeGjsn,
+        nivaaUt = as.numeric(input$paratetraGjsn),
+        valgtMaal = input$sentralmaal,
+        enhetsUtvalg = as.numeric(input$enhetsUtvalgGjsn),
+        tidsenhet = input$tidsenhetGjsn,
+        session = session
+      )
+
+      tabGjsnTid <- t(UtDataGjsnTid$AggVerdier)
+      grtxt <- UtDataGjsnTid$grtxt
+      if ((min(nchar(grtxt)) == 5) && (max(nchar(grtxt)) == 5)) {
+        grtxt <- paste(substr(grtxt, 1, 3), substr(grtxt, 4, 5))
+      }
+      rownames(tabGjsnTid) <- grtxt
+
+      antKol <- ncol(tabGjsnTid)
+      navnKol <- colnames(tabGjsnTid)
+      if (antKol == 6) {
+        colnames(tabGjsnTid) <- c(navnKol[1:3], navnKol[1:3])
+      }
+
+      output$gjsnTidTab <- function() {
+        kableExtra::kable(
+          tabGjsnTid,
+          format = "html",
+          full_width = FALSE,
+          digits = 1
+        ) %>%
+          kableExtra::add_header_above(
+            c(" " = 1, "Egen enhet/gruppe" = 3, "Resten" = 3)[1:(antKol/3 + 1)]
+          ) %>%
+          kableExtra::column_spec(column = 1, width_min = "7em") %>%
+          kableExtra::column_spec(column = 2:(antKol + 1), width = "7em") %>%
+          kableExtra::row_spec(0, bold = TRUE)
+      }
+
+      output$lastNed_gjsnTidTab <- shiny::downloadHandler(
+        filename = function() {
+          paste0(input$valgtVarGjsn, "_tabGjsnTid.csv")
+        },
+        content = function(file, filename) {
+          write.csv2(tabGjsnTid, file, row.names = TRUE, na = "")
+        }
+      )
+    } else {
+      output$gjsnGrVar <- NULL
+      output$lastNed_figGjsnGrVar <- NULL
+      output$tittelGjsnGrVar <- NULL
+      output$gjsnGrVarTab <- NULL
+      output$lastNed_tabGjsnGrVar <- NULL
+      output$titteltabGjsnGrVar <- NULL
+      output$gjsnTid <- NULL
+      output$lastNed_figGjsnTid <- NULL
+      output$gjsnTidTab <- NULL
+      output$lastNed_gjsnTidTab <- NULL
+    }
+
+  }) #observe gjsn
+
+
 }
 
 #----- Define server logic required to draw a histogram-------
