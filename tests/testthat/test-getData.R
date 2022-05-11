@@ -20,6 +20,13 @@ test_that("fake data can be returned", {
   expect_true(class(getFakeData()) == "list")
 })
 
+test_that("warning and NULL is provided on processing error", {
+  expect_warning(processData(data = list()))
+  options(warn = -1)
+  expect_null(processData(data = list()))
+  options(warn = defaultW)
+})
+
 test_that("fake data can be processed", {
   expect_true(class(processData(getFakeData())) == "list")
 })
