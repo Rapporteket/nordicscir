@@ -867,7 +867,8 @@ server <- function(input, output, session) {
         reshID = reshID,
         AIS = as.numeric(input$AIS), traume = input$traume,
         nivaaUt = as.numeric(input$nivaaUt),
-        minald = as.numeric(input$alder[1]), maxald = as.numeric(input$alder[2]),
+        minald = as.numeric(input$alder[1]),
+        maxald = as.numeric(input$alder[2]),
         erMann = as.numeric(input$erMann),
         enhetsUtvalg = as.numeric(input$enhetsUtvalg),
         session = session
@@ -947,7 +948,8 @@ server <- function(input, output, session) {
         datoUt = as.numeric(input$datoUt),
         AIS = as.numeric(input$AIS), traume = input$traume,
         nivaaUt = as.numeric(input$nivaaUt),
-        minald = as.numeric(input$alder[1]), maxald = as.numeric(input$alder[2]),
+        minald = as.numeric(input$alder[1]),
+        maxald = as.numeric(input$alder[2]),
         erMann = as.numeric(input$erMann),
         session = session
       )
@@ -1193,7 +1195,6 @@ server <- function(input, output, session) {
       output$gjsnTidTab <- NULL
       output$lastNed_gjsnTidTab <- NULL
     }
-
   }) #observe gjsn
 
 
@@ -1213,8 +1214,12 @@ server <- function(input, output, session) {
     output$mndRapp.pdf <- shiny::downloadHandler(
       filename = function() { paste0("MndRapp", Sys.time(), ".pdf")},
       content = function(file) {
-        contentFile(file, srcFil = "NSmndRapp.Rnw", tmpFile = "tmpNSmndRapp.Rnw",
-                    reshID = reshID)
+        contentFile(
+          file,
+          srcFil = "NSmndRapp.Rnw",
+          tmpFile = "tmpNSmndRapp.Rnw",
+          reshID = reshID
+        )
       }
     )
     output$samleRappLand.pdf <- shiny::downloadHandler(
@@ -1250,7 +1255,7 @@ server <- function(input, output, session) {
   }
 
   #------------------ Abonnement -----------------------------------------------
-  reports <- list(
+  subReports <- list(
     `Månedsrapport` = list(
       synopsis = "Rapporteket-NorSCIR: månedsrapport, abonnement",
       fun = "abonnement",
@@ -1265,7 +1270,7 @@ server <- function(input, output, session) {
     type = "subscription",
     paramNames = paramNames,
     paramValues = paramValues,
-    reports = reports
+    reports = subReports
   )
 
 
@@ -1296,7 +1301,7 @@ server <- function(input, output, session) {
 
   org <- rapbase::autoReportOrgServer("NSuts", orgs)
 
-  # oppdatere reaktive parametre, for å få inn valgte verdier (overskrive de i report-lista)
+  # oppdatere reaktive parametre, for å få inn valgte verdier
   paramNames <- shiny::reactive("reshID")
   paramValues <- shiny::reactive(org$value())
 
