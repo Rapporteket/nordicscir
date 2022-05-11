@@ -568,7 +568,6 @@ ui <- function() {
           ),
           shiny::tabPanel(
             "Eksport, krypterte data",
-            #shiny::sidebarLayout(
             shiny::sidebarPanel(
               rapbase::exportUCInput("nordicscirExport")
             ),
@@ -630,12 +629,12 @@ server <- function(input, output, session) {
   isDataOk <- all(c(isGetDataOk, isProcessDataOk))
   attach(AlleData)
 
-  # modules
+
+  #--------------Startside------------------------------
   rapbase::navbarWidgetServer(
     id = "navbar-widget", orgName = "nordicscir", caller = "nordicscir"
   )
 
-  #--------------Startside------------------------------
   output$guide <- shiny::renderText(
     rapbase::renderRmd(
       system.file("brukerveiledning.Rmd", package = "nordicscir"),
@@ -1268,6 +1267,53 @@ server <- function(input, output, session) {
     paramValues = paramValues,
     reports = reports
   )
+
+
+  #---Utsendinger---------------
+  sykehusNavn <- sort(
+    unique(as.character(HovedSkjema$ShNavn)),
+    index.return = TRUE
+  )
+  orgs <- c(0, unique(HovedSkjema$ReshId)[sykehusNavn$ix])
+  names(orgs) <- c("Alle", sykehusNavn$x)
+  orgs <- as.list(orgs)
+
+  ## liste med metadata for rapport
+  disReports <- list(
+    MndRapp = list(
+      synopsis = "Rapporteket-NorSCIR: Månedsrapport",
+      fun = "abonnement",
+      paramNames = c('rnwFil', "reshID"),
+      paramValues = c('NSmndRapp.Rnw', 0)
+    ),
+    SamleRapp = list(
+      synopsis = "Rapporteket-NorSCIR: Rapport, div. resultater",
+      fun = "abonnement",
+      paramNames = c("rnwFil", "reshID"),
+      paramValues = c("NSsamleRapp.Rnw", 0)
+    )
+  )
+
+  org <- rapbase::autoReportOrgServer("NSuts", orgs)
+
+  # oppdatere reaktive parametre, for å få inn valgte verdier (overskrive de i report-lista)
+  paramNames <- shiny::reactive("reshID")
+  paramValues <- shiny::reactive(org$value())
+
+  rapbase::autoReportServer(
+    id = "NSuts", registryName = "nordicscir", type = "dispatchment",
+    org = org$value, paramNames = paramNames, paramValues = paramValues,
+    reports = reports, orgs = orgs, eligible = TRUE
+  )
+
+
+
+  #----------- Eksport ----------------
+  registryName <- "nordicscir"
+  ## brukerkontroller
+  rapbase::exportUCServer("nordicscirExport", registryName)
+  ## veileding
+  rapbase::exportGuideServer("nordicscirExportGuide", registryName)
 
 
 }
