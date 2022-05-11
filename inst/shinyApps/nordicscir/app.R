@@ -695,6 +695,130 @@ server <- function(input, output, session) {
     }
   })
 
+  #----------Tabeller, registreringsoversikter ----------------------
+  output$undertittelReg <- shiny::renderUI({
+    shiny::br()
+    t1 <- "Tabellen viser innleggelser "
+    t2 <- ", basert på første akutte innleggelse"
+    shiny::h4(shiny::HTML(
+      switch(
+        input$tidsenhetReg,
+        Mnd = paste0(t1, "siste 12 måneder før ", input$sluttDatoReg, t2,
+                     "<br />"),
+        Aar = paste0(t1, "siste 5 år før ", input$sluttDatoReg, t2, "<br />")
+      )
+    ))
+  })
+  shiny::observe({
+    if (isDataOk) {
+      tabAntOpphShMndAar <-
+        switch(
+          input$tidsenhetReg,
+          Mnd = tabAntOpphShMnd(
+            RegData = HovedSkjema,
+            datoTil = input$sluttDatoReg,
+            traume = input$traumeReg,
+            antMnd = 12
+          ),
+          Aar = tabAntOpphSh5Aar(
+            RegData = HovedSkjema,
+            datoTil = input$sluttDatoReg,
+            traume = input$traumeReg
+          )
+        )
+
+      output$tabAntOpphShMnd12 <- shiny::renderTable(
+        tabAntOpphShMndAar, rownames = TRUE, digits = 0, spacing = "xs"
+      )
+      output$lastNed_tabAntOpph <- shiny::downloadHandler(
+        filename = function() {paste0("tabAntOpph.csv")},
+        content = function(file, filename) {
+          write.csv2(tabAntOpphShMndAar, file, row.names = TRUE, na = "")
+        }
+      )
+
+      #Antall skjema av alle typer.
+      tabTilknHovedSkjema <- tabSkjemaTilknyttet(
+        Data = AlleTab,
+        moderSkjema = "Hoved",
+        datoFra = input$datovalgReg[1],
+        datoTil = input$datovalgReg[2]
+      )
+
+      #Hovedskjema som har tilknyttede skjema av ulik type
+      output$tabAntTilknyttedeHovedSkjema <- shiny::renderTable(
+        tabTilknHovedSkjema$Antall,
+        rownames = TRUE,
+        digits = 0,
+        spacing = "xs"
+      )
+
+      output$lastNed_tabOppfHovedAnt <- shiny::downloadHandler(
+        filename = function() {'tabOppfHovedAnt.csv'},
+        content = function(file, filename) {
+          write.csv2(
+            tabTilknHovedSkjema$Antall, file, row.names = TRUE, na = ""
+          )
+        }
+      )
+      #Andel (prosent) av registreringsskjemaene som har oppfølgingsskjema.
+      output$tabAndelTilknyttedeHovedSkjema <- shiny::renderTable(
+        tabTilknHovedSkjema$Andeler,
+        rownames = TRUE,
+        digits = 0,
+        spacing = "xs"
+      )
+
+      output$lastNed_tabOppfHovedPst <- shiny::downloadHandler(
+        filename = function() {'tabOppfHovedPst.csv'},
+        content = function(file, filename) {
+          write.csv2(
+            tabTilknHovedSkjema$Andeler, file, row.names = TRUE, na = ""
+          )
+        }
+      )
+
+      #Kontrollskjema som har tilknyttede skjema av ulik type
+      tabTilknKtrSkjema <- tabSkjemaTilknyttet(
+        Data = AlleTab,
+        moderSkjema = "Ktr",
+        datoFra = input$datovalgReg[1],
+        datoTil = input$datovalgReg[2]
+      )
+
+      output$tabAntTilknyttedeKtrSkjema <- shiny::renderTable(
+        tabTilknKtrSkjema$Antall, rownames = TRUE, digits = 0, spacing = "xs"
+      )
+
+      output$lastNed_tabOppfKtrAnt <- shiny::downloadHandler(
+        filename = function() {'tabOppfKtrAnt.csv'},
+        content = function(file, filename) {
+          write.csv2(tabTilknKtrSkjema$Antall, file, row.names = TRUE, na = "")
+        }
+      )
+      #Andel (prosent) av kontrollskjemaene som har oppfølgingsskjema.
+      output$tabAndelTilknyttedeKtrSkjema <- shiny::renderTable(
+        tabTilknKtrSkjema$Andeler, rownames = TRUE, digits = 0, spacing = "xs" )
+
+      output$lastNed_tabOppfKtrPst <- shiny::downloadHandler(
+        filename = function() {"tabOppfKtrPst.csv"},
+        content = function(file, filename) {
+          write.csv2(tabTilknKtrSkjema$Andeler, file, row.names = TRUE, na = "")
+        }
+      )
+    } else {
+      output$tabAntOpphShMnd12 <- NULL
+      output$lastNed_tabAntOpph <- NULL
+      output$tabAntTilknyttedeHovedSkjema <- NULL
+      output$lastNed_tabOppfHovedAnt <- NULL
+      output$tabAndelTilknyttedeHovedSkjema <- NULL
+      output$lastNed_tabOppfHovedPst <- NULL
+      output$lastNed_tabOppfKtrAnt <- NULL
+      output$tabAndelTilknyttedeKtrSkjema <- NULL
+      output$lastNed_tabOppfKtrPst <- NULL
+    }
+  })
+
 
 }
 
