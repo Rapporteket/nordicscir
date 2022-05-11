@@ -1202,6 +1202,57 @@ server <- function(input, output, session) {
   }) #observe gjsn
 
 
+  #-------Samlerapporter--------------------
+  if (isDataOk) {
+    contentFile <- function(file, srcFil, tmpFile, reshID = 0,
+                            datoFra = startDato, datoTil = Sys.Date()) {
+      src <- normalizePath(system.file(srcFil, package="nordicscir"))
+      # gå til tempdir. Har ikke skriverettigheter i arbeidskatalog
+      owd <- setwd(tempdir())
+      on.exit(setwd(owd))
+      file.copy(src, tmpFile, overwrite = TRUE)
+      knitr::knit2pdf(tmpFile)
+      file.copy(paste0(substr(tmpFile, 1, nchar(tmpFile) - 3), "pdf"), file)
+    }
+
+    output$mndRapp.pdf <- shiny::downloadHandler(
+      filename = function() { paste0("MndRapp", Sys.time(), ".pdf")},
+      content = function(file) {
+        contentFile(file, srcFil = "NSmndRapp.Rnw", tmpFile = "tmpNSmndRapp.Rnw",
+                    reshID = reshID)
+      }
+    )
+    output$samleRappLand.pdf <- shiny::downloadHandler(
+      filename = function() {"NorScirSamleRapportLand.pdf"},
+      content = function(file) {
+        contentFile(
+          file,
+          srcFil = "NSsamleRappLand.Rnw",
+          tmpFile = "tmpNSsamleRappLand.Rnw",
+          reshID = reshID,
+          datoFra = as.Date(input$datovalgSamleRapp[1]),
+          datoTil = as.Date(input$datovalgSamleRapp[2])
+        )
+      }
+    )
+    output$samleRappEgen.pdf <- shiny::downloadHandler(
+      filename = function() {"NorScirSamleRapportEgen.pdf"},
+      content = function(file) {
+        contentFile(
+          file,
+          srcFil = "NSsamleRapp.Rnw",
+          tmpFile = "tmpNSsamleRapp.Rnw",
+          reshID = reshID,
+          datoFra = as.Date(input$datovalgSamleRapp[1]),
+          datoTil = as.Date(input$datovalgSamleRapp[2])
+        )
+      }
+    )
+  } else {
+    output$mndRapp.pdf <- NULL
+    output$samleRappLand.pdf <- NULL
+    output$samleRappEgen.pdf <- NULL
+  }
 }
 
 #----- Define server logic required to draw a histogram-------
