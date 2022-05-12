@@ -615,19 +615,19 @@ server <- function(input, output, session) {
 
   isGetDataOk <- TRUE
   isProcessDataOk <- TRUE
-  AlleData <- getRealData()
-  if (is.null(AlleData)) {
+  AlleTab <- getRealData()
+  if (is.null(AlleTab)) {
     warning("Not able to get real data. Applying fake data instead!")
     isGetDataOk <- FALSE
-    AlleData <- getFakeData()
+    AlleTab <- getFakeData()
   }
-  AlleData <- processData(AlleData)
-  if (is.null(AlleData)) {
+  AlleTab <- processData(AlleTab)
+  if (is.null(AlleTab)) {
     warning("Not able to process data.")
     isProcessDataOk <- FALSE
   }
   isDataOk <- all(c(isGetDataOk, isProcessDataOk))
-  attach(AlleData)
+  attach(AlleTab)
 
 
   #--------------Startside------------------------------
@@ -1308,7 +1308,7 @@ server <- function(input, output, session) {
   rapbase::autoReportServer(
     id = "NSuts", registryName = "nordicscir", type = "dispatchment",
     org = org$value, paramNames = paramNames, paramValues = paramValues,
-    reports = reports, orgs = orgs, eligible = TRUE
+    reports = disReports, orgs = orgs, eligible = TRUE
   )
 
 
