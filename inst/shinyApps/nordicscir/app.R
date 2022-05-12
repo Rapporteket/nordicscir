@@ -1275,13 +1275,18 @@ server <- function(input, output, session) {
 
 
   #---Utsendinger---------------
-  sykehusNavn <- sort(
-    unique(as.character(HovedSkjema$ShNavn)),
-    index.return = TRUE
-  )
-  orgs <- c(0, unique(HovedSkjema$ReshId)[sykehusNavn$ix])
-  names(orgs) <- c("Alle", sykehusNavn$x)
-  orgs <- as.list(orgs)
+  if (isDataOk) {
+    sykehusNavn <- sort(
+      unique(as.character(HovedSkjema$ShNavn)),
+      index.return = TRUE
+    )
+    orgs <- c(0, unique(HovedSkjema$ReshId)[sykehusNavn$ix])
+    names(orgs) <- c("Alle", sykehusNavn$x)
+    orgs <- as.list(orgs)
+  } else {
+    orgs <- list(`Alle` = 0)
+  }
+
 
   ## liste med metadata for rapport
   disReports <- list(
