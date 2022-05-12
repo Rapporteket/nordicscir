@@ -1,6 +1,6 @@
 on:
   push:
-    branches: [ r-metrics ]
+    branches: [ master ]
 
 name: pkgdown
 
