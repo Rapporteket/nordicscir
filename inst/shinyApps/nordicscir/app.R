@@ -1308,7 +1308,7 @@ server <- function(input, output, session) {
   rapbase::autoReportServer(
     id = "NSuts", registryName = "nordicscir", type = "dispatchment",
     org = org$value, paramNames = paramNames, paramValues = paramValues,
-    reports = disReports, orgs = orgs, eligible = TRUE
+    reports = disReports, orgs = orgs, eligible = (rolle == "SC")
   )
 
 
