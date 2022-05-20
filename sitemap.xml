@@ -58,10 +58,22 @@
     <loc>/reference/abonnement.html</loc>
   </url>
   <url>
+    <loc>/reference/compound_assignment_pipe.html</loc>
+  </url>
+  <url>
     <loc>/reference/delTekst.html</loc>
   </url>
   <url>
+    <loc>/reference/exposition_pipe.html</loc>
+  </url>
+  <url>
     <loc>/reference/finnRegData.html</loc>
+  </url>
+  <url>
+    <loc>/reference/force_names.html</loc>
+  </url>
+  <url>
+    <loc>/reference/getData.html</loc>
   </url>
   <url>
     <loc>/reference/index.html</loc>
@@ -80,6 +92,15 @@
   </url>
   <url>
     <loc>/reference/lageTulleData.html</loc>
+  </url>
+  <url>
+    <loc>/reference/pipe.html</loc>
+  </url>
+  <url>
+    <loc>/reference/pronoun.html</loc>
+  </url>
+  <url>
+    <loc>/reference/subtract_month.html</loc>
   </url>
   <url>
     <loc>/reference/tabAntOpphPasSh5Aar.html</loc>
