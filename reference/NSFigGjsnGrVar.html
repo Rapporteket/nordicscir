@@ -48,63 +48,92 @@ kunne brukes til andre grupperingsvariable enn sykehus.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">NSFigGjsnGrVar</span><span class="op">(</span>
-  <span class="va">RegData</span>,
-  <span class="va">valgtVar</span>,
-  valgtMaal <span class="op">=</span> <span class="st">"gjsn"</span>,
-  grVar <span class="op">=</span> <span class="st">"ShNavn"</span>,
-  datoFra <span class="op">=</span> <span class="st">"2010-01-01"</span>,
-  datoTil <span class="op">=</span> <span class="st">"2050-12-31"</span>,
-  datoUt <span class="op">=</span> <span class="fl">0</span>,
-  AIS <span class="op">=</span> <span class="st">""</span>,
-  minald <span class="op">=</span> <span class="fl">0</span>,
-  maxald <span class="op">=</span> <span class="fl">130</span>,
-  erMann <span class="op">=</span> <span class="st">""</span>,
-  traume <span class="op">=</span> <span class="st">"alle"</span>,
-  nivaaUt <span class="op">=</span> <span class="fl">99</span>,
-  preprosess <span class="op">=</span> <span class="fl">1</span>,
-  outfile <span class="op">=</span> <span class="st">""</span>,
-  hentData <span class="op">=</span> <span class="fl">0</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">NSFigGjsnGrVar</span><span class="op">(</span></span>
+<span>  <span class="va">RegData</span>,</span>
+<span>  <span class="va">valgtVar</span>,</span>
+<span>  valgtMaal <span class="op">=</span> <span class="st">"gjsn"</span>,</span>
+<span>  grVar <span class="op">=</span> <span class="st">"ShNavn"</span>,</span>
+<span>  datoFra <span class="op">=</span> <span class="st">"2010-01-01"</span>,</span>
+<span>  datoTil <span class="op">=</span> <span class="st">"2050-12-31"</span>,</span>
+<span>  datoUt <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  AIS <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  minald <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  maxald <span class="op">=</span> <span class="fl">130</span>,</span>
+<span>  erMann <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  traume <span class="op">=</span> <span class="st">"alle"</span>,</span>
+<span>  nivaaUt <span class="op">=</span> <span class="fl">99</span>,</span>
+<span>  preprosess <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  outfile <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  hentData <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>RegData</dt>
 <dd><p>- ei dataramme med alle nødvendige variable fra registeret.</p></dd>
+
+
 <dt>valgtVar</dt>
 <dd><p>- variabelen det skal genereres resultat for</p></dd>
+
+
 <dt>valgtMaal</dt>
 <dd><p>- 'med' = median. Alt annet gir gjennomsnitt</p></dd>
+
+
 <dt>datoFra</dt>
 <dd><p>startdato, fra og med Eks. '2010-01-01'    # min og max dato i utvalget vises alltid i figuren.</p></dd>
+
+
 <dt>datoTil</dt>
 <dd><p>sluttdato, fra og med Eks. '2013-05-25'</p></dd>
+
+
 <dt>datoUt</dt>
 <dd><p>Om man skal velge inn eller ut-dato som grunnlag for datofiltrering</p></dd>
+
+
 <dt>AIS</dt>
 <dd><p>- AISgrad ved innleggelse alle(''), velge en eller flere fra 1:5, mappes til: A,B,C,D,E</p></dd>
+
+
 <dt>minald</dt>
 <dd><p>- alder, fra og med</p></dd>
+
+
 <dt>maxald</dt>
 <dd><p>- alder, til og med</p></dd>
+
+
 <dt>erMann</dt>
 <dd><p>- kjønn, 1-menn, 0-kvinner, standard: '' (alt annet enn 0 og 1), dvs. begge</p></dd>
+
+
 <dt>traume</dt>
 <dd><p>- 'ja','nei', 'alle' standard: ikke valgt</p></dd>
+
+
 <dt>nivaaUt</dt>
 <dd><p>- Nivå ved utreise, flervalgs 0:tetraplegi, 1:paraplegi, 2:C1-4, 3:C5-8, 9:ukjent</p></dd>
+
+
 <dt>preprosess</dt>
 <dd><p>Preprosesser data
 0: Nei
 1: Ja (Standard)</p></dd>
+
+
 <dt>outfile</dt>
 <dd><p>- navn på fil figuren skrives ned til.</p></dd>
+
+
 <dt>hentData</dt>
 <dd><p>Gjør spørring mot database hvis data ikke er levert fra andre kilder.
 0: Nei, RegData gis som input til funksjonen (Standard)
 1: Ja</p></dd>
+
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -127,7 +156,7 @@ kunne brukes til andre grupperingsvariable enn sykehus.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>
