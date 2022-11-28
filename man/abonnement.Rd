@@ -23,9 +23,6 @@ abonnement(
 
 \item{datoTil}{- sluttdato for data som hentes til bruk i rapporten}
 }
-\value{
-
-}
 \description{
 Gererere månedsrapport for abonnement
 }
