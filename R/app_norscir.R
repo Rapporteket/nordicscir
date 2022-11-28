@@ -6,7 +6,11 @@ library(lubridate)
 library(dplyr)
 library(kableExtra)
 
-ui <- function() {
+#' Brukergrensesnitt (ui) til nordscir-appen
+#'
+#' @return Brukergrensesnittet (ui) til nordscir-appen
+#' @export
+ui_norscir <- function() {
 
   shiny::addResourcePath("rap", system.file("www", package = "rapbase"))
 
@@ -596,7 +600,16 @@ ui <- function() {
   ) #tagList
 }
 
-server <- function(input, output, session) {
+
+#' Server-del til norscir-appen
+#'
+#' @param input
+#' @param output
+#' @param session
+#'
+#' @return Server-delen til norscir-appen
+#' @export
+server_norscir <- function(input, output, session) {
 
   rapbase::appLogger(
     session = session,
@@ -1330,4 +1343,4 @@ server <- function(input, output, session) {
 
 
 # Run the application
-shinyApp(ui = ui, server = server)
+# shinyApp(ui = ui_norscir, server = server_norscir)

@@ -6,8 +6,15 @@
 #' @return Et objekt som representerer den aktuelle app'en
 #' @export
 
-run_app <- function(register=nordicscir) {
-  shiny::shinyApp(ui = app_ui, server = app_server)
+kjor_NSapper <- function(register = 'norscir') {
+  if (register == 'norscir'){
+  shiny::shinyApp(ui = ui_norscir(), server = server_norscir())}
+
+  if (register == 'nordicscir'){
+    shiny::shinyApp(ui = ui_nordicscir, server = server_nordicscir)}
+
+  if (!(register %in% c('norscir','nordicscir'))){
+    warning('Angitt register har ingen app')}
 }
 
 
