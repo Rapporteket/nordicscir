@@ -1,0 +1,31 @@
+---
+params:
+  isDataOk: true
+title: "Brukerveiledning for NordicScir"
+author: "nordicscir"
+date: '`r format(Sys.time(), "%d. %B %Y")`'
+---
+
+```{r isDataOk, eval=!params$isDataOk, echo=FALSE, results='asis'}
+cat('<div class="alert alert-danger"><strong>Advarsel!</strong> Data kunne ikke hentes og/eller behandles. Noe kan være alvorlig feil.</div>')
+```
+
+Du er nå inne på Rapporteket for NorSCIR. Rapporteket er registerets resultattjeneste. Disse sidene inneholder en samling av figurer og tabeller som viser resultater fra registeret. På hver av sidene kan man gjøre utvalg i menyene til venstre. Alle resultater er basert på ferdigstilte registreringer. Merk at data er hentet direkte fra registerets database. Dette medfører at nyere data ikke er kvalitetssikret ennå.
+                            
+Du kan se på resultater for eget sykehus, nasjonale data og eget sykehus sett opp mot landet for øvrig. Resultatene som vises er basert på AdmitDt, altså dato for første akutte innleggelse. Alle figurer og tabeller kan lastes ned.
+
+Se "nabofanen" Status for å se på nøkkeltall.
+
+## Innhold i de ulike hovedfanene
+
+__Fordelinger__ viser fordelinger (figur/tabell) av ulike variable. Man kan velge hvilken variabel man vil se på, og man kan gjøre ulike filtreringer.
+                            
+__Gjennomsnitt per sykehus og over tid__ viser gjennomsnittsverdier per sykehus. Man kan velge hvilken variabel man vil se på og om man vil se gjennomsnitt eller median. Man kan også velge å filtrere data.
+
+__Registreringsoversikter__ viser aktivitet i registeret. Også her kan man gjøre filtreringer.
+
+__Abonnement__ inneholder oversikt over rapporter du abbonerer på. Her kan du også bestille abonnement, dvs. rapporter tilsendt på e-post.
+                            
+Oversikt over registerets kvalitetsindikatorer og resultater finner du på www.kvalitetsregistre.no: [NorSCIR](https://www.kvalitetsregistre.no/registers/561/resultater).
+
+Alle pasienter med nyervervet ryggmargsskade eller Cauda equina syndrom som legges inn til spesialisert rehabilitering ved en ryggmargsskadeavdeling, blir forespurt om samtykke til å bli registrert i Norsk ryggmargsskaderegister. Dette registeret har til hensikt å sikre og forbedre ryggmargsskadeomsorgen i Norge. Mer informasjon om selve registeret finnes på [NorSCIRs hjemmeside](http://www.norscir.no).

@@ -1,12 +1,21 @@
 # Hjelpefunksjoner for NorSCIR
 #---------------------------------------------
 
+#' Kjør Shiny Application
+#'
+#' @return Et objekt som representerer den aktuelle app'en
+#' @export
+
+run_app <- function(register=nordicscir) {
+  shiny::shinyApp(ui = app_ui, server = app_server)
+}
+
 
 #' Tilrettelegge tidsenhetvariabel:
 #' @param RegData dataramme
 #' @export
 SorterOgNavngiTidsEnhet <- function(RegData, tidsenhet='Aar', tab=0, datoUt=0) {
-  
+
   #Basere på utskrivingsdato. Hvis datoUt==1, er innholdet i InnDato endret til å være utskrivingsdato
   if (datoUt == 1) {
     RegData$DischgDt <- strptime(RegData$DischgDt, format="%Y-%m-%d")
@@ -27,14 +36,14 @@ SorterOgNavngiTidsEnhet <- function(RegData, tidsenhet='Aar', tab=0, datoUt=0) {
                                   Halvaar = RegData$Halvaar-min(RegData$Halvaar[RegData$Aar==min(RegData$Aar)])+1+
                                     (RegData$Aar-min(RegData$Aar))*2
   )
-  
+
       tidtxt <- switch(tidsenhet,
                        # Mnd = format(seq.Date(as.Date(lubridate::floor_date(min(RegData$InnDato), 'month')), max(RegData$InnDato),
                        #                       by = "month"), format = "%b%y"),
                        Mnd = format.Date(seq(from=lubridate::floor_date(as.Date(min(as.Date(RegData$InnDato), na.rm = T)), 'month'),
                                              to=max(as.Date(RegData$InnDato), na.rm = T), by='month'), format = '%B%y'), #Hele måneden
-                       Kvartal = lubridate::quarter(seq.Date(as.Date(lubridate::floor_date(min(RegData$InnDato), 'month')), 
-                                                             max(RegData$InnDato), 
+                       Kvartal = lubridate::quarter(seq.Date(as.Date(lubridate::floor_date(min(RegData$InnDato), 'month')),
+                                                             max(RegData$InnDato),
                                                  by = "quarter"), with_year = T),
                        #NGER: Kvartal = paste(substr(RegData$Aar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)], 3,4),
                        #                sprintf('%01.0f', RegData$Kvartal[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)]), sep='-'),
@@ -44,16 +53,16 @@ SorterOgNavngiTidsEnhet <- function(RegData, tidsenhet='Aar', tab=0, datoUt=0) {
                        Aar = min(RegData$Aar):max(RegData$Aar) #lubridate::year(min(RegData$InnDato)):year(max(RegData$InnDato))
                        #NGER: Aar = as.character(RegData$Aar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)]))
       )
-      
+
       substrRight <- function(x, n){substr(x, nchar(x)-n+1, nchar(x))}
       if (tidsenhet=='Mnd') {tidtxt <- paste0(substr(tidtxt, 1,3), ' '[tab], substrRight(tidtxt, 2))}
-      
-      RegData$TidsEnhet <- factor(RegData$TidsEnhetSort, ordered = TRUE, 
+
+      RegData$TidsEnhet <- factor(RegData$TidsEnhetSort, ordered = TRUE,
                                   levels = min(RegData$TidsEnhetSort):max(RegData$TidsEnhetSort),
                                   labels=tidtxt)
       #RegData$TidsEnhetSort <- factor(RegData$TidsEnhetSort, levels=1:max(RegData$TidsEnhetSort))
       RegData$TidsEnhet <- factor(RegData$TidsEnhetSort, levels=1:max(RegData$TidsEnhetSort), labels=tidtxt)
-      
+
       UtData <- list('RegData'=RegData, 'tidtxt'=tidtxt)
       return(UtData)
 }
@@ -67,7 +76,7 @@ lageTulleData <- function(RegData, varBort='ShNavn', antSh=27) {
       library(synthpop)
       library(dplyr)
       #ForlopsID <- RegData$ForlopsID
-      
+
       RegData <- RegData[,-which(names(RegData) %in% varBort)]
       sykehus <- paste('Sykehus', LETTERS[1:antSh])
       fordelingPasienter <- sample(1:antSh,antSh)
@@ -89,7 +98,7 @@ delTekst <- function(x, len) #x -tekststreng/vektor av tekststrenger, len - Leng
 
 
 #' Koble med aktuell hovedtabell
-#' @param HovedSkjema hvilket skjema skal oppfølgingsskjemaet kobles til? De fleste kobles til Hovedskjema. 
+#' @param HovedSkjema hvilket skjema skal oppfølgingsskjemaet kobles til? De fleste kobles til Hovedskjema.
 #' Satisfaction kobles til Performance
 #' @param Skjema2 Oppfølgingsskjemaet som skal kobles til sitt aktuelle hovedskjema
 #' @param alleHovedskjema TRUE (FALSE) Om alle registreringer fra hovedskjemaet skal være med (TRUE), eller bare
@@ -97,20 +106,20 @@ delTekst <- function(x, len) #x -tekststreng/vektor av tekststrenger, len - Leng
 #' @export
 KobleMedHoved <- function(HovedSkjema, Skjema2, alleHovedskjema=F, alleSkjema2=F) {
       varBegge <- intersect(names(Skjema2),names(HovedSkjema)) ##Variabelnavn som finnes i begge datasett
-      Skjema2 <- Skjema2[ , c("HovedskjemaGUID", names(Skjema2)[!(names(Skjema2) %in% varBegge)])]  #"SkjemaGUID",   
+      Skjema2 <- Skjema2[ , c("HovedskjemaGUID", names(Skjema2)[!(names(Skjema2) %in% varBegge)])]  #"SkjemaGUID",
       NSdata <- merge(HovedSkjema, Skjema2, suffixes = c('','_S2'),
                       by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = alleHovedskjema, all.y=alleSkjema2)
       return(NSdata)
 }
 
 #' Hente data basert på valgtVar
-#' @param valgtVar Angir hvilke(n) variable det skal vises resultat for. 
-#' @param Data Liste med alle skjema/tabeller 
+#' @param valgtVar Angir hvilke(n) variable det skal vises resultat for.
+#' @param Data Liste med alle skjema/tabeller
 #' @export
 finnRegData <- function(valgtVar='Alder', Data = AlleTab){
       valgtSkjema <- substr(valgtVar,1,4)
       if (valgtSkjema %in% c('Livs', 'Urin', 'Tarm', 'Tilf', 'Funk', 'Kont', 'Akti')) {
-            RegData <- switch(valgtSkjema, 
+            RegData <- switch(valgtSkjema,
                               'Livs' = Data$LivskvalH,
                               'Tarm' = Data$TarmH,
                               'Urin' = Data$UrinH,
@@ -123,8 +132,8 @@ finnRegData <- function(valgtVar='Alder', Data = AlleTab){
 }
 
 #' Konvertere boolske variable fra tekst til boolske variable...
-#' @param valgtVar Angir hvilke(n) variable det skal vises resultat for. 
-#' @param Data Liste med alle skjema/tabeller 
+#' @param valgtVar Angir hvilke(n) variable det skal vises resultat for.
+#' @param Data Liste med alle skjema/tabeller
 #' @export
 TilLogiskeVar <- function(Skjema){
       verdiGML <- c('True','False')
@@ -148,21 +157,21 @@ TilLogiskeVar <- function(Skjema){
 #'
 #' @return
 #' @export
-abonnement <- function(rnwFil, brukernavn='ukjent', reshID=0, 
+abonnement <- function(rnwFil, brukernavn='ukjent', reshID=0,
                        datoFra=Sys.Date()-400, datoTil=Sys.Date()) {
-  
+
       # raplog::subLogger(author = brukernavn, registryName = 'NorScir',
       #               reshId = reshID[[1]],
       #               msg = paste0("Abonnement: ", rnwFil))
-  
-  HovedSkjema <- NSRegDataSQL() 
+
+  HovedSkjema <- NSRegDataSQL()
   LivskvalH <- NSRegDataSQL(valgtVar='LivsXX')
   KontrollH <- NSRegDataSQL(valgtVar='KontXX')
   UrinH <- NSRegDataSQL(valgtVar='UrinXX')
   TarmH <- NSRegDataSQL(valgtVar='TarmXX')
   AktivFunksjonH <- NSRegDataSQL(valgtVar='FunkXX')
   AktivTilfredshetH <- NSRegDataSQL(valgtVar='TilfXX')
-  
+
   HovedSkjema <- NSPreprosesser(HovedSkjema)
   LivskvalH <- NSPreprosesser(LivskvalH)
   KontrollH <- NSPreprosesser(KontrollH)
@@ -170,21 +179,21 @@ abonnement <- function(rnwFil, brukernavn='ukjent', reshID=0,
   TarmH <- NSPreprosesser(TarmH)
   AktivFunksjonH <- NSPreprosesser(AktivFunksjonH)
   AktivTilfredshetH <- NSPreprosesser(AktivTilfredshetH)
-  
+
   reshID <- reshID[[1]]
   datoFra <- datoFra[[1]]
   datoTil <- datoTil[[1]]
-  
+
   filbase <- substr(rnwFil[[1]], 1, nchar(rnwFil[[1]])-4)
   tmpFile <- paste0(filbase, Sys.Date(),'_',digest::digest(brukernavn)[[1]], '.Rnw')
   src <- normalizePath(system.file(rnwFil[[1]], package='nordicscir'))
   setwd(tempdir()) # gå til tempdir. Har ikke skriverettigheter i arbeidskatalog
   file.copy(src, tmpFile, overwrite = TRUE)
   knitr::knit2pdf(input=tmpFile) #, output = paste0(filbase, digest::digest(brukernavn),'.tex'))
-  
+
   #gc() #Opprydning gc-"garbage collection"
   utfil <- paste0( getwd(), '/', substr(tmpFile, 1, nchar(tmpFile)-3), 'pdf') #
-  #utfil <- file.copy(from = paste0(substr(tmpFile, 1, nchar(tmpFile)-3), 'pdf'), 
+  #utfil <- file.copy(from = paste0(substr(tmpFile, 1, nchar(tmpFile)-3), 'pdf'),
   #         to = paste0(filbase, digest::digest(brukernavn),'.pdf')) #filnavn)
   return(utfil)
 }
