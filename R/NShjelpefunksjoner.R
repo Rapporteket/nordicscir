@@ -2,19 +2,24 @@
 #---------------------------------------------
 
 #' Kjør Shiny Application
-#'
+#' @param register Angi hvilket register som skal startes
 #' @return Et objekt som representerer den aktuelle app'en
 #' @export
 
 kjor_NSapper <- function(register = 'norscir') {
   if (register == 'norscir'){
-  shiny::shinyApp(ui = ui_norscir(), server = server_norscir())}
+  app <- shiny::shinyApp(ui = ui_norscir, server = server_norscir)
+    }
 
   if (register == 'nordicscir'){
-    shiny::shinyApp(ui = ui_nordicscir, server = server_nordicscir)}
+    app <-   shiny::shinyApp(ui = ui_nordicscir, server = server_nordicscir)
+    }
 
   if (!(register %in% c('norscir','nordicscir'))){
     warning('Angitt register har ingen app')}
+
+  runApp(app)
+
 }
 
 
@@ -162,7 +167,6 @@ TilLogiskeVar <- function(Skjema){
 #' @param datoFra - startdato for data som hentes til bruk i rapporten
 #' @param datoTil - sluttdato for data som hentes til bruk i rapporten
 #'
-#' @return
 #' @export
 abonnement <- function(rnwFil, brukernavn='ukjent', reshID=0,
                        datoFra=Sys.Date()-400, datoTil=Sys.Date()) {

@@ -10,7 +10,7 @@
 #'
 #' @return Brukergrensesnittet (ui) til nordscir-appen
 #' @export
-ui_norscir <- function() {
+ui_nordicscir <- function() {
 
   shiny::addResourcePath("rap", system.file("www", package = "rapbase"))
 
@@ -22,7 +22,7 @@ ui_norscir <- function() {
   paaServer <- context %in% c("DEV", "TEST", "QA", "PRODUCTION")
 
 
-  regTitle = ifelse(paaServer, "Norsk ryggmargsskaderegister",
+  regTitle = ifelse(paaServer, "Nordisk ryggmargsskaderegister",
                     "Norsk ryggmargsskaderegister med FIKTIVE data")
 
   #----Valg
@@ -97,8 +97,9 @@ ui_norscir <- function() {
           if (paaServer) {
             rapbase::navbarWidgetInput("navbar-widget")
           },
-          shiny::h2("Velkommen til Rapporteket - Norsk Ryggmargsskaderegister!",
+          shiny::h2("Velkommen til Rapporteket - Nordisk Ryggmargsskaderegister!",
                     align='center'),
+          shiny::h3('NB: Dette er bare en kopi av den norske Rapporteket versjonen, dog knyttet til nordiske data'),
           shiny::br(),
           shiny::tabsetPanel(
             id = "startside",
@@ -609,7 +610,7 @@ ui_norscir <- function() {
 #'
 #' @return Server-delen til norscir-appen
 #' @export
-server_norscir <- function(input, output, session) {
+server_nordicscir <- function(input, output, session) {
 print(session)
   rapbase::appLogger(
     session = session,
@@ -628,7 +629,7 @@ print(session)
 
   isGetDataOk <- TRUE
   isProcessDataOk <- TRUE
-  AlleTab <- getRealData()
+  AlleTab <- getRealData(register = 'nordicscir')
   if (is.null(AlleTab)) {
     warning("Not able to get real data. Applying fake data instead!")
     isGetDataOk <- FALSE
