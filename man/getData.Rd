@@ -7,13 +7,15 @@
 \alias{processData}
 \title{Get Data for NordicScir}
 \usage{
-getRealData()
+getRealData(register = "norscir")
 
 getFakeData()
 
-processData(data)
+processData(register = "norscir", data)
 }
 \arguments{
+\item{register}{Hvilket register det skal hentes data for}
+
 \item{data}{A data object to be processed by the function.}
 }
 \value{

@@ -1,20 +1,27 @@
-#' Henter data for NordicScir fra database
+#' Henter data for NorScir eller NordicScir fra database
 #'
-#' Spørring som henter og kobler sammen data fra ulike skjema i NordicScir
+#' Spørring som henter og kobler sammen data fra ulike skjema i valgt register
 #'
 #' Aktuelle skjema:
-#' ActivityAndParticipationPerformanceFormDataContract: Aktivitetsfunksjon
-#' ActivityAndParticipationSatisfactionFormDataContract: Aktivitetsfornøydhet
-#' BowelFunctionFormDataContract: Tarmfunksjon (?)
-#' ControlFormDataContract: Kontroll. Noen variable er oppfølging av målinger i hovedskjema
-#' LifeQualityFormDataContract: Livskvalitet
 #' MainFormDataContract: HOVEDSKJEMA
+#' BowelFunctionFormDataContract: Tarmfunksjon (?)
+#' LifeQualityFormDataContract: Livskvalitet
 #' UrinaryTractFunctionFormDataContract: Urinfunksjon
-#'
+#' ActivityAndParticipationPerformanceFormDataContract: Aktivitetsfunksjon.
+#'      Skjema kun i det norske registeret
+#' ActivityAndParticipationSatisfactionFormDataContract: Aktivitetsfornøydhet.
+#'      Skjema kun i det norske registeret
+#' ControlFormDataContract: Kontroll. Noen variable er oppfølging av målinger i hovedskjema.
+#'      Skjema kun i det norske registeret
+#' @param valgtVar Valg av variabel angir hvilket skjema som skal knyttes til hovedskjema
+#'        siden de fire første bokstavene i variabelnavnet utgjør et prefiks for
+#'        å identifisere hvilken tabell variabelen skal hentes fraaktuell tabell. Eks LivsAlder
+#'        Variabler uten prefiks hentes fra hovedtabellen (Main...)
+#' @param register Hvilket register det skal hentes data for: 'norscir' (standard) eller 'nordicscir'
 #' @return RegData data frame
 #' @export
 
-NSRegDataSQL <- function(valgtVar='Alder') {
+NSRegDataSQL <- function(valgtVar='Alder', register='norscir') {
 
 #HovedSkjema: MainFormDataContract
 #Livs: LifeQualityFormDataContract
@@ -351,6 +358,6 @@ query <- paste0('SELECT ',
 #query <- 'select * from MainFormDataContract'
 
 
-RegData <- rapbase::loadRegData(registryName = 'nordicscir', query=query, dbType="mysql")
+RegData <- rapbase::loadRegData(registryName = register, query=query, dbType="mysql")
 return(RegData)
 }

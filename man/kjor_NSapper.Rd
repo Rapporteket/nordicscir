@@ -6,6 +6,9 @@
 \usage{
 kjor_NSapper(register = "norscir")
 }
+\arguments{
+\item{register}{Angi hvilket register som skal startes}
+}
 \value{
 Et objekt som representerer den aktuelle app'en
 }

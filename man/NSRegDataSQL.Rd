@@ -2,23 +2,34 @@
 % Please edit documentation in R/NSRegDataSQL.R
 \name{NSRegDataSQL}
 \alias{NSRegDataSQL}
-\title{Henter data for NordicScir fra  staging}
+\title{Henter data for NorScir eller NordicScir fra database}
 \usage{
-NSRegDataSQL(valgtVar = "Alder")
+NSRegDataSQL(valgtVar = "Alder", register = "norscir")
+}
+\arguments{
+\item{valgtVar}{Valg av variabel angir hvilket skjema som skal knyttes til hovedskjema
+siden de fire første bokstavene i variabelnavnet utgjør et prefiks for
+å identifisere hvilken tabell variabelen skal hentes fraaktuell tabell. Eks LivsAlder
+Variabler uten prefiks hentes fra hovedtabellen (Main...)}
+
+\item{register}{Hvilket register det skal hentes data for: 'norscir' (standard) eller 'nordicscir'}
 }
 \value{
 RegData data frame
 }
 \description{
-Spørring som henter og kobler sammen data fra ulike skjema i NordicScir
+Spørring som henter og kobler sammen data fra ulike skjema i valgt register
 }
 \details{
-Aktuelle skjema: 
-ActivityAndParticipationPerformanceFormDataContract: Aktivitetsfunksjon
-ActivityAndParticipationSatisfactionFormDataContract: Aktivitetsfornøydhet
-BowelFunctionFormDataContract: Tarmfunksjon (?)
-ControlFormDataContract: Kontroll. Noen variable er oppfølging av målinger i hovedskjema
-LifeQualityFormDataContract: Livskvalitet
+Aktuelle skjema:
 MainFormDataContract: HOVEDSKJEMA
+BowelFunctionFormDataContract: Tarmfunksjon (?)
+LifeQualityFormDataContract: Livskvalitet
 UrinaryTractFunctionFormDataContract: Urinfunksjon
+ActivityAndParticipationPerformanceFormDataContract: Aktivitetsfunksjon.
+     Skjema kun i det norske registeret
+ActivityAndParticipationSatisfactionFormDataContract: Aktivitetsfornøydhet.
+     Skjema kun i det norske registeret
+ControlFormDataContract: Kontroll. Noen variable er oppfølging av målinger i hovedskjema.
+     Skjema kun i det norske registeret
 }
