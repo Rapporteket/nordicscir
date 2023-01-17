@@ -57,6 +57,7 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
+
 <div class="section level1">
 <div class="page-header"><h1 id="nordicscir">nordicscir<a class="anchor" aria-label="anchor" href="#nordicscir"></a>
 </h1></div>
@@ -68,16 +69,16 @@
 <p>You can install the released version of nordicscir from <a href="https://github.com/Rapporteket/nordicscir" class="external-link">GitHub</a> with:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"Rapporteket/nordicscir@*release"</span><span class="op">)</span></span></code></pre></div>
-<p>The latest development version can be installed with</p>
+<p>Siste/ønsket utviklingsversjon kan installeres ved:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"Rapporteket/nordicscir"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"Rapporteket/nordicscir"</span>, ref<span class="op">=</span><span class="st">'navn på aktuell grein'</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
 </h2>
-<p>Start the shiny application from the R console:</p>
+<p>???????? Start the shiny application from the R console:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">command_tbd</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">command_tbd</span><span class="op">(</span><span class="op">)</span> <span class="co">#...could not find function "command_tbd"???</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="issues">Issues<a class="anchor" aria-label="anchor" href="#issues"></a>
@@ -93,6 +94,191 @@
 <p>and the development environment will then be served by localhost through a web browser. By default, RStudio will accessible at <a href="http://localhost:8787" class="external-link">localhost:8787</a>, the database server at <a href="http://localhost:8888" class="external-link">localhost:8888</a> and Shiny-Server at <a href="http://localhost:3838" class="external-link">localhost:3838</a>.</p>
 </div>
 </div>
+<div class="section level1">
+<h1 id="r-development-environment-and-database-for-rapporteket">R development environment and database for Rapporteket<a class="anchor" aria-label="anchor" href="#r-development-environment-and-database-for-rapporteket"></a>
+</h1>
+<div class="section level2">
+<h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
+</h2>
+<p>The <a href="https://github.com/Rapporteket/docker/blob/master/rap-dev/docker-compose.yml" class="external-link">docker-compose.yml file</a></p>
+<p>ELLER HENVISE TIL rapbases docker-compose? <a href="https://github.com/Rapporteket/rapbase/blob/make-dev/docker-compose.yml" class="external-link uri">https://github.com/Rapporteket/rapbase/blob/make-dev/docker-compose.yml</a></p>
+<p>kombinerer<br><a href="https://github.com/Rapporteket/docker/tree/master/rap-dev" class="external-link">utviklingsmiljø i R for Rapporteket</a> and a <a href="https://hub.docker.com/_/mysql/" class="external-link">docker mysql image</a> to form a development environment where data also can be explored. Hence, this set of docker containers will be suitable to develop content/reports at Rapporteket.</p>
+</div>
+<div class="section level2">
+<h2 id="hvordan-etablerer-man-et-utviklingsmiljø">Hvordan etablerer man et utviklingsmiljø?<a class="anchor" aria-label="anchor" href="#hvordan-etablerer-man-et-utviklingsmilj%C3%B8"></a>
+</h2>
+<div class="section level3">
+<h3 id="prerequisites">Prerequisites<a class="anchor" aria-label="anchor" href="#prerequisites"></a>
+</h3>
+<p>Docker must be installed, please refer to the instructions for <a href="https://docs.docker.com/docker-for-windows/install/" class="external-link">Windows</a> or <a href="https://docs.docker.com/docker-for-mac/install/" class="external-link">Mac</a> . For <a href="https://store.docker.com/search?offering=community&amp;type=edition&amp;operating_system=linux" class="external-link">linux</a></p>
+<p>please make sure to install <a href="https://docs.docker.com/compose/install/" class="external-link">docker-compose</a> after the docker engine has been installed.</p>
+<p>NB! Please follow the above install instructions carefully. The method used to successfully install docker will depend on your type of OS (and sometimes different versions of the same OS). You might even need to alter BIOS-settings on your computer if virtualisation is not already enabled.</p>
+<p>This documentation is written based on docker hosted on a linux-type OS. Even though a lot of the commands are the same across platforms, following these instructions still might lead you astray. For instance, if you are running the container on an older Windows OS using Docker Toolbox the web browser address <a href="http://localhost:8787" class="external-link">localhost:8787</a> (used throughout this document) will not get you to the right place. Instead, you might find the corresponding site at <a href="http://192.168.99.100:8787" class="external-link">192.168.99.100:8787</a>. The actual IP in this case can be found by running</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker-machine</span> ip default</span></code></pre></div>
+<p>in the Docker Quick Start Terminal, or <code>gitbash</code> in Windows.</p>
+</div>
+<div class="section level3">
+<h3 id="adjustments-to-reflect-your-environment">Adjustments to reflect your environment<a class="anchor" aria-label="anchor" href="#adjustments-to-reflect-your-environment"></a>
+</h3>
+<p>The below sections might or might not apply to your use cases. At the very start of each section a small piece of text is provided to help you decide if the case in question do apply or, if not, can be skipped. And please, do not worry! If you have it wrong, just start over again. Every adjustment you make will be done in either of the files <a href="https://github.com/Rapporteket/docker/blob/master/rap-dev-data/docker-compose.yml" class="external-link">docker-compose.yml</a> or <a href="https://github.com/Rapporteket/docker/blob/master/rap-dev-data/Dockerfile" class="external-link">Dockerfile</a>. Likely, both will come in handy, so you might as well download them right away (along with rest of the repository):</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/Rapporteket/docker.git <span class="at">--config</span> core.autocrlf=input</span></code></pre></div>
+<p>Before you proceed, move into the directory <em>rap-dev</em> where you will find both of the above mentioned files.</p>
+<div class="section level4">
+<h4 id="expose-your-ssh-keys-to-the-container">Expose your ssh keys to the container<a class="anchor" aria-label="anchor" href="#expose-your-ssh-keys-to-the-container"></a>
+</h4>
+<p>It is likely that you want to take use of your ssh keys already existing on your computer (host of your container-to-become).</p>
+<div class="section level5">
+<h5 id="on-linux-and-probably-also-mac-but-not-tested">On linux (and probably also mac, but not tested)<a class="anchor" aria-label="anchor" href="#on-linux-and-probably-also-mac-but-not-tested"></a>
+</h5>
+<p>If you use a linux-type os your ssh keys are usually found in the <em>~/.ssh</em> directory and the corresponding entry in <em>docker-compose.yml</em> is shown below:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">...</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co">  dev:</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">  ...</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">  volumes:</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">    - ~/.ssh:/home/rstudio/.ssh</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co">  ...</span></span></code></pre></div>
+<p>where all after the “:” defines the mount point within the container. Please adjust the part before the “:” according to where your private key is stored on the host.</p>
+</div>
+<div class="section level5">
+<h5 id="on-windows">On Windows<a class="anchor" aria-label="anchor" href="#on-windows"></a>
+</h5>
+<p>If you use Windows and to ensure the correct permissions of your ssh keys used within the container the mount point is different from that of linux (and probably mac). Assuming your ssh keys are stored in the <em>C:\Users\[username]\.ssh</em> directory (replace <em>[username]</em> with your actual username) the corresponding entry in <em>docker-compose.yml</em> is shown below:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">...</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co">  dev:</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">  ...</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">  volumes:</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">    - C:/Users/[username]/.ssh:/tmp/.ssh</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co">  ...</span></span></code></pre></div>
+<p>where all after the “:” defines the mount point within the container. Please adjust the part before the “:” according to where your ssh keys are stored on the host. Initialization of the container will make sure your keys are copied to the right place within the container and to adjust permissions accordingly.</p>
+<p>Filene i .ssh-mappa på harddisk skal speiles til .ssh-mappa i containeren, men i Windows kan det være vanskelig å få satt riktige rettigheter på ssh-mappa. Dette kan man omgå på følgende måte:</p>
+<p>Egen nøkkel ligger sannsynligvis i .ssh <em>C:\Users\[username]\.ssh</em>-mappa på egen maskin Man speiler .ssh-mappa på harddisk til ei anna mappe i containeren, f.eks. “speilKat”. Det betyr at ei linje (rundt linje 16) i docker-compose.yml endres til: volumes: - ~/.ssh:/home/rstudio/.ssh TIL, f.eks. - ~/.ssh:/home/rstudio/speilKat</p>
+<p>Kopier nøkler (id_rsa og id_rsa.pub), evt også config fra .ssh til speilKat i container: mkdir .ssh cp ./speilKat/* /.ssh/</p>
+<p><em>Sjekke og Endre rettigheter (fra terminal):</em> Sjekke rettigheter: ls -l</p>
+<p>.ssh directory permissions should be 700 (drwx——). : chmod 700 ./.ssh The public key (. pub file) should be 644 (-rw-r–r–). : chmod 644 id_rsa.pub The private key (id_rsa) on the client host, and the authorized_keys file on the server, should be 600 (-rw——-): chmod 600 id_rsa Store your setting by saving the docker-compose.yml-file.</p>
+</div>
+</div>
+<div class="section level4">
+<h4 id="define-domain-name-system-dns-servers-to-the-container">Define domain name system (DNS) servers to the container<a class="anchor" aria-label="anchor" href="#define-domain-name-system-dns-servers-to-the-container"></a>
+</h4>
+<p>If you will be using your container on a network where internet traffic will traverse a proxy server (see <a href="#build">Build a local image and define proxy server settings</a>) it is also likely that you will have to define DNS servers residing on your local network. If you are not behind such a proxy server, skip this section.</p>
+<p>First, you will have to find the IP address(es) of your DNS servers. On Ubuntu &lt;=14 your DNS servers can be listed using the command:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">nmcli</span> dev list iface <span class="op">&lt;</span>interfacename<span class="op">&gt;</span> <span class="kw">|</span> <span class="fu">grep</span> IP4</span></code></pre></div>
+<p>or for Ubuntu &gt;=15:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">nmcli</span> device show <span class="op">&lt;</span>interfacename<span class="op">&gt;</span> <span class="kw">|</span> <span class="fu">grep</span> IP4.DNS</span></code></pre></div>
+<p>Most likely &lt;interfacename&gt; should be replaced by <em>eth0</em>, <em>wlan0</em> or similar.</p>
+<p>On Windows, open a command prompt (<em>cmd</em>) and type:</p>
+<pre class="cmd"><code><span><span class="va">ipconfig</span> <span class="op">/</span><span class="va">all</span></span></code></pre>
+<p>and look for IP addresses in lines of the output that contain the letters “DNS”.</p>
+<p>Then, provide the IP(s) of your nameserver(s) in the <em>docker-compose.yml</em> file:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co">...</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co">   dev:</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co">     depends_on:</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co">       - db</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co">     image: rap-dev-data</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co">     volumes:</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="co">       - ~/.ssh:/home/rstudio/.ssh</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="co">     ports:</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co">       - "8787:8787"</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="co">       - "3838:3838"</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="co">     dns:</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="co">       - 8.8.8.8</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="co">       - dns_ip_1</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="co">       - dns_ip_2</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="co">       - dns_ip_3</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="co">...</span></span></code></pre></div>
+<p>Save the file.</p>
+</div>
+</div>
+<div class="section level3">
+<h3 id="add-local-data-to-container">Add local data to container<a class="anchor" aria-label="anchor" href="#add-local-data-to-container"></a>
+</h3>
+<div class="section level4">
+<h4 id="build-a-local-image-and-define-proxy-server-settings">
+<a name="build"></a>Build a local image and define proxy server settings<a class="anchor" aria-label="anchor" href="#build-a-local-image-and-define-proxy-server-settings"></a>
+</h4>
+<p>If you do not need to define a proxy server or you do not need to add local data to your container, skip this section.</p>
+<p>If your container is to be used behind a proxy server or/and you will add local data to your container you have to build your very own version of the <em>rap-dev-data</em> container image. On the command line (Docker Quick Start Terminal if on older Windows) make sure you are placed in the <em>rap-dev-data</em> directory. Clean up any docker leftovers from previous builds to ensure you build a clean image:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> system prune <span class="at">--all</span> <span class="at">--volumes</span> <span class="at">--force</span></span></code></pre></div>
+<p>Then you build the your local image by following ONE out of the below two alternatives. It will take some time to pull and extract images all over again so please be patient.</p>
+<div class="section level5">
+<h5 id="alternative-a-without-proxy">Alternative A: without proxy<a class="anchor" aria-label="anchor" href="#alternative-a-without-proxy"></a>
+</h5>
+<p>From the command line do:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> build <span class="at">--no-cache</span> <span class="at">--pull</span> <span class="at">--force-rm</span> <span class="at">-t</span> rap-dev-data .</span></code></pre></div>
+</div>
+<div class="section level5">
+<h5 id="alternative-b-with-proxy">Alternative B: with proxy<a class="anchor" aria-label="anchor" href="#alternative-b-with-proxy"></a>
+</h5>
+<p>Make sure you know the <em>IP address</em> and <em>port number</em> of your proxy server which will be on the form similar to <em><a href="http://192.168.0.1:8080_" class="external-link uri">http://192.168.0.1:8080_</a> where the IP address and port number are separated by “:”. If you do not know what address and port number to use, ask IT support staff or a system administrator. Assuming that the container to be built is to be run locally (on the same computer building it) the same proxy settings will also apply to the docker software running on your computer. The docker software may be able to read global proxy settings for your system and in that case you will be ready to proceed. If not, you might end up getting “connection refused” while trying to pull images during build. Then, you will also have to configure your docker software to reflect your system settings by altering configuration of the docker daemon. On linux (and maybe also similar on other systems, but not tested), open the file </em>/etc/default/docker_ and fill in your proxy server settings (requires root privileges):</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co"># If you need Docker to use an HTTP proxy, it can also be specified here.</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">http_proxy</span><span class="op">=</span><span class="st">"http://192.168.0.1:8080/"</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">https_proxy</span><span class="op">=</span><span class="st">"http://192.168.0.1:8080/"</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span></span></code></pre></div>
+<p>For this to take effect the docker daemon needs to be restarted. On linux (again, not yet tested for other systems) run the following command (also requires root privileges):</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> service docker restart</span></code></pre></div>
+<p>Then, build a local image with proxy definition:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> build <span class="at">--no-cache</span> <span class="at">--pull</span> <span class="at">--force-rm</span> <span class="at">--build-arg</span> PROXY=http://192.168.0.1:8080 <span class="at">-t</span> rap-dev-data .</span></code></pre></div>
+<p>After performing one of the two above alternative builds edit the <em>docker-compose.yml</em> file to make sure you use your newly built local image (rather than pulling it from a remote repository) when starting the container. After editing, the relevant part of <em>docker-compose.yml</em> should look like this:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>   <span class="ex">dev:</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>     <span class="ex">depends_on:</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>       <span class="ex">-</span> db</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>     <span class="ex">image:</span> rap-dev-data</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span></span></code></pre></div>
+</div>
+</div>
+</div>
+<div class="section level3">
+<h3 id="start-containers">Start containers<a class="anchor" aria-label="anchor" href="#start-containers"></a>
+</h3>
+<p>Working your way down here from the top you should be ready to start the containers. On the command line and placed under the <em>rap-dev</em> directory ??Her skal vi kanskje endre til å starte fra <em>“lokal katalog for github-repositories”/nordicscir</em> run the command:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker-compose</span> up</span></code></pre></div>
+<p>After the startup process RStudio will be accessible navigating your browser to <a href="http://localhost:8787" class="external-link">localhost:8787</a>. Log into RStudio with user “rstudio” and password “password”. To access shiny-server navigate your browser to <a href="http://localhost:3838" class="external-link">localhost:3838</a> (no password needed).</p>
+</div>
+<div class="section level3">
+<h3 id="initializing-container-data">Initializing container data<a class="anchor" aria-label="anchor" href="#initializing-container-data"></a>
+</h3>
+<p>At its initial state <em>rap-dev-data</em> holds data in an encrypted form and this data payload must be decrypted to enable further use. An init-script is provided to aid decryption, loading of data into the mysql database, installation of various configuration files, etc. Once your container is started, your web browser is navigated to <a href="http://localhost:8787" class="external-link">localhost:8787</a> and you are logged into RStudio, open the RStudio terminal tab and run the init script:</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./init.sh</span></span></code></pre></div>
+<p>You will be prompted for the password to your private key used for decryption and root password for your mysql database. The latter is by default set to “root”. Please note that use of shiny-server in this container may also depend on configuration provided through this init-script. Therefore, every time this container is started at its initial state please run this script before you start your work.</p>
+</div>
+<div class="section level3">
+<h3 id="stop-containers">Stop containers<a class="anchor" aria-label="anchor" href="#stop-containers"></a>
+</h3>
+<p>Using the above start up command pres <code>ctrl + c</code> to stop the containers. Docker will save the state of your containers and any data that you’ve been working on will still be there once you start your containers the next time. For the security of your data this migth not be desirable. In that case it is recommended to remove your containers (but keeping the initial images) by running the following command after the containers have been stopped:</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> rm <span class="at">-vf</span> <span class="va">$(</span><span class="ex">docker</span> ps <span class="at">-a</span> <span class="at">-q</span><span class="va">)</span></span></code></pre></div>
+<p>After running this command and the next time the containers are started they will be in their initial states (as built).</p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="data-protection">Data protection<a class="anchor" aria-label="anchor" href="#data-protection"></a>
+</h2>
+<p>Getting the most out of the <em>rap-dev-data</em> container depend on the availablity of sensible data. The purpose of the following text is pure informational, mainly on how the data is protected both at rest (storage) and during transport and will apply regardless if the container image comes with data pre-built or if users add data to the container after it has been fetched.</p>
+<div class="section level3">
+<h3 id="organizational-measures">Organizational measures<a class="anchor" aria-label="anchor" href="#organizational-measures"></a>
+</h3>
+<p>In this context there are two parties involved; the <em>provider</em> and the <em>user</em> where the direction of flow is from the first to the latter. Formally, by law/regulation the <em>user</em> represents the <em>data owner</em> and the <em>provider</em> represents the <em>data processor</em> acting under instruction from the <em>data owner</em>. At both ends data will be at rest (stored) and during exchange data will be transported. Flow of data is always initiated by a request from the <em>user</em> to the <em>provider</em> and is only possible (see <a href="#tech">Technical measures</a>) if the <em>user</em> is a member of the <em>Rapporteket</em> organization at GitHub. Membership in this organization can be obtained by persons cooperating on registry statistics and is granted base on user application and a following approval by administrators of this organization.</p>
+<p>This arrangement ensures that the <em>provider</em> and the <em>user</em> have both a formal and a practical relation prior to any exchange of data.</p>
+</div>
+<div class="section level3">
+<h3 id="technical-measures">
+<a name="tech"></a>Technical measures<a class="anchor" aria-label="anchor" href="#technical-measures"></a>
+</h3>
+<p>A data set to be used in conjunction with this docker container is encrypted by the <em>provider</em> following a hybrid scheme: the data is encrypted applying a <a href="https://en.wikipedia.org/wiki/Symmetric-key_algorithm" class="external-link">symmetric key algorithm</a> using a disposable key. This key is in turn encrypted using <a href="https://en.wikipedia.org/wiki/Public-key_cryptography" class="external-link">public-key cryptography</a> with a public key provided by the <em>user</em> (resipient of data). Here, the term “hybrid” referes to that both symmetric an asymmetric encrytion systems are used, and the term “disposable” means that the key used for in the symmetric key algorithm will only be applied once and never re-used for encryption of data. The public key is assosiated with a corresponding private key that is kept secret and only accessible by the person owning it (in contrast to the public key that can be shared freely). The <em>provider</em> then deliver the encrypted data to the <em>user</em>. After receiving the data the <em>user</em> follow the reverse hybrid scheme: the encrypted “symmetric key” is decrypted applying the <em>users</em> private key and then the decrypted symmetric key is used to decrypt the data set itself.</p>
+<p>Method of encryption consists of generating a randomized 256 bit key every time data is to be encrypted. This key is then used to encrypt data following the <a href="https://en.wikipedia.org/wiki/Advanced_Encryption_Standard" class="external-link">Advance Encryption Standard</a>. The recipients public key is collected from his/hers user account at GitHub and used to asymmetrically encrypt the “symmetric key”. The encrypted data and encrypted key is then shipped to the recipient. For practial implementation of encryption and decryption as describe above the <a href="https://www.openssl.org/" class="external-link">OpenSSL cryptography library</a> is applied.</p>
+<p>This scheme ensures that data privacy are protected by <a href="https://www.keylength.com/" class="external-link">sufficiently strong encryption</a> also along the lines of the <a href="https://www.nsm.stat.no/globalassets/dokumenter/veiledninger/systemteknisk-sikkerhet/nsm-cryptographic-recommendations-juli19.pdf" class="external-link">recommendations by the Norwegian National Security Authority</a> and that decryption only can be performed by the recipient.</p>
+</div>
+<div class="section level3">
+<h3 id="ways-of-data-delivery-transport">Ways of data delivery (transport)<a class="anchor" aria-label="anchor" href="#ways-of-data-delivery-transport"></a>
+</h3>
+<p>A data set can be delivered by e-mail, which is a method commonly used when statisticians need data from the registries they work on. E-mail is <em>per se</em> an insecure channel; the sender or recipient cannot control or prevent evesdroping or any temporary of permanent storage of e-mail content in transit. However, when the content itself (<em>e.g.</em> data) is properly protected by methods approved by the <em>data owner</em> this method can still be safely applied for data transportation.</p>
+<p>Alternatively, a data set can be bundled into the container image and exposed in a cloud service for retrieval. The cloud service may <em>per se</em> be publicly accessible and hence insecure in terms of data privacy. Again, when the data set itself is properly protected by methods approved by the <em>data owner</em> this method can be safely applied for data transportation.</p>
+<p>In this context the two methods described above can be regarded as equal with regard to the degree of data privacy protection.</p>
+</div>
+</div>
+</div>
+
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -144,7 +330,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>
