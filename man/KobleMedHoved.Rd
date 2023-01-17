@@ -7,7 +7,7 @@
 KobleMedHoved(HovedSkjema, Skjema2, alleHovedskjema = F, alleSkjema2 = F)
 }
 \arguments{
-\item{HovedSkjema}{hvilket skjema skal oppfølgingsskjemaet kobles til? De fleste kobles til Hovedskjema. 
+\item{HovedSkjema}{hvilket skjema skal oppfølgingsskjemaet kobles til? De fleste kobles til Hovedskjema.
 Satisfaction kobles til Performance}
 
 \item{Skjema2}{Oppfølgingsskjemaet som skal kobles til sitt aktuelle hovedskjema}
