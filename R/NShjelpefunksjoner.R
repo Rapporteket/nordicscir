@@ -8,8 +8,8 @@
 
 kjor_NSapper <- function(register = 'norscir') {
   if (register == 'norscir'){
-  shiny::shinyApp(ui = ui_norscir(), server = server_norscir())}
-
+  shiny::shinyApp(ui = ui_norscir, server = server_norscir)}
+  #shiny::shinyApp(ui = app_ui, server = app_server)
   if (register == 'nordicscir'){
     shiny::shinyApp(ui = ui_nordicscir, server = server_nordicscir)}
 
@@ -162,7 +162,6 @@ TilLogiskeVar <- function(Skjema){
 #' @param datoFra - startdato for data som hentes til bruk i rapporten
 #' @param datoTil - sluttdato for data som hentes til bruk i rapporten
 #'
-#' @return
 #' @export
 abonnement <- function(rnwFil, brukernavn='ukjent', reshID=0,
                        datoFra=Sys.Date()-400, datoTil=Sys.Date()) {
