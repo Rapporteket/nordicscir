@@ -627,19 +627,19 @@ print(session)
   }
 
   isGetDataOk <- TRUE
-  isProcessDataOk <- TRUE
-  AlleTab <- getRealData()
+  isprocessAllDataOk <- TRUE
+  AlleTab <- getRealData(register = 'norscir')
   if (is.null(AlleTab)) {
     warning("Not able to get real data. Applying fake data instead!")
     isGetDataOk <- FALSE
-    AlleTab <- getFakeData()
+    AlleTab <- getFakeData() #Har foreløpig bare norske, fiktive data. Men blir de hentet...?
   }
-  AlleTab <- processData(AlleTab)
+  AlleTab <- processAllData(AlleTab, register = 'norscir')
   if (is.null(AlleTab)) {
     warning("Not able to process data.")
-    isProcessDataOk <- FALSE
+    isprocessAllDataOk <- FALSE
   }
-  isDataOk <- all(c(isGetDataOk, isProcessDataOk))
+  isDataOk <- all(c(isGetDataOk, isprocessAllDataOk))
   attach(AlleTab)
 
 

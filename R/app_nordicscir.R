@@ -635,7 +635,7 @@ print(session)
     isGetDataOk <- FALSE
     AlleTab <- getFakeData()
   }
-  AlleTab <- processData(AlleTab)
+  AlleTab <- processData(AlleTab, register = 'nordicscir')
   if (is.null(AlleTab)) {
     warning("Not able to process data.")
     isProcessDataOk <- FALSE

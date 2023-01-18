@@ -18,7 +18,7 @@ kjor_NSapper <- function(register = 'norscir') {
   if (!(register %in% c('norscir','nordicscir'))){
     warning('Angitt register har ingen app')}
 
-  runApp(app)
+  shiny::runApp(app)
 
 }
 

@@ -5,16 +5,18 @@
 \alias{getRealData}
 \alias{getFakeData}
 \alias{processData}
+\alias{processAllData}
 \title{Get Data for NordicScir}
 \usage{
 getRealData(register = "norscir")
 
-getFakeData()
+getFakeData(register = "norscir")
 
-processData(register = "norscir", data)
+processAllData(data, register = "norscir")
 }
 \arguments{
-\item{register}{Hvilket register det skal hentes data for}
+\item{register}{Hvilket register det skal hentes data for
+'norscir' (standard) eller 'nordicscir'}
 
 \item{data}{A data object to be processed by the function.}
 }

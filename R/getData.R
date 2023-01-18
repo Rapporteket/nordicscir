@@ -4,6 +4,7 @@
 #'
 #' @param data A data object to be processed by the function.
 #' @param register Hvilket register det skal hentes data for
+#'        'norscir' (standard) eller 'nordicscir'
 #' @return A list of data objects (data frames).  If not successful in query for
 #' real data, a warning is issued and NULL will be will be returned.
 #' @aliases getRealData getFakeData processData
@@ -42,7 +43,8 @@ getRealData <- function(register='norscir') {
 
 #' @rdname getData
 #' @export
-getFakeData <- function() {
+getFakeData <- function(register = 'norscir') {
+#Har foreløpbig bare norske, fiktive data.
 
   data('NordicScirFIKTIVEdata', package = 'nordicscir', envir = environment())
 
@@ -85,7 +87,7 @@ getFakeData <- function() {
 
 #' @rdname getData
 #' @export
-processData <- function(register = 'norscir', data) {
+processAllData <- function(data, register = 'norscir') {
 
   tryCatch({
     HovedSkjema <- NSPreprosesser(data$HovedSkjema)
