@@ -47,12 +47,7 @@ and the development environment will then be served by localhost through a web b
 # R development environment and database for Rapporteket
 
 ## Introduction
-The 
-[docker-compose.yml file](https://github.com/Rapporteket/docker/blob/master/rap-dev/docker-compose.yml)
-
-ELLER HENVISE TIL rapbases docker-compose?
-https://github.com/Rapporteket/rapbase/blob/make-dev/docker-compose.yml
-
+The [docker-compose.yml file](https://github.com/Rapporteket/docker/blob/master/rap-dev/docker-compose.yml), evt. se: https://github.com/Rapporteket/rapbase/blob/make-dev/docker-compose.yml
 kombinerer  
 [utviklingsmiljø i R for Rapporteket](https://github.com/Rapporteket/docker/tree/master/rap-dev)
 and a
@@ -62,7 +57,6 @@ be explored. Hence, this set of docker containers will be suitable to develop
 content/reports at Rapporteket.
 
 ## Hvordan etablerer man et utviklingsmiljø?
-
 
 ### Prerequisites
 Docker must be installed, please refer to the instructions for
@@ -97,10 +91,7 @@ in the Docker Quick Start Terminal, or `gitbash` in Windows.
 
 
 ### Adjustments to reflect your environment
-The below sections might or might not apply to your use cases. At the very
-start of each section a small piece of text is provided to help you
-decide if the case in question do apply or, if not, can be skipped. And please,
-do not worry! If you have it wrong, just start over again. Every adjustment
+The below sections might or might not apply to your use cases. If you have it wrong, just start over again. Every adjustment
 you make will be done in either of the files
 [docker-compose.yml](https://github.com/Rapporteket/docker/blob/master/rap-dev-data/docker-compose.yml)
 or
