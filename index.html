@@ -100,9 +100,7 @@
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>The <a href="https://github.com/Rapporteket/docker/blob/master/rap-dev/docker-compose.yml" class="external-link">docker-compose.yml file</a></p>
-<p>ELLER HENVISE TIL rapbases docker-compose? <a href="https://github.com/Rapporteket/rapbase/blob/make-dev/docker-compose.yml" class="external-link uri">https://github.com/Rapporteket/rapbase/blob/make-dev/docker-compose.yml</a></p>
-<p>kombinerer<br><a href="https://github.com/Rapporteket/docker/tree/master/rap-dev" class="external-link">utviklingsmiljø i R for Rapporteket</a> and a <a href="https://hub.docker.com/_/mysql/" class="external-link">docker mysql image</a> to form a development environment where data also can be explored. Hence, this set of docker containers will be suitable to develop content/reports at Rapporteket.</p>
+<p>The <a href="https://github.com/Rapporteket/docker/blob/master/rap-dev/docker-compose.yml" class="external-link">docker-compose.yml file</a>, evt. se: <a href="https://github.com/Rapporteket/rapbase/blob/make-dev/docker-compose.yml" class="external-link uri">https://github.com/Rapporteket/rapbase/blob/make-dev/docker-compose.yml</a> kombinerer<br><a href="https://github.com/Rapporteket/docker/tree/master/rap-dev" class="external-link">utviklingsmiljø i R for Rapporteket</a> and a <a href="https://hub.docker.com/_/mysql/" class="external-link">docker mysql image</a> to form a development environment where data also can be explored. Hence, this set of docker containers will be suitable to develop content/reports at Rapporteket.</p>
 </div>
 <div class="section level2">
 <h2 id="hvordan-etablerer-man-et-utviklingsmiljø">Hvordan etablerer man et utviklingsmiljø?<a class="anchor" aria-label="anchor" href="#hvordan-etablerer-man-et-utviklingsmilj%C3%B8"></a>
@@ -120,7 +118,7 @@
 <div class="section level3">
 <h3 id="adjustments-to-reflect-your-environment">Adjustments to reflect your environment<a class="anchor" aria-label="anchor" href="#adjustments-to-reflect-your-environment"></a>
 </h3>
-<p>The below sections might or might not apply to your use cases. At the very start of each section a small piece of text is provided to help you decide if the case in question do apply or, if not, can be skipped. And please, do not worry! If you have it wrong, just start over again. Every adjustment you make will be done in either of the files <a href="https://github.com/Rapporteket/docker/blob/master/rap-dev-data/docker-compose.yml" class="external-link">docker-compose.yml</a> or <a href="https://github.com/Rapporteket/docker/blob/master/rap-dev-data/Dockerfile" class="external-link">Dockerfile</a>. Likely, both will come in handy, so you might as well download them right away (along with rest of the repository):</p>
+<p>The below sections might or might not apply to your use cases. If you have it wrong, just start over again. Every adjustment you make will be done in either of the files <a href="https://github.com/Rapporteket/docker/blob/master/rap-dev-data/docker-compose.yml" class="external-link">docker-compose.yml</a> or <a href="https://github.com/Rapporteket/docker/blob/master/rap-dev-data/Dockerfile" class="external-link">Dockerfile</a>. Likely, both will come in handy, so you might as well download them right away (along with rest of the repository):</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/Rapporteket/docker.git <span class="at">--config</span> core.autocrlf=input</span></code></pre></div>
 <p>Before you proceed, move into the directory <em>rap-dev</em> where you will find both of the above mentioned files.</p>
 <div class="section level4">
