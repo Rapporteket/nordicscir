@@ -7,7 +7,7 @@
 #'        'norscir' (standard) eller 'nordicscir'
 #' @return A list of data objects (data frames).  If not successful in query for
 #' real data, a warning is issued and NULL will be will be returned.
-#' @aliases getRealData getFakeData processData
+#' @aliases getRealData getFakeData processAllData
 #' @name getData
 NULL
 

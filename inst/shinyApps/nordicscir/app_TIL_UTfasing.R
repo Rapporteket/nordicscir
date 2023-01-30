@@ -621,7 +621,7 @@ server <- function(input, output, session) {
     isGetDataOk <- FALSE
     AlleTab <- getFakeData()
   }
-  AlleTab <- processData(AlleTab)
+  AlleTab <- processAllData(AlleTab)
   if (is.null(AlleTab)) {
     warning("Not able to process data.")
     isProcessDataOk <- FALSE

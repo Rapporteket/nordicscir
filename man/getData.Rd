@@ -4,7 +4,6 @@
 \alias{getData}
 \alias{getRealData}
 \alias{getFakeData}
-\alias{processData}
 \alias{processAllData}
 \title{Get Data for NordicScir}
 \usage{
