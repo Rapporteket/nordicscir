@@ -29,6 +29,6 @@ tabBelegg(
 Fil som beregner div tabeller.Group of functions Description section
 }
 \details{
-Fil som inneholder funksjoner for å lage tabeller, i første rekke tellinger av personer 
+Fil som inneholder funksjoner for å lage tabeller, i første rekke tellinger av personer
 Belegg (samlerapport), antall opphold per år og enhet, ant. pasienter per år og enhet, ant opph. per måned og enhet.
 }
