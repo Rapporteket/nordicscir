@@ -112,44 +112,13 @@ tabAntOpphPasSh5Aar <- function(RegData, gr='opph', datoTil){
       return(tabAvdAarN)
 }
 
-# #' @section Tabell: Antall og andel hovedskjema som har ulike typer registreringsskjema
-# #' @rdname NordicScirtabeller
-# #' @export
-# #'
-# tabSkjemaTilknyttetH <- function(Data=AlleTab, datoFra='2017-01-01', datoTil=Sys.Date()){
-#
-#       Data$HovedSkjema <- NSUtvalg(Data$HovedSkjema, datoFra = datoFra, datoTil = datoTil)$RegData
-#
-#       RaaTab <- data.frame(Sykehus = Data$HovedSkjema$ShNavn,
-#                      #Aar = as.POSIXlt(Hskjema$AdmitDt, format="%Y-%m-%d")$year +1900,
-#                      Livskvalitet = Data$HovedSkjema$SkjemaGUID %in% Data$LivskvalitetH$HovedskjemaGUID,
-#                      #Kontroll = HovedSkjema$SkjemaGUID %in% Kontroll$HovedskjemaGUID,
-#                      Urin = Data$HovedSkjema$SkjemaGUID %in% Data$UrinH$HovedskjemaGUID,
-#                      Tarm = Data$HovedSkjema$SkjemaGUID %in% Data$TarmH$HovedskjemaGUID,
-#                      Funksjon = Data$HovedSkjema$SkjemaGUID %in% Data$FunksjonH$HovedskjemaGUID,
-#                      Tilfredshet = Data$HovedSkjema$SkjemaGUID %in%
-#                            Data$FunksjonH$HovedskjemaGUID[Data$FunksjonH$SkjemaGUID %in% Data$TilfredsH$HovedskjemaGUID]
-# )
-#
-# AntReg <- table(Data$HovedSkjema$ShNavn)
-# AntOppf <- cbind(Hoved = AntReg,
-#                  apply(RaaTab[ ,-1], MARGIN=2,
-#                        FUN=function(x) tapply(x,INDEX=RaaTab$Sykehus, sum))
-#                  )
-# addmargins(AntOppf, margin=1, FUN = list('Hele landet' = sum) )
-# AndelOppf <- (100*AntOppf / as.vector(AntReg))[,-1]
-#
-# tab = list(Antall = AntOppf,
-#            Andeler = AndelOppf)
-# return(tab)
-# }
-
 #' Tabell: Antall og andel moder"skjema som har ulike typer registreringsskjema
 #' @param moderSkjema Hvilket skjema man skal knytte oppfølgingene til
 #' @inheritParams NSUtvalg
 #' @export
 #'
-tabSkjemaTilknyttet <- function(Data=AlleTab, moderSkjema='Hoved', datoFra='2017-01-01', datoTil=Sys.Date()){
+tabSkjemaTilknyttet <- function(Data=AlleTab, moderSkjema='Hoved',
+                                datoFra='2017-01-01', datoTil=Sys.Date()){
       #Denne skal fungere både for HovedSkjema og kontrollskjema. I AlleTab er
       ModerSkjema <- switch(moderSkjema,
                             'Hoved' = Data$HovedSkjema,
@@ -162,22 +131,28 @@ tabSkjemaTilknyttet <- function(Data=AlleTab, moderSkjema='Hoved', datoFra='2017
          } else {
             ModerSkjema <- NSUtvalg(RegData=ModerSkjema, datoFra = datoFra,
                               datoTil = datoTil)$RegData}
+      exists('Data$AktivFunksjon')
       RaaTab <- data.frame(Sykehus = ModerSkjema$ShNavn,
                            #Aar = as.POSIXlt(Hskjema$AdmitDt, format="%Y-%m-%d")$year +1900,
                            Livskvalitet = ModerSkjema$SkjemaGUID %in% Data$LivskvalH$HovedskjemaGUID,
                            #Kontroll = HovedSkjema$SkjemaGUID %in% Kontroll$HovedskjemaGUID,
                            Urin = ModerSkjema$SkjemaGUID %in% Data$UrinH$HovedskjemaGUID,
-                           Tarm = ModerSkjema$SkjemaGUID %in% Data$TarmH$HovedskjemaGUID,
-                           Funksjon = ModerSkjema$SkjemaGUID %in% Data$AktivFunksjonH$HovedskjemaGUID,
-                           Tilfredshet = ModerSkjema$SkjemaGUID %in%
-                                 Data$AktivFunksjonH$HovedskjemaGUID[Data$AktivFunksjonH$SkjemaGUID %in% Data$AktivTilfredshetH$HovedskjemaGUID]
-      )
+                           Tarm = ModerSkjema$SkjemaGUID %in% Data$TarmH$HovedskjemaGUID
+                           )
+      if (exists('Data$AktivFunksjon')) {
+        RaaTab <- cbind(RaaTab,
+                        Funksjon = ModerSkjema$SkjemaGUID %in% Data$AktivFunksjonH$HovedskjemaGUID,
+                        Tilfredshet = ModerSkjema$SkjemaGUID %in%
+                          Data$AktivFunksjonH$HovedskjemaGUID[Data$AktivFunksjonH$SkjemaGUID %in%
+                                              Data$AktivTilfredshetH$HovedskjemaGUID]
+                        )
+        }
 
       AntReg <- table(ModerSkjema$ShNavn)
       AntOppf <- cbind(Hoved = AntReg,
                        apply(RaaTab[ ,-1], MARGIN=2,
                              FUN=function(x) tapply(x,INDEX=RaaTab$Sykehus, sum))
-      )
+                       )
       addmargins(AntOppf, margin=1, FUN = list('Hele landet' = sum) )
       AndelOppf <- (100*AntOppf / as.vector(AntReg))[,-1]
       if (moderSkjema == 'Ktr') { colnames(AntOppf)[1] <- 'Kontroll'}

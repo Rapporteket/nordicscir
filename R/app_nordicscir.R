@@ -99,7 +99,6 @@ ui_nordicscir <- function() {
           },
           shiny::h2("Velkommen til Rapporteket - Nordisk Ryggmargsskaderegister!",
                     align='center'),
-          shiny::h3('NB: Dette er bare en kopi av den norske Rapporteket versjonen, dog knyttet til nordiske data'),
           shiny::br(),
           shiny::tabsetPanel(
             id = "startside",
@@ -163,15 +162,14 @@ ui_nordicscir <- function() {
               "Tid fra skade til oppstart rehab." = "DagerTilRehab",
               "Tid med rehabilitering" = "DagerRehab",
               "Utskrevet til" = "UtTil",
-              #"Fjern? Pustehjelp" = "Pustehjelp[VentAssi]",
-              "A&D Funksjon: Mobilitet" = "FunkMob",
-              "A&D Funksjon: Påkledning" = "FunkKler",
-              "A&D Funksjon: Spising" = "FunkSpis",
-              "A&D Funksjon: Toalett" = "FunkDo",
-              "A&D Tilfredshet: Mobilitet" = "TilfMob",
-              "A&D Tilfredshet: Påkledning" = "TilfKler",
-              "A&D Tilfredshet: Spising" = "TilfSpis",
-              "A&D Tilfredshet: Toalett" = "TilfDo",
+              # "A&D Funksjon: Mobilitet" = "FunkMob",
+              # "A&D Funksjon: Påkledning" = "FunkKler",
+              # "A&D Funksjon: Spising" = "FunkSpis",
+              # "A&D Funksjon: Toalett" = "FunkDo",
+              # "A&D Tilfredshet: Mobilitet" = "TilfMob",
+              # "A&D Tilfredshet: Påkledning" = "TilfKler",
+              # "A&D Tilfredshet: Spising" = "TilfSpis",
+              # "A&D Tilfredshet: Toalett" = "TilfDo",
               "Livskval.: Tilfredshet med livet" = "LivsGen",
               "Livskval.: Tilfredshet med fysisk helse" = "LivsFys",
               "Livskval.: Tilfredshet med psykisk helse" = "LivsPsyk",
@@ -454,8 +452,7 @@ ui_nordicscir <- function() {
           ),
           shiny::conditionalPanel(
             condition = paste0(
-              "input.ark == 'Antall hovedskjema med tilknyttede skjema' | ",
-              "input.ark == 'Antall kontrollskjema med tilknyttede skjema' "
+              "input.ark == 'Antall hovedskjema med tilknyttede skjema' | " #,"input.ark == 'Antall kontrollskjema med tilknyttede skjema' "
             ),
             shiny::dateRangeInput(
               inputId = "datovalgReg",
@@ -497,22 +494,23 @@ ui_nordicscir <- function() {
               shiny::downloadButton(
                 outputId = "lastNed_tabOppfHovedPst", label="Last ned"
               )
-            ),
-            shiny::tabPanel(
-              "Antall kontrollskjema med tilknyttede skjema",
-              shiny::h3("Antall kontrollskjema med tilknyttede skjema"),
-              shiny::h5("Datoutvalg er basert på dato for kontroll"),
-              shiny::tableOutput("tabAntTilknyttedeKtrSkjema"),
-              shiny::downloadButton(
-                outputId = "lastNed_tabOppfKtrAnt", label="Last ned"
-              ),
-              shiny::br(),
-              shiny::h3("Andel (%) kontrollskjema med tilknyttede skjema"),
-              shiny::tableOutput("tabAndelTilknyttedeKtrSkjema"),
-              shiny::downloadButton(
-                outputId = "lastNed_tabOppfKtrPst", label="Last ned"
-              )
             )
+            #,
+            # shiny::tabPanel(
+            #   "Antall kontrollskjema med tilknyttede skjema",
+            #   shiny::h3("Antall kontrollskjema med tilknyttede skjema"),
+            #   shiny::h5("Datoutvalg er basert på dato for kontroll"),
+            #   shiny::tableOutput("tabAntTilknyttedeKtrSkjema"),
+            #   shiny::downloadButton(
+            #     outputId = "lastNed_tabOppfKtrAnt", label="Last ned"
+            #   ),
+            #   shiny::br(),
+            #   shiny::h3("Andel (%) kontrollskjema med tilknyttede skjema"),
+            #   shiny::tableOutput("tabAndelTilknyttedeKtrSkjema"),
+            #   shiny::downloadButton(
+            #     outputId = "lastNed_tabOppfKtrPst", label="Last ned"
+            #   )
+            # )
           )
         )
       ), #tab Registreringsoversikter
@@ -522,6 +520,7 @@ ui_nordicscir <- function() {
       shiny::tabPanel(
         "Registeradministrasjon",
         shiny::h2("Fane som bare er synlig for SC-bruker."),
+        h3('NB: Samlerapportene er ikke tilpasset nordiske data'),
 
         shiny::tabsetPanel(
           id = "ark",
@@ -581,22 +580,22 @@ ui_nordicscir <- function() {
             )
           ) #Eksport-tab
         ) #tabsetPanel
-      ), #Registeradm-tab
+      ) #Registeradm-tab
 
       #------------------Abonnement------------------------
-      shiny::tabPanel(
-        shiny::p(
-          "Abonnement",
-          title="Bestill automatisk utsending av månedsrapport på e-post"),
-        shiny::sidebarLayout(
-          shiny::sidebarPanel(
-            rapbase::autoReportInput("ns-subscription")
-          ),
-          shiny::mainPanel(
-            rapbase::autoReportUI("ns-subscription")
-          )
-        )
-      )
+      # shiny::tabPanel(
+      #   shiny::p(
+      #     "Abonnement",
+      #     title="Bestill automatisk utsending av månedsrapport på e-post"),
+      #   shiny::sidebarLayout(
+      #     shiny::sidebarPanel(
+      #       rapbase::autoReportInput("ns-subscription")
+      #     ),
+      #     shiny::mainPanel(
+      #       rapbase::autoReportUI("ns-subscription")
+      #     )
+      #   )
+      # )
     ) #navbar
   ) #tagList
 }
@@ -611,7 +610,7 @@ ui_nordicscir <- function() {
 #' @return Server-delen til norscir-appen
 #' @export
 server_nordicscir <- function(input, output, session) {
-print(session)
+#print(session)
   rapbase::appLogger(
     session = session,
     msg = "Starter nordicscir-app'en"
@@ -642,11 +641,13 @@ print(session)
   }
   isDataOk <- all(c(isGetDataOk, isProcessDataOk))
   attach(AlleTab)
-
+  enhet <- ifelse(exists('reshID'),
+                  as.character(HovedSkjema$ShNavn[match(reshID, HovedSkjema$ReshId)]),
+                  'Uidentifisert enhet')
 
   #--------------Startside------------------------------
   rapbase::navbarWidgetServer(
-    id = "navbar-widget", orgName = "nordicscir", caller = "nordicscir"
+    id = "navbar-widget", orgName = enhet, caller = "nordicscir"
   )
 
   output$guide <- shiny::renderText(
@@ -1269,23 +1270,23 @@ print(session)
   }
 
   #------------------ Abonnement -----------------------------------------------
-  subReports <- list(
-    `Månedsrapport` = list(
-      synopsis = "Rapporteket-NorSCIR: månedsrapport, abonnement",
-      fun = "abonnement",
-      paramNames = c("rnwFil", "brukernavn", "reshID", "datoTil"),
-      paramValues = c("NSmndRapp.Rnw", brukernavn, reshID, datoTil=Sys.Date())
-    )
-  )
-
-  rapbase::autoReportServer(
-    id = "ns-subscription",
-    registryName = "nordicscir",
-    type = "subscription",
-    paramNames = paramNames,
-    paramValues = paramValues,
-    reports = subReports
-  )
+  # subReports <- list(
+  #   `Månedsrapport` = list(
+  #     synopsis = "Rapporteket-NordicSCIR: månedsrapport, abonnement",
+  #     fun = "abonnement",
+  #     paramNames = c("rnwFil", "brukernavn", "reshID", "datoTil"),
+  #     paramValues = c("NSmndRapp.Rnw", brukernavn, reshID, datoTil=Sys.Date())
+  #   )
+  # )
+  #
+  # rapbase::autoReportServer(
+  #   id = "ns-subscription",
+  #   registryName = "nordicscir",
+  #   type = "subscription",
+  #   paramNames = paramNames,
+  #   paramValues = paramValues,
+  #   reports = subReports
+  # )
 
 
   #---Utsendinger---------------
@@ -1305,7 +1306,7 @@ print(session)
   ## liste med metadata for rapport
   disReports <- list(
     MndRapp = list(
-      synopsis = "Rapporteket-NorSCIR: Månedsrapport",
+      synopsis = "Rapporteket-NordicSCIR: Månedsrapport",
       fun = "abonnement",
       paramNames = c('rnwFil', "reshID"),
       paramValues = c('NSmndRapp.Rnw', 0)
@@ -1338,8 +1339,6 @@ print(session)
   rapbase::exportUCServer("nordicscirExport", registryName)
   ## veileding
   rapbase::exportGuideServer("nordicscirExportGuide", registryName)
-
-
 }
 
 

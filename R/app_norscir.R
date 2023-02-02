@@ -1,4 +1,4 @@
-#Resultattjeneste for NordicScir
+#Resultattjeneste for NorScir
 # library(nordicscir)
 # library(shiny)
 # library(knitr)
@@ -573,10 +573,10 @@ ui_norscir <- function() {
           shiny::tabPanel(
             "Eksport, krypterte data",
             shiny::sidebarPanel(
-              rapbase::exportUCInput("nordicscirExport")
+              rapbase::exportUCInput("norscirExport")
             ),
             shiny::mainPanel(
-              rapbase::exportGuideUI("nordicscirExportGuide")
+              rapbase::exportGuideUI("norscirExportGuide")
             )
           ) #Eksport-tab
         ) #tabsetPanel
@@ -610,10 +610,10 @@ ui_norscir <- function() {
 #' @return Server-delen til norscir-appen
 #' @export
 server_norscir <- function(input, output, session) {
-print(session)
+#print(session)
   rapbase::appLogger(
     session = session,
-    msg = "Starter nordicscir-app'en"
+    msg = "Starter norscir-app'en"
   )
 
 
@@ -641,11 +641,13 @@ print(session)
   }
   isDataOk <- all(c(isGetDataOk, isprocessAllDataOk))
   attach(AlleTab)
-
+  enhet <- ifelse(exists('reshID'),
+    as.character(HovedSkjema$ShNavn[match(reshID, HovedSkjema$ReshId)]),
+  'Uidentifisert enhet')
 
   #--------------Startside------------------------------
   rapbase::navbarWidgetServer(
-    id = "navbar-widget", orgName = "nordicscir", caller = "nordicscir"
+    id = "navbar-widget", orgName = enhet, caller = "nordicscir" #caller = pakkenavn
   )
 
   output$guide <- shiny::renderText(
@@ -1332,11 +1334,11 @@ print(session)
 
 
   #----------- Eksport ----------------
-  registryName <- "nordicscir"
+  registryName <- "norscir" #i dbConfig
   ## brukerkontroller
-  rapbase::exportUCServer("nordicscirExport", registryName)
+  rapbase::exportUCServer("norscirExport", registryName)
   ## veileding
-  rapbase::exportGuideServer("nordicscirExportGuide", registryName)
+  rapbase::exportGuideServer("norscirExportGuide", registryName)
 
 
 }

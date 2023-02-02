@@ -8,28 +8,15 @@
 
 kjor_NSapper <- function(register = 'norscir') {
 
-  if (!(register %in% c('norscir','nordicscir'))){
-    warning('Angitt register har ingen app')}
-
-  switch(register,
+  app <- switch(register,
          'norscir' = shiny::shinyApp(ui = nordicscir::ui_norscir, server = nordicscir::server_norscir),
          'nordicscir' = shiny::shinyApp(ui = nordicscir::ui_nordicscir, server = nordicscir::server_nordicscir)
   )
-    #  }
 
-    #if (register == 'nordicscir'){
-    #app <- shiny::shinyApp(ui = nordicscir::ui_nordicscir, server = nordicscir::server_nordicscir)
-    # }
+  if (!(register %in% c('norscir','nordicscir'))){
+    warning('Angitt register har ingen app')}
 
-  #  if (register == 'norscir'){
-  #app <- shiny::shinyApp(ui = nordicscir::ui_norscir, server = nordicscir::server_norscir)
-  #  }
-
-  #if (register == 'nordicscir'){
-    #app <- shiny::shinyApp(ui = nordicscir::ui_nordicscir, server = nordicscir::server_nordicscir)
-   # }
-
-  #shiny::runApp(app)
+  return(app)
 }
 
 
