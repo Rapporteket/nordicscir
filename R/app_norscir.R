@@ -1341,8 +1341,7 @@ server_norscir <- function(input, output, session) {
                           repoName = 'nordicscir') #pakke, for tilhørighet på github
   ## veileding
   rapbase::exportGuideServer("norscirExportGuide",
-                             registryName = 'norscir',
-                             repoName = 'nordicscir')
+                             registryName = 'norscir')
 
 
 }
