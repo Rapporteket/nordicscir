@@ -48,13 +48,13 @@ NSFigAndeler(
 \description{
 Argumentet \emph{valgtVar} har følgende valgmuligheter:
    \itemize{
-    \item Alder: Aldersfordeling, 15-årige grupper 
+    \item Alder: Aldersfordeling, 15-årige grupper
     \item AAis: A-E+U, innleggelse
     \item FAis: A-E+U, kontroll
     \item DagerRehab: Lengde på rehab.opphold (Utskrevet – Innl. rehab dato)
     \item DagerTilRehab: Tid fra skadedato til oppstart rehab [trauma/ikke], 5d interv
-    \item OpphTot: Lengde på opphold – totalt (HosptlDy) 20d… >200, 
-    \item Permisjon: Antall døgn ute av sykehus 
+    \item OpphTot: Lengde på opphold – totalt (HosptlDy) 20d… >200,
+    \item Permisjon: Antall døgn ute av sykehus
     \item UtTil: Hva pasienten skrives ut til. [PlaceDis]
     \item SkadeArsak: Årsak til skade [variabel: Scietiol]
     \item Pustehjelp[VentAssi]

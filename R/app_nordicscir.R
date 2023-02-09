@@ -39,6 +39,14 @@ ui_nordicscir <- function() {
       "Måned" = "Mnd")
   )
 
+  enhetsUtvalg <- 0:5
+  names(enhetsUtvalg) <- c("Hele Norden",
+                           "Egen enhet mot alle andre",
+                           "Egen enhet",
+                           "Egen enhet mot eget land forøvrig",
+                           "Eget land",
+                           "Eget land mot Norden forøvrig")
+
   shiny::tagList(
     shinyjs::useShinyjs(),
     shiny::navbarPage(
@@ -151,25 +159,16 @@ ui_nordicscir <- function() {
               "Alder" = "Alder",
               "Ais ved innleggelse" = "AAis" ,
               "Ais ved utskriving" = "FAis",
-              "Anbefalt tid til kontroll" = "AnbefTidKtr",
+             # "Anbefalt tid til kontroll" = "AnbefTidKtr",
               "Lengde på rehab.opphold" = "DagerRehab",
               "Opphold, totalt antall dager" = "OpphTot",
               "Planlagt utskrevet til" = "PPlaceDis",
-              #"Fjern? Permisjon (ant. døgn ute av sykehus) " = "Permisjon",
               "Registreringsforsinkelse" = "RegForsinkelse",
               "Skadeårsak " = "SkadeArsak",
               "Skadeårsak, ikke-traumatisk" = "Ntsci",
               "Tid fra skade til oppstart rehab." = "DagerTilRehab",
               "Tid med rehabilitering" = "DagerRehab",
               "Utskrevet til" = "UtTil",
-              # "A&D Funksjon: Mobilitet" = "FunkMob",
-              # "A&D Funksjon: Påkledning" = "FunkKler",
-              # "A&D Funksjon: Spising" = "FunkSpis",
-              # "A&D Funksjon: Toalett" = "FunkDo",
-              # "A&D Tilfredshet: Mobilitet" = "TilfMob",
-              # "A&D Tilfredshet: Påkledning" = "TilfKler",
-              # "A&D Tilfredshet: Spising" = "TilfSpis",
-              # "A&D Tilfredshet: Toalett" = "TilfDo",
               "Livskval.: Tilfredshet med livet" = "LivsGen",
               "Livskval.: Tilfredshet med fysisk helse" = "LivsFys",
               "Livskval.: Tilfredshet med psykisk helse" = "LivsPsyk",
@@ -222,8 +221,8 @@ ui_nordicscir <- function() {
           shiny::selectInput(
             inputId = "enhetsUtvalg",
             label = "Egen enhet og/eller landet",
-            choices = c("Egen mot resten av landet" = 1, "Hele landet" = 0,
-                        "Egen enhet" = 2)
+            choices = enhetsUtvalg,
+            selected = 1
           ),
           shiny::selectInput(
             inputId = "AIS",
@@ -370,9 +369,8 @@ ui_nordicscir <- function() {
           shiny::selectInput(
             inputId = "enhetsUtvalgGjsn",
             label="Egen enhet og/eller landet",
-            choices = c("Egen mot resten av landet"=1,
-                        "Hele landet" = 0,
-                        "Egen enhet" = 2)
+            choices = enhetsUtvalg,
+            selected = 1
           ),
           shiny::selectInput(
             inputId = "tidsenhetGjsn",

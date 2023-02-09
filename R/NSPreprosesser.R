@@ -65,19 +65,19 @@ NSPreprosesser <- function(RegData)
 
       # Nye variabler:
       RegData$MndNum <- RegData$AdmitDt$mon +1
-      head(format(RegData$AdmitDt, '%b'))
+      #head(format(RegData$AdmitDt, '%b'))
       RegData$MndAar <- format(RegData$AdmitDt, '%b%y')
       RegData$Kvartal <- ceiling(RegData$MndNum/3)
       RegData$Halvaar <- ceiling(RegData$MndNum/6)
       RegData$Aar <- 1900 + RegData$AdmitDt$year #strptime(RegData$Innleggelsestidspunkt, format="%Y")$year
       RegData$LandKode <- substr(RegData$ReshId, 1, 1)
-      RegData$Land <- factor(RegData$LandKode, #1-N, 3-Fin, 4-Dan, 5-Is, 6-Sverige,
+      RegData$Land <- as.character(factor(RegData$LandKode, #1-N, 3-Fin, 4-Dan, 5-Is, 6-Sverige,
                              levels = c(1,3,4,5,6),
-                             labels = c('Norge', 'Finland', 'Danmark', 'Island', 'Sverige'))
+                             labels = c('Norge', 'Finland', 'Danmark', 'Island', 'Sverige')))
 
         #Legge til dummynavn for manglende enhetsnavn
-        ind <- which(RegData$HealthUnitShortName == '')
-        RegData$HealthUnitShortName[ind] <- RegData$ReshId[ind]
+        ind <- which(RegData$ShNavn == '')
+        RegData$ShNavn[ind] <- RegData$ReshId[ind]
 
 
       # #Konvertere boolske variable fra tekst til boolske variable...
