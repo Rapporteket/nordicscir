@@ -11,9 +11,6 @@
 NSPreprosesser <- function(RegData)
       {
 
-  #   RegData$ShNavn <- factor(RegData$ReshId, levels=c(105593, 106896, 107627),
-  #                                        labels=c('Haukeland', 'Sunnaas', 'St.Olavs'))
-
    #Kjønn
       RegData$erMann <- RegData$PatientGender
       RegData$erMann[RegData$PatientGender == 2] <- 0 #Ingen manglende verdier i variabelen
@@ -76,6 +73,11 @@ NSPreprosesser <- function(RegData)
                              labels = c('Norge', 'Finland', 'Danmark', 'Island', 'Sverige')))
 
         #Legge til dummynavn for manglende enhetsnavn
+      RegData$ShNavn[which(RegData$ReshId==30000001)] <- 'Finland1'
+      RegData$ShNavn[which(RegData$ReshId==40000001)] <- 'Danmark1'
+      RegData$ShNavn[which(RegData$ReshId==40000002)] <- 'Danmark2'
+      RegData$ShNavn[which(RegData$ReshId==50000001)] <- 'Island1'
+      RegData$ShNavn[which(RegData$ReshId==60000001)] <- 'Sverige1'
         ind <- which(RegData$ShNavn == '')
         RegData$ShNavn[ind] <- RegData$ReshId[ind]
 
