@@ -74,13 +74,17 @@ NSPreprosesser <- function(RegData)
 
         #Legge til dummynavn for manglende enhetsnavn
       RegData$ShNavn[which(RegData$ReshId==30000001)] <- 'Finland1'
-      RegData$ShNavn[which(RegData$ReshId==40000001)] <- 'Danmark1'
-      RegData$ShNavn[which(RegData$ReshId==40000002)] <- 'Danmark2'
-      RegData$ShNavn[which(RegData$ReshId==50000001)] <- 'Island1'
-      RegData$ShNavn[which(RegData$ReshId==60000001)] <- 'Sverige1'
+      RegData$ShNavn[which(RegData$ReshId==40000001)] <- 'København'
+      RegData$ShNavn[which(RegData$ReshId==40000002)] <- 'Viborg'
+      RegData$ShNavn[which(RegData$ReshId==50000001)] <- 'Reykjavik'
+      RegData$ShNavn[which(RegData$ReshId==60000001)] <- 'Linkjøping'
         ind <- which(RegData$ShNavn == '')
         RegData$ShNavn[ind] <- RegData$ReshId[ind]
 
+        # Legg på Trondheim, Bergen, Nesodden/Oslo
+        if (nordisk){
+          #RegData$
+        }
 
       # #Konvertere boolske variable fra tekst til boolske variable...
       # TilLogiskeVar <- function(Skjema){
