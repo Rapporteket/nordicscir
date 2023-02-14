@@ -178,7 +178,7 @@ ui_norscir <- function() {
               "Urin: Ufrivillig urinlekkasje (t.o.m. 2018)" = "UrinInkontinensTom2018",
               "Urin: Kirurgiske inngrep" = "UrinKirInngr",
               "Urin: Legemiddelbruk (fra 2019)" = "UrinLegemidler",
-              "Urin: Legemiddelbruk (t.o.m. 2018)" = "UrinLegemidlerTom2018",
+            #  "Urin: Legemiddelbruk (t.o.m. 2018)" = "UrinLegemidlerTom2018",
               "Urin: Legemiddelbruk, hvilke" = "UrinLegemidlerHvilke",
               "Urin: Blæretømming, hovedmetode" = "UrinTomBlareHoved",
               "Urin: Blæretømming, tilleggsmetode" = "UrinTomBlareTillegg",
