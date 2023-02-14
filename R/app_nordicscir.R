@@ -123,26 +123,21 @@ ui_nordicscir <- function() {
               shiny::br(),
               shiny::br(),
               shiny::fluidRow(
-                shiny::column(
-                  width = 6,
+                shiny::h3("Liggetider, egen avdeling", align = "left"),
+                shiny::tableOutput("tabLiggetider")
+              ),
+              shiny::fluidRow(
                   shiny::h3("Nevrologisk klassifikasjon", align = "center"),
                   shiny::h4("alle pasienter", align = "center"),
-                  shiny::br(),
+                  #shiny::br(),
                   shiny::tableOutput("tabNevrKlass")),
-                shiny::column(
-                  width = 6,
+                shiny::fluidRow(
                   shiny::h3("Nevrologisk klassifikasjon", align = "center"),
                   shiny::h4("pasienter med liggetid over 28 dager i
                                    ryggmargsskadeavdeling", align = "center"),
                   shiny::tableOutput("tabNevrKlass28")
                 )
-              ),
-
-              shiny::fluidRow(
-                shiny::h3("Liggetider, egen avdeling", align = "left"),
-                shiny::tableOutput("tabLiggetider")
               )
-            )
           )
         ) #main
       ), #tab
@@ -218,12 +213,17 @@ ui_nordicscir <- function() {
             max = 110,
             value = c(0, 110)
           ),
-          shiny::selectInput(
-            inputId = "enhetsUtvalg",
-            label = "Egen enhet og/eller landet",
-            choices = enhetsUtvalg,
-            selected = 1
-          ),
+
+
+          shiny::conditionalPanel(
+            condition = "input.fordeling == 'Figur' | input.fordeling == 'Tabell' ",
+            shiny::selectInput(
+              inputId = "enhetsUtvalg",
+              label = "Egen enhet og/eller landet",
+              choices = enhetsUtvalg,
+              selected = 1)
+            ),
+
           shiny::selectInput(
             inputId = "AIS",
             label = "AIS-grad ved utreise",
@@ -640,7 +640,7 @@ server_nordicscir <- function(input, output, session) {
   isDataOk <- all(c(isGetDataOk, isProcessDataOk))
   attach(AlleTab)
   enhet <- ifelse(exists('reshID'),
-                  as.character(HovedSkjema$ShNavn[match(reshID, HovedSkjema$ReshId)]),
+                  as.character(AlleTab$HovedSkjema$ShNavn[match(reshID, AlleTab$HovedSkjema$ReshId)]),
                   'Uidentifisert enhet')
 
   #--------------Startside------------------------------
@@ -921,7 +921,9 @@ server_nordicscir <- function(input, output, session) {
 
       output$fordelingPrSh <- shiny::renderPlot({
         NSFigAndelerSh(
-          RegData = RegData, valgtVar = input$valgtVar, preprosess = 0,
+          RegData = RegData, preprosess = 0,
+          register = 'nordicscir',
+          valgtVar = input$valgtVar,
           datoFra = input$datovalg[1], datoTil = input$datovalg[2],
           datoUt = as.numeric(input$datoUt),
           AIS = as.numeric(input$AIS), traume = input$traume,
@@ -941,7 +943,9 @@ server_nordicscir <- function(input, output, session) {
         },
         content = function(file) {
           NSFigAndelerSh(
-            RegData = RegData, valgtVar = input$valgtVar, preprosess = 0,
+            RegData = RegData, preprosess = 0,
+            register = 'nordicscir',
+            valgtVar = input$valgtVar,
             datoFra = input$datovalg[1], datoTil = input$datovalg[2],
             datoUt = as.numeric(input$datoUt),
             AIS = as.numeric(input$AIS), traume = input$traume,
@@ -956,7 +960,9 @@ server_nordicscir <- function(input, output, session) {
       )
 
       UtDataFordSh <- NSFigAndelerSh(
-        RegData = RegData, preprosess = 0, valgtVar = input$valgtVar,
+        RegData = RegData, preprosess = 0,
+        register = 'nordicscir',
+        valgtVar = input$valgtVar,
         datoFra = input$datovalg[1], datoTil = input$datovalg[2],
         datoUt = as.numeric(input$datoUt),
         AIS = as.numeric(input$AIS), traume = input$traume,
@@ -970,15 +976,15 @@ server_nordicscir <- function(input, output, session) {
       tabFordSh <- lagTabavFigAndelerSh(UtDataFraFig = UtDataFordSh)
 
       output$fordelingShTab <- function() {
-        antKol <- ncol(tabFordSh)
+        antKol <- ncol(tabFordSh)/2
         kableExtra::kable(
           tabFordSh,
           format = "html",
           full_width = FALSE,
-          digits = c(0, 0, 0, 1, 1, 1)[1:antKol]
+          digits = c(rep(0, antKol), rep(1, antKol))
         ) %>%
           kableExtra::add_header_above(
-            header = c(" " = 1, "Antall" = 3, "Andel" = 3)
+            header = c(" " = 1, "Antall" = antKol, "Andel" = antKol)
           ) %>%
           kableExtra::column_spec(column = 1, width_min = "7em") %>%
           kableExtra::column_spec(

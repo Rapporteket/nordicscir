@@ -47,7 +47,7 @@
 #' @export
 
 NSFigAndelerSh <- function(RegData, outfile='', valgtVar='Alder',
-                           hentData=0, register='nordicscir',  preprosess=1,
+                           hentData=0, register='norscir', preprosess=1,
                          datoFra='2010-01-01', datoTil='2050-01-01', datoUt=0, AIS='',
                          minald=0, maxald=130, erMann=99, traume='alle',nivaaUt=99, ...) {
 
@@ -64,7 +64,6 @@ NSFigAndelerSh <- function(RegData, outfile='', valgtVar='Alder',
                                  N=0,
                                  Ngr=0,
                                  KImaal <- '',
-                                 #soyletxt=soyletxt,
                                  grtxt2='',
                                  grtxt='',
                                  tittel='Ingen registreringer',
@@ -87,10 +86,8 @@ NSFigAndelerSh <- function(RegData, outfile='', valgtVar='Alder',
             }
 
             #--------------- Tilrettelegge variable og gjøre utvalg ------------------------------
-            #TarmAvfmiddelHvilke, 'TarmAvfHoved','TarmAvfTillegg'
             NSVarSpes <- NSVarTilrettelegg(RegData=RegData, valgtVar=valgtVar, figurtype='andeler')
             RegData <- NSVarSpes$RegData
-
 
             Utvalg <- NSUtvalg(RegData=RegData, datoFra=datoFra, datoTil=datoTil, minald=minald, maxald=maxald,
                                erMann=erMann, traume=traume, AIS=AIS, nivaaUt=nivaaUt, datoUt=datoUt)
@@ -103,7 +100,7 @@ NSFigAndelerSh <- function(RegData, outfile='', valgtVar='Alder',
 
             #--------------- Gjøre beregninger ------------------------------
             #      AggVerdier <- list(Hoved = 0, Rest =0)
-            N <- table(RegData$GrVar)   #Nevner
+            #N <- table(RegData$GrVar)   #Nevner
             variable <- NSVarSpes$variable
             flerevar <- NSVarSpes$flerevar
 
@@ -137,16 +134,10 @@ NSFigAndelerSh <- function(RegData, outfile='', valgtVar='Alder',
                            '0' = 100*prop.table(table(RegData[ ,'VariabelGr'])),
                            '1' = 100*apply(X=RegData[,variable], MARGIN = 2,
                                            FUN=function(x) sum(x==1)/length(x %in% 0:1)))
-
-          #  #-------Eksempel
-           #  specie <- c(rep("sorgho" , 3) , rep("poacee" , 3) , rep("banana" , 3) , rep("triticum" , 3) )
-           #  condition <- rep(c("normal" , "stress" , "Nitrogen") , 4)
-           #  value <- abs(rnorm(12 , 0 , 15))
-           #  data <- data.frame(specie,condition,value)
-           #  ggplot(data, aes(fill=condition, y=value, x=specie)) +
-           #        geom_bar(position="dodge", stat="identity")
-           # #------------------
-
+Ngrense <- 5
+indNgrense <- N < Ngrense
+AggVerdier[indNgrense,] <- NA
+#AggTot[indNgrense] <- NA #paste0('N<', Ngrense)
 
             if(flerevar==1) {
                   Nfig <- apply(N, MARGIN = 1, FUN = max)
@@ -159,12 +150,14 @@ NSFigAndelerSh <- function(RegData, outfile='', valgtVar='Alder',
 
 
 
-
             grtxt <- NSVarSpes$grtxt
             grtxt2 <- paste0('(', sprintf('%.1f',AggTot), '%)')
             grtxtpst <- paste0(grtxt, '\n(', sprintf('%.1f',AggTot), '%)')
             cexgr <- NSVarSpes$cexgr
             enhTxt <- attributes(AggVerdier)$row.vars$GrVar
+            anttxt <- paste0(' (N=', Nfig,')')
+            anttxt[indNgrense] <- paste0(' (N < ', Ngrense, ')')
+            legendtxt <- paste0(enhTxt, anttxt)
             yAkseTxt='Andel pasienter (%)'
 
             FigDataParam <- list(AggVerdier=AggVerdier,
@@ -220,7 +213,7 @@ NSFigAndelerSh <- function(RegData, outfile='', valgtVar='Alder',
                         mtext(at=pos[2,], grtxt2, side=1, cex=cexgr-0.1, adj=0.5, line=1.5) #las=txtretn,
                         mtext(c('Hele landet:', 'Norden')[nordisk+1],
                               at=-2, side=1, cex=cexgr-0.1, adj=0, line=1.5)
-                        legend('top', paste0(enhTxt, ' (N=', Nfig,')'),
+                        legend('top', legendtxt,
                                      border=NA, fill=fargeHoved, bty='n', ncol=1, cex=cexleg)
                   }
 
@@ -233,7 +226,7 @@ NSFigAndelerSh <- function(RegData, outfile='', valgtVar='Alder',
                                          cex.lab=cexleg, cex.sub=cexleg, axisnames =FALSE, #names.arg = grtxtpst, #sub=NSVarSpes$xAkseTxt,
                                          col=fargeHoved, border='white', xlim=c(0, xmax)) #, ylim=c(0, ymax))
                         mtext(at=pos[2,]+0.1, text=rev(grtxtpst), side=2, las=1, cex=cexgr, adj=1, line=0.25)
-                              legend('top', paste0(enhTxt, ' (N=', Nfig,')'),
+                              legend('topright', legendtxt,
                                      border=NA, fill=fargeHoved, bty='n', ncol=1, cex=cexleg)
                   }
 

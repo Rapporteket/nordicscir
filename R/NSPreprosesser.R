@@ -50,8 +50,10 @@ NSPreprosesser <- function(RegData)
       #RegData$Permisjon <- with(RegData, OutOfHosptlDy+OutOfHosptlDy2+OutOfRehabDy)
 
       #Riktig format på datovariable:
-      RegData$InnDato <- as.Date(RegData$AdmitDt, tz= 'UTC', format="%Y-%m-%d") #as.POSIXlt(RegData$AdmitDt, format="%Y-%m-%d")
+      RegData$InnDato <- as.Date(RegData$AdmitDt, tz= 'UTC', format="%Y-%m-%d")
       RegData$AdmitDt <- strptime(RegData$AdmitDt, format="%Y-%m-%d")
+      RegData$UtDato <- as.Date(RegData$DischgDt, tz= 'UTC', format="%Y-%m-%d")
+      RegData$DischgDt <- strptime(RegData$DischgDt, format="%Y-%m-%d")
 
       #Kun ferdigstilte registreringer:
       # Rapporteket får kun levert ferdigstilte registreringer fra MRS/NHN.Men det kan dukke opp ufullstendige registreringer.
@@ -62,7 +64,6 @@ NSPreprosesser <- function(RegData)
 
       # Nye variabler:
       RegData$MndNum <- RegData$AdmitDt$mon +1
-      #head(format(RegData$AdmitDt, '%b'))
       RegData$MndAar <- format(RegData$AdmitDt, '%b%y')
       RegData$Kvartal <- ceiling(RegData$MndNum/3)
       RegData$Halvaar <- ceiling(RegData$MndNum/6)
@@ -77,13 +78,16 @@ NSPreprosesser <- function(RegData)
       RegData$ShNavn[which(RegData$ReshId==40000001)] <- 'København'
       RegData$ShNavn[which(RegData$ReshId==40000002)] <- 'Viborg'
       RegData$ShNavn[which(RegData$ReshId==50000001)] <- 'Reykjavik'
-      RegData$ShNavn[which(RegData$ReshId==60000001)] <- 'Linkjøping'
+      RegData$ShNavn[which(RegData$ReshId==60000001)] <- 'Linköping'
         ind <- which(RegData$ShNavn == '')
         RegData$ShNavn[ind] <- RegData$ReshId[ind]
 
         # Legg på Trondheim, Bergen, Nesodden/Oslo
-        if (nordisk){
-          #RegData$
+        if (sum(as.numeric(unique(RegData$LandKode)))!=1){
+          RegData$ShNavn[RegData$ReshId == 105593] <- 'Bergen'
+          RegData$ShNavn[RegData$ReshId == 106896] <- 'Nesodden/Oslo'
+          RegData$ShNavn[RegData$ReshId == 107627] <- 'Trondheim'
+
         }
 
       # #Konvertere boolske variable fra tekst til boolske variable...

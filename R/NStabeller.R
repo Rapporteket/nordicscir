@@ -131,7 +131,7 @@ tabSkjemaTilknyttet <- function(Data=AlleTab, moderSkjema='Hoved',
          } else {
             ModerSkjema <- NSUtvalg(RegData=ModerSkjema, datoFra = datoFra,
                               datoTil = datoTil)$RegData}
-      exists('Data$AktivFunksjon')
+
       RaaTab <- data.frame(Sykehus = ModerSkjema$ShNavn,
                            #Aar = as.POSIXlt(Hskjema$AdmitDt, format="%Y-%m-%d")$year +1900,
                            Livskvalitet = ModerSkjema$SkjemaGUID %in% Data$LivskvalH$HovedskjemaGUID,
@@ -139,7 +139,7 @@ tabSkjemaTilknyttet <- function(Data=AlleTab, moderSkjema='Hoved',
                            Urin = ModerSkjema$SkjemaGUID %in% Data$UrinH$HovedskjemaGUID,
                            Tarm = ModerSkjema$SkjemaGUID %in% Data$TarmH$HovedskjemaGUID
                            )
-      if (exists('Data$AktivFunksjon')) {
+      if ('AktivFunksjonH' %in% names(Data)) {  #exists('Data$AktivFunksjonH')
         RaaTab <- cbind(RaaTab,
                         Funksjon = ModerSkjema$SkjemaGUID %in% Data$AktivFunksjonH$HovedskjemaGUID,
                         Tilfredshet = ModerSkjema$SkjemaGUID %in%
@@ -211,12 +211,13 @@ return(tab)
 #' @param UtDataFraFig Dataliste fra figuren
 #' @export
 lagTabavFigAndelerSh <- function(UtDataFraFig){
+  sensur <- is.na(UtDataFraFig$AggVerdier)[,1]
    tab <-rbind(UtDataFraFig$Ngr,
-               #paste0(sprintf('%.1f',t(UtDataFraFig$AggVerdier)), '%')
                UtDataFraFig$AggVerdier)
-   #tabell <- tab[,c(1,4,2,5,3,6)]
+   tab[c(sensur,sensur),] <- NA #'lav N'
+   grNavn <- attributes(UtDataFraFig$Ngr)$dimnames[[1]]
+   rownames(tab) <- c(grNavn, grNavn)
    colnames(tab) <- UtDataFraFig$grtxt
-   #rownames(tab)[4:6] <- colnames(tab)[1:3] #, N'), Andel (%)'))
 
    return(t(tab))
 }
@@ -238,10 +239,11 @@ lagTabavFigGjsnGrVar <- function(UtDataFraFig){
 #' @param HovedSkjema- hovedskjema
 #' @inheritParams NSUtvalg
 #' @export
-lagTabNevrKlass <- function(HovedSkjema, datoFra='2018-01-01', datoTil=Sys.Date()){
+lagTabNevrKlass <- function(HovedSkjema, datoFra='2018-01-01', datoTil=Sys.Date(), datoUt=0){
 
-      Utvalg <- NSUtvalg(HovedSkjema, datoFra = datoFra, datoTil = datoTil)
+      Utvalg <- NSUtvalg(HovedSkjema, datoFra = datoFra, datoTil = datoTil, datoUt = datoUt)
       HovedSkjema <- Utvalg$RegData
+      HovedSkjema$ShNavn <- as.factor(HovedSkjema$ShNavn)
       Ant <- addmargins(table(HovedSkjema$ShNavn))
       AntKlassInnUt <- addmargins(table(HovedSkjema$ShNavn[(HovedSkjema$AAis %in% c(1:5,9)) & (HovedSkjema$FAis %in% c(1:5,9))]))
 
@@ -262,7 +264,7 @@ NevrKlass <- rbind(
       'Utført ved både inn- og utreise: ' =
             paste0(sprintf('%.0f',AntKlassInnUt/Ant*100), '%')
 )
-colnames(NevrKlass)[dim(NevrKlass)[2] ]<- 'Hele landet'
+colnames(NevrKlass)[dim(NevrKlass)[2] ] <- 'Alle enheter'
 
 # xtable::xtable(NevrKlass, align=c('l', rep('r', ncol(NevrKlass))), digits=0,
 #                caption=paste0('Nevrologisk klassifikasjon for ferdigstilte innleggelser fra og med ',
