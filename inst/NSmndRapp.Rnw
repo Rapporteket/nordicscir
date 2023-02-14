@@ -77,7 +77,7 @@ Rapporten viser følgende:
 \item Liggetider ved eget sykehus
 %\item	Andel som ikke har vært til kontrollopphold
 \item	Fordeling, skadeårsaker
-\item	Fordeling, ikke-traumatiske skadeårsaker (fra 01.01.2018)
+\item	Fordeling, ikke-traumatiske skadeårsaker
 \item	Fordeling, AIS ved innleggelse
 \item	Fordeling, AIS ved utskriving
 \item	Tid fra utreise til ferdigstilt registrering
@@ -131,7 +131,7 @@ AntOppf <- apply(RaaTab[ ,-1], MARGIN=2,
                        FUN=function(x) tapply(x,INDEX=RaaTab$Sykehus, sum))
 AndelOppf <- 100*AntOppf / as.vector(AntReg)
 
-xtable::xtable(cbind(Hoved=AntReg, AntOppf), digits=0, align=c('l', rep('r', ncol(AntOppf))),
+xtable::xtable(cbind(Hoved=AntReg, AntOppf), digits=0, align=c('l', rep('r', ncol(AntOppf)+1)),
 		caption=paste0('Antall hovedskjema og antall av disse som har tilknyttede skjema. Pasienter utskrevet fra og med ', datoFra, '.'))
 # xtable::xtable(rbind(Hoved=AntReg,t(AntOppf)), digits=0, align=c('l', rep('r', nrow(AntOppf))),
 # 		caption=paste0('Antall hovedskjema og antall av disse som har tilknyttede skjema. Pasienter utskrevet fra og med ', datoFra, '.'))
