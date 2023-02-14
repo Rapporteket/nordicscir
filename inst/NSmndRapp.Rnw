@@ -48,7 +48,7 @@ enhetsUtvalg <- 1
 shtxt <- as.character(HovedSkjema$ShNavn[match(reshID, HovedSkjema$ReshId)])
 
 registerTxt <- paste0(c('Norsk ', 'Nordisk ')[nordisk+1], 'ryggmargsskaderegister')
-regTxt <- paste0(c('NorSCIR ', 'NordicSCIR ')[nordisk+1]
+regTxt <- paste0(c('NorSCIR ', 'NordicSCIR ')[nordisk+1])
 
 @
 
