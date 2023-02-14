@@ -131,11 +131,16 @@ AntOppf <- apply(RaaTab[ ,-1], MARGIN=2,
                        FUN=function(x) tapply(x,INDEX=RaaTab$Sykehus, sum))
 AndelOppf <- 100*AntOppf / as.vector(AntReg)
 
-xtable::xtable(rbind(Hoved=AntReg,t(AntOppf)), digits=0, align=c('l', rep('r', nrow(AntOppf))),
+xtable::xtable(cbind(Hoved=AntReg, AntOppf), digits=0, align=c('l', rep('r', ncol(AntOppf))),
 		caption=paste0('Antall hovedskjema og antall av disse som har tilknyttede skjema. Pasienter utskrevet fra og med ', datoFra, '.'))
+# xtable::xtable(rbind(Hoved=AntReg,t(AntOppf)), digits=0, align=c('l', rep('r', nrow(AntOppf))),
+# 		caption=paste0('Antall hovedskjema og antall av disse som har tilknyttede skjema. Pasienter utskrevet fra og med ', datoFra, '.'))
 
-xtable::xtable(t(AndelOppf), digits=1, align=c('l', rep('r', nrow(AndelOppf))),
+xtable::xtable(AndelOppf, digits=1, align=c('l', rep('r', ncol(AndelOppf))),
 		caption=paste0('Andel (prosent) av registreringsskjemaene som har ulike typer oppfølgingsskjema.'))
+
+# xtable::xtable(t(AndelOppf), digits=1, align=c('l', rep('r', nrow(AndelOppf))),
+# 		caption=paste0('Andel (prosent) av registreringsskjemaene som har ulike typer oppfølgingsskjema.'))
 @
 \end{frame}
 
@@ -152,9 +157,9 @@ xtable::xtable(t(AndelOppf), digits=1, align=c('l', rep('r', nrow(AndelOppf))),
 #Tabell: Andel kontrollskjema med oppfølging
 RaaTabKtr <- data.frame(Sykehus = KontrollH$HealthUnitShortName,
       #Aar = as.POSIXlt(Hskjema$AdmitDt, format="%Y-%m-%d")$year +1900,
-      LivskvalH = KontrollH$SkjemaGUID %in% LivskvalH$HovedskjemaGUID,
-      UrinH = KontrollH$SkjemaGUID %in% UrinH$HovedskjemaGUID,
-      TarmH = KontrollH$SkjemaGUID %in% TarmH$HovedskjemaGUID,
+      Livskval = KontrollH$SkjemaGUID %in% LivskvalH$HovedskjemaGUID,
+      Urin = KontrollH$SkjemaGUID %in% UrinH$HovedskjemaGUID,
+      Tarm = KontrollH$SkjemaGUID %in% TarmH$HovedskjemaGUID,
       Funksjon = KontrollH$SkjemaGUID %in% AktivFunksjonH$HovedskjemaGUID,
       Tilfredshet = KontrollH$SkjemaGUID %in%
             AktivFunksjonH$SkjemaGUID[AktivFunksjonH$SkjemaGUID %in% AktivTilfredshetH$HovedskjemaGUID]
@@ -339,8 +344,8 @@ HovedSkjema28 <- HovedSkjema12mnd[which(HovedSkjema12mnd$DagerRehab >28),]
 NevrKlass28 <- lagTabNevrKlass(HovedSkjema = HovedSkjema28, datoFra=datoFra, datoTil=Sys.Date(), datoUt = 1)
 
 if (nordisk==1) {
-  kortNavn <- c(substr(colnames(NevrKlass)[1:(dim(NevrKlass)[2]-1)], 1, 3), 'Alle')
-  colnames(NevrKlass) <- kortNavn
+  kortNavn <- c(substr(colnames(NevrKlass28)[1:(dim(NevrKlass28)[2]-1)], 1, 3), 'Alle')
+  colnames(NevrKlass28) <- kortNavn
 }
 
 xtable::xtable(NevrKlass28, digits=0, align=c('l', rep('r', ncol(NevrKlass28))),

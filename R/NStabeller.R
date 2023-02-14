@@ -248,18 +248,18 @@ lagTabNevrKlass <- function(HovedSkjema, datoFra='2018-01-01', datoTil=Sys.Date(
       AntKlassInnUt <- addmargins(table(HovedSkjema$ShNavn[(HovedSkjema$AAis %in% c(1:5,9)) & (HovedSkjema$FAis %in% c(1:5,9))]))
 
 NevrKlass <- rbind(
-      'Utført og klassifiserbar, innkomst: ' =
+      'Utført og klassifiserbar, innl.: ' =
             addmargins(table(HovedSkjema$ShNavn[HovedSkjema$AAis %in% 1:5])),
       'Ikke utført  ved innkomst:' =
             addmargins(table(HovedSkjema$ShNavn[HovedSkjema$ANeuNoMeasure == TRUE & HovedSkjema$AAis == -1])),
-      'Utført, men ikke klassifiserbar, innkomst: ' =
+      'Utført, ikke klassifiserbar, innl.: ' =
             addmargins(table(HovedSkjema$ShNavn[HovedSkjema$AAis==9])),
        'Utført og klassifiserbar, utreise: ' =
              addmargins(table(HovedSkjema$ShNavn[HovedSkjema$FAis %in% 1:5])),
       'Ikke utført ved utreise:' =
             addmargins(table(HovedSkjema$ShNavn[HovedSkjema$FNeuNoMeasure == TRUE
                                                      & HovedSkjema$FAis == -1])),
-      'Utført, men ikke klassifiserbar, utreise: ' =
+      'Utført, ikke klassifiserbar, utreise: ' =
             addmargins(table(HovedSkjema$ShNavn[HovedSkjema$FAis==9])),
       'Utført ved både inn- og utreise: ' =
             paste0(sprintf('%.0f',AntKlassInnUt/Ant*100), '%')
