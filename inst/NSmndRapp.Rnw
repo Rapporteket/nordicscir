@@ -46,10 +46,14 @@ HovedSkjema5aar$Aar <- factor(HovedSkjema5aar$Aar, levels = (1900+dato$year-4):(
 
 enhetsUtvalg <- 1
 shtxt <- as.character(HovedSkjema$ShNavn[match(reshID, HovedSkjema$ReshId)])
+
+registerTxt <- paste0(c('Norsk ', 'Nordisk ')[nordisk+1], 'ryggmargsskaderegister')
+regTxt <- paste0(c('NorSCIR ', 'NordicSCIR ')[nordisk+1]
+
 @
 
 
-\title[NorSCIR\\\Sexpr{shtxt}]{\textit{Norsk ryggmargsskaderegister} \\
+\title[\Sexpr{regTxt}\\\Sexpr{shtxt}]{\textit{\Sexpr{registerTxt}} \\
 MÅNEDSRAPPORT \\
 \Sexpr{shtxt}}
 \date{}
@@ -234,8 +238,6 @@ for (valgtVar in variabler) {
 \caption{Registreringsforsinkelse. Kvalitetsmålet er registrering innen 30 dager. } %Målet ble innført 2018-01-01.
 \end{figure}
 
-% Variabelen ble innført i desember og alle hovedskjema ferdigstilt (lukket første gang) etter desember 2017 vil derfor kunne inngå i figuren siden datoutvalget er basert på dato for innleggelse på akuttsykehus.
-
 \end{frame}
 
 
@@ -312,9 +314,14 @@ for (valgtVar in variabler) {
 # return(NevrKlass)
 # }
 
-NevrKlass <- TabNevrKlass(HovedSkjema = HovedSkjema12mnd, datoFra=datoFra, datoTil=Sys.Date())
+#NevrKlass <- lagTabNevrKlass(HovedSkjema = HovedSkjema12mnd, datoFra=datoFra, datoTil=Sys.Date())
 
-NevrKlass <- lagTabNevrKlass(HovedSkjema = HovedSkjema12mnd, datoFra=datoFra, datoTil=Sys.Date(), datoUt=0)
+NevrKlass <- lagTabNevrKlass(HovedSkjema = HovedSkjema12mnd, datoFra=datoFra, datoTil=Sys.Date(), datoUt=1)
+
+if (nordisk==1) {
+  kortNavn <- c(substr(colnames(NevrKlass)[1:(dim(NevrKlass)[2]-1)], 1, 3), 'Alle')
+  colnames(NevrKlass) <- kortNavn
+}
 
 xtable::xtable(NevrKlass, digits=0, align=c('l', rep('r', ncol(NevrKlass))),
 		caption=paste0('Nevrologisk klassifikasjon for pasienter utskrevet fra og med ',
@@ -330,7 +337,11 @@ xtable::xtable(NevrKlass, digits=0, align=c('l', rep('r', ncol(NevrKlass))),
 HovedSkjema28 <- HovedSkjema12mnd[which(HovedSkjema12mnd$DagerRehab >28),]
 
 NevrKlass28 <- lagTabNevrKlass(HovedSkjema = HovedSkjema28, datoFra=datoFra, datoTil=Sys.Date(), datoUt = 1)
-#NevrKlass28 <- TabNevrKlass(HovedSkjema = HovedSkjema28, datoFra=datoFra, datoTil=Sys.Date())
+
+if (nordisk==1) {
+  kortNavn <- c(substr(colnames(NevrKlass)[1:(dim(NevrKlass)[2]-1)], 1, 3), 'Alle')
+  colnames(NevrKlass) <- kortNavn
+}
 
 xtable::xtable(NevrKlass28, digits=0, align=c('l', rep('r', ncol(NevrKlass28))),
 		caption=paste0('Nevrologisk klassifikasjon for pasienter utskrevet pasienter fra og med ',

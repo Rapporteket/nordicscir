@@ -85,7 +85,7 @@ NSPreprosesser <- function(RegData)
         # Legg på Trondheim, Bergen, Nesodden/Oslo
         if (sum(as.numeric(unique(RegData$LandKode)))!=1){
           RegData$ShNavn[RegData$ReshId == 105593] <- 'Bergen'
-          RegData$ShNavn[RegData$ReshId == 106896] <- 'Nesodden/Oslo'
+          RegData$ShNavn[RegData$ReshId == 106896] <- 'Oslo/Nesodden'
           RegData$ShNavn[RegData$ReshId == 107627] <- 'Trondheim'
 
         }
