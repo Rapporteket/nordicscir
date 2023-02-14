@@ -248,27 +248,24 @@ lagTabNevrKlass <- function(HovedSkjema, datoFra='2018-01-01', datoTil=Sys.Date(
       AntKlassInnUt <- addmargins(table(HovedSkjema$ShNavn[(HovedSkjema$AAis %in% c(1:5,9)) & (HovedSkjema$FAis %in% c(1:5,9))]))
 
 NevrKlass <- rbind(
-      'Utført og klassifiserbar, innl.: ' =
+      'Utført og klassifiserbar, inn: ' =
             addmargins(table(HovedSkjema$ShNavn[HovedSkjema$AAis %in% 1:5])),
       'Ikke utført  ved innkomst:' =
             addmargins(table(HovedSkjema$ShNavn[HovedSkjema$ANeuNoMeasure == TRUE & HovedSkjema$AAis == -1])),
-      'Utført, ikke klassifiserbar, innl.: ' =
+      'Utført, ikke klassifiserbar, inn: ' =
             addmargins(table(HovedSkjema$ShNavn[HovedSkjema$AAis==9])),
-       'Utført og klassifiserbar, utreise: ' =
+       'Utført og klassifiserbar, ut: ' =
              addmargins(table(HovedSkjema$ShNavn[HovedSkjema$FAis %in% 1:5])),
       'Ikke utført ved utreise:' =
             addmargins(table(HovedSkjema$ShNavn[HovedSkjema$FNeuNoMeasure == TRUE
                                                      & HovedSkjema$FAis == -1])),
-      'Utført, ikke klassifiserbar, utreise: ' =
+      'Utført, ikke klassifiserbar, ut: ' =
             addmargins(table(HovedSkjema$ShNavn[HovedSkjema$FAis==9])),
-      'Utført ved både inn- og utreise: ' =
+      'Utført ved både inn og ut: ' =
             paste0(sprintf('%.0f',AntKlassInnUt/Ant*100), '%')
 )
 colnames(NevrKlass)[dim(NevrKlass)[2] ] <- 'Alle enheter'
 
-# xtable::xtable(NevrKlass, align=c('l', rep('r', ncol(NevrKlass))), digits=0,
-#                caption=paste0('Nevrologisk klassifikasjon for ferdigstilte innleggelser fra og med ',
-#                               datoFra, '.'))
 return(NevrKlass)
 }
 
