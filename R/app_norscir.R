@@ -42,7 +42,7 @@ ui_norscir <- function() {
   shiny::tagList(
     shinyjs::useShinyjs(),
     shiny::navbarPage(
-      id = "toppPaneler",
+      id = "hovedark",
       title = shiny::div(
         shiny::a(
           shiny::includeHTML(
@@ -623,7 +623,9 @@ server_norscir <- function(input, output, session) {
     rolle <- rapbase::getUserRole(session)
     brukernavn <- rapbase::getUserName(session)
   } else {
-    # whatever, if needed anymore
+    reshID <- 0
+    rolle <- 'ukjent'
+    brukernavn <- 'ukjent'
   }
 
   isGetDataOk <- TRUE
@@ -645,6 +647,14 @@ server_norscir <- function(input, output, session) {
     as.character(HovedSkjema$ShNavn[match(reshID, HovedSkjema$ReshId)]),
   'Uidentifisert enhet')
 
+  # observe({
+  if (rolle != 'SC') { #
+    #   shinyjs::hide(id = 'velgResh')
+    #   shinyjs::hide(id = 'velgReshOverf')
+    #   shinyjs::hide(id = 'velgReshData')
+    hideTab(inputId = "hovedark", target = "Registeradministrasjon")
+  }
+  # })
   #--------------Startside------------------------------
   rapbase::navbarWidgetServer(
     id = "navbar-widget", orgName = enhet, caller = "nordicscir" #caller = pakkenavn
