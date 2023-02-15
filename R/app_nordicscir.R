@@ -518,7 +518,8 @@ ui_nordicscir <- function() {
       shiny::tabPanel(
         "Registeradministrasjon",
         shiny::h2("Fane som bare er synlig for SC-bruker."),
-        h3('NB: Samlerapportene er ikke tilpasset nordiske data'),
+        h3('NB: Samlerapporten er ikke tilpasset nordiske data'),
+        h3('Månedsrapporten er tilpasset nordiske data'),
 
         shiny::tabsetPanel(
           id = "ark",
