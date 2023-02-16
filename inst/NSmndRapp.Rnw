@@ -349,7 +349,7 @@ if (nordisk==1) {
 }
 
 xtable::xtable(NevrKlass28, digits=0, align=c('l', rep('r', ncol(NevrKlass28))),
-		caption=paste0('Nevrologisk klassifikasjon for pasienter utskrevet pasienter fra og med ',
+		caption=paste0('Nevrologisk klassifikasjon for pasienter utskrevet fra og med ',
 		               datoFra, '. Antall pasienter med liggetid over 28 dager i ryggmargsskadeavdeling.'))
 
 #For kvalitetsindikatorene ønskes fargekoder på teksten. Grenser:
