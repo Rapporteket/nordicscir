@@ -1291,7 +1291,7 @@ server_norscir <- function(input, output, session) {
 
   rapbase::autoReportServer(
     id = "ns-subscription",
-    registryName = "nordicscir", #Character string with the registry name key. Must correspond to the registry R package name.
+    registryName = "norscir", #Character string with the registry name key. Must correspond to the registry R package name.
     type = "subscription",
     paramNames = paramNames,
     paramValues = paramValues,
@@ -1336,7 +1336,7 @@ server_norscir <- function(input, output, session) {
   paramValues <- shiny::reactive(org$value())
 
   rapbase::autoReportServer(
-    id = "NSuts", registryName = "nordicscir", type = "dispatchment",
+    id = "NSuts", registryName = "norscir", type = "dispatchment",
     org = org$value, paramNames = paramNames, paramValues = paramValues,
     reports = disReports, orgs = orgs, eligible = (rolle == "SC")
   )

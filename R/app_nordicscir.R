@@ -579,34 +579,34 @@ ui_nordicscir <- function() {
             )
           ) #Eksport-tab
         ) #tabsetPanel
-      ) #Registeradm-tab
+      ), #Registeradm-tab
 
       #------------------Abonnement------------------------
-      # shiny::tabPanel(
-      #   shiny::p(
-      #     "Abonnement",
-      #     title="Bestill automatisk utsending av månedsrapport på e-post"),
-      #   shiny::sidebarLayout(
-      #     shiny::sidebarPanel(
-      #       rapbase::autoReportInput("ns-subscription")
-      #     ),
-      #     shiny::mainPanel(
-      #       rapbase::autoReportUI("ns-subscription")
-      #     )
-      #   )
-      # )
+      shiny::tabPanel(
+        shiny::p(
+          "Abonnement",
+          title="Bestill automatisk utsending av månedsrapport på e-post"),
+        shiny::sidebarLayout(
+          shiny::sidebarPanel(
+            rapbase::autoReportInput("ns-subscription")
+          ),
+          shiny::mainPanel(
+            rapbase::autoReportUI("ns-subscription")
+          )
+        )
+      )
     ) #navbar
   ) #tagList
 }
 
 
-#' Server-del til norscir-appen
+#' Server-del til appen
 #'
 #' @param input shiny input object
 #' @param output shiny output object
 #' @param session shiny session object
 #'
-#' @return Server-delen til norscir-appen
+#' @return Server-delen til nordicscir-appen
 #' @export
 server_nordicscir <- function(input, output, session) {
 #print(session)
@@ -1253,7 +1253,7 @@ server_nordicscir <- function(input, output, session) {
       }
     )
     output$samleRappLand.pdf <- shiny::downloadHandler(
-      filename = function() {"NorScirSamleRapportLand.pdf"},
+      filename = function() {"NordicScirSamleRapportLand.pdf"},
       content = function(file) {
         contentFile(
           file,
@@ -1266,7 +1266,7 @@ server_nordicscir <- function(input, output, session) {
       }
     )
     output$samleRappEgen.pdf <- shiny::downloadHandler(
-      filename = function() {"NorScirSamleRapportEgen.pdf"},
+      filename = function() {"NordicScirSamleRapportEgen.pdf"},
       content = function(file) {
         contentFile(
           file,
@@ -1285,23 +1285,23 @@ server_nordicscir <- function(input, output, session) {
   }
 
   #------------------ Abonnement -----------------------------------------------
-  # subReports <- list(
-  #   `Månedsrapport` = list(
-  #     synopsis = "Rapporteket-NordicSCIR: månedsrapport, abonnement",
-  #     fun = "abonnement",
-  #     paramNames = c("rnwFil", "brukernavn", "reshID", "datoTil", "register"),
-  #     paramValues = c("NSmndRapp.Rnw", brukernavn, reshID, datoTil=Sys.Date(), 'nordicscir')
-  #   )
-  # )
-  #
-  # rapbase::autoReportServer(
-  #   id = "ns-subscription",
-  #   registryName = "nordicscir",
-  #   type = "subscription",
-  #   paramNames = paramNames,
-  #   paramValues = paramValues,
-  #   reports = subReports
-  # )
+  subReports <- list(
+    `Månedsrapport` = list(
+      synopsis = "Rapporteket-NordicSCIR: månedsrapport, abonnement",
+      fun = "abonnement",
+      paramNames = c("rnwFil", "brukernavn", "reshID", "datoTil", "register"),
+      paramValues = c("NSmndRapp.Rnw", brukernavn, reshID, datoTil=Sys.Date(), 'nordicscir')
+    )
+  )
+
+  rapbase::autoReportServer(
+    id = "ns-subscription",
+    registryName = "nordicscir",
+    type = "subscription",
+    paramNames = paramNames,
+    paramValues = paramValues,
+    reports = subReports
+  )
 
 
   #---Utsendinger---------------
@@ -1355,7 +1355,3 @@ server_nordicscir <- function(input, output, session) {
   ## veileding
   rapbase::exportGuideServer("nordicscirExportGuide", registryName)
 }
-
-
-# Run the application
-# shinyApp(ui = ui_norscir, server = server_norscir)
