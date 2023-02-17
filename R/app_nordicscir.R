@@ -1325,13 +1325,13 @@ server_nordicscir <- function(input, output, session) {
       fun = "abonnement",
       paramNames = c('rnwFil', "reshID", "register"),
       paramValues = c('NSmndRapp.Rnw', 0, 'nordicscir')
-    ),
-    SamleRapp = list(
-      synopsis = "Rapporteket-NordicSCIR: Samlerapp IKKE tilpasset Nordic!",
-      fun = "abonnement",
-      paramNames = c("rnwFil", "reshID"),
-      paramValues = c("NSsamleRapp.Rnw", 0)
     )
+    # SamleRapp = list(
+    #   synopsis = "Rapporteket-NordicSCIR: Samlerapp IKKE tilpasset Nordic!",
+    #   fun = "abonnement",
+    #   paramNames = c("rnwFil", "reshID"),
+    #   paramValues = c("NSsamleRapp.Rnw", 0)
+    # )
   )
 
   org <- rapbase::autoReportOrgServer("NSuts", orgs)

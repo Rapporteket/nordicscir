@@ -1291,7 +1291,7 @@ server_norscir <- function(input, output, session) {
 
   rapbase::autoReportServer(
     id = "ns-subscription",
-    registryName = "nordicscir",
+    registryName = "nordicscir", #Character string with the registry name key. Must correspond to the registry R package name.
     type = "subscription",
     paramNames = paramNames,
     paramValues = paramValues,
@@ -1318,14 +1318,14 @@ server_norscir <- function(input, output, session) {
     MndRapp = list(
       synopsis = "Rapporteket-NorSCIR: Månedsrapport",
       fun = "abonnement",
-      paramNames = c('rnwFil', "reshID"),
-      paramValues = c('NSmndRapp.Rnw', 0)
+      paramNames = c('rnwFil', "reshID", "register"),
+      paramValues = c('NSmndRapp.Rnw', 0, 'norscir')
     ),
     SamleRapp = list(
       synopsis = "Rapporteket-NorSCIR: Rapport, div. resultater",
       fun = "abonnement",
-      paramNames = c("rnwFil", "reshID"),
-      paramValues = c("NSsamleRapp.Rnw", 0)
+      paramNames = c("rnwFil", "reshID", "register"),
+      paramValues = c("NSsamleRapp.Rnw", 0, 'norscir')
     )
   )
 
