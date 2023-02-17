@@ -1289,8 +1289,8 @@ server_nordicscir <- function(input, output, session) {
   #   `Månedsrapport` = list(
   #     synopsis = "Rapporteket-NordicSCIR: månedsrapport, abonnement",
   #     fun = "abonnement",
-  #     paramNames = c("rnwFil", "brukernavn", "reshID", "datoTil"),
-  #     paramValues = c("NSmndRapp.Rnw", brukernavn, reshID, datoTil=Sys.Date())
+  #     paramNames = c("rnwFil", "brukernavn", "reshID", "datoTil", "register"),
+  #     paramValues = c("NSmndRapp.Rnw", brukernavn, reshID, datoTil=Sys.Date(), 'nordicscir')
   #   )
   # )
   #
@@ -1323,11 +1323,11 @@ server_nordicscir <- function(input, output, session) {
     MndRapp = list(
       synopsis = "Rapporteket-NordicSCIR: Månedsrapport",
       fun = "abonnement",
-      paramNames = c('rnwFil', "reshID"),
-      paramValues = c('NSmndRapp.Rnw', 0)
+      paramNames = c('rnwFil', "reshID", "register"),
+      paramValues = c('NSmndRapp.Rnw', 0, 'nordicscir')
     ),
     SamleRapp = list(
-      synopsis = "Rapporteket-NorSCIR: Rapport, div. resultater",
+      synopsis = "Rapporteket-NordicSCIR: Samlerapp IKKE tilpasset Nordic!",
       fun = "abonnement",
       paramNames = c("rnwFil", "reshID"),
       paramValues = c("NSsamleRapp.Rnw", 0)
