@@ -19,11 +19,7 @@ ui_norscir <- function() {
   )
 
   context <- Sys.getenv("R_RAP_INSTANCE") #Blir tom hvis jobber lokalt
-  paaServer <- context %in% c("DEV", "TEST", "QA", "PRODUCTION")
-
-
-  regTitle = ifelse(paaServer, "Norsk ryggmargsskaderegister",
-                    "Norsk ryggmargsskaderegister med FIKTIVE data")
+  regTitle = "Norsk ryggmargsskaderegister"
 
   #----Valg
 
@@ -94,7 +90,7 @@ ui_norscir <- function() {
         ),
         shiny::mainPanel(
           width = 8,
-          if (paaServer) {
+          if (context %in% c("DEV", "TEST", "QA", "PRODUCTION")) {
             rapbase::navbarWidgetInput("navbar-widget")
           },
           shiny::h2("Velkommen til Rapporteket - Norsk Ryggmargsskaderegister!",
@@ -1292,6 +1288,7 @@ server_norscir <- function(input, output, session) {
   rapbase::autoReportServer(
     id = "ns-subscription",
     registryName = "norscir", #Character string with the registry name key. Must correspond to the registry R package name.
+    #Når norscir benyttes som registryName, kommer bestilte utsendinger opp i den norske appen. Men fungerer utsendinga...? 17.02.2023
     type = "subscription",
     paramNames = paramNames,
     paramValues = paramValues,

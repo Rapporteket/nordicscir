@@ -19,11 +19,7 @@ ui_nordicscir <- function() {
   )
 
   context <- Sys.getenv("R_RAP_INSTANCE") #Blir tom hvis jobber lokalt
-  paaServer <- context %in% c("DEV", "TEST", "QA", "PRODUCTION")
-
-
-  regTitle = ifelse(paaServer, "Nordisk ryggmargsskaderegister",
-                    "Norsk ryggmargsskaderegister med FIKTIVE data")
+  regTitle = "Nordisk ryggmargsskaderegister"
 
   #----Valg
 
@@ -102,7 +98,7 @@ ui_nordicscir <- function() {
         ),
         shiny::mainPanel(
           width = 8,
-          if (paaServer) {
+          if (context %in% c("DEV", "TEST", "QA", "PRODUCTION")) {
             rapbase::navbarWidgetInput("navbar-widget")
           },
           shiny::h2("Velkommen til Rapporteket - Nordisk Ryggmargsskaderegister!",
