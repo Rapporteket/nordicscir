@@ -1327,6 +1327,7 @@ server_norscir <- function(input, output, session) {
   )
 
   org <- rapbase::autoReportOrgServer("NSuts", orgs)
+#Må lage spesialtilpasning for norscir i modulen. Legge til en parameter.
 
   # oppdatere reaktive parametre, for å få inn valgte verdier
   paramNames <- shiny::reactive("reshID")
