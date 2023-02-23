@@ -2,7 +2,7 @@
 % Please edit documentation in R/app_nordicscir.R
 \name{server_nordicscir}
 \alias{server_nordicscir}
-\title{Server-del til norscir-appen}
+\title{Server-del til appen}
 \usage{
 server_nordicscir(input, output, session)
 }
@@ -14,8 +14,8 @@ server_nordicscir(input, output, session)
 \item{session}{shiny session object}
 }
 \value{
-Server-delen til norscir-appen
+Server-delen til nordicscir-appen
 }
 \description{
-Server-del til norscir-appen
+Server-del til appen
 }
