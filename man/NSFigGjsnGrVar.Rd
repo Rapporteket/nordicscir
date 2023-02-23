@@ -67,10 +67,10 @@ kunne brukes til andre grupperingsvariable enn sykehus.
 \details{
 Argumentet \emph{valgtVar} har følgende valgmuligheter:
    \itemize{
-    \item Alder: Aldersfordeling, 15-årige grupper 
+    \item Alder: Aldersfordeling, 15-årige grupper
     \item DagerRehab: antall dager med rehabilitering [RehabDy]
     \item DagerTilRehab: antall dager før rehabilitering [BeforeRehDy]
-    \item OpphTot: Lengde på opphold – totalt [HosptlDy] 
+    \item OpphTot: Lengde på opphold – totalt [HosptlDy]
     \item Permisjon: Antall døgn ute av sykehus [OutOfHosptlDy]
    }
 }

@@ -8,6 +8,7 @@ abonnement(
   rnwFil,
   brukernavn = "ukjent",
   reshID = 0,
+  register = "norscir",
   datoFra = Sys.Date() - 400,
   datoTil = Sys.Date()
 )
