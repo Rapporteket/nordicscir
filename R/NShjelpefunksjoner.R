@@ -9,7 +9,7 @@
 kjor_NSapper <- function(register = 'norscir') {
 
   app <- switch(register,
-         'norscir' = shiny::shinyApp(ui = nordicscir::ui_norscir, server = nordicscir::server_norscir),
+         'norscir' = shiny::shinyApp(ui = norscir::ui_norscir, server = norscir::server_norscir),
          'nordicscir' = shiny::shinyApp(ui = nordicscir::ui_nordicscir, server = nordicscir::server_nordicscir)
   )
 
