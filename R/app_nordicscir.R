@@ -1284,7 +1284,7 @@ server_nordicscir <- function(input, output, session) {
   subReports <- list(
     `Månedsrapport` = list(
       synopsis = "Rapporteket-NordicSCIR: månedsrapport, abonnement",
-      fun = "abonnement",
+      fun = "nordicscir::abonnement",
       paramNames = c("rnwFil", "brukernavn", "reshID", "datoTil", "register"),
       paramValues = c("NSmndRapp.Rnw", brukernavn, reshID, datoTil=Sys.Date(), 'nordicscir')
     )
@@ -1298,7 +1298,6 @@ server_nordicscir <- function(input, output, session) {
     paramValues = paramValues,
     reports = subReports
   )
-
 
   #---Utsendinger---------------
   if (isDataOk) {
@@ -1348,6 +1347,10 @@ server_nordicscir <- function(input, output, session) {
   registryName <- "nordicscir"
   ## brukerkontroller
   rapbase::exportUCServer("nordicscirExport", registryName)
+
   ## veileding
   rapbase::exportGuideServer("nordicscirExportGuide", registryName)
 }
+
+# Run the application
+#shiny::shinyApp(ui = ui_nordicscir, server = server_nordicscir)
