@@ -1284,7 +1284,7 @@ server_nordicscir <- function(input, output, session) {
   subReports <- list(
     `Månedsrapport` = list(
       synopsis = "Rapporteket-NordicSCIR: månedsrapport, abonnement",
-      fun = "nordicscir::abonnement",
+      fun = "abonnement",
       paramNames = c("rnwFil", "brukernavn", "reshID", "datoTil", "register"),
       paramValues = c("NSmndRapp.Rnw", brukernavn, reshID, datoTil=Sys.Date(), 'nordicscir')
     )
