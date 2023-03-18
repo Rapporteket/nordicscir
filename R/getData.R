@@ -18,32 +18,35 @@ getRealData <- function(register='norscir') {
   tryCatch({
     HovedSkjema <- NSRegDataSQL(register=register)
     LivskvalH <- NSRegDataSQL(register=register, valgtVar = "LivsXX")
-    KontrollH <- NSRegDataSQL(register=register, valgtVar = "KontXX")
     UrinH <- NSRegDataSQL(register=register, valgtVar = "UrinXX")
     TarmH <- NSRegDataSQL(register=register, valgtVar = "TarmXX")
-    AktivFunksjonH <- NSRegDataSQL(register=register, valgtVar = "FunkXX")
-    AktivTilfredshetH <- NSRegDataSQL(register=register, valgtVar = "TilfXX")
-    return(
-      list(
-        HovedSkjema = HovedSkjema,
-        LivskvalH = LivskvalH,
-        KontrollH = KontrollH,
-        UrinH = UrinH,
-        TarmH = TarmH,
+    data <- list(
+      HovedSkjema = HovedSkjema,
+      LivskvalH = LivskvalH,
+      UrinH = UrinH,
+      TarmH = TarmH)
+
+    if (register=='norscir'){
+      KontrollH <- NSRegDataSQL(register=register, valgtVar = "KontXX")
+      AktivFunksjonH <- NSRegDataSQL(register=register, valgtVar = "FunkXX")
+      AktivTilfredshetH <- NSRegDataSQL(register=register, valgtVar = "TilfXX")
+      data <- append(data,
+        list(KontrollH = KontrollH,
         AktivFunksjonH = AktivFunksjonH,
-        AktivTilfredshetH = AktivTilfredshetH
-      )
-    )
-  }, error = function(e) {
-    warning(paste("Could not get real data:", e))
-    return(NULL)
-  })
+        AktivTilfredshetH = AktivTilfredshetH))
+      }
+
+    return(data)},
+    error = function(e) {
+      warning(paste("Could not get real data:", e))
+      return(NULL)}
+  )
 }
 
 
 #' @rdname getData
 #' @export
-getFakeData <- function(register = 'norscir') {
+getFakeData <- function(register = 'norscir') { #Denne må muligens tilpasses nordiske data
 #Har foreløpbig bare norske, fiktive data.
 
   data('NordicScirFIKTIVEdata', package = 'nordicscir', envir = environment())
@@ -92,21 +95,21 @@ processAllData <- function(data, register = 'norscir') {
   tryCatch({
     HovedSkjema <- NSPreprosesser(data$HovedSkjema)
     LivskvalH <- NSPreprosesser(data$LivskvalH)
-    KontrollH <- NSPreprosesser(data$KontrollH)
     UrinH <- NSPreprosesser(data$UrinH)
     TarmH <- NSPreprosesser(data$TarmH)
 
     Skjemaer <- list(
       HovedSkjema = HovedSkjema,
       LivskvalH = LivskvalH,
-      KontrollH = KontrollH,
       UrinH = UrinH,
       TarmH = TarmH)
 
     if (register == 'norscir'){
+      KontrollH <- NSPreprosesser(data$KontrollH)
       AktivFunksjonH <- NSPreprosesser(data$AktivFunksjonH)
       AktivTilfredshetH <- NSPreprosesser(data$AktivTilfredshetH)
       Aktiv <- list(
+        KontrollH = KontrollH,
         AktivFunksjonH = AktivFunksjonH,
         AktivTilfredshetH = AktivTilfredshetH)
       Skjemaer <- append(Skjemaer, Aktiv)
