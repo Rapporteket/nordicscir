@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nordicscir</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.4.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.0.0</span>
       </span>
     </div>
 
@@ -76,13 +76,13 @@
       </tr><tr><td>
           <p><code><a href="NSRegDataSQL.html">NSRegDataSQL()</a></code> </p>
         </td>
-        <td><p>Henter data for NordicScir fra  staging</p></td>
-      </tr><tr><td>
-          <p><code><a href="NSRegDataSQL_Jasper.html">NSRegDataSQL_Jasper()</a></code> </p>
-        </td>
-        <td><p>Henter data for NordicScir fra  staging</p></td>
+        <td><p>Henter data for NorScir eller NordicScir fra database</p></td>
       </tr><tr><td>
           <p><code><a href="NSUtvalg.html">NSUtvalg()</a></code> </p>
+        </td>
+        <td><p>Funksjon som gjør utvalg av data basert på brukervalg.</p></td>
+      </tr><tr><td>
+          <p><code><a href="NSUtvalgEnh.html">NSUtvalgEnh()</a></code> </p>
         </td>
         <td><p>Funksjon som gjør utvalg av data basert på brukervalg.</p></td>
       </tr><tr><td>
@@ -110,9 +110,13 @@
         </td>
         <td><p>Hente data basert på valgtVar</p></td>
       </tr><tr><td>
-          <p><code><a href="getData.html">getRealData()</a></code> <code><a href="getData.html">getFakeData()</a></code> <code><a href="getData.html">processData()</a></code> </p>
+          <p><code><a href="getData.html">getRealData()</a></code> <code><a href="getData.html">getFakeData()</a></code> <code><a href="getData.html">processAllData()</a></code> </p>
         </td>
         <td><p>Get Data for NordicScir</p></td>
+      </tr><tr><td>
+          <p><code><a href="kjor_NSapper.html">kjor_NSapper()</a></code> </p>
+        </td>
+        <td><p>Kjør Shiny Application</p></td>
       </tr><tr><td>
           <p><code><a href="lagTabNevrKlass.html">lagTabNevrKlass()</a></code> </p>
         </td>
@@ -134,6 +138,14 @@
         </td>
         <td><p>Lage tulledata (simulerte data). Takler ikke posixlt- type data.</p></td>
       </tr><tr><td>
+          <p><code><a href="server_nordicscir.html">server_nordicscir()</a></code> </p>
+        </td>
+        <td><p>Server-del til appen</p></td>
+      </tr><tr><td>
+          <p><code><a href="server_norscir.html">server_norscir()</a></code> </p>
+        </td>
+        <td><p>Server-del til norscir-appen</p></td>
+      </tr><tr><td>
           <p><code><a href="tabAntOpphPasSh5Aar.html">tabAntOpphPasSh5Aar()</a></code> </p>
         </td>
         <td><p>Antall registreringer/pasienter siste 5 år</p></td>
@@ -145,8 +157,8 @@
           <p><code><a href="tabAntOpphShMnd.html">tabAntOpphShMnd()</a></code> </p>
         </td>
         <td><p>tabAntOpphShMnd antall opphold siste X (antMnd) mnd
--tabAntOpphSh12mnd: Antall opphold per måned og enhet siste 12 måneder fram til datoTil. 
--tabAntOpphSh5Aar:Antall opphold per år og enhet siste 5 år (inkl. inneværende år) fram til datoTil. 
+-tabAntOpphSh12mnd: Antall opphold per måned og enhet siste 12 måneder fram til datoTil.
+-tabAntOpphSh5Aar:Antall opphold per år og enhet siste 5 år (inkl. inneværende år) fram til datoTil.
 RegData må inneholde Aar.</p></td>
       </tr><tr><td>
           <p><code><a href="tabAntSkjema.html">tabAntSkjema()</a></code> </p>
@@ -159,12 +171,20 @@ RegData må inneholde Aar.</p></td>
       </tr><tr><td>
           <p><code><a href="tabLiggetider.html">tabLiggetider()</a></code> </p>
         </td>
-        <td><p>Liggetider. Liggetid tot.(OpphTot), Liggetid rehab.(DagerRehab), Liggetid før rehab (DagerTilRehab): 
+        <td><p>Liggetider. Liggetid tot.(OpphTot), Liggetid rehab.(DagerRehab), Liggetid før rehab (DagerTilRehab):
 min/max, gjsn, median</p></td>
       </tr><tr><td>
           <p><code><a href="tabSkjemaTilknyttet.html">tabSkjemaTilknyttet()</a></code> </p>
         </td>
         <td><p>Tabell: Antall og andel moder"skjema som har ulike typer registreringsskjema</p></td>
+      </tr><tr><td>
+          <p><code><a href="ui_nordicscir.html">ui_nordicscir()</a></code> </p>
+        </td>
+        <td><p>Brukergrensesnitt (ui) til nordscir-appen</p></td>
+      </tr><tr><td>
+          <p><code><a href="ui_norscir.html">ui_norscir()</a></code> </p>
+        </td>
+        <td><p>Brukergrensesnitt (ui) til nordscir-appen</p></td>
       </tr></tbody></table></div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

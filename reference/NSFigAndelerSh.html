@@ -45,7 +45,7 @@ TarmAvfTillegg: Avføring, tilleggsmetode
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nordicscir</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.4.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.0.0</span>
       </span>
     </div>
 
@@ -102,6 +102,7 @@ TarmAvfTillegg: Avføring, tilleggsmetode
 <span>  outfile <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  valgtVar <span class="op">=</span> <span class="st">"Alder"</span>,</span>
 <span>  hentData <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  register <span class="op">=</span> <span class="st">"norscir"</span>,</span>
 <span>  preprosess <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  datoFra <span class="op">=</span> <span class="st">"2010-01-01"</span>,</span>
 <span>  datoTil <span class="op">=</span> <span class="st">"2050-01-01"</span>,</span>
@@ -147,7 +148,11 @@ TarmAvfTillegg: Avføring, tilleggsmetode
 
 
 <dt>reshID</dt>
-<dd><p>- avdelingsid for egen avdeling, standard: 0-hele landet.</p></dd>
+<dd><p>- avdelingsid for egen avdeling, standard: 0-hele landet/Norden.</p></dd>
+
+
+<dt>regsiter</dt>
+<dd><p>Må angis hvis hentData=1. Valg: 'norscir' (standard), 'nordicscir'</p></dd>
 
 
 <dt>figurtype</dt>

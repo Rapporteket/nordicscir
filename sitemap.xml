@@ -40,10 +40,10 @@
     <loc>/reference/NSRegDataSQL.html</loc>
   </url>
   <url>
-    <loc>/reference/NSRegDataSQL_Jasper.html</loc>
+    <loc>/reference/NSUtvalg.html</loc>
   </url>
   <url>
-    <loc>/reference/NSUtvalg.html</loc>
+    <loc>/reference/NSUtvalgEnh.html</loc>
   </url>
   <url>
     <loc>/reference/NSVarTilrettelegg.html</loc>
@@ -79,6 +79,9 @@
     <loc>/reference/index.html</loc>
   </url>
   <url>
+    <loc>/reference/kjor_NSapper.html</loc>
+  </url>
+  <url>
     <loc>/reference/lagTabNevrKlass.html</loc>
   </url>
   <url>
@@ -98,6 +101,12 @@
   </url>
   <url>
     <loc>/reference/pronoun.html</loc>
+  </url>
+  <url>
+    <loc>/reference/server_nordicscir.html</loc>
+  </url>
+  <url>
+    <loc>/reference/server_norscir.html</loc>
   </url>
   <url>
     <loc>/reference/subtract_month.html</loc>
@@ -122,5 +131,11 @@
   </url>
   <url>
     <loc>/reference/tabSkjemaTilknyttet.html</loc>
+  </url>
+  <url>
+    <loc>/reference/ui_nordicscir.html</loc>
+  </url>
+  <url>
+    <loc>/reference/ui_norscir.html</loc>
   </url>
 </urlset>

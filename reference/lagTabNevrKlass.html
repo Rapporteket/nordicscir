@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nordicscir</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.4.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.0.0</span>
       </span>
     </div>
 
@@ -44,7 +44,12 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">lagTabNevrKlass</span><span class="op">(</span><span class="va">HovedSkjema</span>, datoFra <span class="op">=</span> <span class="st">"2018-01-01"</span>, datoTil <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">lagTabNevrKlass</span><span class="op">(</span></span>
+<span>  <span class="va">HovedSkjema</span>,</span>
+<span>  datoFra <span class="op">=</span> <span class="st">"2018-01-01"</span>,</span>
+<span>  datoTil <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  datoUt <span class="op">=</span> <span class="fl">0</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -55,6 +60,10 @@
 
 <dt>datoTil</dt>
 <dd><p>sluttdato, fra og med Eks. '2013-05-25'</p></dd>
+
+
+<dt>datoUt</dt>
+<dd><p>datofiltrering basert på innleggelse (0), utskriving (1)</p></dd>
 
 
 <dt>HovedSkjema-</dt>
