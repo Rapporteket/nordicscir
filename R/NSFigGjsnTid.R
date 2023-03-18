@@ -42,7 +42,7 @@ NSFigGjsnTid <- function(RegData, valgtVar='Alder', datoFra='2011-01-01', datoTi
   RegData <- NSVarSpes$RegData
 
 
-  NSUtvalg <- NSUtvalg(RegData=RegData, datoFra=datoFra, datoTil=datoTil, datoUt = datoUt,
+  NSUtvalg <- NSUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil=datoTil, datoUt = datoUt,
                        minald=minald, maxald=maxald, erMann=erMann, reshID=reshID,
                        traume=traume, AIS=AIS, nivaaUt=nivaaUt, enhetsUtvalg = enhetsUtvalg)
   RegData <- NSUtvalg$RegData
@@ -117,7 +117,7 @@ NSFigGjsnTid <- function(RegData, valgtVar='Alder', datoFra='2011-01-01', datoTi
   ResData <- round(rbind(Midt, Konf, MidtRest, KonfRest), 1)
   rownames(ResData) <- c(maaltxt, 'KImin', 'KImaks',
                          paste0(maaltxt, 'Resten'), 'KImin, Resten', 'KImaks, Resten')[1:(3*(medSml+1))]
-  
+
   FigDataParam <- list(AggVerdier=ResData,
                        N=N,
                        Ngr=Ngr,
@@ -176,11 +176,11 @@ if (lagFigur==1) {
                    tidNum[AntTidsenh]+0.012, tidNum[AntTidsenh:1], tidNum[1]-0.01)
       minmaks <- c(KonfRest[1,c(1,1:AntTidsenh, AntTidsenh)], KonfRest[2,c(AntTidsenh,AntTidsenh:1,1)])
       ind <- which(is.na(minmaks))
-      dummy <- c(0.9*MidtRest[c(1,1:AntTidsenh, AntTidsenh)], 1.1*MidtRest[c(AntTidsenh,AntTidsenh:1,1)]) 
-      minmaks[ind] <- dummy[ind] 
+      dummy <- c(0.9*MidtRest[c(1,1:AntTidsenh, AntTidsenh)], 1.1*MidtRest[c(AntTidsenh,AntTidsenh:1,1)])
+      minmaks[ind] <- dummy[ind]
       if (sum(is.na(minmaks))==0) {
       polygon(x = tidspkt, y = minmaks, col=fargeRestRes, border=NA)
-      
+
       legend('top', bty='n', fill=fargeRestRes, border=fargeRestRes, cex=cexgr,
              paste0('95% konfidensintervall for ', NSUtvalg$smltxt, ', N=', sum(Nrest, na.rm=T)))
       }

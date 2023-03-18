@@ -2,7 +2,7 @@
 % Please edit documentation in R/NStabeller.R
 \name{tabLiggetider}
 \alias{tabLiggetider}
-\title{Liggetider. Liggetid tot.(OpphTot), Liggetid rehab.(DagerRehab), Liggetid før rehab (DagerTilRehab): 
+\title{Liggetider. Liggetid tot.(OpphTot), Liggetid rehab.(DagerRehab), Liggetid før rehab (DagerTilRehab):
 min/max, gjsn, median}
 \usage{
 tabLiggetider(
@@ -28,6 +28,6 @@ tabLiggetider(
 \item{Data}{Liste med alle datatabeller/skjema}
 }
 \description{
-Liggetider. Liggetid tot.(OpphTot), Liggetid rehab.(DagerRehab), Liggetid før rehab (DagerTilRehab): 
+Liggetider. Liggetid tot.(OpphTot), Liggetid rehab.(DagerRehab), Liggetid før rehab (DagerTilRehab):
 min/max, gjsn, median
 }

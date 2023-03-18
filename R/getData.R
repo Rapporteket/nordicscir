@@ -3,101 +3,120 @@
 #' Functions to obtain and process data for NordicScir, both real and fake.
 #'
 #' @param data A data object to be processed by the function.
+#' @param register Hvilket register det skal hentes data for
+#'        'norscir' (standard) eller 'nordicscir'
 #' @return A list of data objects (data frames).  If not successful in query for
 #' real data, a warning is issued and NULL will be will be returned.
-#' @aliases getRealData getFakeData processData
+#' @aliases getRealData getFakeData processAllData
 #' @name getData
 NULL
 
 #' @rdname getData
 #' @export
-getRealData <- function() {
+getRealData <- function(register='norscir') {
 
   tryCatch({
-    HovedSkjema <- NSRegDataSQL()
-    LivskvalH <- NSRegDataSQL(valgtVar = "LivsXX")
-    KontrollH <- NSRegDataSQL(valgtVar = "KontXX")
-    UrinH <- NSRegDataSQL(valgtVar = "UrinXX")
-    TarmH <- NSRegDataSQL(valgtVar = "TarmXX")
-    AktivFunksjonH <- NSRegDataSQL(valgtVar = "FunkXX")
-    AktivTilfredshetH <- NSRegDataSQL(valgtVar = "TilfXX")
-    return(
-      list(
-        HovedSkjema = HovedSkjema,
-        LivskvalH = LivskvalH,
-        KontrollH = KontrollH,
-        UrinH = UrinH,
-        TarmH = TarmH,
+    HovedSkjema <- NSRegDataSQL(register=register)
+    LivskvalH <- NSRegDataSQL(register=register, valgtVar = "LivsXX")
+    UrinH <- NSRegDataSQL(register=register, valgtVar = "UrinXX")
+    TarmH <- NSRegDataSQL(register=register, valgtVar = "TarmXX")
+    data <- list(
+      HovedSkjema = HovedSkjema,
+      LivskvalH = LivskvalH,
+      UrinH = UrinH,
+      TarmH = TarmH)
+
+    if (register=='norscir'){
+      KontrollH <- NSRegDataSQL(register=register, valgtVar = "KontXX")
+      AktivFunksjonH <- NSRegDataSQL(register=register, valgtVar = "FunkXX")
+      AktivTilfredshetH <- NSRegDataSQL(register=register, valgtVar = "TilfXX")
+      data <- append(data,
+        list(KontrollH = KontrollH,
         AktivFunksjonH = AktivFunksjonH,
-        AktivTilfredshetH = AktivTilfredshetH
-      )
-    )
-  }, error = function(e) {
-    warning(paste("Could not get real data:", e))
-    return(NULL)
-  })
+        AktivTilfredshetH = AktivTilfredshetH))
+      }
+
+    return(data)},
+    error = function(e) {
+      warning(paste("Could not get real data:", e))
+      return(NULL)}
+  )
 }
 
 
 #' @rdname getData
 #' @export
-getFakeData <- function() {
+getFakeData <- function(register = 'norscir') { #Denne må muligens tilpasses nordiske data
+#Har foreløpbig bare norske, fiktive data.
 
   data('NordicScirFIKTIVEdata', package = 'nordicscir', envir = environment())
 
   Livskval$HovedskjemaGUID <- toupper(Livskval$HovedskjemaGUID)
-  Kontroll$HovedskjemaGUID <- toupper(Kontroll$HovedskjemaGUID)
   Urin$HovedskjemaGUID <- toupper(Urin$HovedskjemaGUID)
   Tarm$HovedskjemaGUID <- toupper(Tarm$HovedskjemaGUID)
-  AktivFunksjon$HovedskjemaGUID <- toupper(AktivFunksjon$HovedskjemaGUID)
-  AktivTilfredshet$HovedskjemaGUID <- toupper(AktivTilfredshet$HovedskjemaGUID)
 
   LivskvalH <- KobleMedHoved(HovedSkjema, Livskval)
   KontrollH <- KobleMedHoved(HovedSkjema, Kontroll)
   UrinH <- KobleMedHoved(HovedSkjema, Urin)
   TarmH <- KobleMedHoved(HovedSkjema, Tarm)
-  AktivFunksjonH <- KobleMedHoved(HovedSkjema, AktivFunksjon)
-  Aktivitet <- KobleMedHoved(
-    HovedSkjema = AktivFunksjon, Skjema2 = AktivTilfredshet
-  )
-  AktivTilfredshetH <- KobleMedHoved(HovedSkjema, Aktivitet)
 
-  list(
+  if (register == 'norscir') {
+    Kontroll$HovedskjemaGUID <- toupper(Kontroll$HovedskjemaGUID)
+    AktivFunksjon$HovedskjemaGUID <- toupper(AktivFunksjon$HovedskjemaGUID)
+    AktivTilfredshet$HovedskjemaGUID <- toupper(AktivTilfredshet$HovedskjemaGUID)
+
+    AktivFunksjonH <- KobleMedHoved(HovedSkjema, AktivFunksjon)
+    Aktivitet <- KobleMedHoved(
+      HovedSkjema = AktivFunksjon, Skjema2 = AktivTilfredshet
+    )
+    AktivTilfredshetH <- KobleMedHoved(HovedSkjema, Aktivitet)
+  }
+
+  Skjemaer <- list(
     HovedSkjema = HovedSkjema,
     LivskvalH = LivskvalH,
     KontrollH = KontrollH,
     UrinH = UrinH,
-    TarmH = TarmH,
-    AktivFunksjonH = AktivFunksjonH,
-    AktivTilfredshetH = AktivTilfredshetH
-  )
+    TarmH = TarmH)
+
+  if (register =='norscir'){
+    Aktiv <- list(
+      AktivFunksjonH = AktivFunksjonH,
+      AktivTilfredshetH = AktivTilfredshetH)
+    Skjemaer <- append(Skjemaer, Aktiv)
+  }
 }
 
 
 #' @rdname getData
 #' @export
-processData <- function(data) {
+processAllData <- function(data, register = 'norscir') {
 
   tryCatch({
     HovedSkjema <- NSPreprosesser(data$HovedSkjema)
     LivskvalH <- NSPreprosesser(data$LivskvalH)
-    KontrollH <- NSPreprosesser(data$KontrollH)
     UrinH <- NSPreprosesser(data$UrinH)
     TarmH <- NSPreprosesser(data$TarmH)
-    AktivFunksjonH <- NSPreprosesser(data$AktivFunksjonH)
-    AktivTilfredshetH <- NSPreprosesser(data$AktivTilfredshetH)
 
-    return(
-      list(
-        HovedSkjema = HovedSkjema,
-        LivskvalH = LivskvalH,
+    Skjemaer <- list(
+      HovedSkjema = HovedSkjema,
+      LivskvalH = LivskvalH,
+      UrinH = UrinH,
+      TarmH = TarmH)
+
+    if (register == 'norscir'){
+      KontrollH <- NSPreprosesser(data$KontrollH)
+      AktivFunksjonH <- NSPreprosesser(data$AktivFunksjonH)
+      AktivTilfredshetH <- NSPreprosesser(data$AktivTilfredshetH)
+      Aktiv <- list(
         KontrollH = KontrollH,
-        UrinH = UrinH,
-        TarmH = TarmH,
         AktivFunksjonH = AktivFunksjonH,
-        AktivTilfredshetH = AktivTilfredshetH
-      )
-    )
+        AktivTilfredshetH = AktivTilfredshetH)
+      Skjemaer <- append(Skjemaer, Aktiv)
+
+    }
+    return(Skjemaer)
+
   }, error = function(e) {
     warning("Something went wrong processing the data:", e)
     return(NULL)

@@ -2,12 +2,21 @@
 #---------------------------------------------
 
 #' Kjør Shiny Application
-#'
+#' @param register Angi hvilket register som skal startes
 #' @return Et objekt som representerer den aktuelle app'en
 #' @export
 
-run_app <- function(register=nordicscir) {
-  shiny::shinyApp(ui = app_ui, server = app_server)
+kjor_NSapper <- function(register = 'norscir') {
+
+  app <- switch(register,
+         'norscir' = shiny::shinyApp(ui = norscir::ui_norscir, server = norscir::server_norscir),
+         'nordicscir' = shiny::shinyApp(ui = nordicscir::ui_nordicscir, server = nordicscir::server_nordicscir)
+  )
+
+  if (!(register %in% c('norscir','nordicscir'))){
+    warning('Angitt register har ingen app')}
+
+  return(app)
 }
 
 
@@ -155,30 +164,17 @@ TilLogiskeVar <- function(Skjema){
 #' @param datoFra - startdato for data som hentes til bruk i rapporten
 #' @param datoTil - sluttdato for data som hentes til bruk i rapporten
 #'
-#' @return
 #' @export
-abonnement <- function(rnwFil, brukernavn='ukjent', reshID=0,
+abonnement <- function(rnwFil, brukernavn='ukjent', reshID=0, register='nordicscir',
                        datoFra=Sys.Date()-400, datoTil=Sys.Date()) {
 
-      # raplog::subLogger(author = brukernavn, registryName = 'NorScir',
+      # raplog::subLogger(author = brukernavn, registryName = register,
       #               reshId = reshID[[1]],
-      #               msg = paste0("Abonnement: ", rnwFil))
+      #               msg = paste0("1)starter abonnementkjøring: ", rnwFil))
 
-  HovedSkjema <- NSRegDataSQL()
-  LivskvalH <- NSRegDataSQL(valgtVar='LivsXX')
-  KontrollH <- NSRegDataSQL(valgtVar='KontXX')
-  UrinH <- NSRegDataSQL(valgtVar='UrinXX')
-  TarmH <- NSRegDataSQL(valgtVar='TarmXX')
-  AktivFunksjonH <- NSRegDataSQL(valgtVar='FunkXX')
-  AktivTilfredshetH <- NSRegDataSQL(valgtVar='TilfXX')
-
-  HovedSkjema <- NSPreprosesser(HovedSkjema)
-  LivskvalH <- NSPreprosesser(LivskvalH)
-  KontrollH <- NSPreprosesser(KontrollH)
-  UrinH <- NSPreprosesser(UrinH)
-  TarmH <- NSPreprosesser(TarmH)
-  AktivFunksjonH <- NSPreprosesser(AktivFunksjonH)
-  AktivTilfredshetH <- NSPreprosesser(AktivTilfredshetH)
+  AlleTab <- nordicscir::getRealData(register = register)
+  AlleTab <- nordicscir::processAllData(AlleTab, register = register)
+  attach(AlleTab)
 
   reshID <- reshID[[1]]
   datoFra <- datoFra[[1]]
@@ -187,14 +183,20 @@ abonnement <- function(rnwFil, brukernavn='ukjent', reshID=0,
   filbase <- substr(rnwFil[[1]], 1, nchar(rnwFil[[1]])-4)
   tmpFile <- paste0(filbase, Sys.Date(),'_',digest::digest(brukernavn)[[1]], '.Rnw')
   src <- normalizePath(system.file(rnwFil[[1]], package='nordicscir'))
+  # raplog::subLogger(author = brukernavn, registryName = 'NorScir',
+  #                   reshId = reshID[[1]],
+  #                   msg = "2) filbase, tmpFile, src ok")
+
   setwd(tempdir()) # gå til tempdir. Har ikke skriverettigheter i arbeidskatalog
   file.copy(src, tmpFile, overwrite = TRUE)
-  knitr::knit2pdf(input=tmpFile) #, output = paste0(filbase, digest::digest(brukernavn),'.tex'))
+
+  knitr::knit2pdf(input=tmpFile)
 
   #gc() #Opprydning gc-"garbage collection"
   utfil <- paste0( getwd(), '/', substr(tmpFile, 1, nchar(tmpFile)-3), 'pdf') #
-  #utfil <- file.copy(from = paste0(substr(tmpFile, 1, nchar(tmpFile)-3), 'pdf'),
-  #         to = paste0(filbase, digest::digest(brukernavn),'.pdf')) #filnavn)
+  # raplog::subLogger(author = brukernavn, registryName = 'NorScir',
+  #                                      reshId = reshID[[1]],
+  #                                      msg = paste("5) Leverer abonnementsfil: ", utfil))
   return(utfil)
 }
 

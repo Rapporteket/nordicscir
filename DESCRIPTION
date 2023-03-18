@@ -1,7 +1,7 @@
 Package: nordicscir
 Type: Package
 Title: R-pakke for å generere resultater fra NordicScir
-Version: 2.4.0.9000
+Version: 3.0.0
 Authors@R: c(
      person(given = "Lena Ringstad",
            family = "Olsen",
@@ -43,5 +43,5 @@ Remotes:
 Suggests:
     testthat (>= 3.0.0)
 VignetteBuilder: knitr
-RoxygenNote: 7.2.2
+RoxygenNote: 7.2.3
 Config/testthat/edition: 3

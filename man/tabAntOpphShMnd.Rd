@@ -3,8 +3,8 @@
 \name{tabAntOpphShMnd}
 \alias{tabAntOpphShMnd}
 \title{tabAntOpphShMnd antall opphold siste X (antMnd) mnd
--tabAntOpphSh12mnd: Antall opphold per måned og enhet siste 12 måneder fram til datoTil. 
--tabAntOpphSh5Aar:Antall opphold per år og enhet siste 5 år (inkl. inneværende år) fram til datoTil. 
+-tabAntOpphSh12mnd: Antall opphold per måned og enhet siste 12 måneder fram til datoTil.
+-tabAntOpphSh5Aar:Antall opphold per år og enhet siste 5 år (inkl. inneværende år) fram til datoTil.
 RegData må inneholde Aar.}
 \usage{
 tabAntOpphShMnd(RegData, datoTil = Sys.Date(), traume = "", antMnd = 12)
@@ -16,7 +16,7 @@ tabAntOpphShMnd(RegData, datoTil = Sys.Date(), traume = "", antMnd = 12)
 }
 \description{
 tabAntOpphShMnd antall opphold siste X (antMnd) mnd
--tabAntOpphSh12mnd: Antall opphold per måned og enhet siste 12 måneder fram til datoTil. 
--tabAntOpphSh5Aar:Antall opphold per år og enhet siste 5 år (inkl. inneværende år) fram til datoTil. 
+-tabAntOpphSh12mnd: Antall opphold per måned og enhet siste 12 måneder fram til datoTil.
+-tabAntOpphSh5Aar:Antall opphold per år og enhet siste 5 år (inkl. inneværende år) fram til datoTil.
 RegData må inneholde Aar.
 }

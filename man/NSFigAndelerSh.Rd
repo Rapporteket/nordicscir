@@ -9,6 +9,7 @@ NSFigAndelerSh(
   outfile = "",
   valgtVar = "Alder",
   hentData = 0,
+  register = "norscir",
   preprosess = 1,
   datoFra = "2010-01-01",
   datoTil = "2050-01-01",
@@ -39,20 +40,22 @@ NSFigAndelerSh(
 
 \item{datoUt}{Om man skal velge inn eller ut-dato som grunnlag for datofiltrering}
 
-\item{reshID}{- avdelingsid for egen avdeling, standard: 0-hele landet.}
+\item{reshID}{- avdelingsid for egen avdeling, standard: 0-hele landet/Norden.}
+
+\item{regsiter}{Må angis hvis hentData=1. Valg: 'norscir' (standard), 'nordicscir'}
 
 \item{figurtype}{angir hvilken figurtype som skal lages: andeler, gjsnGrVar}
 }
 \description{
 Argumentet \emph{valgtVar} har følgende valgmuligheter:
    \itemize{
-    \item Alder: Aldersfordeling, 15-årige grupper 
+    \item Alder: Aldersfordeling, 15-årige grupper
     \item AAis: A-E+U, innleggelse
     \item FAis: A-E+U, kontroll
     \item DagerRehab: Lengde på rehab.opphold (Utskrevet – Innl. rehab dato)
     \item DagerTilRehab: Tid fra skadedato til oppstart rehab [trauma/ikke], 5d interv
-    \item OpphTot: Lengde på opphold – totalt (HosptlDy) 20d… >200, 
-    \item Permisjon: Antall døgn ute av sykehus 
+    \item OpphTot: Lengde på opphold – totalt (HosptlDy) 20d… >200,
+    \item Permisjon: Antall døgn ute av sykehus
     \item UtTil: Hva pasienten skrives ut til. [PlaceDis]
     \item SkadeArsak: Årsak til skade [variabel: Scietiol]
     \item Pustehjelp[VentAssi]

@@ -6,13 +6,13 @@
 #'
 #' Argumentet \emph{valgtVar} har følgende valgmuligheter:
 #'    \itemize{
-#'     \item Alder: Aldersfordeling, 15-årige grupper 
+#'     \item Alder: Aldersfordeling, 15-årige grupper
 #'     \item DagerRehab: antall dager med rehabilitering [RehabDy]
 #'     \item DagerTilRehab: antall dager før rehabilitering [BeforeRehDy]
-#'     \item OpphTot: Lengde på opphold – totalt [HosptlDy] 
+#'     \item OpphTot: Lengde på opphold – totalt [HosptlDy]
 #'     \item Permisjon: Antall døgn ute av sykehus [OutOfHosptlDy]
 #'    }
-#'    
+#'
 #' @inheritParams NSFigAndeler
 #' @inheritParams NSUtvalg
 #' @param valgtMaal - 'med' = median. Alt annet gir gjennomsnitt
@@ -21,9 +21,9 @@
 
 NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='gjsn', grVar='ShNavn',
                               datoFra='2010-01-01', datoTil='2050-12-31', datoUt=0,
-					AIS='', minald=0, maxald=130, erMann='', traume='alle', nivaaUt=99, 
+					AIS='', minald=0, maxald=130, erMann='', traume='alle', nivaaUt=99,
 					preprosess=1, outfile='', hentData=0, ...) {
-  
+
   if ("session" %in% names(list(...))) {
     rapbase::repLogger(session = list(...)[["session"]], msg = "Sentralmaal per sykehus, figur")
   }
@@ -40,32 +40,32 @@ NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='gjsn', grVar='ShNavn',
       t1 <- switch(valgtMaal,
                    med = 'Median ',
                    gjsn = 'Gjennomsnittlig ')
-      tittel <- paste0(t1, NSVarSpes$tittel) 
-      
+      tittel <- paste0(t1, NSVarSpes$tittel)
+
       #------- Gjøre utvalg
-      Utvalg <- NSUtvalg(RegData=RegData, datoFra=datoFra, datoTil=datoTil, datoUt = datoUt, 
+      Utvalg <- NSUtvalg(RegData=RegData, datoFra=datoFra, datoTil=datoTil, datoUt = datoUt,
                          minald=minald, maxald=maxald,
                          erMann=erMann, traume=traume, AIS=AIS, nivaaUt=nivaaUt)
       RegData <- Utvalg$RegData
       utvalgTxt <- Utvalg$utvalgTxt
-            
-  RegData[ ,grVar] <- factor(RegData[ ,grVar]) 
+
+  RegData[ ,grVar] <- factor(RegData[ ,grVar])
 #Grupper som ikke har registreringer vil nå ikke komme med i oversikta. Gjøres dette tidligere, vil alle
 #grupper komme med uansett om de ikke har registreringer.
-  
+
   '%i%' <- intersect
 
   N <- dim(RegData)[1]
   Ngrense <- 10		#Minste antall registreringer for at et sykehus skal bli vist
   if(N>0) {Ngr <- table(RegData[ ,grVar])}	else {Ngr <- 0}
-  Ngrtxt <- paste0(' (', as.character(Ngr),')') 
+  Ngrtxt <- paste0(' (', as.character(Ngr),')')
   indGrUt <- which(Ngr < Ngrense)
   if (length(indGrUt)==0) { indGrUt <- 0}
-  Ngrtxt[indGrUt] <- paste0(' (<', Ngrense,')')	
+  Ngrtxt[indGrUt] <- paste0(' (<', Ngrense,')')
   indGrUt <- which(Ngr < Ngrense)
 
 
-  KIHele <- c(0,0)    
+  KIHele <- c(0,0)
   KIned <- c(0,0)
   KIhele <- c(0,0)
   dummy0 <- NA #-0.0001
@@ -75,7 +75,7 @@ NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='gjsn', grVar='ShNavn',
         MedIQR <- plot(RegData[ ,grVar], RegData$Variabel, notch=TRUE, plot=FALSE)
         MedIQR$stats[ ,indGrUt] <- dummy0
         MedIQR$conf[ ,indGrUt] <- dummy0
-        sortInd <- order( MedIQR$stats[3,], decreasing=NSVarSpes$sortAvtagende, na.last = FALSE) 
+        sortInd <- order( MedIQR$stats[3,], decreasing=NSVarSpes$sortAvtagende, na.last = FALSE)
         Midt <- as.numeric(MedIQR$stats[3, sortInd])
         KIned <- MedIQR$conf[1, sortInd]
         KIopp <- MedIQR$conf[2, sortInd]
@@ -86,12 +86,12 @@ NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='gjsn', grVar='ShNavn',
         #j <- ceiling(N/2 - 1.96*sqrt(N/4))
         #k <- ceiling(N/2 + 1.96*sqrt(N/4))
         #KIHele <- sort(RegData$Variabel)[c(j,k)]
-        #The notches (if requested) extend to +/-1.58 IQR/sqrt(n). (Chambers et al. (1983, p. 62), given in McGill et al. (1978, p. 16).) 
-        #They are based on asymptotic normality of the median and roughly equal sample sizes for the two medians being compared, 
-        #and are said to be rather insensitive to the underlying distributions of the samples. The idea appears to be to give 
-        #roughly a 95% confidence interval for the difference in two medians. 	
-  } 
-  
+        #The notches (if requested) extend to +/-1.58 IQR/sqrt(n). (Chambers et al. (1983, p. 62), given in McGill et al. (1978, p. 16).)
+        #They are based on asymptotic normality of the median and roughly equal sample sizes for the two medians being compared,
+        #and are said to be rather insensitive to the underlying distributions of the samples. The idea appears to be to give
+        #roughly a 95% confidence interval for the difference in two medians.
+  }
+
   if (valgtMaal=='gjsn') {	#Gjennomsnitt er standard, men må velges.
               Gjsn <- tapply(RegData$Variabel, RegData[ ,grVar], mean, na.rm=T)
               SE <- tapply(RegData$Variabel, RegData[ ,grVar], sd, na.rm=T)/sqrt(Ngr)
@@ -99,23 +99,23 @@ NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='gjsn', grVar='ShNavn',
               KIHele <- MidtHele + sd(RegData$Variabel)/sqrt(N)*c(-2,2)
         Gjsn[indGrUt] <- dummy0
         SE[indGrUt] <- 0
-        sortInd <- order(Gjsn, decreasing=NSVarSpes$sortAvtagende, na.last = FALSE) 
+        sortInd <- order(Gjsn, decreasing=NSVarSpes$sortAvtagende, na.last = FALSE)
         Midt <- Gjsn[sortInd] #as.numeric(gjsn[sortInd])
         KIned <- Midt - 2*SE[sortInd]
         KIopp <- Midt + 2*SE[sortInd]
   }
-  
-  
+
+
   Ngr <- Ngr[sortInd] #list(Hoved=Ngr[sortInd], Rest=0)
   GrNavnSort <- paste0(names(Ngr), Ngrtxt[sortInd])
-  soyletxt <- sprintf('%.1f', Midt) #sprintf(paste0('%.', AntDes,'f'), Midt) 
+  soyletxt <- sprintf('%.1f', Midt) #sprintf(paste0('%.', AntDes,'f'), Midt)
   indUT <- which(is.na(Midt))  #Rydd slik at bare benytter indGrUt
   soyletxt[indUT] <- ''
   KIned[indUT] <- NA
   KIopp[indUT] <- NA
   AggVerdier <- list(Hoved=Midt, Rest=0, KIned=KIned, KIopp=KIopp, KIHele=KIHele)
-  
-  
+
+
   #indGrOK <- which(Midt>0)
   xmax <-  min(1.1*max(c(Midt, KIned, KIopp), na.rm=T), 1.5*max(Midt, na.rm = T))
   xlabt <- switch(valgtVar, Alder='alder (år)',
@@ -123,45 +123,33 @@ NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='gjsn', grVar='ShNavn',
                   DagerTilRehab='dager',
                   OpphTot= 'dager',
                   RegForsinkelse = 'dager')
-  
+
   #Se NSFigSoyler for forklaring av innhold i lista gjsnGrVarData
   SentralmaalTxt <- switch(valgtMaal,
                      med = 'Median',
                      gjsn = 'Gjennomsnitt')
-  
+
   GjsnGrVarData <- list(AggVerdier=AggVerdier, #Endres til Soyleverdi? Evt. AggVerdier
                         AggTot=MidtHele, #Til AggVerdiTot?
-                        N=list(Hoved=N), 
+                        N=list(Hoved=N),
                         Ngr=Ngr,
-                        grtxt2='', 
+                        grtxt2='',
                         medKI=1,
                         KImaal = NSVarSpes$KImaal,
                         soyletxt=soyletxt,
                         grtxt=GrNavnSort,
                         valgtMaal=valgtMaal,
-                        tittel=tittel,    #NSVarSpes$tittel, 
+                        tittel=tittel,    #NSVarSpes$tittel,
                         SentralmaalTxt = SentralmaalTxt,
-                        #yAkseTxt=yAkseTxt, 
-                        retn='H', 
+                        #yAkseTxt=yAkseTxt,
+                        retn='H',
                         xAkseTxt=NSVarSpes$xAkseTxt,
-                        grTypeTxt='sykehus',   #NSUtvalg$grTypeTxt,			 
-                        utvalgTxt=Utvalg$utvalgTxt, 
-                        fargepalett=Utvalg$fargepalett, 
-                        medSml=Utvalg$medSml, 
+                        grTypeTxt='sykehus',   #NSUtvalg$grTypeTxt,
+                        utvalgTxt=Utvalg$utvalgTxt,
+                        fargepalett=Utvalg$fargepalett,
+                        medSml=Utvalg$medSml,
                         smltxt=Utvalg$smltxt)
-  
 
-  #FigDataParam skal inn som enkeltparametre i funksjonskallet
-  lagFig <- 0
-  if (lagFig == 1) {
-        cexgr <- 1-ifelse(length(soyletxt)>20, 0.25*length(soyletxt)/60, 0)
-        NIRFigSoyler(RegData, AggVerdier=AggVerdier, AggTot=MidtHele, Ngr=Ngr, N=list(Hoved=N), cexgr=cexgr, 
-                     tittel=tittel, valgtMaal=valgtMaal,
-                     smltxt=NIRUtvalg$smltxt, yAkseTxt=yAkseTxt,utvalgTxt=NIRUtvalg$utvalgTxt, 
-                     grTypeTxt=NIRUtvalg$grTypeTxt,  fargepalett=NIRUtvalg$fargepalett, grtxt=GrNavnSort, 
-                     soyletxt=soyletxt,  grVar=grVar, medKI=medKI, KImaal = NIRVarSpes$KImaal,
-                     medSml=NIRUtvalg$medSml, xAkseTxt=NIRVarSpes$xAkseTxt, outfile=outfile)
-  }
 
 #--------------------------FIGUR---------------------------------------------------
 
@@ -178,7 +166,7 @@ NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='gjsn', grVar='ShNavn',
           if ( outfile != '') {dev.off()}
     } else {
           #--------------------------------------------------------
-          
+
           #Plottspesifikke parametre:
     FigTypUt <- rapFigurer::figtype(outfile, fargepalett=Utvalg$fargepalett)
     farger <- FigTypUt$farger
@@ -189,30 +177,33 @@ NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='gjsn', grVar='ShNavn',
     vmarg <- max(0, strwidth(GrNavnSort, units='figure', cex=cexgr)*0.9)
     par('fig'=c(vmarg, 1, 0, 1-0.02*(NutvTxt-1)))	#Har alltid datoutvalg med
 
+
     #Må def. pos først for å få strek for hele gruppa bak søylene
     ### reverserer for å slippe å gjøre det på konf.int
-    pos <- rev(barplot(rev(as.numeric(Midt)), horiz=T, border=NA, col=farger[3], axes = FALSE,
-                   xlim=c(0,xmax), ylim=c(0.3,4.1), xlab='', las=1) )	#xlim=c(0,ymax),
+    pos <- rev(barplot(rev(as.numeric(Midt)), horiz=T, border=NA, col=farger[3], axes = FALSE, las=1,
+                   xlim=c(0,xmax), xlab='', ylim=c(0.3, 0.4+1.3*length(AggVerdier$Hoved))))
     ybunn <- 0.1
-    ytopp <- 3.7	#c(0, max(posKI) + min(posKI))
+    ytopp <- max(pos)+min(pos)
+    posOver <- max(pos)+0.35*log(max(pos))
+
     polygon( c(rep(KIHele[1],2), rep(KIHele[2],2)), c(ybunn, ytopp, ytopp, ybunn),
              col=farger[4], border=farger[4])
     lines(x=rep(MidtHele, 2), y=c(ybunn, ytopp), col=farger[2], lwd=3)
-    #	legend('topright', xjust=1, fill=c(farger[4],'white'), border=c(farger[4],'white'), cex=0.8, #lwd=2, #col=farger[2],
-    #		legend='95% konf.int., alle sykehus', bty='o', bg='white', box.col='white')
     legend('topright', fill=c('white', farger[4]),  border='white', lwd=2, cex=cexleg,
            col=c(farger[2], farger[4]), seg.len=0.6, merge=TRUE, bty='n',
-           c(paste0('Alle sykehus: ', sprintf('%.1f', MidtHele), ', N=', N), 
+           c(paste0('Alle sykehus: ', sprintf('%.1f', MidtHele), ', N=', N),
              paste0('95% konf.int., alle (',
                    sprintf('%.1f', KIHele[1]), '-', sprintf('%.1f', KIHele[2]), ')')))
+    # legend(xmax/4, posOver, 'TXT', yjust=0, xpd=TRUE, fill=c(NA, farger[3]),  border=NA, lwd=2.5,
+    #         col=c(farger[1], farger[3]), cex=cexleg, seg.len=0.6, merge=TRUE, bty='n') #+2*posDiff
     barplot(rev(as.numeric(Midt)), horiz=T, border=NA, col=farger[3], xlim=c(0, xmax), add=TRUE,
             xlab=NSVarSpes$xAkseTxt, cex.lab=cexleg+0.1, cex.sub=cexleg+0.1, cex.axis=cexleg, las=1)
-    title(tittel, line=1.1, font.main=1, cex.main=1.5)
-    title('med 95% konfidensintervall', font.main=1, line=0)
+    title(tittel, line=1, font.main=1, cex.main=1.3)
+    #title('med 95% konfidensintervall', font.main=1, line=0)
 
     soyleXpos <- 1.3*xmax*max(strwidth(soyletxt, units='figure', cex = cexgr)) # cex=cexgr
     text(x=soyleXpos, y=pos+0.1, soyletxt, las=1, cex=cexgr, adj=1, col=farger[1])	#AggVerdier, hvert sykehus
-    
+
     mtext(at=pos+0.15, GrNavnSort, side=2, las=1, cex=cexgr+0.1, adj=1, line=0.25)	#Hvis vil legge på navn som eget steg
     options(warn = -1)	#Unngå melding om KI med lengde 0. Fungerer av en eller annen grunn ikke i pdf.
     arrows(x0=Midt*0.999, y0=pos, x1=KIopp, y1=pos,

@@ -1,12 +1,16 @@
-#Resultattjeneste for NordicScir
-library(nordicscir)
-library(shiny)
-library(knitr)
-library(lubridate)
-library(dplyr)
-library(kableExtra)
+#Resultattjeneste for NorScir
+# library(nordicscir)
+# library(shiny)
+# library(knitr)
+# library(lubridate)
+# library(dplyr)
+# library(kableExtra)
 
-ui <- function() {
+#' Brukergrensesnitt (ui) til nordscir-appen
+#'
+#' @return Brukergrensesnittet (ui) til nordscir-appen
+#' @export
+ui_norscir <- function() {
 
   shiny::addResourcePath("rap", system.file("www", package = "rapbase"))
 
@@ -15,11 +19,7 @@ ui <- function() {
   )
 
   context <- Sys.getenv("R_RAP_INSTANCE") #Blir tom hvis jobber lokalt
-  paaServer <- context %in% c("DEV", "TEST", "QA", "PRODUCTION")
-
-
-  regTitle = ifelse(paaServer, "Norsk ryggmargsskaderegister",
-                    "Norsk ryggmargsskaderegister med FIKTIVE data")
+  regTitle = "Norsk ryggmargsskaderegister"
 
   #----Valg
 
@@ -38,7 +38,7 @@ ui <- function() {
   shiny::tagList(
     shinyjs::useShinyjs(),
     shiny::navbarPage(
-      id = "toppPaneler",
+      id = "hovedark",
       title = shiny::div(
         shiny::a(
           shiny::includeHTML(
@@ -90,7 +90,7 @@ ui <- function() {
         ),
         shiny::mainPanel(
           width = 8,
-          if (paaServer) {
+          if (context %in% c("DEV", "TEST", "QA", "PRODUCTION")) {
             rapbase::navbarWidgetInput("navbar-widget")
           },
           shiny::h2("Velkommen til Rapporteket - Norsk Ryggmargsskaderegister!",
@@ -174,7 +174,7 @@ ui <- function() {
               "Urin: Ufrivillig urinlekkasje (t.o.m. 2018)" = "UrinInkontinensTom2018",
               "Urin: Kirurgiske inngrep" = "UrinKirInngr",
               "Urin: Legemiddelbruk (fra 2019)" = "UrinLegemidler",
-              "Urin: Legemiddelbruk (t.o.m. 2018)" = "UrinLegemidlerTom2018",
+            #  "Urin: Legemiddelbruk (t.o.m. 2018)" = "UrinLegemidlerTom2018",
               "Urin: Legemiddelbruk, hvilke" = "UrinLegemidlerHvilke",
               "Urin: Blæretømming, hovedmetode" = "UrinTomBlareHoved",
               "Urin: Blæretømming, tilleggsmetode" = "UrinTomBlareTillegg",
@@ -569,10 +569,10 @@ ui <- function() {
           shiny::tabPanel(
             "Eksport, krypterte data",
             shiny::sidebarPanel(
-              rapbase::exportUCInput("nordicscirExport")
+              rapbase::exportUCInput("norscirExport")
             ),
             shiny::mainPanel(
-              rapbase::exportGuideUI("nordicscirExportGuide")
+              rapbase::exportGuideUI("norscirExportGuide")
             )
           ) #Eksport-tab
         ) #tabsetPanel
@@ -596,11 +596,20 @@ ui <- function() {
   ) #tagList
 }
 
-server <- function(input, output, session) {
 
+#' Server-del til norscir-appen
+#'
+#' @param input shiny input object
+#' @param output shiny output object
+#' @param session shiny session object
+#'
+#' @return Server-delen til norscir-appen
+#' @export
+server_norscir <- function(input, output, session) {
+#print(session)
   rapbase::appLogger(
     session = session,
-    msg = "Starter nordicscir-app'en"
+    msg = "Starter norscir-app'en"
   )
 
 
@@ -610,29 +619,41 @@ server <- function(input, output, session) {
     rolle <- rapbase::getUserRole(session)
     brukernavn <- rapbase::getUserName(session)
   } else {
-    # whatever, if needed anymore
+    reshID <- 0
+    rolle <- 'ukjent'
+    brukernavn <- 'ukjent'
   }
 
   isGetDataOk <- TRUE
-  isProcessDataOk <- TRUE
-  AlleTab <- getRealData()
+  isprocessAllDataOk <- TRUE
+  AlleTab <- getRealData(register = 'norscir')
   if (is.null(AlleTab)) {
     warning("Not able to get real data. Applying fake data instead!")
     isGetDataOk <- FALSE
-    AlleTab <- getFakeData()
+    AlleTab <- getFakeData() #Har foreløpig bare norske, fiktive data. Men blir de hentet...?
   }
-  AlleTab <- processData(AlleTab)
+  AlleTab <- processAllData(AlleTab, register = 'norscir')
   if (is.null(AlleTab)) {
     warning("Not able to process data.")
-    isProcessDataOk <- FALSE
+    isprocessAllDataOk <- FALSE
   }
-  isDataOk <- all(c(isGetDataOk, isProcessDataOk))
+  isDataOk <- all(c(isGetDataOk, isprocessAllDataOk))
   attach(AlleTab)
+  enhet <- ifelse(exists('reshID'),
+    as.character(HovedSkjema$ShNavn[match(reshID, HovedSkjema$ReshId)]),
+  'Uidentifisert enhet')
 
-
+  # observe({
+  if (rolle != 'SC') { #
+    #   shinyjs::hide(id = 'velgResh')
+    #   shinyjs::hide(id = 'velgReshOverf')
+    #   shinyjs::hide(id = 'velgReshData')
+    hideTab(inputId = "hovedark", target = "Registeradministrasjon")
+  }
+  # })
   #--------------Startside------------------------------
   rapbase::navbarWidgetServer(
-    id = "navbar-widget", orgName = "nordicscir", caller = "nordicscir"
+    id = "navbar-widget", orgName = enhet, caller = "nordicscir" #caller = pakkenavn
   )
 
   output$guide <- shiny::renderText(
@@ -1266,7 +1287,8 @@ server <- function(input, output, session) {
 
   rapbase::autoReportServer(
     id = "ns-subscription",
-    registryName = "nordicscir",
+    registryName = "nordicscir", #Character string with the registry name key. Must correspond to the registry R package name.
+    #Når norscir benyttes som registryName, kommer bestilte utsendinger opp i den norske appen. Men fungerer utsendinga...? N E I !!
     type = "subscription",
     paramNames = paramNames,
     paramValues = paramValues,
@@ -1293,18 +1315,19 @@ server <- function(input, output, session) {
     MndRapp = list(
       synopsis = "Rapporteket-NorSCIR: Månedsrapport",
       fun = "abonnement",
-      paramNames = c('rnwFil', "reshID"),
-      paramValues = c('NSmndRapp.Rnw', 0)
+      paramNames = c('rnwFil', "reshID", "register"),
+      paramValues = c('NSmndRapp.Rnw', 0, 'norscir')
     ),
     SamleRapp = list(
       synopsis = "Rapporteket-NorSCIR: Rapport, div. resultater",
       fun = "abonnement",
-      paramNames = c("rnwFil", "reshID"),
-      paramValues = c("NSsamleRapp.Rnw", 0)
+      paramNames = c("rnwFil", "reshID", "register"),
+      paramValues = c("NSsamleRapp.Rnw", 0, 'norscir')
     )
   )
 
   org <- rapbase::autoReportOrgServer("NSuts", orgs)
+#Må lage spesialtilpasning for norscir i modulen. Legge til en parameter.
 
   # oppdatere reaktive parametre, for å få inn valgte verdier
   paramNames <- shiny::reactive("reshID")
@@ -1319,15 +1342,18 @@ server <- function(input, output, session) {
 
 
   #----------- Eksport ----------------
-  registryName <- "nordicscir"
+  registryName <- "norscir"
   ## brukerkontroller
-  rapbase::exportUCServer("nordicscirExport", registryName)
+  rapbase::exportUCServer("norscirExport",
+                          registryName = 'norscir', #i dbConfig
+                          repoName = 'nordicscir') #pakke, for tilhørighet på github
   ## veileding
-  rapbase::exportGuideServer("nordicscirExportGuide", registryName)
+  rapbase::exportGuideServer("norscirExportGuide",
+                             registryName = 'norscir')
 
 
 }
 
 
 # Run the application
-shinyApp(ui = ui, server = server)
+# shinyApp(ui = ui_norscir, server = server_norscir)
