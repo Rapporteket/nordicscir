@@ -1226,7 +1226,7 @@ server_nordicscir <- function(input, output, session) {
 
   #-------Samlerapporter--------------------
   if (isDataOk) {
-    contentFile <- function(file, srcFil, tmpFile, reshID = 0,
+    contentFile <- function(file, srcFil, tmpFile, reshID = 0, register = 'nordicscir',
                             datoFra = startDato, datoTil = Sys.Date()) {
       src <- normalizePath(system.file(srcFil, package="nordicscir"))
       # gå til tempdir. Har ikke skriverettigheter i arbeidskatalog
