@@ -108,7 +108,7 @@ rapbase::autLogger(msg = 'Starter prosessering av data')
       UrinH = UrinH,
       TarmH = TarmH)
 
-rapbase::rapbase::autLogger(msg = paste0('Har prosessert alle fellestabeller.'))
+rapbase::autLogger(msg = paste0('Har prosessert alle fellestabeller.'))
 
     if (register == 'norscir'){
       KontrollH <- NSPreprosesser(data$KontrollH)
