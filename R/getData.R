@@ -98,6 +98,7 @@ getFakeData <- function(register = 'norscir') { #Denne må muligens tilpasses no
 processAllData <- function(data, register = 'norscir') {
 
 rapbase::autLogger(name='test', pkg = 'nordicscir', user = 'dummy',
+                   fun=0, param=0, type=0,
                    registryName = register, reshId = 0,
                    msg = 'Starter prosessering av data')
   tryCatch({
