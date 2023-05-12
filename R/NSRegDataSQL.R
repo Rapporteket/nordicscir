@@ -31,7 +31,9 @@ NSRegDataSQL <- function(valgtVar='Alder', register='norscir') {
 #Perf: ActivityAndParticipationPerformanceFormDataContract
 #Kont: ControlFormDataContract
 
-rapbase::autLogger(name='test', user = 'dummy', registryName = 'Nor(dic)Scir', reshId = 0,msg = "Starter SQL-funksjon")
+rapbase::autLogger(name='test',  pkg = 'nordicscir', user = 'dummy', registryName = register, reshId = 0,
+                   fun=0, param=0, type=0,
+                   msg = "Starter SQL-funksjon")
 
 varHoved <- c("
       h.AAis,
@@ -360,7 +362,9 @@ query <- paste0('SELECT ',
 
 RegData <- rapbase::loadRegData(registryName = register, query=query, dbType="mysql")
 
-rapbase::autLogger(name='test', user = 'dummy', registryName = 'Nor(dic)Scir', reshId = 0,msg = paste0('Har hentet skjema ', valgtSkjema, 'fra database'))
+rapbase::autLogger(name='test',  pkg = 'nordicscir', user = 'dummy', registryName = register, reshId = 0,
+                   fun=0, param=0, type=0,
+                   msg = paste0('Har hentet skjema ', valgtSkjema, 'fra database'))
 
 return(RegData)
 }
