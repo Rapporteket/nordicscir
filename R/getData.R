@@ -37,6 +37,7 @@ getRealData <- function(register='norscir') {
       }
 
     rapbase::autLogger(name='test', pkg = 'nordicscir', user = 'dummy',
+                       fun=0, param=0, type=0,
                        registryName = register, reshId = 0,
                        msg = 'Har hentet alle data fra database')
 
