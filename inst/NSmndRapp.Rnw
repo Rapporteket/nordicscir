@@ -66,7 +66,7 @@ MÅNEDSRAPPORT \\
 \section{Registreringsoversikter}
 
 \begin{frame}[fragile] {Innhold}
-Dette er en sammenstilling av resultater  fra NorSCIR. Alle registreringer er basert på ferdigstilte registreringer i registeret per rapportdato. Alle data er ikke nødvendigvis kvalitetssikret enda. Tidsutvalg for rapportene er spesifisert for hver enkelt figur.
+Dette er en sammenstilling av resultater  fra \Sexpr{regTxt} Alle registreringer er basert på ferdigstilte registreringer i registeret per rapportdato. Alle data er ikke nødvendigvis kvalitetssikret enda. Tidsutvalg for rapportene er spesifisert for hver enkelt figur.
 Datoer/årstall er basert på utskrivingsdato akuttsykehus (DischgDt).
 Rapporten viser følgende:
 \begin{itemize}
