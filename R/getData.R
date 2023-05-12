@@ -15,7 +15,7 @@ NULL
 #' @export
 getRealData <- function(register='norscir') {
 
-  tryCatch({
+   tryCatch({
     HovedSkjema <- NSRegDataSQL(register=register)
     LivskvalH <- NSRegDataSQL(register=register, valgtVar = "LivsXX")
     UrinH <- NSRegDataSQL(register=register, valgtVar = "UrinXX")
@@ -35,6 +35,8 @@ getRealData <- function(register='norscir') {
         AktivFunksjonH = AktivFunksjonH,
         AktivTilfredshetH = AktivTilfredshetH))
       }
+
+autLogger(msg = 'Har hentet alle data fra database')
 
     return(data)},
     error = function(e) {
@@ -92,6 +94,8 @@ getFakeData <- function(register = 'norscir') { #Denne må muligens tilpasses no
 #' @export
 processAllData <- function(data, register = 'norscir') {
 
+autLogger(msg = 'Starter prosessering av data')
+
   tryCatch({
     HovedSkjema <- NSPreprosesser(data$HovedSkjema)
     LivskvalH <- NSPreprosesser(data$LivskvalH)
@@ -104,6 +108,8 @@ processAllData <- function(data, register = 'norscir') {
       UrinH = UrinH,
       TarmH = TarmH)
 
+rapbase::autLogger(msg = paste0('Har prosessert alle fellestabeller.'))
+
     if (register == 'norscir'){
       KontrollH <- NSPreprosesser(data$KontrollH)
       AktivFunksjonH <- NSPreprosesser(data$AktivFunksjonH)
@@ -114,7 +120,10 @@ processAllData <- function(data, register = 'norscir') {
         AktivTilfredshetH = AktivTilfredshetH)
       Skjemaer <- append(Skjemaer, Aktiv)
 
+autLogger(msg = paste0('Har prosessert kontroll og aktivitetstabeller'))
+
     }
+
     return(Skjemaer)
 
   }, error = function(e) {
