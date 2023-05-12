@@ -36,7 +36,7 @@ getRealData <- function(register='norscir') {
         AktivTilfredshetH = AktivTilfredshetH))
       }
 
-rapbase::autLogger(msg = 'Har hentet alle data fra database')
+rapbase::utLogger(user = 'dummy', registryName = 'Nor(dic)Scir', reshId = 0,msg = 'Har hentet alle data fra database')
 
     return(data)},
     error = function(e) {
@@ -94,8 +94,7 @@ getFakeData <- function(register = 'norscir') { #Denne må muligens tilpasses no
 #' @export
 processAllData <- function(data, register = 'norscir') {
 
-rapbase::autLogger(msg = 'Starter prosessering av data')
-
+rapbase::autLogger(user = 'dummy', registryName = 'Nor(dic)Scir', reshId = 0,msg = 'Starter prosessering av data')
   tryCatch({
     HovedSkjema <- NSPreprosesser(data$HovedSkjema)
     LivskvalH <- NSPreprosesser(data$LivskvalH)
@@ -108,7 +107,7 @@ rapbase::autLogger(msg = 'Starter prosessering av data')
       UrinH = UrinH,
       TarmH = TarmH)
 
-rapbase::autLogger(msg = paste0('Har prosessert alle fellestabeller.'))
+rapbase::autLogger(user = 'dummy', registryName = 'Nor(dic)Scir', reshId = 0,msg = paste0('Har prosessert alle fellestabeller.'))
 
     if (register == 'norscir'){
       KontrollH <- NSPreprosesser(data$KontrollH)
@@ -120,7 +119,7 @@ rapbase::autLogger(msg = paste0('Har prosessert alle fellestabeller.'))
         AktivTilfredshetH = AktivTilfredshetH)
       Skjemaer <- append(Skjemaer, Aktiv)
 
-rapbase::autLogger(msg = paste0('Har prosessert kontroll og aktivitetstabeller'))
+rapbase::autLogger(user = 'dummy', registryName = 'Nor(dic)Scir', reshId = 0,msg = paste0('Har prosessert kontroll og aktivitetstabeller'))
 
     }
 
