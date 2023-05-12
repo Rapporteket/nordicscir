@@ -13,9 +13,9 @@ NULL
 
 #' @rdname getData
 #' @export
-getRealData <- function(register='norscir') {
+getRealData <- function(register='norscir', ...) {
 
-  tryCatch({
+   tryCatch({
     HovedSkjema <- NSRegDataSQL(register=register)
     LivskvalH <- NSRegDataSQL(register=register, valgtVar = "LivsXX")
     UrinH <- NSRegDataSQL(register=register, valgtVar = "UrinXX")
@@ -35,6 +35,15 @@ getRealData <- function(register='norscir') {
         AktivFunksjonH = AktivFunksjonH,
         AktivTilfredshetH = AktivTilfredshetH))
       }
+
+    # rapbase::autLogger(name='test', pkg = 'nordicscir', user = 'dummy',
+    #                    fun=0, param=0, type=0,
+    #                    registryName = register, reshId = 0,
+    #                    msg = 'Har hentet alle data fra database')
+    if ("session" %in% names(list(...))) {
+      raplog::repLogger(session = list(...)[["session"]],
+                        msg = 'Har hentet alle data fra database')
+    }
 
     return(data)},
     error = function(e) {
@@ -90,8 +99,16 @@ getFakeData <- function(register = 'norscir') { #Denne må muligens tilpasses no
 
 #' @rdname getData
 #' @export
-processAllData <- function(data, register = 'norscir') {
+processAllData <- function(data, register = 'norscir', ...) {
 
+# rapbase::autLogger(name='test', pkg = 'nordicscir', user = 'dummy',
+#                    fun=0, param=0, type=0,
+#                    registryName = register, reshId = 0,
+#                    msg = 'Starter prosessering av data')
+  if ("session" %in% names(list(...))) {
+    raplog::repLogger(session = list(...)[["session"]],
+                      msg = 'Starter prosessering av data')
+  }
   tryCatch({
     HovedSkjema <- NSPreprosesser(data$HovedSkjema)
     LivskvalH <- NSPreprosesser(data$LivskvalH)
@@ -104,6 +121,15 @@ processAllData <- function(data, register = 'norscir') {
       UrinH = UrinH,
       TarmH = TarmH)
 
+# rapbase::autLogger(name='test', pkg = 'nordicscir', user = 'dummy',
+#                    fun=0, param=0, type=0,
+#                    registryName = register, reshId = 0,
+#                    msg = paste0('Har prosessert alle fellestabeller.'))
+    if ("session" %in% names(list(...))) {
+      raplog::repLogger(session = list(...)[["session"]],
+                        msg = 'Har prosessert alle fellestabeller.')
+    }
+
     if (register == 'norscir'){
       KontrollH <- NSPreprosesser(data$KontrollH)
       AktivFunksjonH <- NSPreprosesser(data$AktivFunksjonH)
@@ -114,7 +140,18 @@ processAllData <- function(data, register = 'norscir') {
         AktivTilfredshetH = AktivTilfredshetH)
       Skjemaer <- append(Skjemaer, Aktiv)
 
+if ("session" %in% names(list(...))) {
+  raplog::repLogger(session = list(...)[["session"]],
+                    msg = paste0('Har prosessert kontroll og aktivitetstabeller'))
+}
+
+# rapbase::autLogger(name='test', pkg = 'nordicscir', user = 'dummy',
+#                    fun=0, param=0, type=0,
+#                    registryName = register, reshId = 0,
+#                    msg = paste0('Har prosessert kontroll og aktivitetstabeller'))
+
     }
+
     return(Skjemaer)
 
   }, error = function(e) {

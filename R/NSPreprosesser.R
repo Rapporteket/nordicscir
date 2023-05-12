@@ -11,6 +11,7 @@
 NSPreprosesser <- function(RegData)
       {
 
+
    #Kjønn
       RegData$erMann <- RegData$PatientGender
       RegData$erMann[RegData$PatientGender == 2] <- 0 #Ingen manglende verdier i variabelen

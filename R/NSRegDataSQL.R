@@ -21,7 +21,7 @@
 #' @return RegData data frame
 #' @export
 
-NSRegDataSQL <- function(valgtVar='Alder', register='norscir') {
+NSRegDataSQL <- function(valgtVar='Alder', register='norscir',...) {
 
 #HovedSkjema: MainFormDataContract
 #Livs: LifeQualityFormDataContract
@@ -31,7 +31,13 @@ NSRegDataSQL <- function(valgtVar='Alder', register='norscir') {
 #Perf: ActivityAndParticipationPerformanceFormDataContract
 #Kont: ControlFormDataContract
 
-
+   if ("session" %in% names(list(...))) {
+      raplog::repLogger(session = list(...)[["session"]],
+                        msg = "Starter SQL-funksjon")
+   }
+   # rapbase::autLogger(name='test',  pkg = 'nordicscir', user = 'dummy', registryName = register, reshId = 0,
+#                    fun=0, param=0, type=0,
+#                    msg = "Starter SQL-funksjon")
 
 varHoved <- c("
       h.AAis,
@@ -359,5 +365,14 @@ query <- paste0('SELECT ',
 
 
 RegData <- rapbase::loadRegData(registryName = register, query=query, dbType="mysql")
+
+if ("session" %in% names(list(...))) {
+   raplog::repLogger(session = list(...)[["session"]],
+                     msg = paste0('Har hentet skjema ', valgtSkjema, 'fra database'))
+}
+# rapbase::autLogger(name='test',  pkg = 'nordicscir', user = 'dummy', registryName = register, reshId = 0,
+#                    fun=0, param=0, type=0,
+#                    msg = paste0('Har hentet skjema ', valgtSkjema, 'fra database'))
+
 return(RegData)
 }
