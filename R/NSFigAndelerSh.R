@@ -96,7 +96,7 @@ NSFigAndelerSh <- function(RegData, outfile='', valgtVar='Alder',
             #Benytter variabelen LandKode til å sjekke om det er nordiske eller norske data
             nordisk <- ifelse(sum(as.numeric(unique(RegData$LandKode)))==1, 0, 1)
             grVar <- c('ShNavn', 'Land')[nordisk+1]
-            RegData$GrVar <- RegData[ ,grVar]
+            RegData$GrVar <- as.factor(RegData[ ,grVar])
 
             #--------------- Gjøre beregninger ------------------------------
             #      AggVerdier <- list(Hoved = 0, Rest =0)
@@ -136,15 +136,11 @@ NSFigAndelerSh <- function(RegData, outfile='', valgtVar='Alder',
                                            FUN=function(x) sum(x==1)/length(x %in% 0:1)))
 Ngrense <- 5
 indNgrense <- N < Ngrense
-AggVerdier[indNgrense,] <- NA
+AggVerdier[indNgrense] <- NA
 #AggTot[indNgrense] <- NA #paste0('N<', Ngrense)
 
             if(flerevar==1) {
                   Nfig <- apply(N, MARGIN = 1, FUN = max)
-                  #ifelse(min(N$Hoved)==max(N$Hoved),
-                  #              min(N$Hoved[1]),
-                  #               paste0(min(N$Hoved),'-',max(N$Hoved)))
-
             } else {
                   Nfig <- N}
 
@@ -154,9 +150,9 @@ AggVerdier[indNgrense,] <- NA
             grtxt2 <- paste0('(', sprintf('%.1f',AggTot), '%)')
             grtxtpst <- paste0(grtxt, '\n(', sprintf('%.1f',AggTot), '%)')
             cexgr <- NSVarSpes$cexgr
-            enhTxt <- attributes(AggVerdier)$row.vars$GrVar
+            enhTxt <- rownames(Ngr) #attributes(AggVerdier)$row.vars$GrVar
             anttxt <- paste0(' (N=', Nfig,')')
-            anttxt[indNgrense] <- paste0(' (N < ', Ngrense, ')')
+            anttxt[Nfig < Ngrense] <- paste0(' (N < ', Ngrense, ')')
             legendtxt <- paste0(enhTxt, anttxt)
             yAkseTxt='Andel pasienter (%)'
 
@@ -178,7 +174,7 @@ AggVerdier[indNgrense,] <- NA
             #-----------Figur---------------------------------------
             #FigurAndeler <- function(     ){
             #-----Hvis få registreringer: ---------------------
-            Ngrense <- 5      # 5
+            #Ngrense <- 5      # 5
             if (sum(Nfig) < Ngrense) {
                   FigTypUt <- rapFigurer::figtype(outfile)
                   farger <- FigTypUt$farger

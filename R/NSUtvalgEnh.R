@@ -35,7 +35,8 @@ NSUtvalgEnh <- function(RegData, datoFra='2010-01-01', datoTil=Sys.Date(), datoU
   #Når bare skal sml med eget land/ikke sammenlikne, trengs ikke alle data:
   reshID <- as.numeric(reshID)
   indEgen1 <- match(reshID, RegData$ReshId)
-  enhetsUtvalg <- ifelse(reshID==0 | is.na(indEgen1), 0, enhetsUtvalg )
+  #enhetsUtvalg <- ifelse(reshID==0 | is.na(indEgen1), 0, enhetsUtvalg )
+  enhetsUtvalg <- ifelse(reshID==0, 0, enhetsUtvalg )
   egetLand <- RegData$Land[indEgen1]
   if (enhetsUtvalg %in% 2:4) {
     RegData <- switch(as.character(enhetsUtvalg),
@@ -105,7 +106,8 @@ NSUtvalgEnh <- function(RegData, datoFra='2010-01-01', datoTil=Sys.Date(), datoU
   smltxt <- ''
   if (enhetsUtvalg %in% c(0,2,4)) {		#Ikke sammenlikning
     medSml <- 0
-    ind$Hoved <- 1:dim(RegData)[1]	#Tidligere redusert datasettet for 2,4
+    N <- dim(RegData)[1]
+    ind$Hoved <- if (N>0) {1:N} else {NULL}	#Tidligere redusert datasettet for 2,4
     ind$Rest <- NULL
   } else {						#Skal gjøre sammenlikning 1,3,5
     medSml <- 1

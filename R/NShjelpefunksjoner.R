@@ -127,11 +127,12 @@ KobleMedHoved <- function(HovedSkjema, Skjema2, alleHovedskjema=F, alleSkjema2=F
 #' @export
 finnRegData <- function(valgtVar='Alder', Data = AlleTab){
       valgtSkjema <- substr(valgtVar,1,4)
-      if (valgtSkjema %in% c('Livs', 'Urin', 'Tarm', 'Tilf', 'Funk', 'Kont', 'Akti')) {
+      if (valgtSkjema %in% c('Livs', 'Urin', 'Tarm', 'Tilf', 'Eq5d', 'Funk', 'Kont', 'Akti')) {
             RegData <- switch(valgtSkjema,
                               'Livs' = Data$LivskvalH,
                               'Tarm' = Data$TarmH,
                               'Urin' = Data$UrinH,
+                              'Eq5d' = Data$EQ5DH,
                               'Kont' = Data$KontrollH,
                               'Funk' = Data$AktivFunksjonH,
                               'Tilf' = Data$AktivTilfredshetH #,'Akti' = Data$AktivitetH

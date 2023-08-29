@@ -178,7 +178,8 @@ ui_nordicscir <- function() {
               "Tarm: Fekal inkontinens (fra 2019)" = "TarmInkontinensFra2019",
             #  "Tarm: Fekal inkontinens (t.o.m. 2018)" = "TarmInkontinensTom2018",
               "Tarm: Kirurgisk inngrep" = "TarmKirInngrep",
-              "Tarm: Kirurgiske inngrep, hvilke" = "TarmKirInngrepHvilke"
+              "Tarm: Kirurgiske inngrep, hvilke" = "TarmKirInngrepHvilke",
+            "Tarm: NBD" = "TarmNBD"
             ),
             selected = c("Registreringsforsinkelse" = "RegForsinkelse")
           ),

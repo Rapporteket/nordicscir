@@ -30,6 +30,7 @@ NSRegDataSQL <- function(valgtVar='Alder', register='norscir',...) {
 #Sati: ActivityAndParticipationSatisfactionFormDataContract
 #Perf: ActivityAndParticipationPerformanceFormDataContract
 #Kont: ControlFormDataContract
+#EQ5D: Eq5dlFormDataContract
 
    if ("session" %in% names(list(...))) {
       raplog::repLogger(session = list(...)[["session"]],
@@ -96,11 +97,11 @@ varLivs <- c('
 #,Livs.PasientGUID
 
 varFunk <- c('
+,UPPER(Funk.HovedskjemaGUID) AS HovedskjemaGUID
 ,Funk.DataClDt
 ,Funk.Dreslbdy
 ,Funk.Feeding
 ,Funk.FirstTimeClosed
-,UPPER(Funk.HovedskjemaGUID) AS HovedskjemaGUID
 ,Funk.Mobilmod
 -- ,Funk.SkjemaGUID
 -- ,Funk.SkjemaGUID AS SkjemaGUIDFunk
@@ -108,18 +109,19 @@ varFunk <- c('
 ')
 
 varTilf <- c('
+,UPPER(Funk.HovedskjemaGUID) AS HovedskjemaGUID
+-- ,UPPER(Tilf.HovedskjemaGUID) AS HovedskjemaGUID
 ,Tilf.DataClDtS
 ,Tilf.DreslbdyS
 ,Tilf.FeedingS
 ,Tilf.FirstTimeClosed
--- ,UPPER(Tilf.HovedskjemaGUID) AS HovedskjemaGUID
 ,Tilf.MobilmodS
-,UPPER(Funk.HovedskjemaGUID) AS HovedskjemaGUID
 -- ,Tilf.SkjemaGUID
 -- ,Tilf.SkjemaGUID AS SkjemaGUIDTilf
 ,Tilf.ToiletinS
 ')
 varUrin <- c("
+,UPPER(Urin.HovedskjemaGUID) AS HovedskjemaGUID
 ,Urin.Antiprop
 ,Urin.Antiuti
 ,Urin.AnyDrugs
@@ -169,7 +171,6 @@ varUrin <- c("
 ,Urin.FormDate
 ,Urin.HealthUnitId
 ,Urin.HealthUnitName
-,UPPER(Urin.HovedskjemaGUID) AS HovedskjemaGUID
 ,Urin.Ilurts
 ,Urin.IlurtsDt
 ,Urin.Ilvscs
@@ -204,8 +205,9 @@ varUrin <- c("
 #,Urin.PasientGUID
 
 varTarm <- c('
-,Tarm.Antichol
-,Tarm.Apndec
+ ,UPPER(Tarm.HovedskjemaGUID) AS HovedskjemaGUID
+ ,Tarm.Antichol
+ ,Tarm.Apndec
  ,Tarm.Apndic
  ,Tarm.ApndecDt
  ,Tarm.ApndecDtUnknown
@@ -241,13 +243,13 @@ varTarm <- c('
  ,Tarm.Gifxnun
  ,Tarm.Hemec
  ,Tarm.Hemrhoid
- ,UPPER(Tarm.HovedskjemaGUID) AS HovedskjemaGUID
  ,Tarm.Ileost
  ,Tarm.IleostDt
  ,Tarm.IleostDtUnknown
  ,Tarm.Irrtdrp
  ,Tarm.Irrttab
  ,Tarm.Narcotic
+ ,Tarm.NBD
  ,Tarm.OralLaxatives
  ,Tarm.Osmodrp
  ,Tarm.Osmotab
@@ -278,8 +280,24 @@ varTarm <- c('
  ')
 # ,Tarm.PasientGUID
 
+varEQ5D <- c('
+ ,UPPER(EQ5D.HovedskjemaGUID) AS HovedskjemaGUID
+,EQ5D.FormDate
+,EQ5D.SkjemaGUID
+,EQ5D.Eq5dQ1Mobility
+,EQ5D.Eq5dQ2Selfcare
+,EQ5D.Eq5dQ3UsualActivities
+,EQ5D.Eq5dQ4PainDiscomfort
+,EQ5D.Eq5dQ5AnxietyDepression
+,EQ5D.Eq5dQ6HealthToday
+,EQ5D.Eq5d5lDt
+,EQ5D.ProceedingID
+,EQ5D.ParentCNum
+')
+
 varKont <- c('
-      ,Kont.CAis
+ ,UPPER(Kont.HovedskjemaGUID) AS HovedskjemaGUID
+,Kont.CAis
 ,Kont.CMtrLvlAreaL
 ,Kont.CMtrLvlAreaR
 ,Kont.CMtrLvlLC
@@ -309,7 +327,6 @@ varKont <- c('
 ,Kont.FormDate
 ,Kont.FormStatus
 ,Kont.FormTypeId
-,UPPER(Kont.HovedskjemaGUID) AS HovedskjemaGUID
 ,Kont.LastUpdate
 ,Kont.NoControl
 ,Kont.NoControlReason
@@ -325,13 +342,14 @@ valgtSkjema <- substr(valgtVar,1,4)
 
 variable <- ''
 qSkjema <- ''
-if (valgtSkjema %in% c('Livs', 'Urin', 'Tarm', 'Tilf', 'Funk', 'Kont')) {
+if (valgtSkjema %in% c('Livs', 'Urin', 'Tarm', 'Tilf', 'Funk', 'Eq5d', 'Kont')) {
       variable <- switch(valgtSkjema,
                          Livs = varLivs,
                          Urin = varUrin,
                          Tarm = varTarm,
                          Funk = varFunk,
                          Tilf = varTilf,
+                         Eq5d = varEQ5D,
                          Kont = varKont)
 
       qSkjema <- paste0(switch(valgtSkjema, #Dette vil bare fungere hvis konsekvent med navngiving i valgtVar
@@ -339,6 +357,7 @@ if (valgtSkjema %in% c('Livs', 'Urin', 'Tarm', 'Tilf', 'Funk', 'Kont')) {
            Urin = 'INNER JOIN UrinaryTractFunctionFormDataContract Urin ',
            Tarm = 'INNER JOIN BowelFunctionFormDataContract Tarm ',
            Funk = 'INNER JOIN ActivityAndParticipationPerformanceFormDataContract Funk ',
+           Eq5d = 'INNER JOIN Eq5dlFormDataContract EQ5D ',
            Kont = 'INNER JOIN ControlFormDataContract Kont '
            ),
            'ON UPPER(h.SkjemaGUID) = UPPER(',valgtSkjema , '.HovedskjemaGUID) ')
@@ -362,7 +381,7 @@ query <- paste0('SELECT ',
 
 
 #query <- 'select * from MainFormDataContract'
-
+#query <- paste0('SELECT ', variable, ' FROM Eq5dlFormDataContract EQ5D ')
 
 RegData <- rapbase::loadRegData(registryName = register, query=query, dbType="mysql")
 

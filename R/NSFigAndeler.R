@@ -87,13 +87,13 @@ NSFigAndeler <- function(RegData, outfile='', valgtVar='Alder',
                   RegData <- NSPreprosesser(RegData)
             }
 
-            #--------------- Tilrettelegge variable og gjøre utvalg ------------------------------
+            #--------------- Tilrettelegge variabler og gjøre utvalg ------------------------------
 
             NSVarSpes <- NSVarTilrettelegg(RegData=RegData, valgtVar=valgtVar, figurtype='andeler')
             RegData <- NSVarSpes$RegData
 
 
-            Utvalg <- NSUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil=datoTil, minald=minald, maxald=maxald,
+            Utvalg <- NSUtvalgEnh(RegData=RegData,datoFra=datoFra, datoTil=datoTil, minald=minald, maxald=maxald,
                                erMann=erMann, traume=traume, AIS=AIS, nivaaUt=nivaaUt,
                                enhetsUtvalg = enhetsUtvalg, reshID = reshID, datoUt=datoUt)
             RegData <- Utvalg$RegData

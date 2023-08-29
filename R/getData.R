@@ -27,11 +27,13 @@ getRealData <- function(register='norscir', ...) {
       TarmH = TarmH)
 
     if (register=='norscir'){
+      EQ5DH <- NSRegDataSQL(register=register, valgtVar = "Eq5dXX")
       KontrollH <- NSRegDataSQL(register=register, valgtVar = "KontXX")
       AktivFunksjonH <- NSRegDataSQL(register=register, valgtVar = "FunkXX")
       AktivTilfredshetH <- NSRegDataSQL(register=register, valgtVar = "TilfXX")
       data <- append(data,
-        list(KontrollH = KontrollH,
+        list(EQ5DH = EQ5DH,
+          KontrollH = KontrollH,
         AktivFunksjonH = AktivFunksjonH,
         AktivTilfredshetH = AktivTilfredshetH))
       }
@@ -131,10 +133,12 @@ processAllData <- function(data, register = 'norscir', ...) {
     }
 
     if (register == 'norscir'){
+      EQ5DH <- NSPreprosesser(data$EQ5DH)
       KontrollH <- NSPreprosesser(data$KontrollH)
       AktivFunksjonH <- NSPreprosesser(data$AktivFunksjonH)
       AktivTilfredshetH <- NSPreprosesser(data$AktivTilfredshetH)
       Aktiv <- list(
+        EQ5DH = EQ5DH,
         KontrollH = KontrollH,
         AktivFunksjonH = AktivFunksjonH,
         AktivTilfredshetH = AktivTilfredshetH)

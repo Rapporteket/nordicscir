@@ -48,6 +48,7 @@ shtxt <- as.character(HovedSkjema$ShNavn[match(reshID, HovedSkjema$ReshId)])
 
 registerTxt <- paste0(c('Norsk ', 'Nordisk ')[nordisk+1], 'ryggmargsskaderegister')
 regTxt <- paste0(c('NorSCIR ', 'NordicSCIR ')[nordisk+1])
+grVar <- c('ShNavn', 'Land')[nordisk+1] #Settes automatisk i noen figurfiler (FigAndelerSh)
 
 @
 
@@ -82,6 +83,7 @@ Rapporten viser følgende:
 \item	Tid fra utreise til ferdigstilt registrering
 \item	Nevrologisk klassifikasjon på sykehusnivå
 \item	Nevrologisk klassifikasjon på sykehusnivå, ved rehabiliteringsopphold over 28 dager
+\item Anbefalt tid til kontroll
 \end{itemize}
 
 \end{frame}
@@ -208,7 +210,7 @@ xtable::xtable(AndelMKtr, digits=1, align=c('l', rep('r', ncol(AndelMKtr))),
 
 <<'LageFigurer', include=FALSE>>=
 
-variabler <- c('SkadeArsak', 'Ntsci', 'AAis', 'FAis','RegForsinkelse')
+variabler <- c('SkadeArsak', 'Ntsci', 'AAis', 'FAis','RegForsinkelse', 'AnbefTidKtr')
 for (valgtVar in variabler) {
       outfile <- paste0(valgtVar, '.pdf')
       NSFigAndeler(RegData=HovedSkjema12mnd, valgtVar=valgtVar,
@@ -217,23 +219,24 @@ for (valgtVar in variabler) {
                    hentData=0, preprosess=0)
 }
 
-# 'Tid fra skade til oppstart rehab.' = 'DagerTilRehab',
-# 'Tid med rehabilitering' = 'DagerRehab',
+datoTilReg <- datoTil-30
 
-#variabler <- c('DagerTilRehab', 'DagerRehab')
+NSFigAndeler(RegData=HovedSkjema12mnd, valgtVar=valgtVar,
+                   datoFra=datoFra, datoTil=datoTilReg, datoUt = 1,
+                   outfile=outfile, reshID=reshID, enhetsUtvalg=enhetsUtvalg,
+                   hentData=0, preprosess=0)
 
-# for (valgtVar in variabler) {
-#       for (traume in c('ja', 'nei')){
-#             outfile <- paste0(valgtVar, '_t_', traume,'.pdf')
-#             NSFigAndeler(RegData=HovedSkjema12mnd, valgtVar=valgtVar, preprosess=0,
-#                          datoFra=datoFra, datoTil=datoTil, datoUt = 1,
-#                          traume = traume, outfile=outfile, reshID=reshID, enhetsUtvalg=enhetsUtvalg,
-#                          )
-#             }
-#       }
+NSFigGjsnTid <- function(RegData, valgtVar='RegForsinkelse', datoFra=datoFra, datoTil=datoTilReg,
+                         datoUt = 1, tidsenhet='Mnd', reshID=reshID,
+                           enhetsUtvalg=1, valgtMaal='gjsn',
+                         preprosess=0, outfile='RegForsinkelseGjsnTid.pdf')
+
+NSFigGjsnGrVar(RegData, valgtVar='RegForsinkelse', valgtMaal='gjsn', grVar=grVar,
+                              datoFra=datoFra, datoTil=datoTilReg, datoUt=1,
+					                    preprosess=0, outfile='RegForsinkelseGjsnEnh.pdf')
+
 @
 
-\section{Pasientkarakteristika}
 
 \begin{frame}[fragile]
 \begin{figure}[ht]
@@ -241,9 +244,20 @@ for (valgtVar in variabler) {
 \includegraphics[scale=0.35]{RegForsinkelse.pdf}
 \caption{Registreringsforsinkelse. Kvalitetsmålet er registrering innen 30 dager. } %Målet ble innført 2018-01-01.
 \end{figure}
-
 \end{frame}
 
+\begin{frame}[fragile]
+\begin{figure}[ht]
+\centering
+\includegraphics[scale=0.35]{RegForsinkelseGjsnTid.pdf}
+\includegraphics[scale=0.35]{RegForsinkelseGjsnEnh.pdf}
+\caption{Registreringsforsinkelse.}
+\end{figure}
+\end{frame}
+
+
+
+\section{Pasientkarakteristika}
 
 \begin{frame}[fragile]
 \begin{figure}[ht]
@@ -392,6 +406,17 @@ xtable::xtable(LiggetiderUtraume, digits=0, align=c('l', rep('r', ncol(Liggetide
 
 @
 \end{frame}
+
+
+\begin{frame}[fragile]
+\begin{figure}[ht]
+\centering
+\includegraphics[scale=0.35]{AnbefTidKtr.pdf}
+\caption{Anbefalt tid til kontroll}
+\end{figure}
+\end{frame}
+
+
 
 % \begin{frame}[fragile]
 % \begin{figure}[ht]
