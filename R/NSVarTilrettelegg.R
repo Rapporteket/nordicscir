@@ -499,9 +499,9 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
         #0-6: svært liten, 7-9: liten, 10-13: moderat, >=14: alvorlig, -1:Ikke beregnet
         tittel <- 'NBD-skår'
         RegData <- RegData[RegData$NBD %in% 1:47,]
-        gr <- c(0,6,9,13,48)	#c(seq(0, 90, 15), 120)
+        gr <- c(0,7,10,14,48)	#c(seq(0, 90, 15), 120)
         RegData$VariabelGr <- cut(as.numeric(RegData$NBD), breaks=gr, include.lowest=TRUE, right=FALSE)
-        grtxt <- c('svært liten', 'liten', 'moderat', 'alvorlig')
+        grtxt <- c('svært liten (0-6)', 'liten (7-9)', 'moderat (10-13)', 'alvorlig (\u2265 14)')
         #RegData$VariabelGr <- factor(RegData$NBD, levels = gr, labels = grtxt)
       }
 
@@ -536,38 +536,38 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
       #----------- EQ5D-5L------------------------------
 
       if (valgtVar == 'Eq5dQ5AnxietyDepression') {#fordeling
-        tittel <- 'Problemer med angst/depresjon'
+        tittel <- 'Angst/depresjon'
         grtxt <- c('Ingen', 'Litt','Middels', 'Svært','Ekstremt')
         RegData$VariabelGr <- factor(RegData$Eq5dQ5AnxietyDepression, levels = 1:5)
         subtxt <- 'Grad av engstelighet/deprimerthet'	#Tilstand i forhold til angst'
       }
       if (valgtVar == 'Eq5dQ1Mobility') { #fordeling
         tittel <- 'Problemer med gangfunksjon'
-        grtxt <- c('Ingen', 'Litt','Middels', 'Store', 'Invalidiserende')
+        grtxt <- c('Ingen', 'Litt','Middels', 'Store', 'Ute av stand')
         RegData$VariabelGr <- factor(RegData$Eq5dQ1Mobility, levels = 1:5)
         subtxt <- 'problemer med gange'
       }
       if (valgtVar == 'Eq5dQ4PainDiscomfort') { #fordeling
         tittel <- 'Smerter/ubehag'
-        grtxt <- c('Ingen', 'Litt','Middels', 'Sterke', 'Svært sterke')
+        grtxt <- c('Ingen', 'Litt','Middels', 'Sterke', 'Svært mye')
         RegData$VariabelGr <- factor(RegData$Eq5dQ4PainDiscomfort, levels = 1:5)
         subtxt <- 'problemer med gange'
       }
       if (valgtVar == 'Eq5dQ2Selfcare') {#fordeling
         tittel <- 'Problemer med personlig stell'
-        grtxt <- c('Ingen', 'Litt','Middels', 'Store', 'Invalidiserende')
+        grtxt <- c('Ingen', 'Litt','Middels', 'Store', 'Ute av stand')
         RegData$VariabelGr <- factor(RegData$Eq5dQ2Selfcare, levels = 1:5)
         subtxt <- 'Grad av problemer'
       }
       if (valgtVar == 'Eq5dQ3UsualActivities') {#fordeling
         tittel <- 'Problemer med vanlige gjøremål'
-        grtxt <- c('Ingen', 'Litt','Middels', 'Store', 'Invalidiserende')
+        grtxt <- c('Ingen', 'Litt','Middels', 'Store', 'Ute av stand')
         RegData$VariabelGr <- factor(RegData$Eq5dQ3UsualActivities, levels = 1:5)
         subtxt <- 'Grad av problemer'
       }
 
       if (valgtVar == 'Eq5dQ6HealthToday') {
-        tittel <- 'Generell helsetilstand'
+        tittel <- 'Egenvurdert helse'
         gr <- seq(0,100,10) #c(seq(0,90,10), 101)
         RegData$VariabelGr <- cut(as.numeric(RegData$Eq5dQ6HealthToday), breaks=gr, include.lowest=TRUE, right=FALSE)
         grtxt <- levels(RegData$VariabelGr)
