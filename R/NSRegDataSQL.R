@@ -30,7 +30,7 @@ NSRegDataSQL <- function(valgtVar='Alder', register='norscir',...) {
    #Sati: ActivityAndParticipationSatisfactionFormDataContract (bare NorScir)
    #Perf: ActivityAndParticipationPerformanceFormDataContract (bare NorScir)
    #Kont: ControlFormDataContract (bare NorScir)
-   #EQ5D: Eq5dlFormDataContract (bare NorScir)
+   #Eq5d: Eq5dlFormDataContract (bare NorScir)
 
    if ("session" %in% names(list(...))) {
       raplog::repLogger(session = list(...)[["session"]],
@@ -281,18 +281,18 @@ NSRegDataSQL <- function(valgtVar='Alder', register='norscir',...) {
    # ,Tarm.PasientGUID
 
    varEQ5D <- c('
-,EQ5D.FormDate
-,EQ5D.SkjemaGUID
-,EQ5D.Eq5dQ1Mobility
-,EQ5D.Eq5dQ2Selfcare
-,EQ5D.Eq5dQ3UsualActivities
-,EQ5D.Eq5dQ4PainDiscomfort
-,EQ5D.Eq5dQ5AnxietyDepression
-,EQ5D.Eq5dQ6HealthToday
-,EQ5D.Eq5d5lDt
-,EQ5D.ProceedingID
-,EQ5D.ParentCNum
-,UPPER(EQ5D.HovedskjemaGUID) AS HovedskjemaGUID
+,Eq5d.FormDate
+,Eq5d.SkjemaGUID
+,Eq5d.Eq5dQ1Mobility
+,Eq5d.Eq5dQ2Selfcare
+,Eq5d.Eq5dQ3UsualActivities
+,Eq5d.Eq5dQ4PainDiscomfort
+,Eq5d.Eq5dQ5AnxietyDepression
+,Eq5d.Eq5dQ6HealthToday
+,Eq5d.Eq5d5lDt
+,Eq5d.ProceedingID
+,Eq5d.ParentCNum
+,UPPER(Eq5d.HovedskjemaGUID) AS HovedskjemaGUID
 ')
 
    varKont <- c('
@@ -357,7 +357,7 @@ NSRegDataSQL <- function(valgtVar='Alder', register='norscir',...) {
                                Urin = 'INNER JOIN UrinaryTractFunctionFormDataContract Urin ',
                                Tarm = 'INNER JOIN BowelFunctionFormDataContract Tarm ',
                                Funk = 'INNER JOIN ActivityAndParticipationPerformanceFormDataContract Funk ',
-                               Eq5d = 'INNER JOIN Eq5dlFormDataContract EQ5D ',
+                               Eq5d = 'INNER JOIN Eq5dlFormDataContract Eq5d ',
                                Kont = 'INNER JOIN ControlFormDataContract Kont '
       ),
       'ON UPPER(h.SkjemaGUID) = UPPER(',valgtSkjema , '.HovedskjemaGUID) ')
@@ -381,7 +381,7 @@ NSRegDataSQL <- function(valgtVar='Alder', register='norscir',...) {
 
 
    #query <- 'select * from MainFormDataContract'
-   #query <- paste0('SELECT ', variable, ' FROM Eq5dlFormDataContract EQ5D ')
+   #query <- paste0('SELECT ', variable, ' FROM Eq5dlFormDataContract Eq5d ')
 
    RegData <- rapbase::loadRegData(registryName = register, query=query, dbType="mysql")
 
