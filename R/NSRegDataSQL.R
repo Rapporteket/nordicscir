@@ -27,10 +27,10 @@ NSRegDataSQL <- function(valgtVar='Alder', register='norscir',...) {
 #Livs: LifeQualityFormDataContract
 #Urin: UrinaryTractFunctionFormDataContract
 #Tarm: BowelFunctionFormDataContract
-#Sati: ActivityAndParticipationSatisfactionFormDataContract
-#Perf: ActivityAndParticipationPerformanceFormDataContract
-#Kont: ControlFormDataContract
-#EQ5D: Eq5dlFormDataContract
+#Sati: ActivityAndParticipationSatisfactionFormDataContract (bare NorScir)
+#Perf: ActivityAndParticipationPerformanceFormDataContract (bare NorScir)
+#Kont: ControlFormDataContract (bare NorScir)
+#EQ5D: Eq5dlFormDataContract (bare NorScir)
 
    if ("session" %in% names(list(...))) {
       raplog::repLogger(session = list(...)[["session"]],

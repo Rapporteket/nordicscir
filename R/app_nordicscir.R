@@ -1,10 +1,4 @@
 #Resultattjeneste for NordicScir
-# library(nordicscir)
-# library(shiny)
-# library(knitr)
-# library(lubridate)
-# library(dplyr)
-# library(kableExtra)
 
 #' Brukergrensesnitt (ui) til nordscir-appen
 #'
