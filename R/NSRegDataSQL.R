@@ -23,24 +23,24 @@
 
 NSRegDataSQL <- function(valgtVar='Alder', register='norscir',...) {
 
-#HovedSkjema: MainFormDataContract
-#Livs: LifeQualityFormDataContract
-#Urin: UrinaryTractFunctionFormDataContract
-#Tarm: BowelFunctionFormDataContract
-#Sati: ActivityAndParticipationSatisfactionFormDataContract (bare NorScir)
-#Perf: ActivityAndParticipationPerformanceFormDataContract (bare NorScir)
-#Kont: ControlFormDataContract (bare NorScir)
-#EQ5D: Eq5dlFormDataContract (bare NorScir)
+   #HovedSkjema: MainFormDataContract
+   #Livs: LifeQualityFormDataContract
+   #Urin: UrinaryTractFunctionFormDataContract
+   #Tarm: BowelFunctionFormDataContract
+   #Sati: ActivityAndParticipationSatisfactionFormDataContract (bare NorScir)
+   #Perf: ActivityAndParticipationPerformanceFormDataContract (bare NorScir)
+   #Kont: ControlFormDataContract (bare NorScir)
+   #EQ5D: Eq5dlFormDataContract (bare NorScir)
 
    if ("session" %in% names(list(...))) {
       raplog::repLogger(session = list(...)[["session"]],
                         msg = "Starter SQL-funksjon")
    }
    # rapbase::autLogger(name='test',  pkg = 'nordicscir', user = 'dummy', registryName = register, reshId = 0,
-#                    fun=0, param=0, type=0,
-#                    msg = "Starter SQL-funksjon")
+   #                    fun=0, param=0, type=0,
+   #                    msg = "Starter SQL-funksjon")
 
-varHoved <- c("
+   varHoved <- c("
       h.AAis,
       h.AdmitDt,
       h.AdmitRehDt,
@@ -81,10 +81,10 @@ varHoved <- c("
       h.UnitId,
       h.VentAssi
 ")
-#h.PasientGUID,
-#h.UnitId AS ReshId,
+   #h.PasientGUID,
+   #h.UnitId AS ReshId,
 
-varLivs <- c('
+   varLivs <- c('
 ,Livs.FormDate
 ,UPPER(Livs.HovedskjemaGUID) AS HovedskjemaGUID
 ,Livs.QolDt
@@ -94,9 +94,9 @@ varLivs <- c('
 -- ,Livs.SkjemaGUID AS SkjemaGUID
 -- ,Livs.SkjemaGUID AS SkjemaGUIDLivs
 ')
-#,Livs.PasientGUID
+   #,Livs.PasientGUID
 
-varFunk <- c('
+   varFunk <- c('
 ,UPPER(Funk.HovedskjemaGUID) AS HovedskjemaGUID
 ,Funk.DataClDt
 ,Funk.Dreslbdy
@@ -108,7 +108,7 @@ varFunk <- c('
 ,Funk.Toiletin
 ')
 
-varTilf <- c('
+   varTilf <- c('
 ,UPPER(Funk.HovedskjemaGUID) AS HovedskjemaGUID
 -- ,UPPER(Tilf.HovedskjemaGUID) AS HovedskjemaGUID
 ,Tilf.DataClDtS
@@ -120,7 +120,7 @@ varTilf <- c('
 -- ,Tilf.SkjemaGUID AS SkjemaGUIDTilf
 ,Tilf.ToiletinS
 ')
-varUrin <- c("
+   varUrin <- c("
 ,UPPER(Urin.HovedskjemaGUID) AS HovedskjemaGUID
 ,Urin.Antiprop
 ,Urin.Antiuti
@@ -202,9 +202,9 @@ varUrin <- c("
 ,Urin.UstnrmDt
 ,Urin.Utimprun
 ")
-#,Urin.PasientGUID
+   #,Urin.PasientGUID
 
-varTarm <- c('
+   varTarm <- c('
  ,UPPER(Tarm.HovedskjemaGUID) AS HovedskjemaGUID
  ,Tarm.Antichol
  ,Tarm.Apndec
@@ -278,10 +278,9 @@ varTarm <- c('
  ,Tarm.SurgicalIntervention
  ,Tarm.Wrpadplg
  ')
-# ,Tarm.PasientGUID
+   # ,Tarm.PasientGUID
 
-varEQ5D <- c('
- ,UPPER(EQ5D.HovedskjemaGUID) AS HovedskjemaGUID
+   varEQ5D <- c('
 ,EQ5D.FormDate
 ,EQ5D.SkjemaGUID
 ,EQ5D.Eq5dQ1Mobility
@@ -293,9 +292,10 @@ varEQ5D <- c('
 ,EQ5D.Eq5d5lDt
 ,EQ5D.ProceedingID
 ,EQ5D.ParentCNum
+,UPPER(EQ5D.HovedskjemaGUID) AS HovedskjemaGUID
 ')
 
-varKont <- c('
+   varKont <- c('
  ,UPPER(Kont.HovedskjemaGUID) AS HovedskjemaGUID
 ,Kont.CAis
 ,Kont.CMtrLvlAreaL
@@ -335,14 +335,14 @@ varKont <- c('
 -- ,Kont.SkjemaGUID AS SkjemaGUIDKont
 ,Kont.UnitId
 ')
-#"HealthUnitId","HealthUnitName","HealthUnitShortName","HF" ,"Hospital","RHF"
+   #"HealthUnitId","HealthUnitName","HealthUnitShortName","HF" ,"Hospital","RHF"
 
 
-valgtSkjema <- substr(valgtVar,1,4)
+   valgtSkjema <- substr(valgtVar,1,4)
 
-variable <- ''
-qSkjema <- ''
-if (valgtSkjema %in% c('Livs', 'Urin', 'Tarm', 'Tilf', 'Funk', 'Eq5d', 'Kont')) {
+   variable <- ''
+   qSkjema <- ''
+   if (valgtSkjema %in% c('Livs', 'Urin', 'Tarm', 'Tilf', 'Funk', 'Eq5d', 'Kont')) {
       variable <- switch(valgtSkjema,
                          Livs = varLivs,
                          Urin = varUrin,
@@ -353,45 +353,45 @@ if (valgtSkjema %in% c('Livs', 'Urin', 'Tarm', 'Tilf', 'Funk', 'Eq5d', 'Kont')) 
                          Kont = varKont)
 
       qSkjema <- paste0(switch(valgtSkjema, #Dette vil bare fungere hvis konsekvent med navngiving i valgtVar
-           Livs = 'INNER JOIN LifeQualityFormDataContract Livs ',
-           Urin = 'INNER JOIN UrinaryTractFunctionFormDataContract Urin ',
-           Tarm = 'INNER JOIN BowelFunctionFormDataContract Tarm ',
-           Funk = 'INNER JOIN ActivityAndParticipationPerformanceFormDataContract Funk ',
-           Eq5d = 'INNER JOIN Eq5dlFormDataContract EQ5D ',
-           Kont = 'INNER JOIN ControlFormDataContract Kont '
-           ),
-           'ON UPPER(h.SkjemaGUID) = UPPER(',valgtSkjema , '.HovedskjemaGUID) ')
+                               Livs = 'INNER JOIN LifeQualityFormDataContract Livs ',
+                               Urin = 'INNER JOIN UrinaryTractFunctionFormDataContract Urin ',
+                               Tarm = 'INNER JOIN BowelFunctionFormDataContract Tarm ',
+                               Funk = 'INNER JOIN ActivityAndParticipationPerformanceFormDataContract Funk ',
+                               Eq5d = 'INNER JOIN Eq5dlFormDataContract EQ5D ',
+                               Kont = 'INNER JOIN ControlFormDataContract Kont '
+      ),
+      'ON UPPER(h.SkjemaGUID) = UPPER(',valgtSkjema , '.HovedskjemaGUID) ')
       #qSkjema er NULL hvis ingen treff
       if (valgtSkjema=='Tilf') {
-            qSkjema <- 'INNER JOIN ActivityAndParticipationPerformanceFormDataContract Funk
+         qSkjema <- 'INNER JOIN ActivityAndParticipationPerformanceFormDataContract Funk
                         ON UPPER(h.SkjemaGUID) = UPPER(Funk.HovedskjemaGUID)
                         INNER JOIN ActivityAndParticipationSatisfactionFormDataContract Tilf
                         ON UPPER(Funk.SkjemaGUID) = UPPER(Tilf.HovedskjemaGUID)'
-                  }
       }
+   }
 
 
-query <- paste0('SELECT ',
-               varHoved,
-               variable,
-            ' FROM
+   query <- paste0('SELECT ',
+                   varHoved,
+                   variable,
+                   ' FROM
             MainFormDataContract h ',
-            qSkjema
-            )
+                   qSkjema
+   )
 
 
-#query <- 'select * from MainFormDataContract'
-#query <- paste0('SELECT ', variable, ' FROM Eq5dlFormDataContract EQ5D ')
+   #query <- 'select * from MainFormDataContract'
+   #query <- paste0('SELECT ', variable, ' FROM Eq5dlFormDataContract EQ5D ')
 
-RegData <- rapbase::loadRegData(registryName = register, query=query, dbType="mysql")
+   RegData <- rapbase::loadRegData(registryName = register, query=query, dbType="mysql")
 
-if ("session" %in% names(list(...))) {
-   raplog::repLogger(session = list(...)[["session"]],
-                     msg = paste0('Har hentet skjema ', valgtSkjema, 'fra database'))
-}
-# rapbase::autLogger(name='test',  pkg = 'nordicscir', user = 'dummy', registryName = register, reshId = 0,
-#                    fun=0, param=0, type=0,
-#                    msg = paste0('Har hentet skjema ', valgtSkjema, 'fra database'))
+   if ("session" %in% names(list(...))) {
+      raplog::repLogger(session = list(...)[["session"]],
+                        msg = paste0('Har hentet skjema ', valgtSkjema, 'fra database'))
+   }
+   # rapbase::autLogger(name='test',  pkg = 'nordicscir', user = 'dummy', registryName = register, reshId = 0,
+   #                    fun=0, param=0, type=0,
+   #                    msg = paste0('Har hentet skjema ', valgtSkjema, 'fra database'))
 
-return(RegData)
+   return(RegData)
 }
