@@ -388,16 +388,16 @@ NSRegDataSQL <- function(valgtVar='Alder', register='norscir',...) {
 
    if (valgtSkjema=='Tilf') { #IKKE FERDIG...
      #RegData er nå Hovedskjema
-     qTilf <- 'SELECT UPPER(HovedskjemaGUID) AS HovedskjemaGUID,
+     qTilf <- 'SELECT UPPER(HovedskjemaGUID) AS FunkskjemaGUID,
       DataClDtS, DreslbdyS, FeedingS, FirstTimeClosed, MobilmodS, ToiletinS
                      FROM ActivityAndParticipationSatisfactionFormDataContract'
      TilfData <- rapbase::loadRegData(registryName = 'norscir', query=qTilf, dbType="mysql")
 
-     qFunkTilf <- 'SELECT UPPER(HovedskjemaGUID) AS HovedskjemaGUID, SkjemaGUID FROM
+     qFunkTilf <- 'SELECT UPPER(HovedskjemaGUID) AS HovedskjemaGUID, SkjemaGUID AS FunkskjemaGUID FROM
      ActivityAndParticipationPerformanceFormDataContract'
      FunkVarKobl <- rapbase::loadRegData(registryName = 'norscir', query=qFunkTilf, dbType="mysql")
      FunkTilf <- FunkVarKobl %>%
-       dplyr::inner_join(TilfData, by = dplyr::join_by(SkjemaGUID == HovedskjemaGUID))
+       dplyr::inner_join(TilfData, by = dplyr::join_by(FunkskjemaGUID))
 
      RegData <- RegData %>%
        dplyr::inner_join(FunkTilf, by = dplyr::join_by(SkjemaGUID == HovedskjemaGUID))

@@ -142,9 +142,10 @@ tabSkjemaTilknyttet <- function(Data=AlleTab, moderSkjema='Hoved',
       if ('AktivFunksjonH' %in% names(Data)) {  #exists('Data$AktivFunksjonH')
         RaaTab <- cbind(RaaTab,
                         Funksjon = ModerSkjema$SkjemaGUID %in% Data$AktivFunksjonH$HovedskjemaGUID,
-                        Tilfredshet = ModerSkjema$SkjemaGUID %in%
-                          Data$AktivFunksjonH$HovedskjemaGUID[Data$AktivFunksjonH$SkjemaGUID %in%
-                                              Data$AktivTilfredshetH$HovedskjemaGUID]
+                        Tilfredshet = ModerSkjema$SkjemaGUID %in% Data$AktivTilfredshetH$SkjemaGUID #(SkjemaGUID er fra hovedskjema)
+                        # Tilfredshet = ModerSkjema$SkjemaGUID %in%
+                         # Data$AktivFunksjonH$HovedskjemaGUID[Data$AktivFunksjonH$SkjemaGUID %in%
+                           #                   Data$AktivTilfredshetH$FunkskjemaGUID]
                         )
         }
 
