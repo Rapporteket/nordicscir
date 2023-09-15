@@ -109,8 +109,8 @@ NSRegDataSQL <- function(valgtVar='Alder', register='norscir',...) {
 ')
 
    varTilf <- c('
-,UPPER(Funk.HovedskjemaGUID) AS HovedskjemaGUID
--- ,UPPER(Tilf.HovedskjemaGUID) AS HovedskjemaGUID
+-- ,UPPER(Funk.HovedskjemaGUID) AS HovedskjemaGUID
+ ,UPPER(Tilf.HovedskjemaGUID) AS HovedskjemaGUID
 ,Tilf.DataClDtS
 ,Tilf.DreslbdyS
 ,Tilf.FeedingS
@@ -342,13 +342,13 @@ NSRegDataSQL <- function(valgtVar='Alder', register='norscir',...) {
 
    variable <- ''
    qSkjema <- ''
-   if (valgtSkjema %in% c('Livs', 'Urin', 'Tarm', 'Tilf', 'Funk', 'Eq5d', 'Kont')) {
+   if (valgtSkjema %in% c('Livs', 'Urin', 'Tarm', 'Funk', 'Eq5d', 'Kont')) { #'Tilf'
       variable <- switch(valgtSkjema,
                          Livs = varLivs,
                          Urin = varUrin,
                          Tarm = varTarm,
                          Funk = varFunk,
-                         Tilf = varTilf,
+                         #Tilf = varTilf,
                          Eq5d = varEQ5D,
                          Kont = varKont)
 
@@ -361,13 +361,14 @@ NSRegDataSQL <- function(valgtVar='Alder', register='norscir',...) {
                                Kont = 'INNER JOIN ControlFormDataContract Kont '
       ),
       'ON UPPER(h.SkjemaGUID) = UPPER(',valgtSkjema , '.HovedskjemaGUID) ')
+
       #qSkjema er NULL hvis ingen treff
-      if (valgtSkjema=='Tilf') {
-         qSkjema <- 'INNER JOIN ActivityAndParticipationPerformanceFormDataContract Funk
-                        ON UPPER(h.SkjemaGUID) = UPPER(Funk.HovedskjemaGUID)
-                        INNER JOIN ActivityAndParticipationSatisfactionFormDataContract Tilf
-                        ON UPPER(Funk.SkjemaGUID) = UPPER(Tilf.HovedskjemaGUID)'
-      }
+      # if (valgtSkjema=='Tilf') {
+      #    qSkjema <- 'INNER JOIN ActivityAndParticipationPerformanceFormDataContract Funk
+      #                   ON UPPER(h.SkjemaGUID) = UPPER(Funk.HovedskjemaGUID)
+      #                   INNER JOIN ActivityAndParticipationSatisfactionFormDataContract Tilf
+      #                   ON UPPER(Funk.SkjemaGUID) = UPPER(Tilf.HovedskjemaGUID)'
+      # }
    }
 
 
@@ -384,6 +385,23 @@ NSRegDataSQL <- function(valgtVar='Alder', register='norscir',...) {
    #query <- paste0('SELECT ', variable, ' FROM Eq5dlFormDataContract Eq5d ')
 
    RegData <- rapbase::loadRegData(registryName = register, query=query, dbType="mysql")
+
+   if (valgtSkjema=='Tilf') { #IKKE FERDIG...
+     #RegData er nå Hovedskjema
+     qTilf <- 'SELECT UPPER(HovedskjemaGUID) AS HovedskjemaGUID,
+      DataClDtS, DreslbdyS, FeedingS, FirstTimeClosed, MobilmodS, ToiletinS
+                     FROM ActivityAndParticipationSatisfactionFormDataContract'
+     TilfData <- rapbase::loadRegData(registryName = 'norscir', query=qTilf, dbType="mysql")
+
+     qFunkTilf <- 'SELECT UPPER(HovedskjemaGUID) AS HovedskjemaGUID, SkjemaGUID FROM
+     ActivityAndParticipationPerformanceFormDataContract'
+     FunkVarKobl <- rapbase::loadRegData(registryName = 'norscir', query=qFunkTilf, dbType="mysql")
+     FunkTilf <- FunkVarKobl %>%
+       dplyr::inner_join(TilfData, by = dplyr::join_by(SkjemaGUID == HovedskjemaGUID))
+
+     RegData <- RegData %>%
+       dplyr::inner_join(FunkTilf, by = dplyr::join_by(SkjemaGUID == HovedskjemaGUID))
+   }
 
    if ("session" %in% names(list(...))) {
       raplog::repLogger(session = list(...)[["session"]],

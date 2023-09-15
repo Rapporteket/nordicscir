@@ -1,6 +1,77 @@
 nordicscir::kjor_NSapper('norscir')
 nordicscir::kjor_NSapper('nordicscir')
 
+#Problemer med å laste data fra ny prod. Hvorfor
+#Gamle data: 6,8 sek
+start <- Sys.time()
+AlleTab <- nordicscir::getRealData(register = 'norscir')
+tidGml <- as.numeric(difftime(Sys.time(), start, units = 's'))
+
+#Nye data
+start <- Sys.time()
+AlleTab <- nordicscir::getRealData(register = 'norscir')
+tidNy <- as.numeric(difftime(Sys.time(), start, units = 's'))
+#Tar laaang tid...
+#Problemet ligger i AktivTilfredshetH
+AktivFunksjonH <- NSRegDataSQL(register=register, valgtVar = "FunkXX")
+AktivTilfredshetH <- NSRegDataSQL(register=register, valgtVar = "TilfXX")
+
+
+varTilf <- c('
+,Tilf.DataClDtS
+')
+
+#,UPPER(Funk.HovedskjemaGUID) AS HovedskjemaGUID
+#-- ,UPPER(Tilf.HovedskjemaGUID) AS HovedskjemaGUID
+
+varHoved <- c("
+      h.AAis,
+      h.AdmitDt,
+      h.AdmitRehDt,
+      h.SkjemaGUID")
+
+query <- paste0('SELECT ',
+                varHoved,
+                varTilf,
+                ' FROM
+            MainFormDataContract h ',
+                'INNER JOIN ActivityAndParticipationPerformanceFormDataContract Funk
+                        ON UPPER(h.SkjemaGUID) = UPPER(Funk.HovedskjemaGUID)
+                        INNER JOIN ActivityAndParticipationSatisfactionFormDataContract Tilf
+                        ON UPPER(Funk.SkjemaGUID) = UPPER(Tilf.HovedskjemaGUID)')
+
+RegData <- rapbase::loadRegData(registryName = register, query=query, dbType="mysql")
+
+
+qTilf <- 'select UPPER(HovedskjemaGUID) AS FunkSkjemaGUID, SkjemaGUID AS TilfSkjemaGUID, Tilf.DataClDtS, Tilf.DreslbdyS FROM ActivityAndParticipationSatisfactionFormDataContract Tilf'
+TilfData <- rapbase::loadRegData(registryName = 'norscir', query=qTilf, dbType="mysql")
+qFunk <- 'select UPPER(HovedskjemaGUID) AS HovedskjemaGUID, SkjemaGUID AS FunkSkjemaGUID, Funk.DataClDt FROM ActivityAndParticipationPerformanceFormDataContract Funk'
+FunkData <- rapbase::loadRegData(registryName = 'norscir', query=qFunk, dbType="mysql")
+qHoved <- 'select SkjemaGUID, AdmitDt  FROM  MainFormDataContract h'
+HovedData <- rapbase::loadRegData(registryName = 'norscir', query=qHoved, dbType="mysql")
+
+#band_members %>% full_join(band_instruments2, by = join_by(name == artist))
+FunkTilf <- FunkData %>%
+  dplyr::inner_join(TilfData, by = join_by(FunkSkjemaGUID)) #join_by(SkjemaGUID == FunkSkjemaGUID))
+
+HovedFunkTilf <- HovedData %>%
+  dplyr::inner_join(FunkTilf, by = join_by(SkjemaGUID == HovedskjemaGUID))
+
+# HovedTilf <- HovedData %>%
+#   dplyr::inner_join(TilfData, by = join_by(SkjemaGUID == FunkSkjemaGUID))
+
+HovedFunk <- HovedData %>%
+  dplyr::inner_join(FunkData, by = join_by(SkjemaGUID == HovedskjemaGUID))
+
+
+#Tar fortsatt lang tid:
+qFunkTilf <- paste0('SELECT Tilf.DataClDtS, Funk.DataClDt, Funk.HovedskjemaGUID, Funk.SkjemaGUID, h.AdmitDt
+                    FROM MainFormDataContract h ',
+                'INNER JOIN ActivityAndParticipationPerformanceFormDataContract Funk
+                        ON UPPER(h.SkjemaGUID) = UPPER(Funk.HovedskjemaGUID)
+                        INNER JOIN ActivityAndParticipationSatisfactionFormDataContract Tilf
+                        ON UPPER(Funk.SkjemaGUID) = UPPER(Tilf.HovedskjemaGUID)')
+FunkTilf <- rapbase::loadRegData(registryName = 'norscir', query=qFunkTilf, dbType="mysql")
 #-----------------------Lage eksempeldatasett-----------------------
 rm(list=ls())
 # NorScirEksData <- read.table('E:/Registre/NorScir/data/NorScirEksempeldata.csv', header=T, sep=';')
