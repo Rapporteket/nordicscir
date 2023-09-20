@@ -17,24 +17,24 @@ NSVarTilrettelegg(RegData, valgtVar, grVar = "", figurtype = "andeler")
 Definisjon av valgt variabel.
 }
 \description{
-Denne funksjonen gjør utvalg og tilrettelegger variable (gitt ved valgtVar) til videre bruk. 
-Videre bruk kan eksempelvis være beregning av AggVerdier eller gjennomsnitt. 
+Denne funksjonen gjør utvalg og tilrettelegger variable (gitt ved valgtVar) til videre bruk.
+Videre bruk kan eksempelvis være beregning av AggVerdier eller gjennomsnitt.
 Funksjonen gjør også filtreringer som å fjerne ugyldige verdier for den valgte variabelen, samt ta høyde for avhengigheter med
-andre variable. Det er også her man angir aksetekster og titler for den valgte variabelen. 
+andre variable. Det er også her man angir aksetekster og titler for den valgte variabelen.
 Her kan mye hentes til analysebok
 }
 \details{
 Argumentet \emph{valgtVar} har følgende valgmuligheter:
    \itemize{
-    \item Alder: Aldersfordeling, 10-årige grupper 
+    \item Alder: Aldersfordeling, 10-årige grupper
    }
-   
-NB: valgtVar må komponeres slik at den henspeiler på hvilken 
+
+NB: valgtVar må komponeres slik at den henspeiler på hvilken
 tabell variabelen kommer fra. Dette for å senere kunne hente og koble dataene riktig.
-valgtSkjema <- substr(valgtVar,1,4) 
+valgtSkjema <- substr(valgtVar,1,4)
 Prefixet til  \emph{valgtVar} skal være følgende:
    \itemize{
-   \item Livs - LifeQuality, 
+   \item Livs - LifeQuality,
    \item Urin - UrinaryTractFunction
    \item Tarm - BowelFunction
    \item Kont - Control

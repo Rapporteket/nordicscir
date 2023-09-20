@@ -28,8 +28,10 @@ NSUtvalgEnh <- function(RegData, datoFra='2010-01-01', datoTil=Sys.Date(), datoU
   datoUt <- as.numeric(datoUt)
   # Definer intersect-operator
   "%i%" <- intersect
-  RegData$RapDato <- if (datoUt==1) {as.Date(RegData$DischgDt)
-  } else {as.Date(RegData$InnDato)}
+
+    RegData$RapDato <- as.Date(RegData[ ,c('InnDato', 'DischgDt')[datoUt+1]])
+    #Fjerner de som har for lange opphold pga ulik registreringspraksis
+    if (datoUt==1) {RegData <- RegData[which(RegData$OpphTot <= 730), ]}
 
   #Enhetsutvalg:
   #Når bare skal sml med eget land/ikke sammenlikne, trengs ikke alle data:

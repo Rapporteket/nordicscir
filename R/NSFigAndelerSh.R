@@ -89,7 +89,8 @@ NSFigAndelerSh <- function(RegData, outfile='', valgtVar='Alder',
             NSVarSpes <- NSVarTilrettelegg(RegData=RegData, valgtVar=valgtVar, figurtype='andeler')
             RegData <- NSVarSpes$RegData
 
-            Utvalg <- NSUtvalg(RegData=RegData, datoFra=datoFra, datoTil=datoTil, minald=minald, maxald=maxald,
+            #NSUtvalg -> NSUtvalgEnh
+            Utvalg <- NSUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil=datoTil, minald=minald, maxald=maxald,
                                erMann=erMann, traume=traume, AIS=AIS, nivaaUt=nivaaUt, datoUt=datoUt)
             RegData <- Utvalg$RegData
             utvalgTxt <- Utvalg$utvalgTxt

@@ -7,11 +7,11 @@
 \alias{processAllData}
 \title{Get Data for NordicScir}
 \usage{
-getRealData(register = "norscir")
+getRealData(register = "norscir", ...)
 
 getFakeData(register = "norscir")
 
-processAllData(data, register = "norscir")
+processAllData(data, register = "norscir", ...)
 }
 \arguments{
 \item{register}{Hvilket register det skal hentes data for

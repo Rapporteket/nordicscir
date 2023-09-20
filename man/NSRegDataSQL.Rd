@@ -4,7 +4,7 @@
 \alias{NSRegDataSQL}
 \title{Henter data for NorScir eller NordicScir fra database}
 \usage{
-NSRegDataSQL(valgtVar = "Alder", register = "norscir")
+NSRegDataSQL(valgtVar = "Alder", register = "norscir", ...)
 }
 \arguments{
 \item{valgtVar}{Valg av variabel angir hvilket skjema som skal knyttes til hovedskjema

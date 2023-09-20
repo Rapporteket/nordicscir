@@ -16,7 +16,8 @@ tabBelegg <- function(RegData, tidsenhet='Mnd', datoTil=Sys.Date(), enhetsUtvalg
                         Mnd = lubridate::floor_date(as.Date(datoTil)%m-% months(12, abbreviate = T), 'month'), #as.Date(paste0(as.numeric(substr(datoTil,1,4))-1, substr(datoTil,5,8), '01'), tz='UTC')
                         Aar = paste0(lubridate::year(as.Date(datoTil))-4, '-01-01')
       )
-      RegData <- NSUtvalg(RegData=RegData, datoFra=datoFra, datoTil = datoTil,
+      #sep23: NSUtvalg -> NSUtvalgEnh
+      RegData <- NSUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil = datoTil,
                              enhetsUtvalg = enhetsUtvalg, reshID = reshID)$RegData
       RegData <- SorterOgNavngiTidsEnhet(RegData, tidsenhet=tidsenhet)$RegData
       tabBeleggAnt <- rbind('Antall pasienter' = tapply(RegData$PasientID, RegData$TidsEnhet,
@@ -42,8 +43,8 @@ tabBelegg <- function(RegData, tidsenhet='Mnd', datoTil=Sys.Date(), enhetsUtvalg
 #' @export
 tabLiggetider <- function(RegData, datoFra='2018-01-01', datoTil=Sys.Date(), enhetsUtvalg=0, reshID=0,
                           traume='') {
-
-      RegData <- NSUtvalg(RegData=RegData, datoFra=datoFra, datoTil = datoTil, traume=traume,
+      #sep23: NSUtvalg -> NSUtvalgEnh
+      RegData <- NSUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil = datoTil, traume=traume,
                           enhetsUtvalg = enhetsUtvalg, reshID = reshID)$RegData
 
       Liggetider <- rbind('Liggetid, totalt' = summary(RegData$OpphTot)[c(1,3,4,6)],
@@ -59,13 +60,14 @@ tabLiggetider <- function(RegData, datoFra='2018-01-01', datoTil=Sys.Date(), enh
 #' -tabAntOpphSh12mnd: Antall opphold per måned og enhet siste 12 måneder fram til datoTil.
 #' -tabAntOpphSh5Aar:Antall opphold per år og enhet siste 5 år (inkl. inneværende år) fram til datoTil.
 #' RegData må inneholde Aar.
-#' @inheritParams NSUtvalg
+#' @inheritParams NSUtvalgEnh
 #' @export
 tabAntOpphShMnd <- function(RegData, datoTil=Sys.Date(), traume='', antMnd=12){
       #RegData må inneholde DateAdmittedIntensive, DateDischargedIntensive
       datoFra <- lubridate::floor_date(as.Date(datoTil)%m-% months(antMnd, abbreviate = T), 'month') #as.Date(paste0(as.numeric(substr(datoTil,1,4))-1, substr(datoTil,5,8), '01'), tz='UTC')
       aggVar <-  c('ShNavn', 'InnDato')
-      RegData <- NSUtvalg(RegData = RegData, traume=traume)$RegData
+      #sep23: NSUtvalg -> NSUtvalgEnh
+      RegData <- NSUtvalgEnh(RegData = RegData, traume=traume)$RegData
       RegDataDum <- RegData[RegData$InnDato <= as.Date(datoTil, tz='UTC')
                               & RegData$InnDato > as.Date(datoFra, tz='UTC'), aggVar]
       RegDataDum$Maaned1 <- lubridate::floor_date(RegDataDum$InnDato, 'month')
@@ -79,11 +81,12 @@ tabAntOpphShMnd <- function(RegData, datoTil=Sys.Date(), traume='', antMnd=12){
 }
 
 #' Antall opphold siste 5 år
-#' @inheritParams NSUtvalg
+#' @inheritParams NSUtvalgEnh
 #' @export
 tabAntOpphSh5Aar <- function(RegData, datoTil=Sys.Date(), traume=''){
       AarNaa <- as.numeric(format.Date(datoTil, "%Y"))
-      RegData <- NSUtvalg(RegData = RegData, traume=traume)$RegData
+      #sep23: NSUtvalg -> NSUtvalgEnh
+      RegData <- NSUtvalgEnh(RegData = RegData, traume=traume)$RegData
       tabAvdAarN <- addmargins(table(RegData[which(RegData$Aar %in% (AarNaa-4):AarNaa), c('ShNavn','Aar')]))
       rownames(tabAvdAarN)[dim(tabAvdAarN)[1] ]<- 'TOTALT, alle enheter:'
       colnames(tabAvdAarN)[dim(tabAvdAarN)[2] ]<- 'Siste 5 år'
@@ -128,8 +131,8 @@ tabSkjemaTilknyttet <- function(Data=AlleTab, moderSkjema='Hoved',
          indDato <- which(as.Date(ModerSkjema$CNeuExmDt) >= datoFra &
                           as.Date(ModerSkjema$CNeuExmDt) <= datoTil)
          ModerSkjema <- ModerSkjema[indDato, ]
-         } else {
-            ModerSkjema <- NSUtvalg(RegData=ModerSkjema, datoFra = datoFra,
+         } else { #sep23: NSUtvalg -> NSUtvalgEnh
+            ModerSkjema <- NSUtvalgEnh(RegData=ModerSkjema, datoFra = datoFra,
                               datoTil = datoTil)$RegData}
 
       RaaTab <- data.frame(Sykehus = ModerSkjema$ShNavn,
@@ -170,13 +173,14 @@ tabAntSkjema <- function(Data=AlleTab, datoFra='2017-01-01', datoTil=Sys.Date())
       # sum(Data$HovedSkjema$SkjemaGUID %in% Data$LivskvalitetH$HovedskjemaGUID)
       # sum(Data$LivskvalitetH$HovedskjemaGUID %in% Data$HovedSkjema$SkjemaGUID)
       # sum(table(Data$LivskvalitetH$ShNavn))
-      AntSkjema <- rbind(Hovedskjema = table(NSUtvalg(Data$HovedSkjema, datoFra = datoFra, datoTil = datoTil)$RegData$ShNavn),
+  # sep23: NSUtvalg -> NSUtvalgEnh
+      AntSkjema <- rbind(Hovedskjema = table(NSUtvalgEnh(Data$HovedSkjema, datoFra = datoFra, datoTil = datoTil)$RegData$ShNavn),
             Livskvalitet = table(NSUtvalg(Data$LivskvalitetH, datoFra = datoFra, datoTil = datoTil)$RegData$ShNavn),
                       #Kontroll = table(Data$LivskvalitetH$ShNavn),
-                      Urin = table(NSUtvalg(Data$UrinH, datoFra = datoFra, datoTil = datoTil)$RegData$ShNavn),
-                      Tarm = table(NSUtvalg(Data$TarmH, datoFra = datoFra, datoTil = datoTil)$RegData$ShNavn),
-                      Funksjon = table(NSUtvalg(Data$FunksjonH, datoFra = datoFra, datoTil = datoTil)$RegData$ShNavn),
-                      Tilfredshet = table(NSUtvalg(Data$TilfredsH, datoFra = datoFra, datoTil = datoTil)$RegData$ShNavn)
+                      Urin = table(NSUtvalgEnh(Data$UrinH, datoFra = datoFra, datoTil = datoTil)$RegData$ShNavn),
+                      Tarm = table(NSUtvalgEnh(Data$TarmH, datoFra = datoFra, datoTil = datoTil)$RegData$ShNavn),
+                      Funksjon = table(NSUtvalgEnh(Data$FunksjonH, datoFra = datoFra, datoTil = datoTil)$RegData$ShNavn),
+                      Tilfredshet = table(NSUtvalgEnh(Data$TilfredsH, datoFra = datoFra, datoTil = datoTil)$RegData$ShNavn)
       )
       AntSkjema <- addmargins(AntSkjema, margin=2, FUN=list('Hele landet' = sum))
       return(AntSkjema)

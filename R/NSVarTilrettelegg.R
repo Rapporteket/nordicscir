@@ -205,17 +205,23 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
             RegData$VariabelGr <- factor(as.numeric(RegData$SkadeArsak), levels=1:7, labels = grtxtAlle)
             retn <- 'H'
       }
-      if (valgtVar == 'UtTil') {
+      if (valgtVar %in% c('UtTil', 'KontUtTil')) {
+
             tittel <- 'Utskrevet til'
             #gr <- (1:10,99) - Kodene som registereres
-            RegData$UtTil[which(RegData$UtTil==99)] <- 12
-            RegData <- RegData[RegData$UtTil %in% 1:12, ]
-            grtxtAlle <- c('Hjem', 'Sykehus', 'Sykehjem', 'Omsorgsbolig', 'Bofellesskap','Kriminalomsorg', 'Hotell', 'Bostedsløs', 'Avdød', 'Annet', 'Planlagt hjem', 'Ukjent')
-            grtxt <- grtxtAlle
+            grtxt <- c('Hjem', 'Sykehus', 'Sykehjem', 'Omsorgsbolig', 'Bofellesskap',
+                       'Kriminalomsorg', 'Hotell', 'Bostedsløs', 'Avdød', 'Annet', 'Planlagt hjem', 'Ukjent')
             xAkseTxt <- 'Utskrevet til'
-            RegData$VariabelGr <- factor(as.numeric(RegData$UtTil), levels=1:12, labels = grtxtAlle)
-            #Vurder om skal ta med bare de som er registrert
-            #grtxt <- grtxtAlle[as.numeric(names(table(as.numeric(RegData$PlaceDis))))] #De som er reg.
+
+            RegData$PlaceDis[which(RegData$PlaceDis==99)] <- 12
+            RegData <- RegData[RegData$PlaceDis %in% 1:12, ]
+            RegData$VariabelGr <- factor(as.numeric(RegData$PlaceDis), levels=1:12, labels = grtxt)
+            if (valgtVar=='KontUtTil'){
+              RegData <- RegData[RegData$CNum ==1, ]
+              RegData$CPlaceDis[which(RegData$CPlaceDis==99)] <- 12
+              RegData <- RegData[RegData$CPlaceDis %in% 1:12, ]
+              RegData$VariabelGrPost <- factor(as.numeric(RegData$CPlaceDis), levels=1:12, labels = grtxt)
+            }
             retn <- 'H'
       }
       if (valgtVar == 'PPlaceDis') {

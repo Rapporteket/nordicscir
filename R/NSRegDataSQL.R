@@ -386,7 +386,11 @@ NSRegDataSQL <- function(valgtVar='Alder', register='norscir',...) {
 
    RegData <- rapbase::loadRegData(registryName = register, query=query, dbType="mysql")
 
-   if (valgtSkjema=='Tilf') { #IKKE FERDIG...
+   if (valgtSkjema=='Kont'){
+     RegData <- RegData[RegData$NoControl=='False', ]
+   }
+
+   if (valgtSkjema=='Tilf') {
      #RegData er nå Hovedskjema
      qTilf <- 'SELECT UPPER(HovedskjemaGUID) AS FunkskjemaGUID,
       DataClDtS, DreslbdyS, FeedingS, FirstTimeClosed, MobilmodS, ToiletinS

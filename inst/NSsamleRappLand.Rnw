@@ -131,7 +131,7 @@ s1 <- 0.8	#Skaleringsparameter for enkeltfigurer
 
 #Utvalg/datarensk
 Ninn <- dim(NSdata)[1]
-Utvalg <- NSUtvalg(RegData=NSdata, datoFra=datoFra, datoTil=datoTil)
+Utvalg <- NSUtvalgEnh(RegData=NSdata, datoFra=datoFra, datoTil=datoTil)
 NSdata <- Utvalg$RegData
 
 
@@ -187,7 +187,7 @@ utvalg <- switch(hvem,
 	BehDager <- NSdata$OpphTot[utvalg]
 	RehabDager <- NSdata$DagerRehab[utvalg]
 	Ventetid <- NSdata$DagerTilRehab[utvalg]
-	
+
 #if (sum(RehabDager>0, na.rm=T)>0 ) {
 
 	VerdiOmr <- rbind('Alder' = c(round(c(median(Alder), mean(Alder), sd(Alder))),
@@ -233,7 +233,7 @@ utvalg <- switch(hvem,
 
 Nutv <- length(utvalg)
 Kjonn <- table(NSdata$erMann[utvalg])
-AntTilHjem <- c(sum(NSdata$UtTil[utvalg]==1), sum(NSdata$UtTil[utvalg] %in% 1:10))
+AntTilHjem <- c(sum(NSdata$PlaceDis[utvalg]==1), sum(NSdata$PlaceDis[utvalg] %in% 1:10))
 AntAssSkade <-c(sum(NSdata$AssocInj[utvalg]==1), sum(NSdata$AssocInj[utvalg] %in% 0:1))
 AntSpinkir <- c(sum(NSdata$SpnlSurg[utvalg]==1), sum(NSdata$SpnlSurg[utvalg] %in% 0:1))
 AntTraumer <- c(sum(NSdata$SkadeArsak[utvalg] %in% 1:5), sum(NSdata$SkadeArsak[utvalg] %in% 1:6))

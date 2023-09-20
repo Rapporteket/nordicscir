@@ -41,14 +41,12 @@ NSPreprosesser <- function(RegData)
       names(RegData)[which(names(RegData) == 'PatientInRegistryGuid')] <- 'PasientID'
       names(RegData)[which(names(RegData) == 'HealthUnitShortName')] <- 'ShNavn'
       names(RegData)[which(names(RegData) == 'PatientAge')] <- 'Alder'
-      names(RegData)[which(names(RegData) == 'PlaceDis')] <- 'UtTil'
+      #names(RegData)[which(names(RegData) == 'PlaceDis')] <- 'UtTil'
       names(RegData)[which(names(RegData) == 'Scietiol')] <- 'SkadeArsak'
       names(RegData)[which(names(RegData) == 'VentAssi')] <- 'Pustehjelp'
       names(RegData)[which(names(RegData) == 'HosptlDy')] <- 'OpphTot'  #Sjekk forskjell HosptlDy og ..2
       names(RegData)[which(names(RegData) == 'RehabDy')] <- 'DagerRehab'
       names(RegData)[which(names(RegData) == 'BeforeRehDy')] <- 'DagerTilRehab'
-      #names(RegData)[which(names(RegData) == 'OutOfHosptlDy')] <- 'Permisjon'
-      #RegData$Permisjon <- with(RegData, OutOfHosptlDy+OutOfHosptlDy2+OutOfRehabDy)
 
       #Riktig format på datovariable:
       RegData$InnDato <- as.Date(RegData$AdmitDt, tz= 'UTC', format="%Y-%m-%d")

@@ -29,7 +29,7 @@ SorterOgNavngiTidsEnhet <- function(RegData, tidsenhet='Aar', tab=0, datoUt=0) {
   if (datoUt == 1) {
     RegData$DischgDt <- strptime(RegData$DischgDt, format="%Y-%m-%d")
   RegData$MndNum <- RegData$DischgDt$mon +1
-  head(format(RegData$DischgDt, '%b'))
+  #head(format(RegData$DischgDt, '%b'))
   RegData$MndAar <- format(RegData$DischgDt, '%b%y')
   RegData$Kvartal <- ceiling(RegData$MndNum/3)
   RegData$Halvaar <- ceiling(RegData$MndNum/6)
@@ -39,7 +39,7 @@ SorterOgNavngiTidsEnhet <- function(RegData, tidsenhet='Aar', tab=0, datoUt=0) {
   RegData$TidsEnhetSort <- switch(tidsenhet,
                                   Aar = RegData$Aar-min(RegData$Aar)+1,
                                   Mnd = RegData$MndNum-min(RegData$MndNum[RegData$Aar==min(RegData$Aar)])+1
-                                  +(RegData$Aar-min(RegData$Aar))*12, #format(RegData$InnDato, '%b%y'), #
+                                  +(RegData$Aar-min(RegData$Aar))*12,
                                   Kvartal = RegData$Kvartal-min(RegData$Kvartal[RegData$Aar==min(RegData$Aar)])+1+
                                     (RegData$Aar-min(RegData$Aar))*4,
                                   Halvaar = RegData$Halvaar-min(RegData$Halvaar[RegData$Aar==min(RegData$Aar)])+1+
@@ -68,9 +68,9 @@ SorterOgNavngiTidsEnhet <- function(RegData, tidsenhet='Aar', tab=0, datoUt=0) {
 
       RegData$TidsEnhet <- factor(RegData$TidsEnhetSort, ordered = TRUE,
                                   levels = min(RegData$TidsEnhetSort):max(RegData$TidsEnhetSort),
-                                  labels=tidtxt)
+                                  labels=tidtxt[1:max(RegData$TidsEnhetSort)])
       #RegData$TidsEnhetSort <- factor(RegData$TidsEnhetSort, levels=1:max(RegData$TidsEnhetSort))
-      RegData$TidsEnhet <- factor(RegData$TidsEnhetSort, levels=1:max(RegData$TidsEnhetSort), labels=tidtxt)
+      #RegData$TidsEnhet <- factor(RegData$TidsEnhetSort, levels=1:max(RegData$TidsEnhetSort), labels=tidtxt)
 
       UtData <- list('RegData'=RegData, 'tidtxt'=tidtxt)
       return(UtData)
