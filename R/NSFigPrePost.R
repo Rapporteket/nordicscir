@@ -2,7 +2,6 @@
 #'
 #' Funksjon som genererer en figur med som viser endring i en variabels fordeling ved to ulike tidspunkter.
 #'
-#'
 #' Detajer: Her bør man liste opp hvilke variable funksjonen benytter...
 #'
 #' @inheritParams NSFigAndeler
@@ -82,8 +81,8 @@ NSFigPrePost  <- function(RegData, valgtVar='KontUtTil', datoFra='2019-01-01', d
     plot.new()
     title(main=tittel)
     legend('topleft',utvalgTxt, bty='n', cex=0.9, text.col=farger[1])
-    text(0.5, 0.65, 'Færre enn 10 registreringer i hoved-', cex=1.2)
-    text(0.55, 0.6, 'eller sammenlikningsgruppe', cex=1.2)
+    text(0.5, 0.65, 'Færre enn 10 registreringer i ', cex=1.2)
+    text(0.55, 0.6, 'den valgte datafiltreringa', cex=1.2)
     if ( outfile != '') {dev.off()}
   } else {
 
@@ -97,7 +96,7 @@ NSFigPrePost  <- function(RegData, valgtVar='KontUtTil', datoFra='2019-01-01', d
                      cex.names=1, col=farger[c(1,3)], border='white', ylim=c(0, ymax))
     }
 
-    if (retn == 'H') { #Benytte denne til å vise ulike variabler
+    if (retn == 'H') {
       #Horisontale søyler
       xmax <- min(max(AggVerdierPP,na.rm=T)*1.25, 100)
       pos <- barplot(t(AggVerdierPP), beside=TRUE, horiz=TRUE, main='', las=1,
@@ -107,7 +106,7 @@ NSFigPrePost  <- function(RegData, valgtVar='KontUtTil', datoFra='2019-01-01', d
       #        fill=farger[c(1:3,NA)], border=NA, ncol=3, cex=0.9)
     }
 
-    legend('top', c('Ut fra rehab', '1.kontroll', paste0('N=', N)), bty='n',
+    legend('top', c('Utskriving', '1.kontroll', paste0('N=', N)), bty='n',
            fill=farger[c(1,3,NA)], border=NA, ncol=4, cex=0.9)
     title(tittel, font.main=1)	#line=0.5,
     #Tekst som angir hvilket utvalg som er gjort

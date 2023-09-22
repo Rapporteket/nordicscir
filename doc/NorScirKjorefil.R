@@ -16,10 +16,10 @@ nordicscir::kjor_NSapper('nordicscir')
 #RegData <- KobleMedHoved(RegData, Kontroll)
 # q <- 'SELECT * from ControlFormDataContract'
 # KontrollAlleVar <- rapbase::loadRegData(registryName = 'norscir', query=q)
-valgtVar <- 'KontUtTil'
-HovedKontroll <- NSRegDataSQL(valgtVar = 'KontXX')
+valgtVar <- 'KontFAis'
+HovedKontroll <- NSRegDataSQL(valgtVar = valgtVar)
 RegData <- NSPreprosesser(HovedKontroll)
-NSFigPrePost(RegData=RegData, #valgtVar=valgtVar, datoFra='2019-01-01', datoTil=Sys.Date(),
+NSFigPrePost(RegData=RegData, valgtVar=valgtVar, datoFra='2015-01-01', datoTil=Sys.Date(),
                           enhetsUtvalg = 0)
 library('nordicscir')
 table(RegData$NoControl)

@@ -93,33 +93,42 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
                                gjsn = 'alder (år)')
       }
 
-      if (valgtVar %in% c('AAis', 'FAis')) {
-            retn <- 'H'
-            #-1: Velg verdi, 1:A Komplett skade, 2:B Inkomplett, 3:C Inkomplett, 4:D Inkomplett, 5:E Normal,
-            #9: U Ukjent eller ikke anvendbar
-			#Fra 01.01.2015
-			#Aais == 9 & ANeuNoMeasure = FALSE: Ukjent/Ikke klassifiserbar
-            #Aais == -1 & ANeuNoMeasure = TRUE: Ikke utført. Tilsv. F
-		RegData <- RegData[RegData$InnDato >= as.Date('2015-01-01'), ]
-            RegData$VariabelGr <- RegData[,valgtVar]
-            if (valgtVar == 'AAis') {
-                  RegData$VariabelGr[which((RegData$AAis == 9) & (RegData$ANeuNoMeasure == FALSE))] <- 6
-                  RegData$VariabelGr[which((RegData$AAis == -1) & (RegData$ANeuNoMeasure == TRUE))] <- 7
-                  #RegData$VariabelGr[which((RegData$AAis == 9) & (RegData$ANeuNoMeasure == 0))] <- 6
-                  #RegData$VariabelGr[which((RegData$AAis == -1) & (RegData$ANeuNoMeasure == -1))] <- 7
-                  }
-            if (valgtVar == 'FAis') {
-                  #RegData$VariabelGr[which((RegData$FAis == 9) & (RegData$FNeuNoMeasure == 0))] <- 6
-                  #RegData$VariabelGr[which((RegData$FAis == -1) & (RegData$FNeuNoMeasure == -1))] <- 7
-                  RegData$VariabelGr[which((RegData$FAis == 9) & (RegData$FNeuNoMeasure == FALSE))] <- 6
-                  RegData$VariabelGr[which((RegData$FAis == -1) & (RegData$FNeuNoMeasure == TRUE))] <- 7
-            }
-            tittel <- switch(valgtVar, AAis = 'AIS ved innleggelse', FAis = 'AIS ved utskriving') #paste('Fordeling av', )
-            grtxt <- c('A: Komplett', 'B: Inkomplett', 'C: Inkomplett', 'D: Inkomplett', 'E: Normal',
-						'Ukjent/Ikke klassifiserbar', 'Ikke utført')	#c('A','B','C','D','E','U')
-            xAkseTxt <- 'AIS-kategori'
-            RegData$VariabelGr <- factor(RegData$VariabelGr, levels = c(1:7), labels = grtxt)
+      if (valgtVar %in% c('AAis', 'FAis', 'KontFAis')) {
+        retn <- 'H'
+        #-1: Velg verdi, 1:A Komplett skade, 2:B Inkomplett, 3:C Inkomplett, 4:D Inkomplett, 5:E Normal,
+        #9: U Ukjent eller ikke anvendbar
+        #Fra 01.01.2015
+        #Aais == 9 & ANeuNoMeasure = FALSE: Ukjent/Ikke klassifiserbar
+        #Aais == -1 & ANeuNoMeasure = TRUE: Ikke utført. Tilsv. F
+        RegData <- RegData[RegData$InnDato >= as.Date('2015-01-01'), ]
+
+        tittel <- switch(valgtVar,
+                         AAis = 'AIS ved innleggelse',
+                         FAis = 'AIS ved utskriving',
+                         KontFAis = 'AIS ved utskriving og kontroll')
+        grtxt <- c('A: Komplett', 'B: Inkomplett', 'C: Inkomplett', 'D: Inkomplett', 'E: Normal',
+                   'Ukjent/Ikke klassifiserbar', 'Ikke utført')
+        xAkseTxt <- 'AIS-kategori'
+        if (valgtVar == 'AAis') {
+          RegData$VariabelGr <- RegData[,valgtVar]
+          RegData$VariabelGr[which((RegData$AAis == 9) & (RegData$ANeuNoMeasure == FALSE))] <- 6
+          RegData$VariabelGr[which((RegData$AAis == -1) & (RegData$ANeuNoMeasure == TRUE))] <- 7
+        }
+        if (valgtVar %in% c('FAis', 'KontFAis')) {
+          RegData$VariabelGr <- RegData$FAis
+          RegData$VariabelGr[which((RegData$FAis == 9) & (RegData$FNeuNoMeasure == FALSE))] <- 6
+          RegData$VariabelGr[which((RegData$FAis == -1) & (RegData$FNeuNoMeasure == TRUE))] <- 7
+          if (valgtVar == 'KontFAis') {
+            RegData <- RegData[RegData$CNum ==1, ]
+            RegData$VariabelGrPost <- RegData$CAis
+            RegData$VariabelGrPost[which((RegData$CAis == 9) & (RegData$CNeuNoMeasure == FALSE))] <- 6
+            RegData$VariabelGrPost[which((RegData$CAis == -1) & (RegData$CNeuNoMeasure == TRUE))] <- 7
+            RegData$VariabelGrPost <- factor(RegData$VariabelGrPost, levels = c(1:7), labels = grtxt)
+          }
+        }
+        RegData$VariabelGr <- factor(RegData$VariabelGr, levels = c(1:7), labels = grtxt)
       }
+
 
       if (valgtVar == 'AnbefTidKtr') {
             tittel <- 'Anbefalt tid til kontroll'
@@ -224,6 +233,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
             }
             retn <- 'H'
       }
+   #   AAIS, FAIS, CAIS
       if (valgtVar == 'PPlaceDis') {
             tittel <- 'Planlagt midlertidig utskrevet til '
             RegData$PPlacedis[RegData$PPlacedis==8] <- 5
