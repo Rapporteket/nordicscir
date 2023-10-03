@@ -221,17 +221,18 @@ for (valgtVar in variabler) {
 
 datoTilReg <- datoTil-30
 
-NSFigAndeler(RegData=HovedSkjema12mnd, valgtVar=valgtVar,
+NSFigAndeler(RegData=HovedSkjema, valgtVar=valgtVar,
                    datoFra=datoFra, datoTil=datoTilReg, datoUt = 1,
                    outfile=outfile, reshID=reshID, enhetsUtvalg=enhetsUtvalg,
                    hentData=0, preprosess=0)
 
-NSFigGjsnTid <- function(RegData, valgtVar='RegForsinkelse', datoFra=datoFra, datoTil=datoTilReg,
-                         datoUt = 1, tidsenhet='Mnd', reshID=reshID,
-                           enhetsUtvalg=1, valgtMaal='gjsn',
-                         preprosess=0, outfile='RegForsinkelseGjsnTid.pdf')
+NSFigGjsnTid(RegData=HovedSkjema, valgtVar='RegForsinkelse',
+             preprosess=0, datoFra=datoFra,datoTil=datoTilReg,
+             datoUt = 1, tidsenhet='Kvartal', reshID=reshID,
+             enhetsUtvalg=1, valgtMaal='gjsn',
+             outfile='RegForsinkelseGjsnTid.pdf')
 
-NSFigGjsnGrVar(RegData, valgtVar='RegForsinkelse', valgtMaal='gjsn', grVar=grVar,
+NSFigGjsnGrVar(RegData=HovedSkjema12mnd, valgtVar='RegForsinkelse', valgtMaal='gjsn', grVar=grVar,
                               datoFra=datoFra, datoTil=datoTilReg, datoUt=1,
 					                    preprosess=0, outfile='RegForsinkelseGjsnEnh.pdf')
 
