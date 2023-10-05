@@ -639,9 +639,6 @@ server_nordicscir <- function(input, output, session) {
 
   # observe({
   if (rolle != 'SC') { #
-  #   shinyjs::hide(id = 'velgResh')
-  #   shinyjs::hide(id = 'velgReshOverf')
-  #   shinyjs::hide(id = 'velgReshData')
     hideTab(inputId = "hovedark", target = "Registeradministrasjon")
    }
   # })
@@ -788,34 +785,6 @@ server_nordicscir <- function(input, output, session) {
         }
       )
 
-      #Kontrollskjema som har tilknyttede skjema av ulik type
-      # tabTilknKtrSkjema <- tabSkjemaTilknyttet(
-      #   Data = AlleTab,
-      #   moderSkjema = "Ktr",
-      #   datoFra = input$datovalgReg[1],
-      #   datoTil = input$datovalgReg[2]
-      # )
-
-      # output$tabAntTilknyttedeKtrSkjema <- shiny::renderTable(
-      #   tabTilknKtrSkjema$Antall, rownames = TRUE, digits = 0, spacing = "xs"
-      # )
-      #
-      # output$lastNed_tabOppfKtrAnt <- shiny::downloadHandler(
-      #   filename = function() {'tabOppfKtrAnt.csv'},
-      #   content = function(file, filename) {
-      #     write.csv2(tabTilknKtrSkjema$Antall, file, row.names = TRUE, na = "")
-      #   }
-      # )
-      # #Andel (prosent) av kontrollskjemaene som har oppfølgingsskjema.
-      # output$tabAndelTilknyttedeKtrSkjema <- shiny::renderTable(
-      #   tabTilknKtrSkjema$Andeler, rownames = TRUE, digits = 0, spacing = "xs" )
-      #
-      # output$lastNed_tabOppfKtrPst <- shiny::downloadHandler(
-      #   filename = function() {"tabOppfKtrPst.csv"},
-      #   content = function(file, filename) {
-      #     write.csv2(tabTilknKtrSkjema$Andeler, file, row.names = TRUE, na = "")
-      #   }
-      # )
     } else {
       output$tabAntOpphShMnd12 <- NULL
       output$lastNed_tabAntOpph <- NULL
@@ -823,9 +792,6 @@ server_nordicscir <- function(input, output, session) {
       output$lastNed_tabOppfHovedAnt <- NULL
       output$tabAndelTilknyttedeHovedSkjema <- NULL
       output$lastNed_tabOppfHovedPst <- NULL
-      #output$lastNed_tabOppfKtrAnt <- NULL
-      #output$tabAndelTilknyttedeKtrSkjema <- NULL
-      #output$lastNed_tabOppfKtrPst <- NULL
     }
   })
 

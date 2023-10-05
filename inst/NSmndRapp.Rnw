@@ -27,7 +27,7 @@ aarFra <- paste0(1900+dato$year-5, '-01-01')
 nordisk <- ifelse(sum(as.numeric(unique(HovedSkjema$LandKode)))==1, 0, 1)
 #Bare gyldige kontrollskjema:
 if (nordisk == 0) {
-KontrollH <- KontrollH[KontrollH$NoControl=='False', ]} # & KontrollH$CNum==1, ]
+KontrollH <- KontrollH[KontrollH$ControlStatus==0, ]}
 
 #!!!!!!!!NB: Kanskje må dette gjøre is preprosesseringa!! I så fall må inn/ut inngå som inngangsparameter i funksjonen
 HovedSkjema$MndNum <- HovedSkjema$DischgDt$mon +1
@@ -112,9 +112,7 @@ xtable::xtable(tabAvdN, digits=0, align=c('l', rep('r', ncol(tabAvdN))),
 #Tabell: Andel registreringsskjema med oppfølging siste 12 mnd
 
 RaaTab <- data.frame(Sykehus = HovedSkjema12mnd$ShNavn,
-      #Aar = as.POSIXlt(Hskjema$AdmitDt, format="%Y-%m-%d")$year +1900,
       Livskval = HovedSkjema12mnd$SkjemaGUID %in% LivskvalH$HovedskjemaGUID,
-      #Kontroll = HovedSkjema12mnd$SkjemaGUID %in% KontrollH$HovedskjemaGUID,
       Urin = HovedSkjema12mnd$SkjemaGUID %in% UrinH$HovedskjemaGUID,
       Tarm = HovedSkjema12mnd$SkjemaGUID %in% TarmH$HovedskjemaGUID)
 
@@ -134,14 +132,27 @@ AndelOppf <- 100*AntOppf / as.vector(AntReg)
 
 xtable::xtable(cbind(Hoved=AntReg, AntOppf), digits=0, align=c('l', rep('r', ncol(AntOppf)+1)),
 		caption=paste0('Antall hovedskjema og antall av disse som har tilknyttede skjema. Pasienter utskrevet fra og med ', datoFra, '.'))
-# xtable::xtable(rbind(Hoved=AntReg,t(AntOppf)), digits=0, align=c('l', rep('r', nrow(AntOppf))),
-# 		caption=paste0('Antall hovedskjema og antall av disse som har tilknyttede skjema. Pasienter utskrevet fra og med ', datoFra, '.'))
 
 xtable::xtable(AndelOppf, digits=1, align=c('l', rep('r', ncol(AndelOppf))),
 		caption=paste0('Andel (prosent) av registreringsskjemaene som har ulike typer oppfølgingsskjema.'))
 
-# xtable::xtable(t(AndelOppf), digits=1, align=c('l', rep('r', nrow(AndelOppf))),
-# 		caption=paste0('Andel (prosent) av registreringsskjemaene som har ulike typer oppfølgingsskjema.'))
+
+#Bytte ut med denne...?
+tabTilknHovedSkjema <- tabSkjemaTilknyttet(
+        Data = AlleTab,
+        moderSkjema = "Hoved",
+        datoFra = datoFra,
+        datoTil = datoTil
+      )
+
+xtable::xtable(tabTilknHovedSkjema$Antall, digits=0, align=c('l', rep('r', ncol(tabTilknHovedSkjema$Antall)+1)),
+		caption=paste0('Antall hovedskjema og antall av disse som har tilknyttede skjema. Pasienter utskrevet fra og med ', datoFra, '.'))
+
+xtable::xtable(tabTilknHovedSkjema$Andeler, digits=1, align=c('l', rep('r', ncol(tabTilknHovedSkjema$Andeler))),
+		caption=paste0('Andel (prosent) av registreringsskjemaene som har ulike typer oppfølgingsskjema.'))
+
+
+
 @
 \end{frame}
 
@@ -184,7 +195,7 @@ xtable::xtable(AndelOppfKtr, digits=1, align=c('l', rep('r', ncol(AndelOppfKtr))
 
 
 \begin{frame} <handout:0 beamer:0>
-%[fragile]{Tas ut til koblingsnøkkel for kontrollskjema er riktig. Har filtrert kontrollskjema på NoControl=FALSE og CNum=1}
+%[fragile]{Tas ut til koblingsnøkkel for kontrollskjema er riktig. FJERN?}
 
 
 <<'AndelUOppf', results='asis'>>=
@@ -251,8 +262,15 @@ NSFigGjsnGrVar(RegData=HovedSkjema12mnd, valgtVar='RegForsinkelse', valgtMaal='g
 \begin{figure}[ht]
 \centering
 \includegraphics[scale=0.35]{RegForsinkelseGjsnTid.pdf}
+\caption{Registreringsforsinkelse, utvikling over tid.}
+\end{figure}
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{figure}[ht]
+\centering
 \includegraphics[scale=0.35]{RegForsinkelseGjsnEnh.pdf}
-\caption{Registreringsforsinkelse.}
+\caption{Registreringsforsinkelse, enhetsvis.}
 \end{figure}
 \end{frame}
 
@@ -417,40 +435,6 @@ xtable::xtable(LiggetiderUtraume, digits=0, align=c('l', rep('r', ncol(Liggetide
 \caption{Anbefalt tid til kontroll}
 \end{figure}
 \end{frame}
-
-
-
-% \begin{frame}[fragile]
-% \begin{figure}[ht]
-% \centering
-% \includegraphics[scale=0.35]{DagerTilRehab_t_ja.pdf}
-% \caption{Antall dager på sykehus før rehabilitering for pasienter med traumatisk ryggmargsskade}
-% \end{figure}
-% \end{frame}
-%
-% \begin{frame}[fragile]
-% \begin{figure}[ht]
-% \centering
-% \includegraphics[scale=0.35]{DagerTilRehab_t_nei.pdf}
-% \caption{Antall dager på sykehus før rehabilitering for pasienter med ikke-traumatisk ryggmargsskade}
-% \end{figure}
-% \end{frame}
-%
-% \begin{frame}[fragile]
-% \begin{figure}[ht]
-% \centering
-% \includegraphics[scale=0.35]{DagerRehab_t_ja.pdf}
-% \caption{Liggetid (dager) ved ryggmargsskadeavdeling for pasienter med traumatisk ryggmargsskade}
-% \end{figure}
-% \end{frame}
-%
-% \begin{frame}[fragile]
-% \begin{figure}[ht]
-% \centering
-% \includegraphics[scale=0.35]{DagerRehab_t_nei.pdf}
-% \caption{Liggetid (dager) ved ryggmargsskadeavdeling for pasienter med ikke-traumatisk ryggmargsskade}
-% \end{figure}
-% \end{frame}
 
 
 \end{tiny}

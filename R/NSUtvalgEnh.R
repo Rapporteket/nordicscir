@@ -31,7 +31,12 @@ NSUtvalgEnh <- function(RegData, datoFra='2010-01-01', datoTil=Sys.Date(), datoU
 
     RegData$RapDato <- as.Date(RegData[ ,c('InnDato', 'DischgDt')[datoUt+1]])
     #Fjerner de som har for lange opphold pga ulik registreringspraksis
-    if (datoUt==1) {RegData <- RegData[which(RegData$OpphTot <= 730), ]}
+    if (datoUt==1) {
+      RegData$InnUtDiff <- as.numeric(difftime(RegData$DischgDt, RegData$InnDato, units = 'days'))
+      #test <- RegData[ which(RegData$InnUtDiff > 730), c("ShNavn", "SkjemaGUID", "AdmitDt", "AdmitRehDt", "DischgDt", 'InnUtDiff')]
+      #write.csv2(test, file = 'Over730.csv', row.names = F, fileEncoding = 'UTF-8')
+      RegData <- RegData[which(RegData$InnUtDiff <= 730), ]
+      }
 
   #Enhetsutvalg:
   #Når bare skal sml med eget land/ikke sammenlikne, trengs ikke alle data:

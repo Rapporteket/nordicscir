@@ -311,6 +311,7 @@ NSRegDataSQL <- function(valgtVar='Alder', register='norscir',...) {
 ,Kont.CNeuExmDt
 ,Kont.CNeuNoMeasure
 ,Kont.CNum
+,Kont.ControlStatus
 ,Kont.CPlaceDis
 ,Kont.CSensLvlAreaL
 ,Kont.CSensLvlAreaR
@@ -387,7 +388,7 @@ NSRegDataSQL <- function(valgtVar='Alder', register='norscir',...) {
    RegData <- rapbase::loadRegData(registryName = register, query=query, dbType="mysql")
 
    if (valgtSkjema=='Kont'){
-     RegData <- RegData[RegData$NoControl=='False', ]
+     RegData <- RegData[RegData$ControlStatus==0, ] #Bare de med gjennomført kontroll
    }
 
    if (valgtSkjema=='Tilf') {
