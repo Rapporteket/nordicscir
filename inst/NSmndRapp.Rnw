@@ -145,7 +145,7 @@ tabTilknHovedSkjema <- tabSkjemaTilknyttet(
         datoTil = datoTil
       )
 
-xtable::xtable(tabTilknHovedSkjema$Antall, digits=0, align=c('l', rep('r', ncol(tabTilknHovedSkjema$Antall)+1)),
+xtable::xtable(tabTilknHovedSkjema$Antall, digits=0, align=c('l', rep('r', ncol(tabTilknHovedSkjema$Antall))),
 		caption=paste0('Antall hovedskjema og antall av disse som har tilknyttede skjema. Pasienter utskrevet fra og med ', datoFra, '.'))
 
 xtable::xtable(tabTilknHovedSkjema$Andeler, digits=1, align=c('l', rep('r', ncol(tabTilknHovedSkjema$Andeler))),
@@ -316,43 +316,6 @@ NSFigGjsnGrVar(RegData=HovedSkjema12mnd, valgtVar='RegForsinkelse', valgtMaal='g
 \section{Nevrologisk klassifikasjon}
 
 \begin{frame}[fragile] %{Tabell: Nevrologisk klassifikasjon på sykehusnivå}
-
-<<'NevrologiskKlass', results='asis'>>=
-
-#NevrKlass <- lagTabNevrKlass(HovedSkjema = HovedSkjema12mnd, datoFra=datoFra, datoTil=Sys.Date())
-#!!! Får trøbbel med encoding når benytter funksjonen over.
-
-# TabNevrKlass <- function(HovedSkjema, datoFra='2018-01-01', datoTil=Sys.Date()){
-#
-#       Utvalg <- NSUtvalg(HovedSkjema, datoFra = datoFra, datoTil = datoTil, datoUt = 1)
-#       HovedSkjema <- Utvalg$RegData
-#       Ant <- addmargins(table(HovedSkjema$ShNavn))
-#       AntKlassInnUt <- addmargins(table(HovedSkjema$ShNavn[(HovedSkjema$AAis %in% 1:5) & (HovedSkjema$FAis %in% 1:5)]))
-#
-# NevrKlass <- rbind(
-#       'Utført og klassifiserbar, innkomst: ' =
-#             addmargins(table(HovedSkjema$ShNavn[HovedSkjema$AAis %in% 1:5])),
-#       'Ikke utført  ved innkomst:' =
-#             addmargins(table(HovedSkjema$ShNavn[HovedSkjema$ANeuNoMeasure == TRUE & HovedSkjema$AAis == -1])),
-#       'Utført, men ikke klassifiserbar, innkomst: ' =
-#             addmargins(table(HovedSkjema$ShNavn[HovedSkjema$AAis==9])),
-#        'Utført og klassifiserbar, utreise: ' =
-#              addmargins(table(HovedSkjema$ShNavn[HovedSkjema$FAis %in% 1:5])),
-#       'Ikke utført ved utreise:' =
-#             addmargins(table(HovedSkjema$ShNavn[HovedSkjema$FNeuNoMeasure == TRUE
-#                                                      & HovedSkjema$FAis == -1])),
-#       'Utført, men ikke klassifiserbar, utreise: ' =
-#             addmargins(table(HovedSkjema$ShNavn[HovedSkjema$FAis==9])),
-#       'Klassifisert ved både inn- og utreise: ' =
-#             paste0(sprintf('%.0f',AntKlassInnUt/Ant*100), '%')
-# )
-# colnames(NevrKlass)[dim(NevrKlass)[2] ]<- 'Hele landet'
-#
-# return(NevrKlass)
-# }
-
-#NevrKlass <- lagTabNevrKlass(HovedSkjema = HovedSkjema12mnd, datoFra=datoFra, datoTil=Sys.Date())
-
 NevrKlass <- lagTabNevrKlass(HovedSkjema = HovedSkjema12mnd, datoFra=datoFra, datoTil=Sys.Date(), datoUt=1)
 
 if (nordisk==1) {
