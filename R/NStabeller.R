@@ -121,24 +121,24 @@ tabAntOpphPasSh5Aar <- function(RegData, gr='opph', datoTil){
 #' @export
 #'
 tabSkjemaTilknyttet <- function(Data=AlleTab, moderSkjema='Hoved',
+                                datoUt=0,
                                 datoFra='2017-01-01', datoTil=Sys.Date()){
       #Denne skal fungere både for HovedSkjema og kontrollskjema. I AlleTab er
       ModerSkjema <- switch(moderSkjema,
                             'Hoved' = Data$HovedSkjema,
                             'Ktr' = Data$KontrollH)
       if (moderSkjema == 'Ktr') {
-         ModerSkjema <- ModerSkjema[!is.na(ModerSkjema$CNum), ]
+         ModerSkjema <- ModerSkjema[!is.na(ModerSkjema$CNum), ] #Har fra før filtrert bort avbrutte skjema..
          indDato <- which(as.Date(ModerSkjema$CNeuExmDt) >= datoFra &
                           as.Date(ModerSkjema$CNeuExmDt) <= datoTil)
          ModerSkjema <- ModerSkjema[indDato, ]
          } else { #sep23: NSUtvalg -> NSUtvalgEnh
-            ModerSkjema <- NSUtvalgEnh(RegData=ModerSkjema, datoFra = datoFra,
-                              datoTil = datoTil)$RegData}
+            ModerSkjema <- NSUtvalgEnh(RegData=ModerSkjema, datoUt=datoUt,
+                                       datoFra = datoFra, datoTil = datoTil)$RegData}
 
       RaaTab <- data.frame(Sykehus = ModerSkjema$ShNavn,
                            #Aar = as.POSIXlt(Hskjema$AdmitDt, format="%Y-%m-%d")$year +1900,
                            Livskvalitet = ModerSkjema$SkjemaGUID %in% Data$LivskvalH$HovedskjemaGUID,
-                           #Kontroll = HovedSkjema$SkjemaGUID %in% Kontroll$HovedskjemaGUID,
                            Urin = ModerSkjema$SkjemaGUID %in% Data$UrinH$HovedskjemaGUID,
                            Tarm = ModerSkjema$SkjemaGUID %in% Data$TarmH$HovedskjemaGUID
                            )
@@ -146,9 +146,6 @@ tabSkjemaTilknyttet <- function(Data=AlleTab, moderSkjema='Hoved',
         RaaTab <- cbind(RaaTab,
                         Funksjon = ModerSkjema$SkjemaGUID %in% Data$AktivFunksjonH$HovedskjemaGUID,
                         Tilfredshet = ModerSkjema$SkjemaGUID %in% Data$AktivTilfredshetH$SkjemaGUID #(SkjemaGUID er fra hovedskjema)
-                        # Tilfredshet = ModerSkjema$SkjemaGUID %in%
-                         # Data$AktivFunksjonH$HovedskjemaGUID[Data$AktivFunksjonH$SkjemaGUID %in%
-                           #                   Data$AktivTilfredshetH$FunkskjemaGUID]
                         )
         }
 

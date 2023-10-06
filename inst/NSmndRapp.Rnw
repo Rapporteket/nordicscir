@@ -111,36 +111,36 @@ xtable::xtable(tabAvdN, digits=0, align=c('l', rep('r', ncol(tabAvdN))),
 <<'AndelOppfolg', results='asis'>>=
 #Tabell: Andel registreringsskjema med oppfølging siste 12 mnd
 
-RaaTab <- data.frame(Sykehus = HovedSkjema12mnd$ShNavn,
-      Livskval = HovedSkjema12mnd$SkjemaGUID %in% LivskvalH$HovedskjemaGUID,
-      Urin = HovedSkjema12mnd$SkjemaGUID %in% UrinH$HovedskjemaGUID,
-      Tarm = HovedSkjema12mnd$SkjemaGUID %in% TarmH$HovedskjemaGUID)
+# RaaTab <- data.frame(Sykehus = HovedSkjema12mnd$ShNavn,
+#       Livskval = HovedSkjema12mnd$SkjemaGUID %in% LivskvalH$HovedskjemaGUID,
+#       Urin = HovedSkjema12mnd$SkjemaGUID %in% UrinH$HovedskjemaGUID,
+#       Tarm = HovedSkjema12mnd$SkjemaGUID %in% TarmH$HovedskjemaGUID)
+#
+# if (nordisk==0) {
+#   RaaTab <- data.frame(
+#     RaaTab,
+#     Funksjon = HovedSkjema12mnd$SkjemaGUID %in% AktivFunksjonH$HovedskjemaGUID,
+#     Tilfredshet = HovedSkjema12mnd$SkjemaGUID %in%
+#             AktivFunksjonH$HovedskjemaGUID[AktivFunksjonH$SkjemaGUID %in% AktivTilfredshetH$HovedskjemaGUID]
+#   )
+#       }
+#
+# AntReg <- table(HovedSkjema12mnd$ShNavn)
+# AntOppf <- apply(RaaTab[ ,-1], MARGIN=2,
+#                        FUN=function(x) tapply(x,INDEX=RaaTab$Sykehus, sum))
+# AndelOppf <- 100*AntOppf / as.vector(AntReg)
+#
+# xtable::xtable(cbind(Hoved=AntReg, AntOppf), digits=0, align=c('l', rep('r', ncol(AntOppf)+1)),
+# 		caption=paste0('Antall hovedskjema og antall av disse som har tilknyttede skjema. Pasienter utskrevet fra og med ', datoFra, '.'))
+#
+# xtable::xtable(AndelOppf, digits=1, align=c('l', rep('r', ncol(AndelOppf))),
+# 		caption=paste0('Andel (prosent) av registreringsskjemaene som har ulike typer oppfølgingsskjema.'))
+#
 
-if (nordisk==0) {
-  RaaTab <- data.frame(
-    RaaTab,
-    Funksjon = HovedSkjema12mnd$SkjemaGUID %in% AktivFunksjonH$HovedskjemaGUID,
-    Tilfredshet = HovedSkjema12mnd$SkjemaGUID %in%
-            AktivFunksjonH$HovedskjemaGUID[AktivFunksjonH$SkjemaGUID %in% AktivTilfredshetH$HovedskjemaGUID]
-  )
-      }
-
-AntReg <- table(HovedSkjema12mnd$ShNavn)
-AntOppf <- apply(RaaTab[ ,-1], MARGIN=2,
-                       FUN=function(x) tapply(x,INDEX=RaaTab$Sykehus, sum))
-AndelOppf <- 100*AntOppf / as.vector(AntReg)
-
-xtable::xtable(cbind(Hoved=AntReg, AntOppf), digits=0, align=c('l', rep('r', ncol(AntOppf)+1)),
-		caption=paste0('Antall hovedskjema og antall av disse som har tilknyttede skjema. Pasienter utskrevet fra og med ', datoFra, '.'))
-
-xtable::xtable(AndelOppf, digits=1, align=c('l', rep('r', ncol(AndelOppf))),
-		caption=paste0('Andel (prosent) av registreringsskjemaene som har ulike typer oppfølgingsskjema.'))
-
-
-#Bytte ut med denne...?
 tabTilknHovedSkjema <- tabSkjemaTilknyttet(
         Data = AlleTab,
         moderSkjema = "Hoved",
+        datoUt=1,
         datoFra = datoFra,
         datoTil = datoTil
       )
