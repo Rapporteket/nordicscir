@@ -108,18 +108,6 @@ NSRegDataSQL <- function(valgtVar='Alder', register='norscir',...) {
 ,Funk.Toiletin
 ')
 
-   varTilf <- c('
--- ,UPPER(Funk.HovedskjemaGUID) AS HovedskjemaGUID
- ,UPPER(Tilf.HovedskjemaGUID) AS HovedskjemaGUID
-,Tilf.DataClDtS
-,Tilf.DreslbdyS
-,Tilf.FeedingS
-,Tilf.FirstTimeClosed
-,Tilf.MobilmodS
--- ,Tilf.SkjemaGUID
--- ,Tilf.SkjemaGUID AS SkjemaGUIDTilf
-,Tilf.ToiletinS
-')
    varUrin <- c("
 ,UPPER(Urin.HovedskjemaGUID) AS HovedskjemaGUID
 ,Urin.Antiprop
@@ -382,9 +370,6 @@ NSRegDataSQL <- function(valgtVar='Alder', register='norscir',...) {
    )
 
 
-   #query <- 'select * from MainFormDataContract'
-   #query <- paste0('SELECT ', variable, ' FROM Eq5dlFormDataContract Eq5d ')
-
    RegData <- rapbase::loadRegData(registryName = register, query=query, dbType="mysql")
 
    if (valgtSkjema=='Kont'){
@@ -412,9 +397,6 @@ NSRegDataSQL <- function(valgtVar='Alder', register='norscir',...) {
       raplog::repLogger(session = list(...)[["session"]],
                         msg = paste0('Har hentet skjema ', valgtSkjema, 'fra database'))
    }
-   # rapbase::autLogger(name='test',  pkg = 'nordicscir', user = 'dummy', registryName = register, reshId = 0,
-   #                    fun=0, param=0, type=0,
-   #                    msg = paste0('Har hentet skjema ', valgtSkjema, 'fra database'))
 
    return(RegData)
 }

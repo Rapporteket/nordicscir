@@ -65,21 +65,22 @@ ui_nordicscir <- function() {
         shiny::sidebarPanel(
           width = 3,
           shiny::br(),
-          shiny::h3("Månedsrapport"), #),
-          shiny::downloadButton(
-            outputId = "mndRapp.pdf",
-            label = "Last ned MÅNEDSRAPPORT",
-            class = "butt"
-          ),
-          shiny::br(),
-          shiny::br(paste("NB: Nedlasting tar litt tid. I mellomtida får man",
-                          "ikke sett på andre resultater.")),
-          shiny::br(),
-          shiny::br(paste("Hvis du ønsker månedsrapporten regelmessig tilsendt",
-                          "på e-post, kan du gå til fanen 'Abonnement' og",
-                          "bestille dette.")),
-          shiny::br(),
-          shiny::br(),
+          # Tar bort månedsrapport inntil videre...
+          # shiny::h3("Månedsrapport"), #),
+          # shiny::downloadButton(
+          #   outputId = "mndRapp.pdf",
+          #   label = "Last ned MÅNEDSRAPPORT",
+          #   class = "butt"
+          # ),
+          # shiny::br(),
+          # shiny::br(paste("NB: Nedlasting tar litt tid. I mellomtida får man",
+          #                 "ikke sett på andre resultater.")),
+          # shiny::br(),
+          # shiny::br(paste("Hvis du ønsker månedsrapporten regelmessig tilsendt",
+          #                 "på e-post, kan du gå til fanen 'Abonnement' og",
+          #                 "bestille dette.")),
+          # shiny::br(),
+          # shiny::br(),
           shiny::conditionalPanel(
             condition = "input.startside == 'Status'",
             shiny::h4(
@@ -441,7 +442,7 @@ ui_nordicscir <- function() {
           ),
           shiny::conditionalPanel(
             condition = paste0(
-              "input.ark == 'Antall hovedskjema med tilknyttede skjema' | " #,"input.ark == 'Antall kontrollskjema med tilknyttede skjema' "
+              "input.ark == 'Antall hovedskjema med tilknyttede skjema' "
             ),
             shiny::dateRangeInput(
               inputId = "datovalgReg",
@@ -450,7 +451,8 @@ ui_nordicscir <- function() {
               label = "Tidsperiode",
               separator="t.o.m.",
               language="nb"
-            )
+            ),
+            h5('Tidsperioden er basert på innleggelsesdato')
           )
         ),
 
@@ -570,22 +572,22 @@ ui_nordicscir <- function() {
             )
           ) #Eksport-tab
         ) #tabsetPanel
-      ), #Registeradm-tab
+      ) #Registeradm-tab
 
       #------------------Abonnement------------------------
-      shiny::tabPanel(
-        shiny::p(
-          "Abonnement",
-          title="Bestill automatisk utsending av månedsrapport på e-post"),
-        shiny::sidebarLayout(
-          shiny::sidebarPanel(
-            rapbase::autoReportInput("ns-subscription")
-          ),
-          shiny::mainPanel(
-            rapbase::autoReportUI("ns-subscription")
-          )
-        )
-      )
+      # shiny::tabPanel(
+      #   shiny::p(
+      #     "Abonnement",
+      #     title="Bestill automatisk utsending av månedsrapport på e-post"),
+      #   shiny::sidebarLayout(
+      #     shiny::sidebarPanel(
+      #       rapbase::autoReportInput("ns-subscription")
+      #     ),
+      #     shiny::mainPanel(
+      #       rapbase::autoReportUI("ns-subscription")
+      #     )
+      #   )
+      # )
     ) #navbar
   ) #tagList
 }

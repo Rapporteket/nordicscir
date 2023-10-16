@@ -146,10 +146,10 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
   if (valgtVar == 'AnbefTidKtr') {
     tittel <- 'Anbefalt tid til kontroll'
     retn <- 'H'
-    gr <- 8:1
+    gr <- 1:8 #8:1
     #1:5  Innen 1:5 år, 6 = Ikke aktuelt, 7 = Ikke avtalt kontroll, -1 = Velg verdi
     #grtxt <- c(paste0('Innen ', 1:5, ' år'),'Ikke aktuelt', 'Ikke avtalt kontroll')
-    grtxt <- rev(c(paste0(c('Innen: 1', 2:5), ' år'),'Ikke aktuelt', 'Ikke avtalt', 'Ikke relevant'))
+    grtxt <- c(paste0(c('Innen: 1', 2:5), ' år'),'Ikke aktuelt', 'Ikke avtalt', 'Ikke relevant')
     RegData <- RegData[RegData$RecCtrl %in% gr,]
     RegData$VariabelGr <- factor(as.numeric(RegData$RecCtrl), levels=gr, labels = grtxt)
   }

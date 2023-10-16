@@ -56,13 +56,11 @@ NSUtvalgEnh <- function(RegData, datoFra='2010-01-01', datoTil=Sys.Date(), datoU
 
   indAld <- which(RegData$Alder >= minald & RegData$Alder <= maxald)
   indDato <- which(RegData$RapDato >= datoFra & RegData$RapDato <= datoTil) #Får bort NA
-  #traumeValgBort <- switch(traume, ja = c(6,9) , nei = c(1:5,9), alle = 99) #6 ikke-tr, 1:5 traumer, 9 ukjent
   traumeValg <- switch(traume, nei = 6 , ja = 1:5, alle = 99) #6 ikke-tr, 1:5 traumer, 9 ukjent
   indTr <-  if (traume %in% c('ja','nei')) {which(RegData$SkadeArsak %in% traumeValg)} else {1:Ninn}
   indKj <- if (erMann %in% 0:1) {which(RegData$erMann == erMann)} else {1:Ninn}
   indAIS <- if (length(which(as.numeric(AIS) %in% 1:5))>0) {
     which(RegData$FAis %in% AIS)} else {1:Ninn}
-  #indPTbort <- if (nivaaUt %in% c(0,1,9)) {which(RegData$TetraplegiUt != nivaaUt)} else {NULL}
   indNivaaUt <- if (nivaaUt %in% c(0:3,9)) {switch(as.character(nivaaUt),
                                                    '0' = which(RegData$TetraplegiUt == nivaaUt),
                                                    '1' = which(RegData$TetraplegiUt == nivaaUt),
@@ -83,8 +81,6 @@ NSUtvalgEnh <- function(RegData, datoFra='2010-01-01', datoTil=Sys.Date(), datoU
                                                         ' til og med ', if (N>0) {max(RegData$Alder, na.rm=T)} else {maxald}, ' år')},
                  if (traume %in% c('ja','nei')) {paste0('Traume:', traume)},
                  if (erMann %in% 0:1){paste0('Kjønn: ', c('kvinner', 'menn')[erMann+1])},
-                 #if (length(which(AIS %in% c(LETTERS[1:5],'U')))>0) {paste0('AIS, ut: ', paste0(AIS, collapse=','))}
-                 #Får character fra Jasper
                  if (length(which(AIS %in% 1:5))>0) {paste0('AIS, ut: ', paste0(LETTERS[AIS], collapse=','))},
                  if (nivaaUt %in% c(0:3,9)) {paste0('Nivå ved utreise: ',
                                                     (c('Paraplegi','Tetraplegi', 'C1-4', 'C5-8',
