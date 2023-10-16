@@ -56,7 +56,6 @@ objekter <- c('HovedSkjema', 'Livskval', 'Kontroll', 'Urin', 'Tarm', 'AktivFunks
 save(list = objekter, file='A:/NordicScir/NordicScirFIKTIVEdata.RData')
 
 
-
 #--------------------------------------SAMLERAPPORT-----------------------------------
 rm(list=ls())
 library(knitr)
@@ -412,9 +411,31 @@ FigAndelStabel(RegData, libkat=libkat, outfile=outfile, valgtVar=valgtVar, datoF
 I_ABC <- which(RegData$AAis %in% c('A','B','C'))
 
 
+#--------------To-veis stabelplott----------------------
+library(nordicscir)
+library(ggplot2)
+data$AAis <- factor(data$AAis, levels = 1:5, LETTERS[1:5])
+data$FAis <- as.factor(data$FAis)
+data <- RegData[ ,c("AAis", "FAis")]
+write.table(RegData[ ,c("AAis", "FAis")], file = 'Ais.csv', row.names = F, fileEncoding = 'UTF-8', sep=';')
 
+RegData <- NSPreprosesser(NSRegDataSQL())
+RegData <- RegData[which(RegData$FAis %in% 1:5 &
+                           RegData$AAis %in% 1:5), ]
+RegData$VariabelGr <- factor(RegData$AAis, levels = 1:5, labels = LETTERS[1:5])
+RegData$VariabelGrPost <- factor(RegData$FAis, levels = 1:5, labels = LETTERS[1:5])
+c('red', 'orange', 'yellow', 'blue', 'green')
 
+ggplot(data = RegData, aes(x = VariabelGr, fill = VariabelGrPost)) +
+  geom_bar()
 
+#col(c('red', 'orange', 'yellow', 'blue', 'green')) +
+
+RegData <- NSPreprosesser(NSRegDataSQL())
+test <- NSFigStabelGr(RegData = 0, hentData = 1, valgtVar='KontFAis')
+                          # ,hentData=0, register='norscir', preprosess=1,
+                          # datoFra='2010-01-01', datoTil='2050-01-01', datoUt=0, AIS='',
+                          # minald=0, maxald=130, erMann=99, traume='alle',nivaaUt=99, ...)
 
 #-----------------------------Nevrologiske kategorier----------------------------
 #Motoriske variable:

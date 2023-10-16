@@ -154,7 +154,7 @@ AggVerdier[indNgrense] <- NA
             enhTxt <- rownames(Ngr) #attributes(AggVerdier)$row.vars$GrVar
             anttxt <- paste0(' (N=', Nfig,')')
             anttxt[Nfig < Ngrense] <- paste0(' (N < ', Ngrense, ')')
-            legendtxt <- paste0(enhTxt, anttxt)
+            legendtxt <- paste0(LETTERS[1:5], anttxt)
             yAkseTxt='Andel pasienter (%)'
 
             FigDataParam <- list(AggVerdier=AggVerdier,

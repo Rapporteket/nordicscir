@@ -93,18 +93,20 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
                        gjsn = 'alder (år)')
   }
 
-  if (valgtVar %in% c('AAis', 'FAis', 'KontFAis')) {
-    retn <- 'H'
+  if (valgtVar %in% c('AAis', 'FAis', 'AAisFAis', 'KontFAis')) {
+     'H'
     #-1: Velg verdi, 1:A Komplett skade, 2:B Inkomplett, 3:C Inkomplett, 4:D Inkomplett, 5:E Normal,
     #9: U Ukjent eller ikke anvendbar
     #Fra 01.01.2015
     #Aais == 9 & ANeuNoMeasure = FALSE: Ukjent/Ikke klassifiserbar
     #Aais == -1 & ANeuNoMeasure = TRUE: Ikke utført. Tilsv. F
     RegData <- RegData[RegData$InnDato >= as.Date('2015-01-01'), ]
+    retn <- ifelse(figurtype == 'antGr', 'V', 'H')
 
     tittel <- switch(valgtVar,
                      AAis = 'AIS ved innleggelse',
                      FAis = 'AIS ved utskriving',
+                     AAisFAis = 'AIS ved innleggelse og utskriving',
                      KontFAis = 'AIS ved utskriving og kontroll')
     grtxt <- c('A: Komplett', 'B: Inkomplett', 'C: Inkomplett', 'D: Inkomplett', 'E: Normal',
                'Ukjent/Ikke klassifiserbar', 'Ikke utført')
@@ -121,13 +123,22 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
       RegData$VariabelGr[which((RegData$FAis == -1) & (RegData$FNeuNoMeasure == TRUE))] <- 7
       RegData$VariabelGr <- factor(RegData$VariabelGr, levels = 7:1, labels = rev(grtxt))
     }
-
+    if (valgtVar == 'AAisFAis') {
+      RegData <- RegData[which(RegData$AAis %in% 1:5 &
+                                 RegData$FAis %in% 1:5), ]
+      grtxt <- rev(grtxt[1:5])
+      RegData$VariabelGr <- factor(RegData$AAis, levels = 5:1, labels = grtxt)
+      RegData$VariabelGrPost <- factor(RegData$FAis, levels = 5:1, labels = LETTERS[5:1])
+      xAkseTxt <- 'AIS ved innleggelse'
+    }
     if (valgtVar == 'KontFAis') {
+      grtxt <- rev(grtxt[1:5])
         RegData <- RegData[which(RegData$FAis %in% 1:5 &
                                    RegData$CAis %in% 1:5 &
                                    RegData$CNum ==1), ]
-        RegData$VariabelGr <- factor(RegData$FAis, levels = 5:1, labels = rev(grtxt[1:5]))
-        RegData$VariabelGrPost <- factor(RegData$CAis, levels = 5:1, labels = rev(grtxt[1:5]))
+        RegData$VariabelGr <- factor(RegData$FAis, levels = 5:1, labels = grtxt)
+        RegData$VariabelGrPost <- factor(RegData$CAis, levels = 5:1, labels = grtxt)
+        xAkseTxt <- 'AIS ved utskriving'
       }
     }
 

@@ -7,12 +7,15 @@
 tabSkjemaTilknyttet(
   Data = AlleTab,
   moderSkjema = "Hoved",
+  datoUt = 0,
   datoFra = "2017-01-01",
   datoTil = Sys.Date()
 )
 }
 \arguments{
 \item{moderSkjema}{Hvilket skjema man skal knytte oppfølgingene til}
+
+\item{datoUt}{datofiltrering basert på innleggelse (0), utskriving (1)}
 
 \item{datoFra}{startdato, fra og med Eks. '2010-01-01'    # min og max dato i utvalget vises alltid i figuren.}
 
