@@ -123,44 +123,52 @@ tabAntOpphPasSh5Aar <- function(RegData, gr='opph', datoTil){
 tabSkjemaTilknyttet <- function(Data=AlleTab, moderSkjema='Hoved',
                                 datoUt=0,
                                 datoFra='2017-01-01', datoTil=Sys.Date()){
-      #Denne skal fungere både for HovedSkjema og kontrollskjema. I AlleTab er
-      ModerSkjema <- switch(moderSkjema,
-                            'Hoved' = Data$HovedSkjema,
-                            'Ktr' = Data$KontrollH)
-      if (moderSkjema == 'Ktr') {
-         ModerSkjema <- ModerSkjema[!is.na(ModerSkjema$CNum), ] #Har fra før filtrert bort avbrutte skjema..
-         indDato <- which(as.Date(ModerSkjema$CNeuExmDt) >= datoFra &
-                          as.Date(ModerSkjema$CNeuExmDt) <= datoTil)
-         ModerSkjema <- ModerSkjema[indDato, ]
-         } else { #sep23: NSUtvalg -> NSUtvalgEnh
-            ModerSkjema <- NSUtvalgEnh(RegData=ModerSkjema, datoUt=datoUt,
-                                       datoFra = datoFra, datoTil = datoTil)$RegData}
+  #Denne skal fungere både for HovedSkjema og kontrollskjema. I AlleTab er
+  ModerSkjema <- switch(moderSkjema,
+                        'Hoved' = Data$HovedSkjema,
+                        'Ktr' = Data$KontrollH)
+  if (moderSkjema == 'Hoved'){
+    ModerSkjema <- NSUtvalgEnh(RegData=ModerSkjema, datoUt=datoUt,
+                               datoFra = datoFra, datoTil = datoTil)$RegData
 
-      RaaTab <- data.frame(Sykehus = ModerSkjema$ShNavn,
-                           #Aar = as.POSIXlt(Hskjema$AdmitDt, format="%Y-%m-%d")$year +1900,
-                           Livskvalitet = ModerSkjema$SkjemaGUID %in% Data$LivskvalH$HovedskjemaGUID,
-                           Urin = ModerSkjema$SkjemaGUID %in% Data$UrinH$HovedskjemaGUID,
-                           Tarm = ModerSkjema$SkjemaGUID %in% Data$TarmH$HovedskjemaGUID
-                           )
-      if ('AktivFunksjonH' %in% names(Data)) {  #exists('Data$AktivFunksjonH')
-        RaaTab <- cbind(RaaTab,
-                        Funksjon = ModerSkjema$SkjemaGUID %in% Data$AktivFunksjonH$HovedskjemaGUID,
-                        Tilfredshet = ModerSkjema$SkjemaGUID %in% Data$AktivTilfredshetH$SkjemaGUID #(SkjemaGUID er fra hovedskjema)
-                        )
-        }
+    RaaTab <- data.frame(Sykehus = ModerSkjema$ShNavn,
+                         Livskvalitet = ModerSkjema$SkjemaGUID %in% Data$LivskvalH$HovedskjemaGUID,
+                         Urin = ModerSkjema$SkjemaGUID %in% Data$UrinH$HovedskjemaGUID,
+                         Tarm = ModerSkjema$SkjemaGUID %in% Data$TarmH$HovedskjemaGUID
+    )
+    if ('AktivFunksjonH' %in% names(Data)) {
+      RaaTab <- cbind(RaaTab,
+                      Funksjon = ModerSkjema$SkjemaGUID %in% Data$AktivFunksjonH$HovedskjemaGUID,
+                      Tilfredshet = ModerSkjema$SkjemaGUID %in% Data$AktivTilfredshetH$SkjemaGUID #(SkjemaGUID er fra hovedskjema)
+      )
+    }
+  }
 
-      AntReg <- table(ModerSkjema$ShNavn)
-      AntOppf <- cbind(Hoved = AntReg,
-                       apply(RaaTab[ ,-1], MARGIN=2,
-                             FUN=function(x) tapply(x,INDEX=RaaTab$Sykehus, sum))
-                       )
-      addmargins(AntOppf, margin=1, FUN = list('Hele landet' = sum) )
-      AndelOppf <- (100*AntOppf / as.vector(AntReg))[,-1]
-      if (moderSkjema == 'Ktr') { colnames(AntOppf)[1] <- 'Kontroll'}
+  if (moderSkjema == 'Ktr') {
+    indDato <- which(as.Date(ModerSkjema$CNeuExmDt) >= datoFra &
+                       as.Date(ModerSkjema$CNeuExmDt) <= datoTil)
+    ModerSkjema <- ModerSkjema[indDato, ]
+    RaaTab <- data.frame(Sykehus = ModerSkjema$ShNavn,
+                         Livskvalitet = ModerSkjema$SkjemaGUID %in% Data$LivskvalH$HovedskjemaGUID,
+                         Urin = ModerSkjema$SkjemaGUID %in% Data$UrinH$HovedskjemaGUID,
+                         Tarm = ModerSkjema$SkjemaGUID %in% Data$TarmH$HovedskjemaGUID,
+                          Funksjon = ModerSkjema$SkjemaGUID %in% Data$AktivFunksjonH$HovedskjemaGUID,
+                          Tilfredshet = ModerSkjema$SkjemaGUID %in% Data$AktivTilfredshetH$SkjemaGUID #(SkjemaGUID er fra hovedskjema)
+      )
+    }
 
-      tab = list(Antall = AntOppf,
-                 Andeler = AndelOppf)
-      return(tab)
+  AntReg <- table(ModerSkjema$ShNavn)
+  AntOppf <- cbind(Hoved = AntReg,
+                   apply(RaaTab[ ,-1], MARGIN=2,
+                         FUN=function(x) tapply(x,INDEX=RaaTab$Sykehus, sum))
+  )
+  addmargins(AntOppf, margin=1, FUN = list('Totalt' = sum) )
+  AndelOppf <- (100*AntOppf / as.vector(AntReg))[,-1]
+  if (moderSkjema == 'Ktr') { colnames(AntOppf)[1] <- 'Kontroll'}
+
+  tab = list(Antall = AntOppf,
+             Andeler = AndelOppf)
+  return(tab)
 }
 
 

@@ -27,21 +27,20 @@ getRealData <- function(register='norscir', ...) {
       TarmH = TarmH)
 
     if (register=='norscir'){
-      EQ5DH <- NSRegDataSQL(register=register, valgtVar = "Eq5dXX")
-      KontrollH <- NSRegDataSQL(register=register, valgtVar = "KontXX")
-      AktivFunksjonH <- NSRegDataSQL(register=register, valgtVar = "FunkXX")
-      AktivTilfredshetH <- NSRegDataSQL(register=register, valgtVar = "TilfXX")
-      data <- append(data,
-        list(EQ5DH = EQ5DH,
-          KontrollH = KontrollH,
-        AktivFunksjonH = AktivFunksjonH,
-        AktivTilfredshetH = AktivTilfredshetH))
+      data <- append(
+        data,
+        list(EQ5DH = NSRegDataSQL(register=register, valgtVar = "Eq5dXX"),
+             KontrollH = NSRegDataSQL(register=register, valgtVar = "KontXX"),
+             AktivFunksjonH = NSRegDataSQL(register=register, valgtVar = "FunkXX"),
+             AktivTilfredshetH = NSRegDataSQL(register=register, valgtVar = "TilfXX"),
+             LivskvalK = NSRegDataSQL(valgtVar = "LivsXX", koblSkjema = 'Kont'),
+             UrinK = NSRegDataSQL(valgtVar = "UrinXX", koblSkjema = 'Kont'),
+             TarmK = NSRegDataSQL(valgtVar = "TarmXX", koblSkjema = 'Kont'),
+             AktivFunksjonK = NSRegDataSQL(valgtVar = "FunkXX", koblSkjema = 'Kont'),
+             AktivTilfredshetK = NSRegDataSQL(valgtVar = "TilfXX", koblSkjema = 'Kont')
+             ))
       }
 
-    # rapbase::autLogger(name='test', pkg = 'nordicscir', user = 'dummy',
-    #                    fun=0, param=0, type=0,
-    #                    registryName = register, reshId = 0,
-    #                    msg = 'Har hentet alle data fra database')
     if ("session" %in% names(list(...))) {
       raplog::repLogger(session = list(...)[["session"]],
                         msg = 'Har hentet alle data fra database')
@@ -100,6 +99,7 @@ getFakeData <- function(register = 'norscir') { #Denne må muligens tilpasses no
 
 
 #' @rdname getData
+#' Prosesserer data som er koblet med hovedskjema, dvs. ikke de som er koblet med kontrollskjema
 #' @export
 processAllData <- function(data, register = 'norscir', ...) {
 
@@ -123,37 +123,25 @@ processAllData <- function(data, register = 'norscir', ...) {
       UrinH = UrinH,
       TarmH = TarmH)
 
-# rapbase::autLogger(name='test', pkg = 'nordicscir', user = 'dummy',
-#                    fun=0, param=0, type=0,
-#                    registryName = register, reshId = 0,
-#                    msg = paste0('Har prosessert alle fellestabeller.'))
-    if ("session" %in% names(list(...))) {
-      raplog::repLogger(session = list(...)[["session"]],
-                        msg = 'Har prosessert alle fellestabeller.')
-    }
-
     if (register == 'norscir'){
-      EQ5DH <- NSPreprosesser(data$EQ5DH)
-      KontrollH <- NSPreprosesser(data$KontrollH)
-      AktivFunksjonH <- NSPreprosesser(data$AktivFunksjonH)
-      AktivTilfredshetH <- NSPreprosesser(data$AktivTilfredshetH)
-      Aktiv <- list(
-        EQ5DH = EQ5DH,
-        KontrollH = KontrollH,
-        AktivFunksjonH = AktivFunksjonH,
-        AktivTilfredshetH = AktivTilfredshetH)
-      Skjemaer <- append(Skjemaer, Aktiv)
+      NorskeSkjemaer <- list(
+        EQ5DH = NSPreprosesser(data$EQ5DH),
+        KontrollH = NSPreprosesser(data$KontrollH),
+        AktivFunksjonH = NSPreprosesser(data$AktivFunksjonH),
+        AktivTilfredshetH = NSPreprosesser(data$AktivTilfredshetH)
+        #LivskvalK = NSPreprosesser(data$LivskvalK),
+        #UrinK = NSPreprosesser(data$UrinK),
+        #TarmK = NSPreprosesser(data$TarmK),
+        #AktivFunksjonK = NSPreprosesser(data$AktivFunksjonK),
+        #AktivTilfredshetK = NSPreprosesser(data$AktivTilfredshetK)
+        )
+
+      Skjemaer <- append(Skjemaer, NorskeSkjemaer)
 
 if ("session" %in% names(list(...))) {
   raplog::repLogger(session = list(...)[["session"]],
                     msg = paste0('Har prosessert kontroll og aktivitetstabeller'))
 }
-
-# rapbase::autLogger(name='test', pkg = 'nordicscir', user = 'dummy',
-#                    fun=0, param=0, type=0,
-#                    registryName = register, reshId = 0,
-#                    msg = paste0('Har prosessert kontroll og aktivitetstabeller'))
-
     }
 
     return(Skjemaer)

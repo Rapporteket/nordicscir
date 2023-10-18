@@ -4,7 +4,12 @@
 \alias{NSRegDataSQL}
 \title{Henter data for NorScir eller NordicScir fra database}
 \usage{
-NSRegDataSQL(valgtVar = "Alder", register = "norscir", ...)
+NSRegDataSQL(
+  valgtVar = "Alder",
+  register = "norscir",
+  koblSkjema = "Hoved",
+  ...
+)
 }
 \arguments{
 \item{valgtVar}{Valg av variabel angir hvilket skjema som skal knyttes til hovedskjema
@@ -13,6 +18,9 @@ siden de fire første bokstavene i variabelnavnet utgjør et prefiks for
 Variabler uten prefiks hentes fra hovedtabellen (Main...)}
 
 \item{register}{Hvilket register det skal hentes data for: 'norscir' (standard) eller 'nordicscir'}
+
+\item{koblSkjema}{Hvilket skjema skal regnes som "hovedskjema". Standard: 'Hoved' (MainFormDataContract),
+'Kont' (ControlFormDataContract). Bare NorScir har kontrollskjema}
 }
 \value{
 RegData data frame

@@ -15,6 +15,8 @@ NSFigStabelAnt(
   datoTil = "2050-01-01",
   datoUt = 0,
   AIS = "",
+  enhetsUtvalg = 0,
+  reshID = 0,
   minald = 0,
   maxald = 130,
   erMann = 99,
