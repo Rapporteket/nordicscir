@@ -316,6 +316,9 @@ NSFigGjsnGrVar(RegData=HovedSkjema12mnd, valgtVar='RegForsinkelse', valgtMaal='g
 \section{Nevrologisk klassifikasjon}
 
 \begin{frame}[fragile] %{Tabell: Nevrologisk klassifikasjon på sykehusnivå}
+
+<<'NevrologiskKlass', results='asis'>>=
+#, include=FALSE
 NevrKlass <- lagTabNevrKlass(HovedSkjema = HovedSkjema12mnd, datoFra=datoFra, datoTil=Sys.Date(), datoUt=1)
 
 if (nordisk==1) {
