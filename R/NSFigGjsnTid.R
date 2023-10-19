@@ -138,7 +138,6 @@ if (lagFigur==1) {
     title(main=tittel)
     text(0.5, 0.65, 'Færre enn 10 registreriNS i hoved-', cex=1.2)
     text(0.55, 0.6, 'eller sammenlikningsgruppe', cex=1.2)
-    #	text(0.5, 0.5, tekst,cex=1.5)	#, family="sans")
     if ( outfile != '') {dev.off()}
   } else {
 
@@ -153,7 +152,6 @@ if (lagFigur==1) {
     FigTypUt <- rapFigurer::figtype(outfile, fargepalett=NSUtvalg$fargepalett)
     #Tilpasse marger for å kunne skrive utvalgsteksten
     NutvTxt <- length(utvalgTxt)
-    #par('fig'=c(0, 1, 0, 1-0.025*(max((NutvTxt-1),0))))
     par('fig'=c(0, 1, 0, 1-0.025*NutvTxt))
 
     farger <- FigTypUt$farger
@@ -170,8 +168,6 @@ if (lagFigur==1) {
     #Sammenlikning:
     if (medSml==1) {
       AntTidsenh <- max(which(!is.na(KonfRest[1,])))
-      # start <- min(which(!is.na(KonfRest[1,])))
-      # slutt <- max(which(!is.na(KonfRest[1,])))
       tidspkt <- c(tidNum[1]-0.01,tidNum[1:AntTidsenh], tidNum[AntTidsenh]+0.012,
                    tidNum[AntTidsenh]+0.012, tidNum[AntTidsenh:1], tidNum[1]-0.01)
       minmaks <- c(KonfRest[1,c(1,1:AntTidsenh, AntTidsenh)], KonfRest[2,c(AntTidsenh,AntTidsenh:1,1)])

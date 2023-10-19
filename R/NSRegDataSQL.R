@@ -19,7 +19,7 @@
 #'        Variabler uten prefiks hentes fra hovedtabellen (Main...)
 #' @param register Hvilket register det skal hentes data for: 'norscir' (standard) eller 'nordicscir'
 #' @param koblSkjema Hvilket skjema skal regnes som "hovedskjema". Standard: 'Hoved' (MainFormDataContract),
-#' 'Kont' (ControlFormDataContract). Bare NorScir har kontrollskjema
+#'  'Kont' (ControlFormDataContract). Bare NorScir har kontrollskjema
 #' @return RegData data frame
 #' @export
 

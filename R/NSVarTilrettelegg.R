@@ -31,7 +31,7 @@
 #'    	}
 #'
 #' @inheritParams NSFigAndeler
-#' @inheritParams NSUtvalg
+#' @inheritParams NSUtvalgEnh
 #'
 #' @return Definisjon av valgt variabel.
 #'
@@ -52,6 +52,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
   flerevar <- 0
 
   grNavn <- ''
+  grPP <- ''
   xAkseTxt <- ''
   yAkseTxt <- ''
   pktTxt <- '' #(evt. søyletekst)
@@ -115,30 +116,32 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
       RegData$VariabelGr <- RegData[,valgtVar]
       RegData$VariabelGr[which((RegData$AAis == 9) & (RegData$ANeuNoMeasure == FALSE))] <- 6
       RegData$VariabelGr[which((RegData$AAis == -1) & (RegData$ANeuNoMeasure == TRUE))] <- 7
-      RegData$VariabelGr <- factor(RegData$VariabelGr, levels = 7:1, labels = rev(grtxt))
+      RegData$VariabelGr <- factor(RegData$VariabelGr, levels = 1:7, labels = grtxt)
     }
     if (valgtVar == 'FAis') {
       RegData$VariabelGr <- RegData$FAis
       RegData$VariabelGr[which((RegData$FAis == 9) & (RegData$FNeuNoMeasure == FALSE))] <- 6
       RegData$VariabelGr[which((RegData$FAis == -1) & (RegData$FNeuNoMeasure == TRUE))] <- 7
-      RegData$VariabelGr <- factor(RegData$VariabelGr, levels = 7:1, labels = rev(grtxt))
+      RegData$VariabelGr <- factor(RegData$VariabelGr, levels = 1:7, labels = grtxt)
     }
     if (valgtVar == 'AAisFAis') {
+      grtxt <- grtxt[1:5]
       RegData <- RegData[which(RegData$AAis %in% 1:5 &
                                  RegData$FAis %in% 1:5), ]
-      grtxt <- rev(grtxt[1:5])
-      RegData$VariabelGr <- factor(RegData$AAis, levels = 5:1, labels = grtxt)
-      RegData$VariabelGrPost <- factor(RegData$FAis, levels = 5:1, labels = LETTERS[5:1])
+      RegData$VariabelGr <- factor(RegData$AAis, levels = 1:5, labels = grtxt)
+      RegData$VariabelGrPost <- factor(RegData$FAis, levels = 1:5, labels = LETTERS[1:5])
       xAkseTxt <- 'AIS ved innleggelse'
+      grPP <- c('Innleggelse', 'Utskriving')
     }
     if (valgtVar == 'KontFAis') {
-      grtxt <- rev(grtxt[1:5])
+       grtxt <- grtxt[1:5]
         RegData <- RegData[which(RegData$FAis %in% 1:5 &
                                    RegData$CAis %in% 1:5 &
                                    RegData$CNum ==1), ]
-        RegData$VariabelGr <- factor(RegData$FAis, levels = 5:1, labels = grtxt)
-        RegData$VariabelGrPost <- factor(RegData$CAis, levels = 5:1, labels = grtxt)
+        RegData$VariabelGr <- factor(RegData$FAis, levels = 1:5, labels = grtxt)
+        RegData$VariabelGrPost <- factor(RegData$CAis, levels = 1:5, labels = LETTERS[1:5])
         xAkseTxt <- 'AIS ved utskriving'
+        grPP <- c('Utskriving', '1.kontroll')
       }
     }
 
@@ -230,18 +233,18 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
   if (valgtVar %in% c('UtTil', 'KontUtTil')) {
     tittel <- 'Utskrevet til'
     #gr <- (1:10,99) - Kodene som registereres
-    grtxt <- rev(c('Hjem', 'Sykehus', 'Sykehjem', 'Omsorgsbolig', 'Bofellesskap',
-               'Kriminalomsorg', 'Hotell', 'Bostedsløs', 'Avdød', 'Annet', 'Planlagt hjem', 'Ukjent'))
+    grtxt <- c('Hjem', 'Sykehus', 'Sykehjem', 'Omsorgsbolig', 'Bofellesskap',
+               'Kriminalomsorg', 'Hotell', 'Bostedsløs', 'Avdød', 'Annet', 'Planlagt hjem', 'Ukjent')
     xAkseTxt <- 'Utskrevet til'
 
     RegData$PlaceDis[which(RegData$PlaceDis==99)] <- 12
     RegData <- RegData[RegData$PlaceDis %in% 1:12, ]
-    RegData$VariabelGr <- factor(as.numeric(RegData$PlaceDis), levels=12:1, labels = grtxt)
+    RegData$VariabelGr <- factor(as.numeric(RegData$PlaceDis), levels=1:12, labels = grtxt)
     if (valgtVar=='KontUtTil'){
       RegData <- RegData[RegData$CNum ==1, ]
       RegData$CPlaceDis[which(RegData$CPlaceDis==99)] <- 12
       RegData <- RegData[RegData$CPlaceDis %in% 1:12, ]
-      RegData$VariabelGrPost <- factor(as.numeric(RegData$CPlaceDis), levels=12:1, labels = grtxt)
+      RegData$VariabelGrPost <- factor(as.numeric(RegData$CPlaceDis), levels=1:12, labels = grtxt)
     }
     retn <- 'H'
   }
@@ -704,7 +707,8 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
     RegData$VariabelGr <- factor(as.numeric(RegData$FeedingS), levels=gr, labels = grtxt)
   }
   UtData <- list(RegData=RegData, grtxt=grtxt, xAkseTxt=xAkseTxt, cexgr=cexgr, KImaal=KImaal, retn=retn,
-                 tittel=tittel, flerevar=flerevar, variable=variable, sortAvtagende=sortAvtagende)
+                 tittel=tittel, flerevar=flerevar, variable=variable, sortAvtagende=sortAvtagende,
+                 grPP=grPP)
   return(invisible(UtData))
 
 }

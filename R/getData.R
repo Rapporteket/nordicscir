@@ -2,6 +2,8 @@
 #'
 #' Functions to obtain and process data for NordicScir, both real and fake.
 #'
+#' Detajer
+#'
 #' @param data A data object to be processed by the function.
 #' @param register Hvilket register det skal hentes data for
 #'        'norscir' (standard) eller 'nordicscir'
@@ -99,14 +101,10 @@ getFakeData <- function(register = 'norscir') { #Denne må muligens tilpasses no
 
 
 #' @rdname getData
-#' Prosesserer data som er koblet med hovedskjema, dvs. ikke de som er koblet med kontrollskjema
 #' @export
 processAllData <- function(data, register = 'norscir', ...) {
+  # Prosesserer data som er koblet med hovedskjema, dvs. ikke de som er koblet med kontrollskjema
 
-# rapbase::autLogger(name='test', pkg = 'nordicscir', user = 'dummy',
-#                    fun=0, param=0, type=0,
-#                    registryName = register, reshId = 0,
-#                    msg = 'Starter prosessering av data')
   if ("session" %in% names(list(...))) {
     raplog::repLogger(session = list(...)[["session"]],
                       msg = 'Starter prosessering av data')

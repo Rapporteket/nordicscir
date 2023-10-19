@@ -42,19 +42,18 @@ NSFigStabelAnt <- function(RegData, outfile='', valgtVar='AAisFAis',
 
   Utvalg <- NSUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil=datoTil, datoUt=datoUt,
                         minald=minald, maxald=maxald, erMann=erMann, traume=traume,
-                        AIS=AIS, nivaaUt=nivaaUt, enhetsUtvalg=enhetsUtvalg)
+                        AIS=AIS, nivaaUt=nivaaUt, enhetsUtvalg=enhetsUtvalg, reshID=reshID)
   RegData <- Utvalg$RegData
   utvalgTxt <- Utvalg$utvalgTxt
+  tittel <- c(NSVarSpes$tittel, Utvalg$hovedgrTxt)
   yAkseTxt <- "Antall pasienter"
 
-  #RegData$GrVar <- as.factor(RegData[ ,grVar])
-
   #--------------- Gjøre beregninger ------------------------------
-  AggVerdier <- table(RegData$VariabelGrPost, RegData$VariabelGr)[ ,length(table(RegData$VariabelGr)):1]
+  AggVerdier <- table(RegData$VariabelGrPost, RegData$VariabelGr)[length(table(RegData$VariabelGr)):1, ]
   N <- table(RegData$VariabelGr)
   grtxt <- NSVarSpes$grtxt
   cexgr <- NSVarSpes$cexgr
-  anttxt <- rev(paste0(' (N=', N,')'))
+  anttxt <- paste0(' (N=', N,')')
   legendtxt <- rev(rownames(AggVerdier))
   stabelVar <- switch(valgtVar,
                     AAisFAis = 'AIS, ut',
@@ -65,7 +64,7 @@ NSFigStabelAnt <- function(RegData, outfile='', valgtVar='AAisFAis',
                        Ngr=AggVerdier,
                        KImaal <- NSVarSpes$KImaal,
                        grtxt=NSVarSpes$grtxt,
-                       tittel=NSVarSpes$tittel,
+                       tittel=tittel,
                        retn=NSVarSpes$retn,
                        xAkseTxt=NSVarSpes$xAkseTxt,
                        yAkseTxt=yAkseTxt,
@@ -77,7 +76,7 @@ NSFigStabelAnt <- function(RegData, outfile='', valgtVar='AAisFAis',
   if (sum(N) < 5) {
     farger <- rapFigurer::figtype(outfile)$farger
     plot.new()
-    title(NSVarSpes$tittel)	#, line=-6)
+    title(tittel)	#, line=-6)
     legend('topleft',utvalgTxt, bty='n', cex=0.9, text.col=farger[1])
     text(0.5, 0.6, paste0('Færre enn ', 5, ' registreringer,'), cex=1.2)
     if ( outfile != '') {dev.off()}
@@ -103,8 +102,8 @@ NSFigStabelAnt <- function(RegData, outfile='', valgtVar='AAisFAis',
                        cex.lab=cexleg, sub=NSVarSpes$xAkseTxt, cex.sub=cexleg,
                        col=fargeHoved, border = NA, ylim=c(0, ymax)) #border='white'
       mtext(at=pos, anttxt, side=1, las=1, cex=0.9, adj=0.5, line=1.8)
-      legend('topright', title = stabelVar, legendtxt,
-             border=NA, fill=c(rev(fargeHoved)), bty='n', ncol=1, cex=cexleg)
+      legend('topright', title = stabelVar, c(legendtxt, paste0('N=', sum(N))),
+             border=NA, fill=c(rev(fargeHoved), NA), bty='n', ncol=1, cex=cexleg)
     }
 
     if (NSVarSpes$retn == 'H') { #Ikke tilrettelagt
@@ -115,11 +114,12 @@ NSFigStabelAnt <- function(RegData, outfile='', valgtVar='AAisFAis',
                        cex.lab=cexleg, cex.sub=cexleg, axisnames =FALSE, #names.arg = grtxtpst, #sub=NSVarSpes$xAkseTxt,
                        col=fargeHoved, border='white', xlim=c(0, xmax)) #, ylim=c(0, ymax))
       mtext(at=pos[2,]+0.1, text=rev(grtxtpst), side=2, las=1, cex=cexgr, adj=1, line=0.25)
-      legend('topright', legendtxt,
+      legend('topright', c(legendtxt, paste0('N=', sum(N))),
              border=NA, fill=fargeHoved, bty='n', ncol=1, cex=cexleg)
     }
 
-    title(NSVarSpes$tittel, line=1, font.main=1, cex.main=1.5)
+    title(tittel, line=1, font.main=1) #, cex.main=1.5)
+
 
     #Tekst som angir hvilket utvalg som er gjort
     mtext(utvalgTxt, side=3, las=1, cex=cexgr, adj=0, col=farger[1], line=c(3+0.9*((NutvTxt-1):0)))

@@ -39,7 +39,7 @@ tabBelegg <- function(RegData, tidsenhet='Mnd', datoTil=Sys.Date(), enhetsUtvalg
 #' @param Data Liste med alle datatabeller/skjema
 #' @param datoFra fra og med dato
 #' @param datoTil til og med dato
-#' @inheritParams NSUtvalg
+#' @inheritParams NSUtvalgEnh
 #' @export
 tabLiggetider <- function(RegData, datoFra='2018-01-01', datoTil=Sys.Date(), enhetsUtvalg=0, reshID=0,
                           traume='') {
@@ -117,7 +117,7 @@ tabAntOpphPasSh5Aar <- function(RegData, gr='opph', datoTil){
 
 #' Tabell: Antall og andel moder"skjema som har ulike typer registreringsskjema
 #' @param moderSkjema Hvilket skjema man skal knytte oppfølgingene til
-#' @inheritParams NSUtvalg
+#' @inheritParams NSUtvalgEnh
 #' @export
 #'
 tabSkjemaTilknyttet <- function(Data=AlleTab, moderSkjema='Hoved',
@@ -247,11 +247,11 @@ lagTabavFigGjsnGrVar <- function(UtDataFraFig){
 
 #' Nevrologisk klassifikasjon
 #' @param HovedSkjema- hovedskjema
-#' @inheritParams NSUtvalg
+#' @inheritParams NSUtvalgEnh
 #' @export
 lagTabNevrKlass <- function(HovedSkjema, datoFra='2018-01-01', datoTil=Sys.Date(), datoUt=0){
 
-      Utvalg <- NSUtvalg(HovedSkjema, datoFra = datoFra, datoTil = datoTil, datoUt = datoUt)
+      Utvalg <- NSUtvalgEnh(HovedSkjema, datoFra = datoFra, datoTil = datoTil, datoUt = datoUt)
       HovedSkjema <- Utvalg$RegData
       HovedSkjema$ShNavn <- as.factor(HovedSkjema$ShNavn)
       Ant <- addmargins(table(HovedSkjema$ShNavn))

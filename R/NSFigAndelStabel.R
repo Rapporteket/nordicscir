@@ -12,7 +12,7 @@
 #' Eget / resten av landet (Velge: Inn eller Ut)
 #'
 #' @inheritParams NSFigAndeler
-#' @inheritParams NSUtvalg
+#' @inheritParams NSUtvalgEnh
 #' @param enhetsUtvalg - 1:eget sykehus, 0:hele landet (standard) Kun for valgtVar=='NevrNivaaInnUt'
 #' @export
 
