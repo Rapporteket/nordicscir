@@ -31,6 +31,8 @@ Eq5d <- rapbase::loadRegData(registryName = register, dbType="mysql",
                              query= 'Select * from Eq5dlFormDataContract ')
 #Mister 0
 
+tabH <- tabSkjemaTilknyttet(Data=AlleTab, moderSkjema='Hoved')
+tabK <- tabSkjemaTilknyttet(Data=AlleTab, moderSkjema='Kont')
 
 
 #-----------------------Lage eksempeldatasett-----------------------

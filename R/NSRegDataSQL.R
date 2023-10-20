@@ -80,11 +80,11 @@ try(if(register == 'nordicscir' & koblSkjema == 'Kont') stop("NordicScir har ikk
       Hoved.RehabDy,
       Hoved.RecCtrl,
       Hoved.Scietiol,
-      Hoved.SkjemaGUID,
---      Hoved.SkjemaGUID AS SkjemaGUIDhoved,
+      Hoved.SkjemaGUID AS SkjemaGUIDHoved,
       Hoved.UnitId,
       Hoved.VentAssi
 ")
+   #Hoved.SkjemaGUID,
    #Hoved.PasientGUID,
    #Hoved.UnitId AS ReshId,
 
@@ -288,8 +288,8 @@ Eq5d.FormDate
 ')
 
    varKont <- c('
- UPPER(Kont.HovedskjemaGUID) AS HovedskjemaGUID
-,Kont.CAis
+# UPPER(Kont.HovedskjemaGUID) AS HovedskjemaGUID
+Kont.CAis
 ,Kont.CMtrLvlAreaL
 ,Kont.CMtrLvlAreaR
 ,Kont.CMtrLvlLC
@@ -324,8 +324,8 @@ Eq5d.FormDate
 ,Kont.NoControl
 ,Kont.NoControlReason
 ,Kont.ProceedingID
-,Kont.SkjemaGUID
--- ,Kont.SkjemaGUID AS SkjemaGUIDKont
+-- ,Kont.SkjemaGUID
+,Kont.SkjemaGUID AS SkjemaGUIDKont
 ,Kont.UnitId
 ')
    #"HealthUnitId","HealthUnitName","HealthUnitShortName","HF" ,"Hospital","RHF"
@@ -353,6 +353,7 @@ Eq5d.FormDate
                                Kont = 'INNER JOIN ControlFormDataContract Kont '
       ),
        'ON UPPER(',koblSkjema ,'.SkjemaGUID) = UPPER(',valgtSkjema , '.HovedskjemaGUID) ')
+      #'ON UPPER(',koblSkjema ,'.SkjemaGUID', koblSkjema,') = UPPER(',valgtSkjema , '.HovedskjemaGUID) ')
       }
 #KontData <- rapbase::loadRegData(registryName = register, query='select * from ControlFormDataContract', dbType="mysql")
 #TilfData <-  rapbase::loadRegData(registryName = register, query='select * from ActivityAndParticipationSatisfactionFormDataContract', dbType="mysql")
@@ -362,20 +363,16 @@ Eq5d.FormDate
 if (koblSkjema=='Hoved'){
    query <- paste0('SELECT ',
                    varHoved,
-                   # ',',
                    variable,
                    ' FROM MainFormDataContract Hoved ',
-                   qSkjema
-                   #, 'ON UPPER(Hoved.SkjemaGUID) = UPPER(',valgtSkjema , '.HovedskjemaGUID) '
-   )}
+                   qSkjema)
+   }
 if (koblSkjema=='Kont'){
   query <- paste0('SELECT ',
                   varKont,
-                  # ',',
                   variable,
                   ' FROM ControlFormDataContract Kont ',
                   qSkjema
-                  #, 'ON UPPER(Kont.SkjemaGUID) = UPPER(',valgtSkjema , '.HovedskjemaGUID) '
   )
   }
 
@@ -400,6 +397,7 @@ if (koblSkjema=='Kont'){
      FunkTilf <- FunkVarKobl %>%
        dplyr::inner_join(TilfData, by = dplyr::join_by(FunkskjemaGUID))
 
+     RegData$SkjemaGUID <- RegData[ , paste0('SkjemaGUID', koblSkjema)]
      RegData <- RegData %>%
        dplyr::inner_join(FunkTilf, by = dplyr::join_by(SkjemaGUID == HovedskjemaGUID))
    }

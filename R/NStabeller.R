@@ -117,6 +117,7 @@ tabAntOpphPasSh5Aar <- function(RegData, gr='opph', datoTil){
 
 #' Tabell: Antall og andel moder"skjema som har ulike typer registreringsskjema
 #' @param moderSkjema Hvilket skjema man skal knytte oppfølgingene til
+#' 'Hoved' - hovedskjema, 'Kont' - Kontrollskjema
 #' @inheritParams NSUtvalgEnh
 #' @export
 #'
@@ -124,36 +125,38 @@ tabSkjemaTilknyttet <- function(Data=AlleTab, moderSkjema='Hoved',
                                 datoUt=0,
                                 datoFra='2017-01-01', datoTil=Sys.Date()){
   #Denne skal fungere både for HovedSkjema og kontrollskjema. I AlleTab er
+  #attach(Data)
   ModerSkjema <- switch(moderSkjema,
                         'Hoved' = Data$HovedSkjema,
-                        'Ktr' = Data$KontrollH)
+                        'Kont' = Data$KontrollH)
+
   if (moderSkjema == 'Hoved'){
     ModerSkjema <- NSUtvalgEnh(RegData=ModerSkjema, datoUt=datoUt,
                                datoFra = datoFra, datoTil = datoTil)$RegData
 
     RaaTab <- data.frame(Sykehus = ModerSkjema$ShNavn,
-                         Livskvalitet = ModerSkjema$SkjemaGUID %in% Data$LivskvalH$HovedskjemaGUID,
-                         Urin = ModerSkjema$SkjemaGUID %in% Data$UrinH$HovedskjemaGUID,
-                         Tarm = ModerSkjema$SkjemaGUID %in% Data$TarmH$HovedskjemaGUID
+                         Livskvalitet = ModerSkjema$SkjemaGUIDHoved %in% Data$LivskvalH$HovedskjemaGUID,
+                         Urin = ModerSkjema$SkjemaGUIDHoved %in% Data$UrinH$HovedskjemaGUID,
+                         Tarm = ModerSkjema$SkjemaGUIDHoved %in% Data$TarmH$HovedskjemaGUID
     )
     if ('AktivFunksjonH' %in% names(Data)) {
       RaaTab <- cbind(RaaTab,
-                      Funksjon = ModerSkjema$SkjemaGUID %in% Data$AktivFunksjonH$HovedskjemaGUID,
-                      Tilfredshet = ModerSkjema$SkjemaGUID %in% Data$AktivTilfredshetH$SkjemaGUID #(SkjemaGUID er fra hovedskjema)
+                      Funksjon = ModerSkjema$SkjemaGUIDHoved %in% Data$AktivFunksjonH$HovedskjemaGUID,
+                      Tilfredshet = ModerSkjema$SkjemaGUIDHoved %in% Data$AktivTilfredshetH$SkjemaGUID #(SkjemaGUID er fra hovedskjema)
       )
     }
   }
 
-  if (moderSkjema == 'Ktr') {
+  if (moderSkjema == 'Kont') {
     indDato <- which(as.Date(ModerSkjema$CNeuExmDt) >= datoFra &
                        as.Date(ModerSkjema$CNeuExmDt) <= datoTil)
     ModerSkjema <- ModerSkjema[indDato, ]
     RaaTab <- data.frame(Sykehus = ModerSkjema$ShNavn,
-                         Livskvalitet = ModerSkjema$SkjemaGUID %in% Data$LivskvalK$HovedskjemaGUID,
-                         Urin = ModerSkjema$SkjemaGUID %in% Data$UrinK$HovedskjemaGUID,
-                         Tarm = ModerSkjema$SkjemaGUID %in% Data$TarmK$HovedskjemaGUID,
-                          Funksjon = ModerSkjema$SkjemaGUID %in% Data$AktivFunksjonK$HovedskjemaGUID,
-                          Tilfredshet = ModerSkjema$SkjemaGUID %in% Data$AktivTilfredshetK$SkjemaGUID
+                         Livskvalitet = ModerSkjema$SkjemaGUIDKont %in% Data$LivskvalK$HovedskjemaGUID,
+                         Urin = ModerSkjema$SkjemaGUIDKont %in% Data$UrinK$HovedskjemaGUID,
+                         Tarm = ModerSkjema$SkjemaGUIDKont %in% Data$TarmK$HovedskjemaGUID,
+                          Funksjon = ModerSkjema$SkjemaGUIDKont %in% Data$AktivFunksjonK$HovedskjemaGUID,
+                          Tilfredshet = ModerSkjema$SkjemaGUIDKont %in% Data$AktivTilfredshetK$SkjemaGUID
       )
     }
 
@@ -164,7 +167,7 @@ tabSkjemaTilknyttet <- function(Data=AlleTab, moderSkjema='Hoved',
   )
   addmargins(AntOppf, margin=1, FUN = list('Totalt' = sum) )
   AndelOppf <- (100*AntOppf / as.vector(AntReg))[,-1]
-  if (moderSkjema == 'Ktr') { colnames(AntOppf)[1] <- 'Kontroll'}
+  if (moderSkjema == 'Kont') { colnames(AntOppf)[1] <- 'Kontroll'}
 
   tab = list(Antall = AntOppf,
              Andeler = AndelOppf)
