@@ -119,7 +119,7 @@ NSFigAndelerSh <- function(RegData, outfile='', valgtVar='Alder',
                                 '0' = t(table(RegData$VariabelGr, RegData$GrVar)),
                                 '1' = apply(X=RegData[,variable], MARGIN = 2,
                                             FUN=function(x) table(RegData$GrVar[x==1]))
-                          )#function(x) sum(x == 1, na.rm=T))
+                          ) #function(x) sum(x == 1, na.rm=T))
             #N$ gjelder selv om totalutvalget er ulikt for de ulike variablene i flerevar
             N <- switch(as.character(flerevar),
                               '0' = t(table(RegData$GrVar)), #sum(Ngr),
@@ -138,7 +138,6 @@ NSFigAndelerSh <- function(RegData, outfile='', valgtVar='Alder',
 Ngrense <- 5
 indNgrense <- N < Ngrense
 AggVerdier[indNgrense] <- NA
-#AggTot[indNgrense] <- NA #paste0('N<', Ngrense)
 
             if(flerevar==1) {
                   Nfig <- apply(N, MARGIN = 1, FUN = max)
@@ -154,7 +153,7 @@ AggVerdier[indNgrense] <- NA
             enhTxt <- rownames(Ngr) #attributes(AggVerdier)$row.vars$GrVar
             anttxt <- paste0(' (N=', Nfig,')')
             anttxt[Nfig < Ngrense] <- paste0(' (N < ', Ngrense, ')')
-            legendtxt <- paste0(LETTERS[1:5], anttxt)
+            legendtxt <- paste0(enhTxt, anttxt)
             yAkseTxt='Andel pasienter (%)'
 
             FigDataParam <- list(AggVerdier=AggVerdier,
@@ -223,7 +222,7 @@ AggVerdier[indNgrense] <- NA
                                          cex.lab=cexleg, cex.sub=cexleg, axisnames =FALSE, #names.arg = grtxtpst, #sub=NSVarSpes$xAkseTxt,
                                          col=fargeHoved, border='white', xlim=c(0, xmax)) #, ylim=c(0, ymax))
                         mtext(at=pos[2,]+0.1, text=rev(grtxtpst), side=2, las=1, cex=cexgr, adj=1, line=0.25)
-                              legend('topright', legendtxt,
+                        legend('topright', legendtxt,
                                      border=NA, fill=fargeHoved, bty='n', ncol=1, cex=cexleg)
                   }
 

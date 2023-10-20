@@ -31,13 +31,14 @@ getRealData <- function(register='norscir', ...) {
     if (register=='norscir'){
       data <- append(
         data,
-        list(EQ5DH = NSRegDataSQL(register=register, valgtVar = "Eq5dXX"),
-             KontrollH = NSRegDataSQL(register=register, valgtVar = "KontXX"),
-             AktivFunksjonH = NSRegDataSQL(register=register, valgtVar = "FunkXX"),
-             AktivTilfredshetH = NSRegDataSQL(register=register, valgtVar = "TilfXX"),
+        list(EQ5DH = NSRegDataSQL(valgtVar = "Eq5dXX"),
+             AktivFunksjonH = NSRegDataSQL(valgtVar = "FunkXX"),
+             AktivTilfredshetH = NSRegDataSQL(valgtVar = "TilfXX"),
+             KontrollH = NSRegDataSQL(valgtVar = "KontXX"),
              LivskvalK = NSRegDataSQL(valgtVar = "LivsXX", koblSkjema = 'Kont'),
              UrinK = NSRegDataSQL(valgtVar = "UrinXX", koblSkjema = 'Kont'),
              TarmK = NSRegDataSQL(valgtVar = "TarmXX", koblSkjema = 'Kont'),
+             EQ5DK = NSRegDataSQL(valgtVar = "Eq5dXX", koblSkjema = 'Kont'),
              AktivFunksjonK = NSRegDataSQL(valgtVar = "FunkXX", koblSkjema = 'Kont'),
              AktivTilfredshetK = NSRegDataSQL(valgtVar = "TilfXX", koblSkjema = 'Kont')
              ))
@@ -103,7 +104,8 @@ getFakeData <- function(register = 'norscir') { #Denne må muligens tilpasses no
 #' @rdname getData
 #' @export
 processAllData <- function(data, register = 'norscir', ...) {
-  # Prosesserer data som er koblet med hovedskjema, dvs. ikke de som er koblet med kontrollskjema
+  # Prosesserer data som er koblet med hovedskjema, dvs. ikke de som er koblet bare med kontrollskjema
+  #Vurder å koble på hovedskjema til disse kontrollskjemaene også.
 
   if ("session" %in% names(list(...))) {
     raplog::repLogger(session = list(...)[["session"]],
@@ -126,12 +128,13 @@ processAllData <- function(data, register = 'norscir', ...) {
         EQ5DH = NSPreprosesser(data$EQ5DH),
         KontrollH = NSPreprosesser(data$KontrollH),
         AktivFunksjonH = NSPreprosesser(data$AktivFunksjonH),
-        AktivTilfredshetH = NSPreprosesser(data$AktivTilfredshetH)
-        #LivskvalK = NSPreprosesser(data$LivskvalK),
-        #UrinK = NSPreprosesser(data$UrinK),
-        #TarmK = NSPreprosesser(data$TarmK),
-        #AktivFunksjonK = NSPreprosesser(data$AktivFunksjonK),
-        #AktivTilfredshetK = NSPreprosesser(data$AktivTilfredshetK)
+        AktivTilfredshetH = NSPreprosesser(data$AktivTilfredshetH),
+        LivskvalK = data$LivskvalK,
+        UrinK = data$UrinK,
+        TarmK = data$TarmK,
+        EQ5DK = data$EQ5DK,
+        AktivFunksjonK = data$AktivFunksjonK,
+        AktivTilfredshetK = data$AktivTilfredshetK
         )
 
       Skjemaer <- append(Skjemaer, NorskeSkjemaer)

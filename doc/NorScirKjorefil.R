@@ -1,31 +1,37 @@
 nordicscir::kjor_NSapper('norscir')
 nordicscir::kjor_NSapper('nordicscir')
 
-# Kun norscir: Resultater fra kontrollskjema (kun ei telling fra før). Egen fane. Kontrollskjema er kortversjon av hovedskjema.
-# Har tilknyttede underskjema.
-# Finn kode for avbrutte skjema og filtrer bort disse fra visninger med kontrollskjema. Se e-post fra 2023-01-05.
+#Sjekke data
+AlleTabRaa <- nordicscir::getRealData(register = 'norscir') #Kobler både til hovedskjema og til ktr-skjema
+AlleTab <- nordicscir::processAllData(AlleTabRaa, register = 'norscir') #preprosesserer bare datasett koblet til hovedskjema
+attach(AlleTab)
+View(AlleTab)
+register <- 'norscir'
+Hoved <- rapbase::loadRegData(registryName = register, dbType="mysql",
+                            query='Select * from MainFormDataContract ')
+Ktr <- rapbase::loadRegData(registryName = register, dbType="mysql",
+                            query='Select * from ControlFormDataContract ')
+Ktr <- Ktr[Ktr$ControlStatus==0, ]
+Livs <- rapbase::loadRegData(registryName = register, dbType="mysql",
+                            query= 'Select * from LifeQualityFormDataContract ')
+#mister 2 skjema etter kobl H og K
+Urin <- rapbase::loadRegData(registryName = register, dbType="mysql",
+                             query= 'Select * from UrinaryTractFunctionFormDataContract ')
+#mister 0
+Tarm <- rapbase::loadRegData(registryName = register, dbType="mysql",
+                             query= 'Select * from BowelFunctionFormDataContract ')
+#mister 0
+Funk <- rapbase::loadRegData(registryName = register, dbType="mysql",
+                             query= 'Select * from ActivityAndParticipationPerformanceFormDataContract ')
+#Mister 0
+Tilf <- rapbase::loadRegData(registryName = register, dbType="mysql",
+                             query= 'Select * from ActivityAndParticipationSatisfactionFormDataContract ')
+# Mister 0
+Eq5d <- rapbase::loadRegData(registryName = register, dbType="mysql",
+                             query= 'Select * from Eq5dlFormDataContract ')
+#Mister 0
 
-# Vise  endring over tid for nevrologisk klassifikasjon ved utreise (hovedskjema, FAIS) –
-# til nevrologisk klassifikasjon ved Kontrollskjema1 (første kontroll) CAIS.
-#Se tabellvisning i artikkel FrankelScale. . Sammenlign nivåer og endring; bedre, uendret, verre for hver A-E. Filtrere på traume/ikke.
-# A og AL: ta stilling til om dette skal vises for Cervicale / total / traumatisk / ikke-traumatisk?) Legge på filtrering for dette?
 
-# Vise  endring over tid for utskrevet til ved utreise (hovedskjema) PlaceDis og PPlaceDis  –
-# til utskrevet til ved Kontrollskjema1 CPlaceDis  (første kontroll) PRE-POST?
-
-#RegData <- KobleMedHoved(RegData, Kontroll)
-# q <- 'SELECT * from ControlFormDataContract'
-# KontrollAlleVar <- rapbase::loadRegData(registryName = 'norscir', query=q)
-valgtVar <- 'KontFAis'
-HovedKontroll <- NSRegDataSQL(valgtVar = valgtVar)
-RegData <- NSPreprosesser(HovedKontroll)
-NSFigPrePost(RegData=RegData, valgtVar=valgtVar, datoFra='2015-01-01', datoTil=Sys.Date(),
-                          enhetsUtvalg = 0)
-library('nordicscir')
-table(RegData$NoControl)
-table(RegData$CNum)
-test <- KontrollAlleVar[KontrollAlleVar$CNum==0,] #Tomme variabler
-table(table(RegData$HovedskjemaGUID))
 
 #-----------------------Lage eksempeldatasett-----------------------
 rm(list=ls())

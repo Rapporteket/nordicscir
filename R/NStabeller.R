@@ -149,11 +149,11 @@ tabSkjemaTilknyttet <- function(Data=AlleTab, moderSkjema='Hoved',
                        as.Date(ModerSkjema$CNeuExmDt) <= datoTil)
     ModerSkjema <- ModerSkjema[indDato, ]
     RaaTab <- data.frame(Sykehus = ModerSkjema$ShNavn,
-                         Livskvalitet = ModerSkjema$SkjemaGUID %in% Data$LivskvalH$HovedskjemaGUID,
-                         Urin = ModerSkjema$SkjemaGUID %in% Data$UrinH$HovedskjemaGUID,
-                         Tarm = ModerSkjema$SkjemaGUID %in% Data$TarmH$HovedskjemaGUID,
-                          Funksjon = ModerSkjema$SkjemaGUID %in% Data$AktivFunksjonH$HovedskjemaGUID,
-                          Tilfredshet = ModerSkjema$SkjemaGUID %in% Data$AktivTilfredshetH$SkjemaGUID #(SkjemaGUID er fra hovedskjema)
+                         Livskvalitet = ModerSkjema$SkjemaGUID %in% Data$LivskvalK$HovedskjemaGUID,
+                         Urin = ModerSkjema$SkjemaGUID %in% Data$UrinK$HovedskjemaGUID,
+                         Tarm = ModerSkjema$SkjemaGUID %in% Data$TarmK$HovedskjemaGUID,
+                          Funksjon = ModerSkjema$SkjemaGUID %in% Data$AktivFunksjonK$HovedskjemaGUID,
+                          Tilfredshet = ModerSkjema$SkjemaGUID %in% Data$AktivTilfredshetK$SkjemaGUID
       )
     }
 
