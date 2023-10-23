@@ -25,6 +25,7 @@ kjor_NSapper <- function(register = 'norscir') {
 #' @export
 SorterOgNavngiTidsEnhet <- function(RegData, tidsenhet='Aar', tab=0, datoUt=0) {
 
+  RegData$RapDato <- as.Date(RegData[ ,c('InnDato', 'DischgDt')[datoUt+1]])
 
   if (datoUt == 1) {
     RegData$DischgDt <- strptime(RegData$DischgDt, format="%Y-%m-%d")
@@ -36,7 +37,6 @@ SorterOgNavngiTidsEnhet <- function(RegData, tidsenhet='Aar', tab=0, datoUt=0) {
   RegData$Aar <- 1900 + RegData$DischgDt$year #strptime(RegData$Innleggelsestidspunkt, format="%Y")$year
   }
 
-  RegData$RapDato <- as.Date(RegData[ ,c('InnDato', 'DischgDt')[datoUt+1]])
 
   #Lager sorteringsvariabel for tidsenhet:
   RegData$TidsEnhetSort <- switch(tidsenhet,

@@ -1,6 +1,20 @@
 nordicscir::kjor_NSapper('norscir')
 nordicscir::kjor_NSapper('nordicscir')
 
+library(nordicscir)
+#Livskvaliet Nfig:103, Ntab:113
+RegData <- NSPreprosesser(NSRegDataSQL(valgtVar = 'Tilf'))
+RegData <- NSUtvalgEnh(RegData = RegData, datoFra = '2022-01-01', datoTil = '2022-12-31')$RegData
+RegData$Diff <- difftime(RegData$DataClDt,  RegData$DischgDt)
+indBort1 <- which(RegData$Diff>0)
+
+indBort2 <- which(as.Date(RegData$DataClDtS) > as.Date(RegData$DischgDt))
+ind <- which(RegData$DataClDt <= RegData$DischgDt)
+DataFiltrertBort <- RegData[indBort1, ]
+
+RegData[which(RegData$Diff>0) ,c("AdmitDt", "AdmitRehDt", "DischgDt", 'DataClDtS', 'Diff')]
+
+
 #Sjekke data
 AlleTabRaa <- nordicscir::getRealData(register = 'norscir') #Kobler både til hovedskjema og til ktr-skjema
 AlleTab <- nordicscir::processAllData(AlleTabRaa, register = 'norscir') #preprosesserer bare datasett koblet til hovedskjema

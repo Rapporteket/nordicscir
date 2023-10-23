@@ -263,11 +263,9 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
 
   if (valgtVar == 'RegForsinkelse') {  #Andeler, gjsn
     #Verdier: 0-3402
-    RegData$Diff <- as.numeric(as.Date(as.POSIXct(RegData$FirstTimeClosed, format="%Y-%m-%d")) -
-                                 as.Date(as.POSIXct(RegData$DischgDt, format="%Y-%m-%d"))) #difftime(RegData$InnDato, RegData$Leveringsdato) #
-    #RegData[,c('InnDato', "FirstTimeClosed", "DischgDt", 'Diff')]
-    #           RegData$InnDato <- as.Date(RegData$AdmitDt, format="%Y-%m-%d") #as.Date(RegData$AdmitDt, format="%Y-%m-%d")
-    #          RegData$Test <- as.Date(RegData$FirstTimeClosed, format="%Y-%m-%d")
+    RegData$Diff <- as.numeric(as.Date(RegData$FirstTimeClosed) - RegData$DischgDt)
+    # RegData$Diff <- as.numeric(as.Date(as.POSIXct(RegData$FirstTimeClosed, format="%Y-%m-%d")) -
+    #                              as.Date(as.POSIXct(RegData$DischgDt, format="%Y-%m-%d")))
     RegData <- RegData[which(RegData$Diff > -1), ]
     tittel <- switch(figurtype,
                      andeler='Tid fra utskriving til ferdigstilt registrering',
@@ -295,7 +293,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
 
   if (substr(valgtVar,1,4)=='Livs') {
     indDato <- which(RegData$InnDato >= as.Date('2015-01-01')) #Ikke filtrer på startdato
-    indTidspkt <- which(RegData$QolDt <= RegData$DischgDt)
+    indTidspkt <- which(as.Date(RegData$QolDt) <= RegData$DischgDt)
     indAlder <- which(RegData$Alder >= 16)
     RegData <- RegData[indTidspkt %i% indAlder, ]
     xAkseTxt <- 'Skåring: 0-10. Høyest er best.'
@@ -333,10 +331,10 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
     sortAvtagende <- TRUE
   }
 
-  #----------------URIN-skjema (start 01.01.2015):
+  #----------------URIN-skjema (start 01.01.2015)--------------
   if (substr(valgtVar,1,4)=='Urin') {
     RegData <- RegData[which(RegData$InnDato >= as.Date('2015-01-01') &
-                               RegData$LutfxnDt <= RegData$DischgDt), ]}
+                               as.Date(RegData$LutfxnDt) <= RegData$DischgDt), ]}
 
   if (valgtVar=='UrinInkontinensTom2018') {
     #0:4,9: Nei, Ja daglig, Ja ukentlig, Ja månedlig, Ikke relevant, Ukjent
@@ -454,7 +452,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
   #BfxnbaDt	<= DischgDt
   if (substr(valgtVar,1,4)=='Tarm') {
     RegData <- RegData[which(RegData$InnDato >= as.Date('2016-01-01') &
-                               RegData$BfxnbaDt <= RegData$DischgDt), ]}
+                               as.Date(RegData$BfxnbaDt) <= RegData$DischgDt), ]}
 
 
   if (valgtVar=='TarmAvfmiddel') {
@@ -605,10 +603,10 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
     grtxt <- levels(RegData$VariabelGr)
   }
 
-  #---------------- ActivityAndParticipationPerformance  (start 01.01.2017):
+  #---------------- ActivityAndParticipationPerformance  (start 01.01.2017)------------------
   if (substr(valgtVar,1,4)=='Funk') {
     RegData <- RegData[which(RegData$InnDato >= as.Date('2017-01-01') &
-                               RegData$DataClDt <= RegData$DischgDt), ]}
+                               as.Date(RegData$DataClDt) <= RegData$DischgDt), ]}
   #Mobilitet «Mobilmod»,  Av/Påkledning, «Dreslbdy»,   Spising «Feeding», Toalettbesøk «Toiletin»
 
   if (valgtVar=='FunkDo') {
@@ -671,10 +669,10 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
 
 
 
-  #---------------- ActivityAndParticipationPerformance  (start 01.01.2017):
+  #---------------- ActivityAndParticipationPerformance  (start 01.01.2017)------------
   if (substr(valgtVar,1,4)=='Tilf') {
     RegData <- RegData[which((RegData$InnDato >= as.Date('2017-01-01')) &
-                               RegData$DataClDtS <= RegData$DischgDt), ]
+                               as.Date(RegData$DataClDtS) <= RegData$DischgDt), ]
     gr <- c(0:2,99)
     grtxt <- c('Ikke tilfreds', 'Ganske tilfreds','Svært tilfreds','Ukjent')
   }
