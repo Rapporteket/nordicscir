@@ -34,7 +34,7 @@ SorterOgNavngiTidsEnhet <- function(RegData, tidsenhet='Aar', tab=0, datoUt=0) {
   RegData$MndAar <- format(RegData$DischgDt, '%b%y')
   RegData$Kvartal <- ceiling(RegData$MndNum/3)
   RegData$Halvaar <- ceiling(RegData$MndNum/6)
-  RegData$Aar <- 1900 + RegData$DischgDt$year #strptime(RegData$Innleggelsestidspunkt, format="%Y")$year
+  RegData$Aar <- lubridate::year(RegData$DischgDt) #strptime(RegData$Innleggelsestidspunkt, format="%Y")$year
   }
 
 

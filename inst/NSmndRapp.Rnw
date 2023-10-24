@@ -21,27 +21,28 @@ library(nordicscir)
 library(knitr)
 library(tools)
 datoTil <- Sys.Date()
-dato <- as.POSIXlt(datoTil, tz='UTC')
-datoFra <- as.Date(paste0(1900+dato$year-1,'-', dato$mon+1, '-', '01'))
-aarFra <- paste0(1900+dato$year-5, '-01-01')
+#dato <- as.POSIXlt(datoTil, tz='UTC')
+aarTil <- lubridate::year(datoTil)
+datoFra <- as.Date(paste0(aarTil-1,'-', lubridate::month(datoTil), '-', '01'))
+aarFra <- paste0(aarTil-5, '-01-01')
 nordisk <- ifelse(sum(as.numeric(unique(HovedSkjema$LandKode)))==1, 0, 1)
 #Bare gyldige kontrollskjema:
 if (nordisk == 0) {
 KontrollH <- KontrollH[KontrollH$ControlStatus==0, ]}
 
 #!!!!!!!!NB: Kanskje må dette gjøre is preprosesseringa!! I så fall må inn/ut inngå som inngangsparameter i funksjonen
-HovedSkjema$MndNum <- HovedSkjema$DischgDt$mon +1
+HovedSkjema$MndNum <- lubridate::month(HovedSkjema$DischgDt)
 HovedSkjema$MndAar <- format(HovedSkjema$DischgDt, '%b%y')
 HovedSkjema$Kvartal <- ceiling(HovedSkjema$MndNum/3)
 HovedSkjema$Halvaar <- ceiling(HovedSkjema$MndNum/6)
-HovedSkjema$Aar <- 1900 + HovedSkjema$AdmitDt$year
+HovedSkjema$Aar <- lubridate::year(HovedSkjema$AdmitDt)
 
 HovedSkjema$ShNavn <- factor(HovedSkjema$ShNavn)
 HovedSkjema$SkjemaGUID <- toupper(HovedSkjema$SkjemaGUID)
 HovedSkjema5aar <- HovedSkjema[which(HovedSkjema$UtDato > as.Date(aarFra)), ]
 HovedSkjema12mnd <- HovedSkjema[which(HovedSkjema$UtDato > as.Date(datoFra)), ]
-HovedSkjema$Aar <- factor(HovedSkjema$Aar, levels = 2011:(1900+dato$year))
-HovedSkjema5aar$Aar <- factor(HovedSkjema5aar$Aar, levels = (1900+dato$year-4):(1900+dato$year))
+HovedSkjema$Aar <- factor(HovedSkjema$Aar, levels = 2011:aarTil)
+HovedSkjema5aar$Aar <- factor(HovedSkjema5aar$Aar, levels = (aarTil-4):(aarTil))
 
 enhetsUtvalg <- 1
 shtxt <- as.character(HovedSkjema$ShNavn[match(reshID, HovedSkjema$ReshId)])
