@@ -7,11 +7,11 @@
 \alias{processAllData}
 \title{Get Data for NordicScir}
 \usage{
-getRealData(register = "norscir")
+getRealData(register = "norscir", ...)
 
 getFakeData(register = "norscir")
 
-processAllData(data, register = "norscir")
+processAllData(data, register = "norscir", ...)
 }
 \arguments{
 \item{register}{Hvilket register det skal hentes data for
@@ -25,4 +25,7 @@ real data, a warning is issued and NULL will be will be returned.
 }
 \description{
 Functions to obtain and process data for NordicScir, both real and fake.
+}
+\details{
+Detajer
 }

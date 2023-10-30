@@ -89,14 +89,15 @@ NSFigAndelerSh <- function(RegData, outfile='', valgtVar='Alder',
             NSVarSpes <- NSVarTilrettelegg(RegData=RegData, valgtVar=valgtVar, figurtype='andeler')
             RegData <- NSVarSpes$RegData
 
-            Utvalg <- NSUtvalg(RegData=RegData, datoFra=datoFra, datoTil=datoTil, minald=minald, maxald=maxald,
+            #NSUtvalg -> NSUtvalgEnh
+            Utvalg <- NSUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil=datoTil, minald=minald, maxald=maxald,
                                erMann=erMann, traume=traume, AIS=AIS, nivaaUt=nivaaUt, datoUt=datoUt)
             RegData <- Utvalg$RegData
             utvalgTxt <- Utvalg$utvalgTxt
             #Benytter variabelen LandKode til å sjekke om det er nordiske eller norske data
             nordisk <- ifelse(sum(as.numeric(unique(RegData$LandKode)))==1, 0, 1)
             grVar <- c('ShNavn', 'Land')[nordisk+1]
-            RegData$GrVar <- RegData[ ,grVar]
+            RegData$GrVar <- as.factor(RegData[ ,grVar])
 
             #--------------- Gjøre beregninger ------------------------------
             #      AggVerdier <- list(Hoved = 0, Rest =0)
@@ -118,7 +119,7 @@ NSFigAndelerSh <- function(RegData, outfile='', valgtVar='Alder',
                                 '0' = t(table(RegData$VariabelGr, RegData$GrVar)),
                                 '1' = apply(X=RegData[,variable], MARGIN = 2,
                                             FUN=function(x) table(RegData$GrVar[x==1]))
-                          )#function(x) sum(x == 1, na.rm=T))
+                          ) #function(x) sum(x == 1, na.rm=T))
             #N$ gjelder selv om totalutvalget er ulikt for de ulike variablene i flerevar
             N <- switch(as.character(flerevar),
                               '0' = t(table(RegData$GrVar)), #sum(Ngr),
@@ -136,15 +137,10 @@ NSFigAndelerSh <- function(RegData, outfile='', valgtVar='Alder',
                                            FUN=function(x) sum(x==1)/length(x %in% 0:1)))
 Ngrense <- 5
 indNgrense <- N < Ngrense
-AggVerdier[indNgrense,] <- NA
-#AggTot[indNgrense] <- NA #paste0('N<', Ngrense)
+AggVerdier[indNgrense] <- NA
 
             if(flerevar==1) {
                   Nfig <- apply(N, MARGIN = 1, FUN = max)
-                  #ifelse(min(N$Hoved)==max(N$Hoved),
-                  #              min(N$Hoved[1]),
-                  #               paste0(min(N$Hoved),'-',max(N$Hoved)))
-
             } else {
                   Nfig <- N}
 
@@ -154,9 +150,9 @@ AggVerdier[indNgrense,] <- NA
             grtxt2 <- paste0('(', sprintf('%.1f',AggTot), '%)')
             grtxtpst <- paste0(grtxt, '\n(', sprintf('%.1f',AggTot), '%)')
             cexgr <- NSVarSpes$cexgr
-            enhTxt <- attributes(AggVerdier)$row.vars$GrVar
+            enhTxt <- rownames(Ngr) #attributes(AggVerdier)$row.vars$GrVar
             anttxt <- paste0(' (N=', Nfig,')')
-            anttxt[indNgrense] <- paste0(' (N < ', Ngrense, ')')
+            anttxt[Nfig < Ngrense] <- paste0(' (N < ', Ngrense, ')')
             legendtxt <- paste0(enhTxt, anttxt)
             yAkseTxt='Andel pasienter (%)'
 
@@ -178,7 +174,7 @@ AggVerdier[indNgrense,] <- NA
             #-----------Figur---------------------------------------
             #FigurAndeler <- function(     ){
             #-----Hvis få registreringer: ---------------------
-            Ngrense <- 5      # 5
+            #Ngrense <- 5      # 5
             if (sum(Nfig) < Ngrense) {
                   FigTypUt <- rapFigurer::figtype(outfile)
                   farger <- FigTypUt$farger
@@ -226,7 +222,7 @@ AggVerdier[indNgrense,] <- NA
                                          cex.lab=cexleg, cex.sub=cexleg, axisnames =FALSE, #names.arg = grtxtpst, #sub=NSVarSpes$xAkseTxt,
                                          col=fargeHoved, border='white', xlim=c(0, xmax)) #, ylim=c(0, ymax))
                         mtext(at=pos[2,]+0.1, text=rev(grtxtpst), side=2, las=1, cex=cexgr, adj=1, line=0.25)
-                              legend('topright', legendtxt,
+                        legend('topright', legendtxt,
                                      border=NA, fill=fargeHoved, bty='n', ncol=1, cex=cexleg)
                   }
 

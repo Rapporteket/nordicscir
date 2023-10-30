@@ -1,10 +1,4 @@
 #Resultattjeneste for NordicScir
-# library(nordicscir)
-# library(shiny)
-# library(knitr)
-# library(lubridate)
-# library(dplyr)
-# library(kableExtra)
 
 #' Brukergrensesnitt (ui) til nordscir-appen
 #'
@@ -71,21 +65,22 @@ ui_nordicscir <- function() {
         shiny::sidebarPanel(
           width = 3,
           shiny::br(),
-          shiny::h3("Månedsrapport"), #),
-          shiny::downloadButton(
-            outputId = "mndRapp.pdf",
-            label = "Last ned MÅNEDSRAPPORT",
-            class = "butt"
-          ),
-          shiny::br(),
-          shiny::br(paste("NB: Nedlasting tar litt tid. I mellomtida får man",
-                          "ikke sett på andre resultater.")),
-          shiny::br(),
-          shiny::br(paste("Hvis du ønsker månedsrapporten regelmessig tilsendt",
-                          "på e-post, kan du gå til fanen 'Abonnement' og",
-                          "bestille dette.")),
-          shiny::br(),
-          shiny::br(),
+          # Tar bort månedsrapport inntil videre...
+          # shiny::h3("Månedsrapport"), #),
+          # shiny::downloadButton(
+          #   outputId = "mndRapp.pdf",
+          #   label = "Last ned MÅNEDSRAPPORT",
+          #   class = "butt"
+          # ),
+          # shiny::br(),
+          # shiny::br(paste("NB: Nedlasting tar litt tid. I mellomtida får man",
+          #                 "ikke sett på andre resultater.")),
+          # shiny::br(),
+          # shiny::br(paste("Hvis du ønsker månedsrapporten regelmessig tilsendt",
+          #                 "på e-post, kan du gå til fanen 'Abonnement' og",
+          #                 "bestille dette.")),
+          # shiny::br(),
+          # shiny::br(),
           shiny::conditionalPanel(
             condition = "input.startside == 'Status'",
             shiny::h4(
@@ -178,7 +173,8 @@ ui_nordicscir <- function() {
               "Tarm: Fekal inkontinens (fra 2019)" = "TarmInkontinensFra2019",
             #  "Tarm: Fekal inkontinens (t.o.m. 2018)" = "TarmInkontinensTom2018",
               "Tarm: Kirurgisk inngrep" = "TarmKirInngrep",
-              "Tarm: Kirurgiske inngrep, hvilke" = "TarmKirInngrepHvilke"
+              "Tarm: Kirurgiske inngrep, hvilke" = "TarmKirInngrepHvilke",
+            "Tarm: NBD" = "TarmNBD"
             ),
             selected = c("Registreringsforsinkelse" = "RegForsinkelse")
           ),
@@ -446,7 +442,7 @@ ui_nordicscir <- function() {
           ),
           shiny::conditionalPanel(
             condition = paste0(
-              "input.ark == 'Antall hovedskjema med tilknyttede skjema' | " #,"input.ark == 'Antall kontrollskjema med tilknyttede skjema' "
+              "input.ark == 'Antall hovedskjema med tilknyttede skjema' "
             ),
             shiny::dateRangeInput(
               inputId = "datovalgReg",
@@ -455,7 +451,8 @@ ui_nordicscir <- function() {
               label = "Tidsperiode",
               separator="t.o.m.",
               language="nb"
-            )
+            ),
+            h5('Tidsperioden er basert på innleggelsesdato')
           )
         ),
 
@@ -575,22 +572,22 @@ ui_nordicscir <- function() {
             )
           ) #Eksport-tab
         ) #tabsetPanel
-      ), #Registeradm-tab
+      ) #Registeradm-tab
 
       #------------------Abonnement------------------------
-      shiny::tabPanel(
-        shiny::p(
-          "Abonnement",
-          title="Bestill automatisk utsending av månedsrapport på e-post"),
-        shiny::sidebarLayout(
-          shiny::sidebarPanel(
-            rapbase::autoReportInput("ns-subscription")
-          ),
-          shiny::mainPanel(
-            rapbase::autoReportUI("ns-subscription")
-          )
-        )
-      )
+      # shiny::tabPanel(
+      #   shiny::p(
+      #     "Abonnement",
+      #     title="Bestill automatisk utsending av månedsrapport på e-post"),
+      #   shiny::sidebarLayout(
+      #     shiny::sidebarPanel(
+      #       rapbase::autoReportInput("ns-subscription")
+      #     ),
+      #     shiny::mainPanel(
+      #       rapbase::autoReportUI("ns-subscription")
+      #     )
+      #   )
+      # )
     ) #navbar
   ) #tagList
 }
@@ -644,9 +641,6 @@ server_nordicscir <- function(input, output, session) {
 
   # observe({
   if (rolle != 'SC') { #
-  #   shinyjs::hide(id = 'velgResh')
-  #   shinyjs::hide(id = 'velgReshOverf')
-  #   shinyjs::hide(id = 'velgReshData')
     hideTab(inputId = "hovedark", target = "Registeradministrasjon")
    }
   # })
@@ -657,7 +651,7 @@ server_nordicscir <- function(input, output, session) {
 
   output$guide <- shiny::renderText(
     rapbase::renderRmd(
-      system.file("brukerveiledning.Rmd", package = "nordicscir"),
+      system.file("brukerveiledningNordisk.Rmd", package = "nordicscir"),
       outputType = "html_fragment",
       params = list(isDataOk = isDataOk)
     )
@@ -793,34 +787,6 @@ server_nordicscir <- function(input, output, session) {
         }
       )
 
-      #Kontrollskjema som har tilknyttede skjema av ulik type
-      # tabTilknKtrSkjema <- tabSkjemaTilknyttet(
-      #   Data = AlleTab,
-      #   moderSkjema = "Ktr",
-      #   datoFra = input$datovalgReg[1],
-      #   datoTil = input$datovalgReg[2]
-      # )
-
-      # output$tabAntTilknyttedeKtrSkjema <- shiny::renderTable(
-      #   tabTilknKtrSkjema$Antall, rownames = TRUE, digits = 0, spacing = "xs"
-      # )
-      #
-      # output$lastNed_tabOppfKtrAnt <- shiny::downloadHandler(
-      #   filename = function() {'tabOppfKtrAnt.csv'},
-      #   content = function(file, filename) {
-      #     write.csv2(tabTilknKtrSkjema$Antall, file, row.names = TRUE, na = "")
-      #   }
-      # )
-      # #Andel (prosent) av kontrollskjemaene som har oppfølgingsskjema.
-      # output$tabAndelTilknyttedeKtrSkjema <- shiny::renderTable(
-      #   tabTilknKtrSkjema$Andeler, rownames = TRUE, digits = 0, spacing = "xs" )
-      #
-      # output$lastNed_tabOppfKtrPst <- shiny::downloadHandler(
-      #   filename = function() {"tabOppfKtrPst.csv"},
-      #   content = function(file, filename) {
-      #     write.csv2(tabTilknKtrSkjema$Andeler, file, row.names = TRUE, na = "")
-      #   }
-      # )
     } else {
       output$tabAntOpphShMnd12 <- NULL
       output$lastNed_tabAntOpph <- NULL
@@ -828,9 +794,6 @@ server_nordicscir <- function(input, output, session) {
       output$lastNed_tabOppfHovedAnt <- NULL
       output$tabAndelTilknyttedeHovedSkjema <- NULL
       output$lastNed_tabOppfHovedPst <- NULL
-      #output$lastNed_tabOppfKtrAnt <- NULL
-      #output$tabAndelTilknyttedeKtrSkjema <- NULL
-      #output$lastNed_tabOppfKtrPst <- NULL
     }
   })
 

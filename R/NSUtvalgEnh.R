@@ -28,14 +28,22 @@ NSUtvalgEnh <- function(RegData, datoFra='2010-01-01', datoTil=Sys.Date(), datoU
   datoUt <- as.numeric(datoUt)
   # Definer intersect-operator
   "%i%" <- intersect
-  RegData$RapDato <- if (datoUt==1) {as.Date(RegData$DischgDt)
-  } else {as.Date(RegData$InnDato)}
+
+    RegData$RapDato <- as.Date(RegData[ ,c('InnDato', 'DischgDt')[datoUt+1]])
+    #Fjerner de som har for lange opphold pga ulik registreringspraksis
+    if (datoUt==1) {
+      RegData$InnUtDiff <- as.numeric(difftime(RegData$DischgDt, RegData$InnDato, units = 'days'))
+      #test <- RegData[ which(RegData$InnUtDiff > 730), c("ShNavn", "SkjemaGUID", "AdmitDt", "AdmitRehDt", "DischgDt", 'InnUtDiff')]
+      #write.csv2(test, file = 'Over730.csv', row.names = F, fileEncoding = 'UTF-8')
+      RegData <- RegData[which(RegData$InnUtDiff <= 730), ]
+      }
 
   #Enhetsutvalg:
   #Når bare skal sml med eget land/ikke sammenlikne, trengs ikke alle data:
   reshID <- as.numeric(reshID)
   indEgen1 <- match(reshID, RegData$ReshId)
-  enhetsUtvalg <- ifelse(reshID==0 | is.na(indEgen1), 0, enhetsUtvalg )
+  #enhetsUtvalg <- ifelse(reshID==0 | is.na(indEgen1), 0, enhetsUtvalg )
+  enhetsUtvalg <- ifelse(reshID==0, 0, enhetsUtvalg )
   egetLand <- RegData$Land[indEgen1]
   if (enhetsUtvalg %in% 2:4) {
     RegData <- switch(as.character(enhetsUtvalg),
@@ -48,13 +56,11 @@ NSUtvalgEnh <- function(RegData, datoFra='2010-01-01', datoTil=Sys.Date(), datoU
 
   indAld <- which(RegData$Alder >= minald & RegData$Alder <= maxald)
   indDato <- which(RegData$RapDato >= datoFra & RegData$RapDato <= datoTil) #Får bort NA
-  #traumeValgBort <- switch(traume, ja = c(6,9) , nei = c(1:5,9), alle = 99) #6 ikke-tr, 1:5 traumer, 9 ukjent
   traumeValg <- switch(traume, nei = 6 , ja = 1:5, alle = 99) #6 ikke-tr, 1:5 traumer, 9 ukjent
   indTr <-  if (traume %in% c('ja','nei')) {which(RegData$SkadeArsak %in% traumeValg)} else {1:Ninn}
   indKj <- if (erMann %in% 0:1) {which(RegData$erMann == erMann)} else {1:Ninn}
   indAIS <- if (length(which(as.numeric(AIS) %in% 1:5))>0) {
     which(RegData$FAis %in% AIS)} else {1:Ninn}
-  #indPTbort <- if (nivaaUt %in% c(0,1,9)) {which(RegData$TetraplegiUt != nivaaUt)} else {NULL}
   indNivaaUt <- if (nivaaUt %in% c(0:3,9)) {switch(as.character(nivaaUt),
                                                    '0' = which(RegData$TetraplegiUt == nivaaUt),
                                                    '1' = which(RegData$TetraplegiUt == nivaaUt),
@@ -75,8 +81,6 @@ NSUtvalgEnh <- function(RegData, datoFra='2010-01-01', datoTil=Sys.Date(), datoU
                                                         ' til og med ', if (N>0) {max(RegData$Alder, na.rm=T)} else {maxald}, ' år')},
                  if (traume %in% c('ja','nei')) {paste0('Traume:', traume)},
                  if (erMann %in% 0:1){paste0('Kjønn: ', c('kvinner', 'menn')[erMann+1])},
-                 #if (length(which(AIS %in% c(LETTERS[1:5],'U')))>0) {paste0('AIS, ut: ', paste0(AIS, collapse=','))}
-                 #Får character fra Jasper
                  if (length(which(AIS %in% 1:5))>0) {paste0('AIS, ut: ', paste0(LETTERS[AIS], collapse=','))},
                  if (nivaaUt %in% c(0:3,9)) {paste0('Nivå ved utreise: ',
                                                     (c('Paraplegi','Tetraplegi', 'C1-4', 'C5-8',
@@ -105,7 +109,8 @@ NSUtvalgEnh <- function(RegData, datoFra='2010-01-01', datoTil=Sys.Date(), datoU
   smltxt <- ''
   if (enhetsUtvalg %in% c(0,2,4)) {		#Ikke sammenlikning
     medSml <- 0
-    ind$Hoved <- 1:dim(RegData)[1]	#Tidligere redusert datasettet for 2,4
+    N <- dim(RegData)[1]
+    ind$Hoved <- if (N>0) {1:N} else {NULL}	#Tidligere redusert datasettet for 2,4
     ind$Rest <- NULL
   } else {						#Skal gjøre sammenlikning 1,3,5
     medSml <- 1

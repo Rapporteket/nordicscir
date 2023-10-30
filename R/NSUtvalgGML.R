@@ -12,32 +12,32 @@
 #' @param traume - 'ja','nei', 'alle' standard: ikke valgt
 #' @param AIS - AISgrad ved innleggelse alle(''), velge en eller flere fra 1:5, mappes til: A,B,C,D,E
 #' @param nivaaUt - Nivå ved utreise, flervalgs 0:tetraplegi, 1:paraplegi, 2:C1-4, 3:C5-8, 9:ukjent
-#' @param enhetsUtvalg - 1:eget sykehus sml med resten, 2:eget sykehus, 0:hele landet (standard) 
+#' @param enhetsUtvalg - 1:eget sykehus sml med resten, 2:eget sykehus, 0:hele landet (standard)
 
 #' @export
 
 
-NSUtvalg <- function(RegData, datoFra='2010-01-01', datoTil=Sys.Date(), datoUt=0, 
-                     minald=0, maxald=110, erMann=99, traume='alle', AIS='', enhetsUtvalg=0, 
+NSUtvalgGML <- function(RegData, datoFra='2010-01-01', datoTil=Sys.Date(), datoUt=0,
+                     minald=0, maxald=110, erMann=99, traume='alle', AIS='', enhetsUtvalg=0,
                      nivaaUt=99, reshID=0, fargepalett='BlaaOff') {
-      
+
       datoUt <- as.numeric(datoUt)
      # Definer intersect-operator
       "%i%" <- intersect
       if (datoUt==1) {RegData$InnDato <- as.Date(RegData$DischgDt)}
-      
+
       #Enhetsutvalg:
-      #Når bare skal sammenlikne med sykehusgruppe eller region, eller ikke sammenlikne, 
+      #Når bare skal sammenlikne med sykehusgruppe eller region, eller ikke sammenlikne,
       #trengs ikke data for hele landet:
       reshID <- as.numeric(reshID)
       indEgen1 <- match(reshID, RegData$ReshId)
-      
+
       enhetsUtvalg <- ifelse(reshID==0 | is.na(indEgen1), 0, enhetsUtvalg )
-      
-      if (enhetsUtvalg == 2) {	
+
+      if (enhetsUtvalg == 2) {
 				RegData <- RegData[which(RegData$ReshId == reshID),]	#kun egen enhet
                            }
-      
+
 
 	Ninn <- dim(RegData)[1]
 
@@ -58,11 +58,11 @@ NSUtvalg <- function(RegData, datoFra='2010-01-01', datoTil=Sys.Date(), datoUt=0
                                                       '9' = which(RegData$TetraplegiUt == nivaaUt)
                                                       )
             } else {1:Ninn}
-      
+
       indMed <- indAld %i% indDato %i% indTr %i% indKj %i% indAIS %i% indNivaaUt
       RegData <- RegData[indMed,]
       N <- length(indMed)
-      
+
       utvalgTxt <- c(paste0(c('Innleggelsesperiode: ', 'Utskrivingsperiode: ')[datoUt+1],
                            if (N>0) {min(RegData$InnDato, na.rm=T)} else {datoFra},
                            ' til ', if (N>0) {max(RegData$InnDato, na.rm=T)} else {datoTil}),
@@ -70,10 +70,10 @@ NSUtvalg <- function(RegData, datoFra='2010-01-01', datoTil=Sys.Date(), datoUt=0
                                                            ' til og med ', if (N>0) {max(RegData$Alder, na.rm=T)} else {maxald}, ' år')},
                      if (traume %in% c('ja','nei')) {paste0('Traume:', traume)},
                      if (erMann %in% 0:1){paste0('Kjønn: ', c('kvinner', 'menn')[erMann+1])},
-                     #if (length(which(AIS %in% c(LETTERS[1:5],'U')))>0) {paste0('AIS, ut: ', paste0(AIS, collapse=','))} 
+                     #if (length(which(AIS %in% c(LETTERS[1:5],'U')))>0) {paste0('AIS, ut: ', paste0(AIS, collapse=','))}
                         #Får character fra Jasper
                      if (length(which(AIS %in% 1:5))>0) {paste0('AIS, ut: ', paste0(LETTERS[AIS], collapse=','))},
-                     if (nivaaUt %in% c(0:3,9)) {paste0('Nivå ved utreise: ', 
+                     if (nivaaUt %in% c(0:3,9)) {paste0('Nivå ved utreise: ',
                                                           (c('Paraplegi','Tetraplegi', 'C1-4', 'C5-8',
                                                              rep('',5), 'Ukjent'))[nivaaUt+1])}
                         )
@@ -82,25 +82,25 @@ NSUtvalg <- function(RegData, datoFra='2010-01-01', datoTil=Sys.Date(), datoUt=0
       #Enhetsutvalg:
       indEgen1 <- match(reshID, RegData$ReshId)
       if (enhetsUtvalg %in% c(1,2)) {	#Involverer egen enhet
-            hovedgrTxt <- as.character(RegData$ShNavn[indEgen1]) 
+            hovedgrTxt <- as.character(RegData$ShNavn[indEgen1])
 			} else {
                   hovedgrTxt <- 'Hele landet'}
-      
-      
+
+
       ind <- list(Hoved=0, Rest=0)
-      smltxt <- ''      
+      smltxt <- ''
       medSml <- 0
       ind$Hoved <- 1:dim(RegData)[1]	#Tidligere redusert datasettet for 2
       ind$Rest <- NULL
-      
+
       if (enhetsUtvalg ==1 ) {	#Egen mot resten
                 ind$Hoved <-which(as.numeric(RegData$ReshId)==reshID)
 				medSml <- 1
 				smltxt <- 'landet forøvrig'
 				ind$Rest <- which(as.numeric(RegData$ReshId) != reshID)
-					}								
-      
-      
+					}
+
+
       UtData <- list(RegData=RegData, utvalgTxt=utvalgTxt, hovedgrTxt=hovedgrTxt, smltxt=smltxt, medSml=medSml, ind=ind, fargepalett=fargepalett) #GronnHNpms624,
       return(invisible(UtData))
 }

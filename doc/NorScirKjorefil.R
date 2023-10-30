@@ -1,14 +1,64 @@
+nordicscir::kjor_NSapper('norscir')
+nordicscir::kjor_NSapper('nordicscir')
+
+library(nordicscir)
+#Livskvaliet Nfig:103, Ntab:113
+RegData <- NSPreprosesser(NSRegDataSQL(valgtVar = 'Tilf'))
+RegData <- NSUtvalgEnh(RegData = RegData, datoFra = '2022-01-01', datoTil = '2022-12-31')$RegData
+RegData$Diff <- difftime(RegData$DataClDt,  RegData$DischgDt)
+indBort1 <- which(RegData$Diff>0)
+
+indBort2 <- which(as.Date(RegData$DataClDtS) > as.Date(RegData$DischgDt))
+ind <- which(RegData$DataClDt <= RegData$DischgDt)
+DataFiltrertBort <- RegData[indBort1, ]
+
+RegData[which(RegData$Diff>0) ,c("AdmitDt", "AdmitRehDt", "DischgDt", 'DataClDtS', 'Diff')]
+
+
+#Sjekke data
+AlleTabRaa <- nordicscir::getRealData(register = 'norscir') #Kobler både til hovedskjema og til ktr-skjema
+AlleTab <- nordicscir::processAllData(AlleTabRaa, register = 'norscir') #preprosesserer bare datasett koblet til hovedskjema
+attach(AlleTab)
+View(AlleTab)
+register <- 'norscir'
+Hoved <- rapbase::loadRegData(registryName = register, dbType="mysql",
+                            query='Select * from MainFormDataContract ')
+Ktr <- rapbase::loadRegData(registryName = register, dbType="mysql",
+                            query='Select * from ControlFormDataContract ')
+Ktr <- Ktr[Ktr$ControlStatus==0, ]
+Livs <- rapbase::loadRegData(registryName = register, dbType="mysql",
+                            query= 'Select * from LifeQualityFormDataContract ')
+#mister 2 skjema etter kobl H og K
+Urin <- rapbase::loadRegData(registryName = register, dbType="mysql",
+                             query= 'Select * from UrinaryTractFunctionFormDataContract ')
+#mister 0
+Tarm <- rapbase::loadRegData(registryName = register, dbType="mysql",
+                             query= 'Select * from BowelFunctionFormDataContract ')
+#mister 0
+Funk <- rapbase::loadRegData(registryName = register, dbType="mysql",
+                             query= 'Select * from ActivityAndParticipationPerformanceFormDataContract ')
+#Mister 0
+Tilf <- rapbase::loadRegData(registryName = register, dbType="mysql",
+                             query= 'Select * from ActivityAndParticipationSatisfactionFormDataContract ')
+# Mister 0
+Eq5d <- rapbase::loadRegData(registryName = register, dbType="mysql",
+                             query= 'Select * from Eq5dlFormDataContract ')
+#Mister 0
+
+tabH <- tabSkjemaTilknyttet(Data=AlleTab, moderSkjema='Hoved')
+tabK <- tabSkjemaTilknyttet(Data=AlleTab, moderSkjema='Kont')
+
 
 #-----------------------Lage eksempeldatasett-----------------------
 rm(list=ls())
 # NorScirEksData <- read.table('E:/Registre/NorScir/data/NorScirEksempeldata.csv', header=T, sep=';')
 # #perm.sammen:
-# permA <- c('InjuryDt', 'AdmitDt', 'DischgDt', 'ANeuExmDt', 'FNeuExmDt', 'QolDt', 
+# permA <- c('InjuryDt', 'AdmitDt', 'DischgDt', 'ANeuExmDt', 'FNeuExmDt', 'QolDt',
 # 		'AdmitRehDt', 'CNeuExmDt', 'InjuryDateUnknown')
-# 
+#
 # permB <- c('ReshId', 'ShNavn')
 # N <- dim(NorScirEksData)[1]
-# 
+#
 # NorScirEksData[ ,permA] <- NorScirEksData[sample(N, N),permA]
 # NorScirEksData[ ,permB] <- NorScirEksData[sample(N, N),permB]
 # NorScirEksData$PasientId <- NorScirEksData$PasientId[sample(N,N)]
@@ -16,20 +66,17 @@ rm(list=ls())
 # NorScirEksData$AlderAar <- NorScirEksData$AlderAar[sample(N,N)]
 
 varBort <- c('ShNavn', 'RHF', 'HF', 'MunicipalNumber', 'Municipal', 'PostalCode', 'HealthUnitName', 'Hospital', 'HealthUnitId')
-HovedSkjema <- lageTulleData(HovedSkjema, varBort=varBort, antSh=3) 
-Livskval <- lageTulleData(Livskval, varBort=varBort, antSh=3) 
-Kontroll <- lageTulleData(Kontroll, varBort=varBort, antSh=3) 
-Urin <- lageTulleData(Urin, varBort=varBort, antSh=3) 
-Tarm <- lageTulleData(Tarm, varBort=varBort, antSh=3) 
-AktivFunksjon <- lageTulleData(AktivFunksjon, varBort=varBort, antSh=3) 
-AktivTilfredshet <- lageTulleData(AktivTilfredshet, varBort=varBort, antSh=3) 
+HovedSkjema <- lageTulleData(HovedSkjema, varBort=varBort, antSh=3)
+Livskval <- lageTulleData(Livskval, varBort=varBort, antSh=3)
+Kontroll <- lageTulleData(Kontroll, varBort=varBort, antSh=3)
+Urin <- lageTulleData(Urin, varBort=varBort, antSh=3)
+Tarm <- lageTulleData(Tarm, varBort=varBort, antSh=3)
+AktivFunksjon <- lageTulleData(AktivFunksjon, varBort=varBort, antSh=3)
+AktivTilfredshet <- lageTulleData(AktivTilfredshet, varBort=varBort, antSh=3)
 
 objekter <- c('HovedSkjema', 'Livskval', 'Kontroll', 'Urin', 'Tarm', 'AktivFunksjon', 'AktivTilfredshet')
 save(list = objekter, file='A:/NordicScir/NordicScirFIKTIVEdata.RData')
 
-
-
-#write.table(NorScirEksData, file='E:/Registre/NordicScir/data/NorScirEksData.csv', sep=';')
 
 #--------------------------------------SAMLERAPPORT-----------------------------------
 rm(list=ls())
@@ -53,8 +100,8 @@ knit2pdf('NSsamleRapp.Rnw')
 #texi2pdf('NSsamleRapp.tex')
 
 filtype <- c('.toc','.log', '.lof','.lot','.out', '.aux', '.vrb','.snm','.nav')
-removeFiles <- c(paste0('NSmndRapp',filtype), 
-                 paste0('NSsamleRapp', filtype), 
+removeFiles <- c(paste0('NSmndRapp',filtype),
+                 paste0('NSsamleRapp', filtype),
                  paste0('NSsamleRappLand', filtype))
 file.remove(file=removeFiles)
 
@@ -111,8 +158,8 @@ RegData <- NSPreprosesser(RegData)
 save(AktivTilfredshet, file='AktivTilfredshet.RData')
 
 # Jeg har koblet i to steg i R etter følgende skisse:
-#       NyTab = AktivFunksjon.SkjemaGUID <-> Satisfaction. HovedskjemaGUID  
-# Main.SkjemaGUID <-> NyTab. HovedskjemaGUID  
+#       NyTab = AktivFunksjon.SkjemaGUID <-> Satisfaction. HovedskjemaGUID
+# Main.SkjemaGUID <-> NyTab. HovedskjemaGUID
 
 # På Server
       HovedSkjema <- NSRegDataSQL() #datoFra = datoFra, datoTil = datoTil)
@@ -192,7 +239,7 @@ datoUt=0 #Velge ut-dato som filtrering
 outfile <- ''
 valgtVar <- 'Alder'
 
-NSFigGjsnTid(valgtVar='RegForsinkelse', datoFra='2019-01-01', datoTil='2020-12-31', #RegData, 
+NSFigGjsnTid(valgtVar='RegForsinkelse', datoFra='2019-01-01', datoTil='2020-12-31', #RegData,
                          tidsenhet='Mnd', minald=0, maxald=110, erMann=9, reshID=107627,
                          outfile='',enhetsUtvalg=1, valgtMaal='gjsn', hentData = 1,
                          AIS='', traume='alle', nivaaUt=99)
@@ -201,13 +248,13 @@ UtDataFraFig <- NSFigAndelerSh(preprosess = 1, hentData = 1, valgtVar = valgtVar
 
 #--------Utvikling av livskvalitet------------------
 #Forslag til figurvisning for utvikling av livskvalitet over tid, personnivå.
-Ei linje for hver pasient. x-akse: Antall dager/uker fra utskriving til målt livskvalitet
-y-akse Livskvalitetsverdi fra innleggelse og senere kontroller
+#Ei linje for hver pasient. x-akse: Antall dager/uker fra utskriving til målt livskvalitet
+#y-akse Livskvalitetsverdi fra innleggelse og senere kontroller
 
-Andel pasienter som har minst X% forbedring siden sist. 
-Andel pasienter som har minst Y kategorier (eks. 2 poeng) forbedring.
-Problem: Randeffekter: Lav livskvalitet i utgangspunktet - stort forbedringspotensiale,
-Andel som har over Z (eks 6) i livskvalitet ved ulike tidspunkt.
+#Andel pasienter som har minst X% forbedring siden sist.
+#Andel pasienter som har minst Y kategorier (eks. 2 poeng) forbedring.
+#Problem: Randeffekter: Lav livskvalitet i utgangspunktet - stort forbedringspotensiale,
+#Andel som har over Z (eks 6) i livskvalitet ved ulike tidspunkt.
 
 #Hovedskjema påkoblet livskvalitet
 RegDataRaa <- NSRegDataSQL(valgtVar = 'LivsXX')
@@ -230,13 +277,13 @@ LivskvalData$FormDate <- as.Date(LivskvalData$FormDate)
 
 pas <- table(LivskvalData$PatientInRegistryGuid)
 table(pas)
-  1   2   3   4   8 
+  1   2   3   4   8
 514 270  68  11   1
 LivskvalData[LivskvalData$PatientInRegistryGuid %in% names(which(pas>5)), c("FormDate", "QolDt")]
 
 #Grupper på PatientInRegistryGuid
 PasID <- names(pas[pas>=3]) #unique(LivskvalData$PatientInRegistryGuid)
-plot(unique(LivskvalData$FormDate), rep(5, length(unique(LivskvalData$FormDate))), 
+plot(unique(LivskvalData$FormDate), rep(5, length(unique(LivskvalData$FormDate))),
      ylim = c(0,10), col = 'white', xlab = 'Svardato', ylab = 'Livskvalitet',
      main = 'SatGenrl',
      type = 'l')
@@ -248,28 +295,28 @@ for (k in 1:length(PasID)) {
 
 # #Ser ut til å trenge fullstendige data
 # interaction.plot(x.factor = as.factor(LivskvalData$FormDate),
-#                  trace.factor = LivskvalData$PatientInRegistryGuid, 
-#                  response = LivskvalData$SatGenrl, 
+#                  trace.factor = LivskvalData$PatientInRegistryGuid,
+#                  response = LivskvalData$SatGenrl,
 #                  #lty = 'l',
 #                  xlab="kontrolltidspkt", ylab="Livskval", legend=F)
 # help("interaction.plot")
-# 
-# CorrMixed::Spaghetti.Plot(Dataset = LivskvalData, Outcome = SatGenrl, 
-#                           Time = as.Date(FormDate), Id = PatientInRegistryGuid, 
-#                           Add.Profiles=TRUE, Add.Mean=FALSE, 
+#
+# CorrMixed::Spaghetti.Plot(Dataset = LivskvalData, Outcome = SatGenrl,
+#                           Time = as.Date(FormDate), Id = PatientInRegistryGuid,
+#                           Add.Profiles=TRUE, Add.Mean=FALSE,
 #                Add.Median=FALSE) #, Col=8, Lwd.Me=3, xlim, ylim, ...)
 
 
 #------------------------------ Fordelinger --------------------------
 RegData <- HovedSkjema
 valgtVar <- 'UtTil'	#AAis, FAis, Alder, DagerRehab, DagerTilRehab, NivaaInn, Ntsci,
-					#OpphTot[HosptlDy], Permisjon[OutOfHosptlDy], UtTil[PlaceDis], 
-                             	#Pustehjelp[VentAssi], PPlaceDis, RegForsinkelse,  #SkadeArsak[Scietiol]  
-#UrinSkjema: 
+					#OpphTot[HosptlDy], Permisjon[OutOfHosptlDy], UtTil[PlaceDis],
+                             	#Pustehjelp[VentAssi], PPlaceDis, RegForsinkelse,  #SkadeArsak[Scietiol]
+#UrinSkjema:
 RegData <- KobleMedHoved(HovedSkjema,Urin)
-valgtVar <- 'UrinTomBlareHoved'   #'UrinInkontinens', 'UrinLegemidler','UrinLegemidlerHvilke', 'UrinKirInngr', 
+valgtVar <- 'UrinTomBlareHoved'   #'UrinInkontinens', 'UrinLegemidler','UrinLegemidlerHvilke', 'UrinKirInngr',
                                     #'UrinTomBlareHoved', 'UrinTomBlareTillegg'
-#TarmSkjema: 
+#TarmSkjema:
 RegData <- KobleMedHoved(HovedSkjema,Tarm)
 valgtVar <- 'TarmInkontinensFra2019'   #'TarmAvfHoved','TarmAvfTillegg', TarmAvfmiddel, TarmAvfmiddelHvilke
                               #TarmInkontinens, TarmKirInngrep, TarmKirInngrepHvilke
@@ -292,7 +339,7 @@ outfile <- '' #paste0(valgtVar, '.png')	#Navn angis av Jasper
 RegData <- TilfredsH
 preprosess <- 0
 
-UtDataFord <- NSFigAndeler(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
+UtDataFord <- NSFigAndeler(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil,
 		AIS=AIS, minald=minald, maxald=maxald, erMann=erMann, traume=traume, nivaaUt=nivaaUt,
 		reshID=reshID, enhetsUtvalg=0)    #, preprosess=1
 #Aktuelt å legge til en parameter som sier hvilket skjema variabelen tilhører. Dette for å koble
@@ -302,7 +349,7 @@ UtDataFord <- NSFigAndeler(RegData=RegData, outfile=outfile, valgtVar=valgtVar, 
 variable <- c('AAis', 'FAis', 'Alder', 'DagerRehab', 'DagerTilRehab', 'NivaaInn', 'NivaaUt',
               'Ntsci', 'OpphTot', 'UtTil', 'SkadeArsak')
 #Urin
-variable <- c('UrinInkontinens', 'UrinLegemidler','UrinLegemidlerHvilke', 'UrinKirInngr', 
+variable <- c('UrinInkontinens', 'UrinLegemidler','UrinLegemidlerHvilke', 'UrinKirInngr',
                   'UrinTomBlareHoved', 'UrinTomBlareTillegg')
 #Tarm
 variable <- c('TarmAvfHoved','TarmAvfTillegg', 'TarmAvfmiddel', 'TarmAvfmiddelHvilke',
@@ -316,26 +363,43 @@ variable  <- c('FunkDo', 'FunkKler', 'FunkMob', 'FunkSpis')
 #Tilf
 variable  <- c('TilfDo', 'TilfKler', 'TilfMob', 'TilfSpis')
 
-setwd("C:/Registerinfo og historie/NordicScir/Figurer/")
+#EQ5D
+variable <- c('Eq5dQ1Mobility',	'Eq5dQ2Selfcare',	'Eq5dQ3UsualActivities',
+              'Eq5dQ4PainDiscomfort',	'Eq5dQ5AnxietyDepression',	'Eq5dQ6HealthToday')
+
+RegData <- nordicscir::NSRegDataSQL(valgtVar = 'Eq5d')
 for (valgtVar in variable) {
 	outfile <- paste0(valgtVar, '.png')
-	NSFigAndeler(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
-	             AIS=AIS, minald=minald, maxald=maxald, erMann=erMann, traume=traume, nivaaUt=nivaaUt,
-	             reshID=reshID, enhetsUtvalg=1, hentData=0)
+	nordicscir::NSFigAndeler(RegData=RegData, outfile=outfile, valgtVar=valgtVar
+	             #,datoFra=datoFra, datoTil=datoTil,reshID=reshID, enhetsUtvalg=1, hentData=0,
+	             #AIS=AIS, minald=minald, maxald=maxald, erMann=erMann, traume=traume, nivaaUt=nivaaUt
+	             )
 }
+
+
+#Testing
+valgtVar <- 'TarmNBD' #'TarmKirInngrepHvilke'
+outfile <- paste0(valgtVar, '.png')
+RegData <- nordicscir::NSRegDataSQL(valgtVar = valgtVar, register = 'norscir')
+nordicscir::NSFigAndeler(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra='2020-01-01', #datoTil=datoTil,
+             datoUt = 1, reshID=107627, enhetsUtvalg=0, preprosess = 1)
+#107627-St.Olavs, 60000001 - Linkøping
+
+NSFigAndelerSh(RegData = RegData, valgtVar = valgtVar, datoFra='2022-01-01', datoUt = 1)
+nordicscir::kjor_NSapper('nordicscir')
 
 #------------------------------ Sentralmål --------------------------
 outfile <- '' #paste(valgtVar, '_Sh.png')	#Navn angis av Jasper
 valgtVar <- 'LivsGen'   #'Alder', 'DagerRehab', 'DagerTilRehab', 'OpphTot', 'LivsGen', 'LivsFys', 'LivsPsyk'
 datoFra <- '2017-07-01'
-Data <- NSFigGjsnGrVar(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
+Data <- NSFigGjsnGrVar(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil,
 		valgtMaal='med', AIS=AIS, minald=minald, maxald=maxald, erMann=erMann, traume=traume)
 
-variable <- c('Alder', 'DagerRehab', 'DagerTilRehab', 'OpphTot', 'RegForsinkelse') 
+variable <- c('Alder', 'DagerRehab', 'DagerTilRehab', 'OpphTot', 'RegForsinkelse')
 variable <- c('LivsGen', 'LivsFys', 'LivsPsyk') #Koble på Livskvalitetsdata
 for (valgtVar in variable) {
 	outfile <- paste0('M_',valgtVar, '.png')
-	NSFigGjsnGrVar(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
+	NSFigGjsnGrVar(RegData=RegData, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil,
 	               valgtMaal=valgtMaal, minald=minald, maxald=maxald, erMann=erMann, traume=traume,
 	               AIS=AIS, nivaaUt = nivaaUt)
 }
@@ -352,26 +416,48 @@ NSFigGjsnTid(RegData, valgtVar='Alder', datoFra='2020-01-01', datoTil='2020-12-3
 #------------------------------ Nevrologisk kategori --------------------------
 rm(list=ls())
 
-valgtVar <- 'NevrNivaaInn'	#M? velge... NevrNivaaInnUt, NevrNivaaInn, NevrNivaaUt, 
+valgtVar <- 'NevrNivaaInn'	#M? velge... NevrNivaaInnUt, NevrNivaaInn, NevrNivaaUt,
 outfile <- paste0(valgtVar, '.png') #navn p? fil figuren skrives ned til
 setwd("C:/ResultattjenesteGIT/nordicscir/")
 
-NSFigAndelStabel(RegData=NSdata, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, 
-		datoTil=datoTil, traume=traume, 
-		minald=minald, maxald=maxald, erMann=erMann, enhetsUtvalg=enhetsUtvalg, reshID=reshID)	#egenavd=egenavd 
-		
+NSFigAndelStabel(RegData=NSdata, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra,
+		datoTil=datoTil, traume=traume,
+		minald=minald, maxald=maxald, erMann=erMann, enhetsUtvalg=enhetsUtvalg, reshID=reshID)	#egenavd=egenavd
+
 for (valgtVar in c('NevrNivaaInnUt', 'NevrNivaaInn', 'NevrNivaaUt' )) {
 	outfile <- paste(valgtVar, '.pdf', sep='')
-FigAndelStabel(RegData, libkat=libkat, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil, 
+FigAndelStabel(RegData, libkat=libkat, outfile=outfile, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil,
 		minald=minald, maxald=maxald, erMann=erMann, traume=traume, reshID=reshID)	#, sml=sml)
 }
 
 I_ABC <- which(RegData$AAis %in% c('A','B','C'))
 
 
+#--------------To-veis stabelplott----------------------
+library(nordicscir)
+library(ggplot2)
+data$AAis <- factor(data$AAis, levels = 1:5, LETTERS[1:5])
+data$FAis <- as.factor(data$FAis)
+data <- RegData[ ,c("AAis", "FAis")]
+write.table(RegData[ ,c("AAis", "FAis")], file = 'Ais.csv', row.names = F, fileEncoding = 'UTF-8', sep=';')
 
+RegData <- NSPreprosesser(NSRegDataSQL())
+RegData <- RegData[which(RegData$FAis %in% 1:5 &
+                           RegData$AAis %in% 1:5), ]
+RegData$VariabelGr <- factor(RegData$AAis, levels = 1:5, labels = LETTERS[1:5])
+RegData$VariabelGrPost <- factor(RegData$FAis, levels = 1:5, labels = LETTERS[1:5])
+c('red', 'orange', 'yellow', 'blue', 'green')
 
+ggplot(data = RegData, aes(x = VariabelGr, fill = VariabelGrPost)) +
+  geom_bar()
 
+#col(c('red', 'orange', 'yellow', 'blue', 'green')) +
+
+RegData <- NSPreprosesser(NSRegDataSQL())
+test <- NSFigStabelGr(RegData = 0, hentData = 1, valgtVar='KontFAis')
+                          # ,hentData=0, register='norscir', preprosess=1,
+                          # datoFra='2010-01-01', datoTil='2050-01-01', datoUt=0, AIS='',
+                          # minald=0, maxald=130, erMann=99, traume='alle',nivaaUt=99, ...)
 
 #-----------------------------Nevrologiske kategorier----------------------------
 #Motoriske variable:
@@ -405,7 +491,7 @@ c('FAis','FSensLvlAreaL', 	'FSensLvlLC', 	'FSensLvlLT', 	'FSensLvlLL', 	'FSensLv
 #Ut, Sensorisk, H
 c('FAis','FSensLvlAreaR', 	'FSensLvlRC', 	'FSensLvlRT', 	'FSensLvlRL', 	'FSensLvlRS')
 
-#Inn, 
+#Inn,
 I_ABC <- which(RegData$AAis %in% c('A','B','C'))
 I_D <- which(RegData$AAis == 'D')
 #Motorisk, Venstre

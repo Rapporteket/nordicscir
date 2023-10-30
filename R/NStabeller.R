@@ -16,7 +16,8 @@ tabBelegg <- function(RegData, tidsenhet='Mnd', datoTil=Sys.Date(), enhetsUtvalg
                         Mnd = lubridate::floor_date(as.Date(datoTil)%m-% months(12, abbreviate = T), 'month'), #as.Date(paste0(as.numeric(substr(datoTil,1,4))-1, substr(datoTil,5,8), '01'), tz='UTC')
                         Aar = paste0(lubridate::year(as.Date(datoTil))-4, '-01-01')
       )
-      RegData <- NSUtvalg(RegData=RegData, datoFra=datoFra, datoTil = datoTil,
+      #sep23: NSUtvalg -> NSUtvalgEnh
+      RegData <- NSUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil = datoTil,
                              enhetsUtvalg = enhetsUtvalg, reshID = reshID)$RegData
       RegData <- SorterOgNavngiTidsEnhet(RegData, tidsenhet=tidsenhet)$RegData
       tabBeleggAnt <- rbind('Antall pasienter' = tapply(RegData$PasientID, RegData$TidsEnhet,
@@ -38,12 +39,12 @@ tabBelegg <- function(RegData, tidsenhet='Mnd', datoTil=Sys.Date(), enhetsUtvalg
 #' @param Data Liste med alle datatabeller/skjema
 #' @param datoFra fra og med dato
 #' @param datoTil til og med dato
-#' @inheritParams NSUtvalg
+#' @inheritParams NSUtvalgEnh
 #' @export
 tabLiggetider <- function(RegData, datoFra='2018-01-01', datoTil=Sys.Date(), enhetsUtvalg=0, reshID=0,
                           traume='') {
-
-      RegData <- NSUtvalg(RegData=RegData, datoFra=datoFra, datoTil = datoTil, traume=traume,
+      #sep23: NSUtvalg -> NSUtvalgEnh
+      RegData <- NSUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil = datoTil, traume=traume,
                           enhetsUtvalg = enhetsUtvalg, reshID = reshID)$RegData
 
       Liggetider <- rbind('Liggetid, totalt' = summary(RegData$OpphTot)[c(1,3,4,6)],
@@ -59,13 +60,14 @@ tabLiggetider <- function(RegData, datoFra='2018-01-01', datoTil=Sys.Date(), enh
 #' -tabAntOpphSh12mnd: Antall opphold per måned og enhet siste 12 måneder fram til datoTil.
 #' -tabAntOpphSh5Aar:Antall opphold per år og enhet siste 5 år (inkl. inneværende år) fram til datoTil.
 #' RegData må inneholde Aar.
-#' @inheritParams NSUtvalg
+#' @inheritParams NSUtvalgEnh
 #' @export
 tabAntOpphShMnd <- function(RegData, datoTil=Sys.Date(), traume='', antMnd=12){
       #RegData må inneholde DateAdmittedIntensive, DateDischargedIntensive
       datoFra <- lubridate::floor_date(as.Date(datoTil)%m-% months(antMnd, abbreviate = T), 'month') #as.Date(paste0(as.numeric(substr(datoTil,1,4))-1, substr(datoTil,5,8), '01'), tz='UTC')
       aggVar <-  c('ShNavn', 'InnDato')
-      RegData <- NSUtvalg(RegData = RegData, traume=traume)$RegData
+      #sep23: NSUtvalg -> NSUtvalgEnh
+      RegData <- NSUtvalgEnh(RegData = RegData, traume=traume)$RegData
       RegDataDum <- RegData[RegData$InnDato <= as.Date(datoTil, tz='UTC')
                               & RegData$InnDato > as.Date(datoFra, tz='UTC'), aggVar]
       RegDataDum$Maaned1 <- lubridate::floor_date(RegDataDum$InnDato, 'month')
@@ -79,11 +81,12 @@ tabAntOpphShMnd <- function(RegData, datoTil=Sys.Date(), traume='', antMnd=12){
 }
 
 #' Antall opphold siste 5 år
-#' @inheritParams NSUtvalg
+#' @inheritParams NSUtvalgEnh
 #' @export
 tabAntOpphSh5Aar <- function(RegData, datoTil=Sys.Date(), traume=''){
       AarNaa <- as.numeric(format.Date(datoTil, "%Y"))
-      RegData <- NSUtvalg(RegData = RegData, traume=traume)$RegData
+      #sep23: NSUtvalg -> NSUtvalgEnh
+      RegData <- NSUtvalgEnh(RegData = RegData, traume=traume)$RegData
       tabAvdAarN <- addmargins(table(RegData[which(RegData$Aar %in% (AarNaa-4):AarNaa), c('ShNavn','Aar')]))
       rownames(tabAvdAarN)[dim(tabAvdAarN)[1] ]<- 'TOTALT, alle enheter:'
       colnames(tabAvdAarN)[dim(tabAvdAarN)[2] ]<- 'Siste 5 år'
@@ -114,52 +117,61 @@ tabAntOpphPasSh5Aar <- function(RegData, gr='opph', datoTil){
 
 #' Tabell: Antall og andel moder"skjema som har ulike typer registreringsskjema
 #' @param moderSkjema Hvilket skjema man skal knytte oppfølgingene til
-#' @inheritParams NSUtvalg
+#' 'Hoved' - hovedskjema, 'Kont' - Kontrollskjema
+#' @inheritParams NSUtvalgEnh
 #' @export
 #'
 tabSkjemaTilknyttet <- function(Data=AlleTab, moderSkjema='Hoved',
+                                datoUt=0,
                                 datoFra='2017-01-01', datoTil=Sys.Date()){
-      #Denne skal fungere både for HovedSkjema og kontrollskjema. I AlleTab er
-      ModerSkjema <- switch(moderSkjema,
-                            'Hoved' = Data$HovedSkjema,
-                            'Ktr' = Data$KontrollH)
-      if (moderSkjema == 'Ktr') {
-         ModerSkjema <- ModerSkjema[!is.na(ModerSkjema$CNum), ]
-         indDato <- which(as.Date(ModerSkjema$CNeuExmDt) >= datoFra &
-                          as.Date(ModerSkjema$CNeuExmDt) <= datoTil)
-         ModerSkjema <- ModerSkjema[indDato, ]
-         } else {
-            ModerSkjema <- NSUtvalg(RegData=ModerSkjema, datoFra = datoFra,
-                              datoTil = datoTil)$RegData}
+  #Denne skal fungere både for HovedSkjema og kontrollskjema. I AlleTab er
+  #attach(Data)
+  ModerSkjema <- switch(moderSkjema,
+                        'Hoved' = Data$HovedSkjema,
+                        'Kont' = Data$KontrollH)
 
-      RaaTab <- data.frame(Sykehus = ModerSkjema$ShNavn,
-                           #Aar = as.POSIXlt(Hskjema$AdmitDt, format="%Y-%m-%d")$year +1900,
-                           Livskvalitet = ModerSkjema$SkjemaGUID %in% Data$LivskvalH$HovedskjemaGUID,
-                           #Kontroll = HovedSkjema$SkjemaGUID %in% Kontroll$HovedskjemaGUID,
-                           Urin = ModerSkjema$SkjemaGUID %in% Data$UrinH$HovedskjemaGUID,
-                           Tarm = ModerSkjema$SkjemaGUID %in% Data$TarmH$HovedskjemaGUID
-                           )
-      if ('AktivFunksjonH' %in% names(Data)) {  #exists('Data$AktivFunksjonH')
-        RaaTab <- cbind(RaaTab,
-                        Funksjon = ModerSkjema$SkjemaGUID %in% Data$AktivFunksjonH$HovedskjemaGUID,
-                        Tilfredshet = ModerSkjema$SkjemaGUID %in%
-                          Data$AktivFunksjonH$HovedskjemaGUID[Data$AktivFunksjonH$SkjemaGUID %in%
-                                              Data$AktivTilfredshetH$HovedskjemaGUID]
-                        )
-        }
+  if (moderSkjema == 'Hoved'){
+    ModerSkjema <- NSUtvalgEnh(RegData=ModerSkjema, datoUt=datoUt,
+                               datoFra = datoFra, datoTil = datoTil)$RegData
 
-      AntReg <- table(ModerSkjema$ShNavn)
-      AntOppf <- cbind(Hoved = AntReg,
-                       apply(RaaTab[ ,-1], MARGIN=2,
-                             FUN=function(x) tapply(x,INDEX=RaaTab$Sykehus, sum))
-                       )
-      addmargins(AntOppf, margin=1, FUN = list('Hele landet' = sum) )
-      AndelOppf <- (100*AntOppf / as.vector(AntReg))[,-1]
-      if (moderSkjema == 'Ktr') { colnames(AntOppf)[1] <- 'Kontroll'}
+    RaaTab <- data.frame(Sykehus = ModerSkjema$ShNavn,
+                         Livskvalitet = ModerSkjema$SkjemaGUIDHoved %in% Data$LivskvalH$HovedskjemaGUID,
+                         Urin = ModerSkjema$SkjemaGUIDHoved %in% Data$UrinH$HovedskjemaGUID,
+                         Tarm = ModerSkjema$SkjemaGUIDHoved %in% Data$TarmH$HovedskjemaGUID
+    )
+    if ('AktivFunksjonH' %in% names(Data)) {
+      RaaTab <- cbind(RaaTab,
+                      Funksjon = ModerSkjema$SkjemaGUIDHoved %in% Data$AktivFunksjonH$HovedskjemaGUID,
+                      Tilfredshet = ModerSkjema$SkjemaGUIDHoved %in% Data$AktivTilfredshetH$SkjemaGUID #(SkjemaGUID er fra hovedskjema)
+      )
+    }
+  }
 
-      tab = list(Antall = AntOppf,
-                 Andeler = AndelOppf)
-      return(tab)
+  if (moderSkjema == 'Kont') {
+    indDato <- which(as.Date(ModerSkjema$CNeuExmDt) >= datoFra &
+                       as.Date(ModerSkjema$CNeuExmDt) <= datoTil)
+    ModerSkjema <- ModerSkjema[indDato, ]
+    RaaTab <- data.frame(Sykehus = ModerSkjema$ShNavn,
+                         Livskvalitet = ModerSkjema$SkjemaGUIDKont %in% Data$LivskvalK$HovedskjemaGUID,
+                         Urin = ModerSkjema$SkjemaGUIDKont %in% Data$UrinK$HovedskjemaGUID,
+                         Tarm = ModerSkjema$SkjemaGUIDKont %in% Data$TarmK$HovedskjemaGUID,
+                          Funksjon = ModerSkjema$SkjemaGUIDKont %in% Data$AktivFunksjonK$HovedskjemaGUID,
+                          Tilfredshet = ModerSkjema$SkjemaGUIDKont %in% Data$AktivTilfredshetK$SkjemaGUID
+      )
+    }
+
+  AntReg <- table(ModerSkjema$ShNavn)
+  AntOppf <- cbind(Hoved = AntReg,
+                   apply(RaaTab[ ,-1], MARGIN=2,
+                         FUN=function(x) tapply(x,INDEX=RaaTab$Sykehus, sum))
+  )
+  addmargins(AntOppf, margin=1, FUN = list('Totalt' = sum) )
+  AndelOppf <- (100*AntOppf / as.vector(AntReg))[,-1]
+  if (moderSkjema == 'Kont') { colnames(AntOppf)[1] <- 'Kontroll'}
+
+  tab = list(Antall = AntOppf,
+             Andeler = AndelOppf)
+  return(tab)
 }
 
 
@@ -169,13 +181,14 @@ tabAntSkjema <- function(Data=AlleTab, datoFra='2017-01-01', datoTil=Sys.Date())
       # sum(Data$HovedSkjema$SkjemaGUID %in% Data$LivskvalitetH$HovedskjemaGUID)
       # sum(Data$LivskvalitetH$HovedskjemaGUID %in% Data$HovedSkjema$SkjemaGUID)
       # sum(table(Data$LivskvalitetH$ShNavn))
-      AntSkjema <- rbind(Hovedskjema = table(NSUtvalg(Data$HovedSkjema, datoFra = datoFra, datoTil = datoTil)$RegData$ShNavn),
+  # sep23: NSUtvalg -> NSUtvalgEnh
+      AntSkjema <- rbind(Hovedskjema = table(NSUtvalgEnh(Data$HovedSkjema, datoFra = datoFra, datoTil = datoTil)$RegData$ShNavn),
             Livskvalitet = table(NSUtvalg(Data$LivskvalitetH, datoFra = datoFra, datoTil = datoTil)$RegData$ShNavn),
                       #Kontroll = table(Data$LivskvalitetH$ShNavn),
-                      Urin = table(NSUtvalg(Data$UrinH, datoFra = datoFra, datoTil = datoTil)$RegData$ShNavn),
-                      Tarm = table(NSUtvalg(Data$TarmH, datoFra = datoFra, datoTil = datoTil)$RegData$ShNavn),
-                      Funksjon = table(NSUtvalg(Data$FunksjonH, datoFra = datoFra, datoTil = datoTil)$RegData$ShNavn),
-                      Tilfredshet = table(NSUtvalg(Data$TilfredsH, datoFra = datoFra, datoTil = datoTil)$RegData$ShNavn)
+                      Urin = table(NSUtvalgEnh(Data$UrinH, datoFra = datoFra, datoTil = datoTil)$RegData$ShNavn),
+                      Tarm = table(NSUtvalgEnh(Data$TarmH, datoFra = datoFra, datoTil = datoTil)$RegData$ShNavn),
+                      Funksjon = table(NSUtvalgEnh(Data$FunksjonH, datoFra = datoFra, datoTil = datoTil)$RegData$ShNavn),
+                      Tilfredshet = table(NSUtvalgEnh(Data$TilfredsH, datoFra = datoFra, datoTil = datoTil)$RegData$ShNavn)
       )
       AntSkjema <- addmargins(AntSkjema, margin=2, FUN=list('Hele landet' = sum))
       return(AntSkjema)
@@ -237,11 +250,11 @@ lagTabavFigGjsnGrVar <- function(UtDataFraFig){
 
 #' Nevrologisk klassifikasjon
 #' @param HovedSkjema- hovedskjema
-#' @inheritParams NSUtvalg
+#' @inheritParams NSUtvalgEnh
 #' @export
 lagTabNevrKlass <- function(HovedSkjema, datoFra='2018-01-01', datoTil=Sys.Date(), datoUt=0){
 
-      Utvalg <- NSUtvalg(HovedSkjema, datoFra = datoFra, datoTil = datoTil, datoUt = datoUt)
+      Utvalg <- NSUtvalgEnh(HovedSkjema, datoFra = datoFra, datoTil = datoTil, datoUt = datoUt)
       HovedSkjema <- Utvalg$RegData
       HovedSkjema$ShNavn <- as.factor(HovedSkjema$ShNavn)
       Ant <- addmargins(table(HovedSkjema$ShNavn))

@@ -14,7 +14,7 @@
 #'    }
 #'
 #' @inheritParams NSFigAndeler
-#' @inheritParams NSUtvalg
+#' @inheritParams NSUtvalgEnh
 #' @param valgtMaal - 'med' = median. Alt annet gir gjennomsnitt
 #'
 #' @export
@@ -42,8 +42,8 @@ NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='gjsn', grVar='ShNavn',
                    gjsn = 'Gjennomsnittlig ')
       tittel <- paste0(t1, NSVarSpes$tittel)
 
-      #------- Gjøre utvalg
-      Utvalg <- NSUtvalg(RegData=RegData, datoFra=datoFra, datoTil=datoTil, datoUt = datoUt,
+      #------- Gjøre utvalg sep23: NSUtvalg -> NSUtvalgEnh
+      Utvalg <- NSUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil=datoTil, datoUt = datoUt,
                          minald=minald, maxald=maxald,
                          erMann=erMann, traume=traume, AIS=AIS, nivaaUt=nivaaUt)
       RegData <- Utvalg$RegData

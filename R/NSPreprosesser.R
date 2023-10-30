@@ -41,34 +41,29 @@ NSPreprosesser <- function(RegData)
       names(RegData)[which(names(RegData) == 'PatientInRegistryGuid')] <- 'PasientID'
       names(RegData)[which(names(RegData) == 'HealthUnitShortName')] <- 'ShNavn'
       names(RegData)[which(names(RegData) == 'PatientAge')] <- 'Alder'
-      names(RegData)[which(names(RegData) == 'PlaceDis')] <- 'UtTil'
+      #names(RegData)[which(names(RegData) == 'PlaceDis')] <- 'UtTil'
       names(RegData)[which(names(RegData) == 'Scietiol')] <- 'SkadeArsak'
       names(RegData)[which(names(RegData) == 'VentAssi')] <- 'Pustehjelp'
       names(RegData)[which(names(RegData) == 'HosptlDy')] <- 'OpphTot'  #Sjekk forskjell HosptlDy og ..2
       names(RegData)[which(names(RegData) == 'RehabDy')] <- 'DagerRehab'
       names(RegData)[which(names(RegData) == 'BeforeRehDy')] <- 'DagerTilRehab'
-      #names(RegData)[which(names(RegData) == 'OutOfHosptlDy')] <- 'Permisjon'
-      #RegData$Permisjon <- with(RegData, OutOfHosptlDy+OutOfHosptlDy2+OutOfRehabDy)
 
       #Riktig format på datovariable:
       RegData$InnDato <- as.Date(RegData$AdmitDt, tz= 'UTC', format="%Y-%m-%d")
-      RegData$AdmitDt <- strptime(RegData$AdmitDt, format="%Y-%m-%d")
+      RegData$AdmitDt <-  as.Date(RegData$AdmitDt) #strptime(, format="%Y-%m-%d")
       RegData$UtDato <- as.Date(RegData$DischgDt, tz= 'UTC', format="%Y-%m-%d")
-      RegData$DischgDt <- strptime(RegData$DischgDt, format="%Y-%m-%d")
+      RegData$DischgDt <- as.Date(RegData$DischgDt) #strptime(, format="%Y-%m-%d")
 
       #Kun ferdigstilte registreringer:
       # Rapporteket får kun levert ferdigstilte registreringer fra MRS/NHN.Men det kan dukke opp ufullstendige registreringer.
 
-      # Riktig format
-      #RegData$ShNavn <- as.factor(RegData$ShNavn)
-
 
       # Nye variabler:
-      RegData$MndNum <- RegData$AdmitDt$mon +1
+      RegData$MndNum <- lubridate::month(RegData$AdmitDt)
       RegData$MndAar <- format(RegData$AdmitDt, '%b%y')
       RegData$Kvartal <- ceiling(RegData$MndNum/3)
       RegData$Halvaar <- ceiling(RegData$MndNum/6)
-      RegData$Aar <- 1900 + RegData$AdmitDt$year #strptime(RegData$Innleggelsestidspunkt, format="%Y")$year
+      RegData$Aar <- lubridate::year(RegData$AdmitDt) #strptime(RegData$Innleggelsestidspunkt, format="%Y")$year
       RegData$LandKode <- substr(RegData$ReshId, 1, 1)
       RegData$Land <- as.character(factor(RegData$LandKode, #1-N, 3-Fin, 4-Dan, 5-Is, 6-Sverige,
                              levels = c(1,3,4,5,6),

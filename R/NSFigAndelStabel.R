@@ -11,8 +11,8 @@
 #' Inn / Ut (Velge: bare eget/hele landet)
 #' Eget / resten av landet (Velge: Inn eller Ut)
 #'
-#' @inheritParams NSFigAndeler 
-#' @inheritParams NSUtvalg
+#' @inheritParams NSFigAndeler
+#' @inheritParams NSUtvalgEnh
 #' @param enhetsUtvalg - 1:eget sykehus, 0:hele landet (standard) Kun for valgtVar=='NevrNivaaInnUt'
 #' @export
 
@@ -31,7 +31,7 @@ NSFigAndelStabel <- function(RegData, outfile='', valgtVar,
       if (preprosess == 1) {
             RegData <- NSPreprosesser(RegData)
       }
-      
+
   #------------Gjøre utvalg-------------------------
   #Definerer funksjonsspesifikke variable................
 
@@ -42,7 +42,8 @@ NSFigAndelStabel <- function(RegData, outfile='', valgtVar,
   }  #Vil bare ha pasienter som har reg. både inn og ut.
 
   #Gjør utvalg (Manglende data i variablene tas høyde for i variabeldef.)
-  Utvalg <- NSUtvalg(RegData=RegData, datoFra=datoFra, datoTil=datoTil,
+  # sep.23: NSUtvalg -> NSUtvalgEnh
+  Utvalg <- NSUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil=datoTil,
                         minald=minald, maxald=maxald, erMann=erMann,
                         traume=traume, AIS='')
 

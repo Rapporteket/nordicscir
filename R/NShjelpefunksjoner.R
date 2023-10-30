@@ -25,21 +25,24 @@ kjor_NSapper <- function(register = 'norscir') {
 #' @export
 SorterOgNavngiTidsEnhet <- function(RegData, tidsenhet='Aar', tab=0, datoUt=0) {
 
-  #Basere på utskrivingsdato. Hvis datoUt==1, er innholdet i InnDato endret til å være utskrivingsdato
+  RegData$RapDato <- as.Date(RegData[ ,c('InnDato', 'DischgDt')[datoUt+1]])
+
   if (datoUt == 1) {
     RegData$DischgDt <- strptime(RegData$DischgDt, format="%Y-%m-%d")
   RegData$MndNum <- RegData$DischgDt$mon +1
-  head(format(RegData$DischgDt, '%b'))
+  #head(format(RegData$DischgDt, '%b'))
   RegData$MndAar <- format(RegData$DischgDt, '%b%y')
   RegData$Kvartal <- ceiling(RegData$MndNum/3)
   RegData$Halvaar <- ceiling(RegData$MndNum/6)
-  RegData$Aar <- 1900 + RegData$DischgDt$year #strptime(RegData$Innleggelsestidspunkt, format="%Y")$year
+  RegData$Aar <- lubridate::year(RegData$DischgDt) #strptime(RegData$Innleggelsestidspunkt, format="%Y")$year
   }
+
+
   #Lager sorteringsvariabel for tidsenhet:
   RegData$TidsEnhetSort <- switch(tidsenhet,
                                   Aar = RegData$Aar-min(RegData$Aar)+1,
                                   Mnd = RegData$MndNum-min(RegData$MndNum[RegData$Aar==min(RegData$Aar)])+1
-                                  +(RegData$Aar-min(RegData$Aar))*12, #format(RegData$InnDato, '%b%y'), #
+                                  +(RegData$Aar-min(RegData$Aar))*12,
                                   Kvartal = RegData$Kvartal-min(RegData$Kvartal[RegData$Aar==min(RegData$Aar)])+1+
                                     (RegData$Aar-min(RegData$Aar))*4,
                                   Halvaar = RegData$Halvaar-min(RegData$Halvaar[RegData$Aar==min(RegData$Aar)])+1+
@@ -47,19 +50,16 @@ SorterOgNavngiTidsEnhet <- function(RegData, tidsenhet='Aar', tab=0, datoUt=0) {
   )
 
       tidtxt <- switch(tidsenhet,
-                       # Mnd = format(seq.Date(as.Date(lubridate::floor_date(min(RegData$InnDato), 'month')), max(RegData$InnDato),
-                       #                       by = "month"), format = "%b%y"),
-                       Mnd = format.Date(seq(from=lubridate::floor_date(as.Date(min(as.Date(RegData$InnDato), na.rm = T)), 'month'),
-                                             to=max(as.Date(RegData$InnDato), na.rm = T), by='month'), format = '%B%y'), #Hele måneden
-                       Kvartal = lubridate::quarter(seq.Date(as.Date(lubridate::floor_date(min(RegData$InnDato), 'month')),
-                                                             max(RegData$InnDato),
+                       Mnd = format.Date(seq(from=lubridate::floor_date(as.Date(min(as.Date(RegData$RapDato), na.rm = T)), 'month'),
+                                             to=max(as.Date(RegData$RapDato), na.rm = T), by='month'), format = '%B%y'), #Hele måneden
+                       Kvartal = lubridate::quarter(seq.Date(as.Date(lubridate::floor_date(min(RegData$RapDato), 'month')),
+                                                             max(RegData$RapDato),
                                                  by = "quarter"), with_year = T),
                        #NGER: Kvartal = paste(substr(RegData$Aar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)], 3,4),
                        #                sprintf('%01.0f', RegData$Kvartal[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)]), sep='-'),
-                       #Halvaar = lubridate::semester(RegData$InnDato, with_year = T),
                        Halvaar = paste(substr(RegData$Aar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)], 3,4),
                                        sprintf('%01.0f', RegData$Halvaar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)]), sep='-'),
-                       Aar = min(RegData$Aar):max(RegData$Aar) #lubridate::year(min(RegData$InnDato)):year(max(RegData$InnDato))
+                       Aar = min(RegData$Aar):max(RegData$Aar)
                        #NGER: Aar = as.character(RegData$Aar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)]))
       )
 
@@ -68,10 +68,7 @@ SorterOgNavngiTidsEnhet <- function(RegData, tidsenhet='Aar', tab=0, datoUt=0) {
 
       RegData$TidsEnhet <- factor(RegData$TidsEnhetSort, ordered = TRUE,
                                   levels = min(RegData$TidsEnhetSort):max(RegData$TidsEnhetSort),
-                                  labels=tidtxt)
-      #RegData$TidsEnhetSort <- factor(RegData$TidsEnhetSort, levels=1:max(RegData$TidsEnhetSort))
-      RegData$TidsEnhet <- factor(RegData$TidsEnhetSort, levels=1:max(RegData$TidsEnhetSort), labels=tidtxt)
-
+                                  labels=tidtxt[1:max(RegData$TidsEnhetSort)])
       UtData <- list('RegData'=RegData, 'tidtxt'=tidtxt)
       return(UtData)
 }
@@ -127,11 +124,12 @@ KobleMedHoved <- function(HovedSkjema, Skjema2, alleHovedskjema=F, alleSkjema2=F
 #' @export
 finnRegData <- function(valgtVar='Alder', Data = AlleTab){
       valgtSkjema <- substr(valgtVar,1,4)
-      if (valgtSkjema %in% c('Livs', 'Urin', 'Tarm', 'Tilf', 'Funk', 'Kont', 'Akti')) {
+      if (valgtSkjema %in% c('Livs', 'Urin', 'Tarm', 'Tilf', 'Eq5d', 'Funk', 'Kont', 'Akti')) {
             RegData <- switch(valgtSkjema,
                               'Livs' = Data$LivskvalH,
                               'Tarm' = Data$TarmH,
                               'Urin' = Data$UrinH,
+                              'Eq5d' = Data$EQ5DH,
                               'Kont' = Data$KontrollH,
                               'Funk' = Data$AktivFunksjonH,
                               'Tilf' = Data$AktivTilfredshetH #,'Akti' = Data$AktivitetH

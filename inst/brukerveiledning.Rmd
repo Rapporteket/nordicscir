@@ -1,7 +1,7 @@
 ---
 params:
   isDataOk: true
-title: "Brukerveiledning for NordicScir"
+title: "Brukerveiledning for NorSCIR"
 author: "nordicscir"
 date: '`r format(Sys.time(), "%d. %B %Y")`'
 ---

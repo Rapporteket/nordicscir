@@ -1,14 +1,14 @@
 #' Søylediagram som viser flere kvalitetsindikatorer
 #'
 #' Funksjonen genererer en figur med ei gruppe kvalitetsindikatorer.
-#' 
+#'
 #' Argumentet \emph{valgtVar} kan bare være "kvalInd".
 #'
-#' @inheritParams NSUtvalg
+#' @inheritParams NSUtvalgEnh
 #' @param NSdata - Alle nødvendige variable fra hvert skjema.
 #' @param outfile - navn på fil figuren skrives ned til.
 #' @param reshID - avdelingsid for egen avdeling, standard: 0-hele landet.
-#' @param valgtVar - variabelen det skal genereres resultat for 
+#' @param valgtVar - variabelen det skal genereres resultat for
 #' @param preprosess Preprosesser data
 #'                 0: Nei
 #'                 1: Ja (Standard)
@@ -50,8 +50,8 @@ NSFigKvalInd <- function(NSdata, outfile='', valgtVar,
   '%i%' <- intersect
 
   #--------------- Gjøre utvlag og Tilrettelegge variable ------------------------------
-  
-  Utvalg <- NSUtvalg(RegData=HovedSkjema, datoFra=datoFra, datoTil=datoTil, minald=minald, maxald=maxald,
+
+  Utvalg <- NSUtvalgEnh(RegData=HovedSkjema, datoFra=datoFra, datoTil=datoTil, minald=minald, maxald=maxald,
                      erMann=erMann, traume=traume, AIS=AIS, nivaaUt=nivaaUt,
                      enhetsUtvalg = enhetsUtvalg, reshID = reshID)
   RegData <- Utvalg$RegData
@@ -59,13 +59,13 @@ NSFigKvalInd <- function(NSdata, outfile='', valgtVar,
   medSml <- Utvalg$medSml
   #smltxt <- Utvalg$smltxt
   #hovedgrTxt <- Utvalg$hovedgrTxt
-  
-   # KImaal <- 
+
+   # KImaal <-
 
   finnRegData(valgtVar='', Data = AlleTab)
 
     tittel <- 'Kvalitetsindikatorer'
-    
+
     grNavn <- c('Nevrologisk klassifikasjon v/innkomst og utreise', #Grønn>90%, Gul 75-90
                'Kartlagt og vurdert blærefunksjon', #Grønn>90%, Gul 80-90
                'Blæretømmingsregime, paraplegi', ##Grønn>75%, Gul 50-75
@@ -82,23 +82,23 @@ NSFigKvalInd <- function(NSdata, outfile='', valgtVar,
           HovedSkjema$NevrKlassIU[which((HovedSkjema$AAis %in% 1:5) & (HovedSkjema$FAis %in% 1:5))] <- 1
  #Kartlagt og vurdert blærefunksjon
           UrinH$BlaFunk <- 'tom'
- #Andel personer med paraplegi, som ved utreise fra ryggmargsskadeavdeling har 
+ #Andel personer med paraplegi, som ved utreise fra ryggmargsskadeavdeling har
 #normalisert blæretømming (EmbladM1=TRUE) eller intermitterende kateterisering (EmbladM7=TRUE) som hovedmetode.
                 # >= as.Date('2015-01-01')
-                
-  #SKrevet ut til sykehjem              
-                
-          
+
+  #SKrevet ut til sykehjem
+
+
     # variable <- c('PostOpKomplReop', 'LapKomplikasjoner', 'HysKomplikasjoner',
     #               'LapKonvertert', 'HysKonvertert', 'Opf0') #, 'Innen6uker')
-    # 
+    #
     # #Reoperasjon som følge av komplikasjon
     # #Kode 0: Nei, 1:Ja
     # RegData$PostOpKomplReop <- NA
     # RegData$PostOpKomplReop[which(RegData$Opf0Komplikasjoner %in% 0:1)
     #                         %i% which(RegData$Opf0Status == 1)] <- 0
     # RegData$PostOpKomplReop[which(RegData$Opf0Reoperasjon == 1)] <- 1
-    # 
+    #
     # RegData$Opf0 <- 1
     # datoTil <- min(as.POSIXlt(datoTil), as.POSIXlt(Sys.Date() - 8*7))
     # RegData$Opf0[RegData$InnDato>datoTil] <- NA
@@ -114,7 +114,7 @@ NSFigKvalInd <- function(NSdata, outfile='', valgtVar,
         xmax <- 100
         indUtHoved <- NULL
         indUtRest <- NULL
-        
+
     Ngr$Hoved <- apply(RegData[ind$Hoved,variable], MARGIN=2,
                                     FUN=function(x) sum(x == 1, na.rm=T))
     #N$ gjelder selv om totalutvalget er ulikt for de ulike variablene i flerevar

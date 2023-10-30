@@ -2,6 +2,8 @@
 #'
 #' Functions to obtain and process data for NordicScir, both real and fake.
 #'
+#' Detajer
+#'
 #' @param data A data object to be processed by the function.
 #' @param register Hvilket register det skal hentes data for
 #'        'norscir' (standard) eller 'nordicscir'
@@ -27,19 +29,21 @@ getRealData <- function(register='norscir', ...) {
       TarmH = TarmH)
 
     if (register=='norscir'){
-      KontrollH <- NSRegDataSQL(register=register, valgtVar = "KontXX")
-      AktivFunksjonH <- NSRegDataSQL(register=register, valgtVar = "FunkXX")
-      AktivTilfredshetH <- NSRegDataSQL(register=register, valgtVar = "TilfXX")
-      data <- append(data,
-        list(KontrollH = KontrollH,
-        AktivFunksjonH = AktivFunksjonH,
-        AktivTilfredshetH = AktivTilfredshetH))
+      data <- append(
+        data,
+        list(EQ5DH = NSRegDataSQL(valgtVar = "Eq5dXX"),
+             AktivFunksjonH = NSRegDataSQL(valgtVar = "FunkXX"),
+             AktivTilfredshetH = NSRegDataSQL(valgtVar = "TilfXX"),
+             KontrollH = NSRegDataSQL(valgtVar = "KontXX"),
+             LivskvalK = NSRegDataSQL(valgtVar = "LivsXX", koblSkjema = 'Kont'),
+             UrinK = NSRegDataSQL(valgtVar = "UrinXX", koblSkjema = 'Kont'),
+             TarmK = NSRegDataSQL(valgtVar = "TarmXX", koblSkjema = 'Kont'),
+             EQ5DK = NSRegDataSQL(valgtVar = "Eq5dXX", koblSkjema = 'Kont'),
+             AktivFunksjonK = NSRegDataSQL(valgtVar = "FunkXX", koblSkjema = 'Kont'),
+             AktivTilfredshetK = NSRegDataSQL(valgtVar = "TilfXX", koblSkjema = 'Kont')
+             ))
       }
 
-    # rapbase::autLogger(name='test', pkg = 'nordicscir', user = 'dummy',
-    #                    fun=0, param=0, type=0,
-    #                    registryName = register, reshId = 0,
-    #                    msg = 'Har hentet alle data fra database')
     if ("session" %in% names(list(...))) {
       raplog::repLogger(session = list(...)[["session"]],
                         msg = 'Har hentet alle data fra database')
@@ -100,11 +104,9 @@ getFakeData <- function(register = 'norscir') { #Denne må muligens tilpasses no
 #' @rdname getData
 #' @export
 processAllData <- function(data, register = 'norscir', ...) {
+  # Prosesserer data som er koblet med hovedskjema, dvs. ikke de som er koblet bare med kontrollskjema
+  #Vurder å koble på hovedskjema til disse kontrollskjemaene også.
 
-# rapbase::autLogger(name='test', pkg = 'nordicscir', user = 'dummy',
-#                    fun=0, param=0, type=0,
-#                    registryName = register, reshId = 0,
-#                    msg = 'Starter prosessering av data')
   if ("session" %in% names(list(...))) {
     raplog::repLogger(session = list(...)[["session"]],
                       msg = 'Starter prosessering av data')
@@ -121,35 +123,26 @@ processAllData <- function(data, register = 'norscir', ...) {
       UrinH = UrinH,
       TarmH = TarmH)
 
-# rapbase::autLogger(name='test', pkg = 'nordicscir', user = 'dummy',
-#                    fun=0, param=0, type=0,
-#                    registryName = register, reshId = 0,
-#                    msg = paste0('Har prosessert alle fellestabeller.'))
-    if ("session" %in% names(list(...))) {
-      raplog::repLogger(session = list(...)[["session"]],
-                        msg = 'Har prosessert alle fellestabeller.')
-    }
-
     if (register == 'norscir'){
-      KontrollH <- NSPreprosesser(data$KontrollH)
-      AktivFunksjonH <- NSPreprosesser(data$AktivFunksjonH)
-      AktivTilfredshetH <- NSPreprosesser(data$AktivTilfredshetH)
-      Aktiv <- list(
-        KontrollH = KontrollH,
-        AktivFunksjonH = AktivFunksjonH,
-        AktivTilfredshetH = AktivTilfredshetH)
-      Skjemaer <- append(Skjemaer, Aktiv)
+      NorskeSkjemaer <- list(
+        EQ5DH = NSPreprosesser(data$EQ5DH),
+        KontrollH = NSPreprosesser(data$KontrollH),
+        AktivFunksjonH = NSPreprosesser(data$AktivFunksjonH),
+        AktivTilfredshetH = NSPreprosesser(data$AktivTilfredshetH),
+        LivskvalK = data$LivskvalK,
+        UrinK = data$UrinK,
+        TarmK = data$TarmK,
+        EQ5DK = data$EQ5DK,
+        AktivFunksjonK = data$AktivFunksjonK,
+        AktivTilfredshetK = data$AktivTilfredshetK
+        )
+
+      Skjemaer <- append(Skjemaer, NorskeSkjemaer)
 
 if ("session" %in% names(list(...))) {
   raplog::repLogger(session = list(...)[["session"]],
                     msg = paste0('Har prosessert kontroll og aktivitetstabeller'))
 }
-
-# rapbase::autLogger(name='test', pkg = 'nordicscir', user = 'dummy',
-#                    fun=0, param=0, type=0,
-#                    registryName = register, reshId = 0,
-#                    msg = paste0('Har prosessert kontroll og aktivitetstabeller'))
-
     }
 
     return(Skjemaer)
