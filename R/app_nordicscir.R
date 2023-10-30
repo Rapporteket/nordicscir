@@ -651,7 +651,7 @@ server_nordicscir <- function(input, output, session) {
 
   output$guide <- shiny::renderText(
     rapbase::renderRmd(
-      system.file("brukerveiledning.Rmd", package = "nordicscir"),
+      system.file("brukerveiledningNordisk.Rmd", package = "nordicscir"),
       outputType = "html_fragment",
       params = list(isDataOk = isDataOk)
     )
