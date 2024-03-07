@@ -528,7 +528,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
     # Verdi fra 0 - 47 er oppnåelig. Benyttes til å vurdere graden av nevrogen tarmdysfunksjon
     #0-6: svært liten, 7-9: liten, 10-13: moderat, >=14: alvorlig, -1:Ikke beregnet
     tittel <- 'NBD-skår'
-    RegData <- RegData[RegData$NBD %in% 1:47,]
+    RegData <- RegData[RegData$NBD %in% 0:47,]
     gr <- c(0,7,10,14,48)	#c(seq(0, 90, 15), 120)
     RegData$VariabelGr <- cut(as.numeric(RegData$NBD), breaks=gr, include.lowest=TRUE, right=FALSE)
     grtxt <- c('svært liten (0-6)', 'liten (7-9)', 'moderat (10-13)', 'alvorlig (\u2265 14)')
