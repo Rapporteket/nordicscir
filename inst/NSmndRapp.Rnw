@@ -35,7 +35,7 @@ HovedSkjema$MndNum <- lubridate::month(HovedSkjema$DischgDt)
 HovedSkjema$MndAar <- format(HovedSkjema$DischgDt, '%b%y')
 HovedSkjema$Kvartal <- ceiling(HovedSkjema$MndNum/3)
 HovedSkjema$Halvaar <- ceiling(HovedSkjema$MndNum/6)
-HovedSkjema$Aar <- lubridate::year(HovedSkjema$AdmitDt)
+HovedSkjema$Aar <- lubridate::year(HovedSkjema$DischgDt) #AdmitDt)
 
 HovedSkjema$ShNavn <- factor(HovedSkjema$ShNavn)
 HovedSkjema$SkjemaGUID <- toupper(HovedSkjema$SkjemaGUID)
@@ -211,7 +211,7 @@ rownames(AndelMKtr)[dim(AndelMKtr)[1] ]<- 'Alle år'
 colnames(AndelMKtr)[dim(AndelMKtr)[2] ]<- 'Hele landet'
 
 xtable::xtable(AndelMKtr, digits=1, align=c('l', rep('r', ncol(AndelMKtr))),
-		caption='Andel pasienter (prosent) som til nå har hatt kontroll, per innleggelsesår og avdeling.')
+		caption='Andel pasienter (prosent) som til nå har hatt kontroll, per utskrivingsår og avdeling.')
 @
 \end{frame}
 
