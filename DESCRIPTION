@@ -38,11 +38,10 @@ Imports:
     shinyjs,
     xtable
 Remotes: 
-    Rapporteket/rapbase@*release,
+    Rapporteket/rapbase@main,
     Rapporteket/rapFigurer,
     Rapporteket/raplog,
 Suggests:
     testthat (>= 3.0.0)
-VignetteBuilder: knitr
 RoxygenNote: 7.2.3
 Config/testthat/edition: 3
