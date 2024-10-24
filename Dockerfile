@@ -10,9 +10,8 @@ COPY *.tar.gz .
 
 RUN R -e "remotes::install_local(list.files(pattern = \"*.tar.gz\"))" \
     && rm ./*.tar.gz \
-    && R -e "remotes::install_github(\"Rapporteket/rapbase\", ref = \"poc\")"
+    && R -e "remotes::install_github(\"Rapporteket/rapbase\", ref = \"main\")"
 
 EXPOSE 3838
 
-CMD ["R", "-e", "options(shiny.port = 3838, shiny.host = \"0.0.0.0\"); nordicscir::kjor_NSapper(register='norscir')"]
 CMD ["R", "-e", "options(shiny.port = 3838, shiny.host = \"0.0.0.0\"); nordicscir::kjor_NSapper(register='nordicscir')"]
