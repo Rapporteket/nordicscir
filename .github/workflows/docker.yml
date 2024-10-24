@@ -3,9 +3,9 @@ on:
   release:
     types: [published]
   push:
-    branches: [ "master", "main" ]
+    branches: [ "main", "nhn" ]
   pull_request:
-    branches: [ "master", "main" ]
+    branches: [ "main" ]
   schedule:
     - cron: '0 21 * * 6' # run every Saturday at 21
 
