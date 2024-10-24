@@ -1,5 +1,4 @@
-#Resultattjeneste for NordicScir
-
+# Resultattjeneste for NordicScir
 #' Brukergrensesnitt (ui) til nordscir-appen
 #'
 #' @return Brukergrensesnittet (ui) til nordscir-appen
@@ -93,7 +92,7 @@ ui_nordicscir <- function() {
         ),
         shiny::mainPanel(
           width = 8,
-          if (context %in% c("DEV", "TEST", "QA", "PRODUCTION")) {
+          if (context %in% c("DEV", "TEST", "QA", "PRODUCTION", "QAC", "PRODUCTIONC")) {
             rapbase::navbarWidgetInput("navbar-widget")
           },
           shiny::h2("Velkommen til Rapporteket - Nordisk Ryggmargsskaderegister!",
@@ -645,7 +644,7 @@ server_nordicscir <- function(input, output, session) {
    }
   # })
   #--------------Startside------------------------------
-  rapbase::navbarWidgetServer(
+  rapbase::navbarWidgetServer2(
     id = "navbar-widget", orgName = enhet, caller = "nordicscir"
   )
 

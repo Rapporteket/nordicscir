@@ -7,6 +7,7 @@ x-environment: &environment
   USERORGID: "pilot"
   SHINYPROXY_USERNAME: test@tester.no
   SHINYPROXY_USERGROUPS: "pilot"
+  R_RAP_INSTANCE: "QAC"
 
 
 services:
@@ -18,7 +19,9 @@ services:
       MYSQL_ROOT_PASSWORD: root
 
   app:
-    image: rapporteket/nordicscir:main
+    depends_on:
+      - db
+    image: rapporteket/nordicscir:nhn
     ports:
       - 3838:3838
     environment:
