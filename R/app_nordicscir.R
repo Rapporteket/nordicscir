@@ -1,4 +1,5 @@
 # Resultattjeneste for NordicScir
+
 #' Brukergrensesnitt (ui) til nordscir-appen
 #'
 #' @return Brukergrensesnittet (ui) til nordscir-appen

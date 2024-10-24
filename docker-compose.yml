@@ -24,7 +24,10 @@ services:
     image: rapporteket/nordicscir:nhn
     ports:
       - 3838:3838
+    volumes:
+      - ./data-raw/config:/app/R
     environment:
+      R_RAP_CONFIG_PATH: /app/R
       << : *environment
 
   dev:
@@ -42,6 +45,7 @@ services:
     environment:
       << : *environment
       DISABLE_AUTH: "true"
+      R_RAP_CONFIG_PATH: /home/rstudio/nordicscir/data-raw/config
 
   adminer:
     depends_on:

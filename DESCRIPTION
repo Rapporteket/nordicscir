@@ -38,7 +38,7 @@ Imports:
     shinyjs,
     xtable
 Remotes: 
-    Rapporteket/rapbase@*release,
+    Rapporteket/rapbase@main,
     Rapporteket/rapFigurer,
     Rapporteket/raplog,
 Suggests:
