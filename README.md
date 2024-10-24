@@ -4,7 +4,7 @@
 <!-- badges: start -->
 [![Version](https://img.shields.io/github/v/release/rapporteket/nordicscir?sort=semver)](https://github.com/rapporteket/nordicscir/releases)
 [![R build status](https://github.com/rapporteket/nordicscir/workflows/R-CMD-check/badge.svg)](https://github.com/rapporteket/nordicscir/actions)
-[![Codecov test coverage](https://codecov.io/gh/Rapporteket/nordicscir/branch/master/graph/badge.svg)](https://codecov.io/gh/Rapporteket/nordicscir?branch=master)
+[![Codecov test coverage](https://codecov.io/gh/Rapporteket/nordicscir/branch/main/graph/badge.svg)](https://codecov.io/gh/Rapporteket/nordicscir?branch=main)
 [![Lifecycle: maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![GitHub open issues](https://img.shields.io/github/issues/rapporteket/nordicscir.svg)](https://github.com/rapporteket/nordicscir/issues)
@@ -35,7 +35,7 @@ Please provide any comments (_e.g._ on proposed enhancements, shortcomings, erro
 
 
 ## Develop
-Contributors submit their code by branching from the _master_ branch and issuing a pull request. After acceptance by peer review the pull request may be merged to the master branch. Changes that are accepted in TEST and/or QA environments may be tagged as a new release of the package.
+Contributors submit their code by branching from the _main_ branch and issuing a pull request. After acceptance by peer review the pull request may be merged to the main branch. Changes that are accepted in TEST and/or QA environments may be tagged as a new release of the package.
 
 A development environment is provided as a _docker-compose.yml_ file found in the root of this repository. The container can be run from a system command prompt, _e.g._
 ```bash
@@ -47,9 +47,9 @@ and the development environment will then be served by localhost through a web b
 # R development environment and database for Rapporteket
 
 ## Introduction
-The [docker-compose.yml file](https://github.com/Rapporteket/docker/blob/master/rap-dev/docker-compose.yml), evt. se: https://github.com/Rapporteket/rapbase/blob/make-dev/docker-compose.yml
+The [docker-compose.yml file](https://github.com/Rapporteket/docker/blob/main/rap-dev/docker-compose.yml), evt. se: https://github.com/Rapporteket/rapbase/blob/make-dev/docker-compose.yml
 kombinerer  
-[utviklingsmiljø i R for Rapporteket](https://github.com/Rapporteket/docker/tree/master/rap-dev)
+[utviklingsmiljø i R for Rapporteket](https://github.com/Rapporteket/docker/tree/main/rap-dev)
 and a
 [docker mysql image](https://hub.docker.com/_/mysql/)
 to form a development environment where data also can
@@ -93,9 +93,9 @@ in the Docker Quick Start Terminal, or `gitbash` in Windows.
 ### Adjustments to reflect your environment
 The below sections might or might not apply to your use cases. If you have it wrong, just start over again. Every adjustment
 you make will be done in either of the files
-[docker-compose.yml](https://github.com/Rapporteket/docker/blob/master/rap-dev-data/docker-compose.yml)
+[docker-compose.yml](https://github.com/Rapporteket/docker/blob/main/rap-dev-data/docker-compose.yml)
 or
-[Dockerfile](https://github.com/Rapporteket/docker/blob/master/rap-dev-data/Dockerfile).
+[Dockerfile](https://github.com/Rapporteket/docker/blob/main/rap-dev-data/Dockerfile).
 Likely, both will come in handy, so you might as well download them right away
 (along with rest of the repository):
 ```bash
