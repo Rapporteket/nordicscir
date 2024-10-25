@@ -20,7 +20,7 @@ AlleTabRaa <- nordicscir::getRealData(register = 'norscir') #Kobler både til ho
 AlleTab <- nordicscir::processAllData(AlleTabRaa, register = 'norscir') #preprosesserer bare datasett koblet til hovedskjema
 attach(AlleTab)
 View(AlleTab)
-register <- 'data'
+register <- 'NORDICSCIR_DB'
 Hoved <- rapbase::loadRegData(registryName = register, dbType="mysql",
                             query='Select * from MainFormDataContract ')
 Ktr <- rapbase::loadRegData(registryName = register, dbType="mysql",
@@ -271,7 +271,7 @@ hist(RegData$SatGenrl)
 
 #Livskvalitetsskjema
 query <- 'select * FROM LifeQualityFormDataContract Livs'
-LivskvalData <- rapbase::LoadRegData(registryName = 'data', query)
+LivskvalData <- rapbase::LoadRegData(registryName = 'NORDICSCIR_DB', query)
 LivskvalData <- LivskvalData[order(LivskvalData$FormDate), ]
 LivskvalData$FormDate <- as.Date(LivskvalData$FormDate)
 

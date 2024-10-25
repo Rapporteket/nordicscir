@@ -387,12 +387,12 @@ if (koblSkjema=='Kont'){
      qTilf <- 'SELECT UPPER(HovedskjemaGUID) AS FunkskjemaGUID,
                     DataClDtS, DreslbdyS, FeedingS, FirstTimeClosed, MobilmodS, ToiletinS
               FROM ActivityAndParticipationSatisfactionFormDataContract'
-     TilfData <- rapbase::loadRegData(registryName = 'data', query=qTilf, dbType="mysql")
+     TilfData <- rapbase::loadRegData(registryName = 'NORDICSCIR_DB', query=qTilf, dbType="mysql")
 
      qFunkTilf <- 'SELECT UPPER(HovedskjemaGUID) AS HovedskjemaGUID,
                           SkjemaGUID AS FunkskjemaGUID FROM
                           ActivityAndParticipationPerformanceFormDataContract'
-     FunkVarKobl <- rapbase::loadRegData(registryName = 'data', query=qFunkTilf, dbType="mysql")
+     FunkVarKobl <- rapbase::loadRegData(registryName = 'NORDICSCIR_DB', query=qFunkTilf, dbType="mysql")
 
      FunkTilf <- FunkVarKobl %>%
        dplyr::inner_join(TilfData, by = dplyr::join_by(FunkskjemaGUID))
