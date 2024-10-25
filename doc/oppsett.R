@@ -11,3 +11,7 @@ Sys.setenv(MYSQL_USERNAME="root")
 Sys.setenv(MYSQL_PASSWORD="root")
 
 nordicscir::kjor_NSapper(register='nordicscir')
+RegData <- rapbase::loadRegData(
+  registryName = "data",
+  query="SELECT * FROM eq5dlformdatacontract",
+  dbType="mysql")
