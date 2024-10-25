@@ -31,7 +31,6 @@ Imports:
     magrittr,
     rapbase,
     rapFigurer,
-    raplog,
     rlang,
     shiny,
     shinyalert,
@@ -39,8 +38,7 @@ Imports:
     xtable
 Remotes: 
     Rapporteket/rapbase@main,
-    Rapporteket/rapFigurer,
-    Rapporteket/raplog,
+    Rapporteket/rapFigurer
 Suggests:
     testthat (>= 3.0.0)
 RoxygenNote: 7.2.3

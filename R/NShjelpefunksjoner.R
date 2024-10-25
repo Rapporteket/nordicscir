@@ -166,7 +166,7 @@ TilLogiskeVar <- function(Skjema){
 abonnement <- function(rnwFil, brukernavn='ukjent', reshID=0, register='nordicscir',
                        datoFra=Sys.Date()-400, datoTil=Sys.Date()) {
 
-      # raplog::subLogger(author = brukernavn, registryName = register,
+      # rapbase::subLogger(author = brukernavn, registryName = register,
       #               reshId = reshID[[1]],
       #               msg = paste0("1)starter abonnementkjøring: ", rnwFil))
 
@@ -181,7 +181,7 @@ abonnement <- function(rnwFil, brukernavn='ukjent', reshID=0, register='nordicsc
   filbase <- substr(rnwFil[[1]], 1, nchar(rnwFil[[1]])-4)
   tmpFile <- paste0(filbase, Sys.Date(),'_',digest::digest(brukernavn)[[1]], '.Rnw')
   src <- normalizePath(system.file(rnwFil[[1]], package='nordicscir'))
-  # raplog::subLogger(author = brukernavn, registryName = 'NorScir',
+  # rapbase::subLogger(author = brukernavn, registryName = 'NorScir',
   #                   reshId = reshID[[1]],
   #                   msg = "2) filbase, tmpFile, src ok")
 
@@ -192,7 +192,7 @@ abonnement <- function(rnwFil, brukernavn='ukjent', reshID=0, register='nordicsc
 
   #gc() #Opprydning gc-"garbage collection"
   utfil <- paste0( getwd(), '/', substr(tmpFile, 1, nchar(tmpFile)-3), 'pdf') #
-  # raplog::subLogger(author = brukernavn, registryName = 'NorScir',
+  # rapbase::subLogger(author = brukernavn, registryName = 'NorScir',
   #                                      reshId = reshID[[1]],
   #                                      msg = paste("5) Leverer abonnementsfil: ", utfil))
   return(utfil)

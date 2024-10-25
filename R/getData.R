@@ -45,7 +45,7 @@ getRealData <- function(register='norscir', ...) {
       }
 
     if ("session" %in% names(list(...))) {
-      raplog::repLogger(session = list(...)[["session"]],
+      rapbase::repLogger(session = list(...)[["session"]],
                         msg = 'Har hentet alle data fra database')
     }
 
@@ -108,7 +108,7 @@ processAllData <- function(data, register = 'norscir', ...) {
   #Vurder å koble på hovedskjema til disse kontrollskjemaene også.
 
   if ("session" %in% names(list(...))) {
-    raplog::repLogger(session = list(...)[["session"]],
+    rapbase::repLogger(session = list(...)[["session"]],
                       msg = 'Starter prosessering av data')
   }
   tryCatch({
@@ -140,7 +140,7 @@ processAllData <- function(data, register = 'norscir', ...) {
       Skjemaer <- append(Skjemaer, NorskeSkjemaer)
 
 if ("session" %in% names(list(...))) {
-  raplog::repLogger(session = list(...)[["session"]],
+  rapbase::repLogger(session = list(...)[["session"]],
                     msg = paste0('Har prosessert kontroll og aktivitetstabeller'))
 }
     }
