@@ -7,7 +7,7 @@ Sys.setenv(R_RAP_INSTANCE="QAC")
 Sys.setenv(R_RAP_CONFIG_PATH="/home/rstudio/nordicscir/data-raw/config")
 Sys.unsetenv("MYSQL_PORT_LOG")
 Sys.setenv(MYSQL_DB="NordicScirReportDataStaging")
-Sys.setenv(MYSQL_USERNAME="root")
+Sys.setenv(MYSQL_USER="root")
 Sys.setenv(MYSQL_PASSWORD="root")
 
 nordicscir::kjor_NSapper(register='nordicscir')
