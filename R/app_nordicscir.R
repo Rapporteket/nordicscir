@@ -508,6 +508,8 @@ ui_nordicscir <- function() {
 
       #----------------------Registeradministrasjon-----------------------------
 
+      # shiny::uiOutput(outputId = 'regadm_ui'),
+
       shiny::tabPanel(
         "Registeradministrasjon",
         shiny::h2("Fane som bare er synlig for SC-bruker."),
@@ -608,17 +610,22 @@ server_nordicscir <- function(input, output, session) {
     msg = "Starter nordicscir-app'en"
   )
 
+  user <- rapbase::navbarWidgetServer2(
+    id = "navbar-widget",
+    orgName = "nordicscir",
+    caller = "nordicscir"
+  )
 
   # session persistent objects
-  if (rapbase::isRapContext()) {
-    reshID <- as.numeric(rapbase::getUserReshId(session))
-    rolle <- rapbase::getUserRole(session)
-    brukernavn <- rapbase::getUserName(session)
-  } else {
-    reshID <- 0
-    rolle <- 'ukjent'
-    brukernavn <- 'ukjent'
-  }
+  # if (rapbase::isRapContext()) {
+  #   reshID <- as.numeric(rapbase::getUserReshId(session))
+  #   rolle <- rapbase::getUserRole(session)
+  #   brukernavn <- rapbase::getUserName(session)
+  # } else {
+  #   reshID <- 0
+  #   rolle <- 'ukjent'
+  #   brukernavn <- 'ukjent'
+  # }
 
   isGetDataOk <- TRUE
   isProcessDataOk <- TRUE
@@ -635,19 +642,23 @@ server_nordicscir <- function(input, output, session) {
   }
   isDataOk <- all(c(isGetDataOk, isProcessDataOk))
   attach(AlleTab)
-  enhet <- ifelse(exists('reshID'),
-                  as.character(AlleTab$HovedSkjema$ShNavn[match(reshID, AlleTab$HovedSkjema$ReshId)]),
-                  'Uidentifisert enhet')
+  # enhet <- ifelse(exists('reshID'),
+  #                 as.character(AlleTab$HovedSkjema$ShNavn[match(reshID, AlleTab$HovedSkjema$ReshId)]),
+  #                 'Uidentifisert enhet')
 
-  # observe({
-  if (rolle != 'SC') { #
+  observeEvent(user$role(), {
+  if (user$role() == 'SC') {
+    showTab(inputId = "hovedark", target = "Registeradministrasjon")
+  } else {
     hideTab(inputId = "hovedark", target = "Registeradministrasjon")
    }
-  # })
+  })
+
+
   #--------------Startside------------------------------
-  rapbase::navbarWidgetServer2(
-    id = "navbar-widget", orgName = enhet, caller = "nordicscir"
-  )
+  # rapbase::navbarWidgetServer2(
+  #   id = "navbar-widget", orgName = "nordicscir", caller = "nordicscir"
+  # )
 
   output$guide <- shiny::renderText(
     rapbase::renderRmd(
@@ -691,7 +702,7 @@ server_nordicscir <- function(input, output, session) {
           datoFra = input$datovalgDash[1],
           datoTil = input$datovalgDash[2],
           enhetsUtvalg=2,
-          reshID=reshID
+          reshID=user$org()
         )
       },
       rownames = TRUE,
@@ -808,7 +819,7 @@ server_nordicscir <- function(input, output, session) {
         NSFigAndeler(
           RegData = RegData, valgtVar = input$valgtVar, preprosess = 0,
           datoFra = input$datovalg[1], datoTil = input$datovalg[2],
-          reshID = reshID,
+          reshID = user$org(),
           AIS = as.numeric(input$AIS), traume = input$traume,
           nivaaUt = as.numeric(input$nivaaUt),
           minald = as.numeric(input$alder[1]),
@@ -830,7 +841,7 @@ server_nordicscir <- function(input, output, session) {
           NSFigAndeler(
             RegData = RegData, valgtVar = input$valgtVar, preprosess = 0,
             datoFra = input$datovalg[1], datoTil = input$datovalg[2],
-            datoUt = as.numeric(input$datoUt), reshID = reshID,
+            datoUt = as.numeric(input$datoUt), reshID = user$org(),
             AIS = as.numeric(input$AIS), traume = input$traume,
             nivaaUt = as.numeric(input$nivaaUt),
             minald = as.numeric(input$alder[1]),
@@ -847,7 +858,7 @@ server_nordicscir <- function(input, output, session) {
         RegData = RegData, preprosess = 0, valgtVar = input$valgtVar,
         datoFra = input$datovalg[1], datoTil = input$datovalg[2],
         datoUt = as.numeric(input$datoUt),
-        reshID = reshID,
+        reshID = user$org(),
         AIS = as.numeric(input$AIS), traume = input$traume,
         nivaaUt = as.numeric(input$nivaaUt),
         minald = as.numeric(input$alder[1]),
@@ -1075,7 +1086,7 @@ server_nordicscir <- function(input, output, session) {
       #------gjsnTid
       output$gjsnTid <- shiny::renderPlot(
         NSFigGjsnTid(
-          RegData = RegData, reshID = reshID, preprosess = 0,
+          RegData = RegData, reshID = user$org(), preprosess = 0,
           valgtVar = input$valgtVarGjsn,
           datoFra = input$datovalgGjsn[1], datoTil = input$datovalgGjsn[2],
           datoUt = as.numeric(input$datoUtGjsn),
@@ -1100,7 +1111,7 @@ server_nordicscir <- function(input, output, session) {
         },
         content = function(file) {
           NSFigGjsnTid(
-            RegData = RegData, reshID = reshID, preprosess = 0,
+            RegData = RegData, reshID = user$org(), preprosess = 0,
             valgtVar = input$valgtVarGjsn,
             datoFra = input$datovalgGjsn[1], datoTil = input$datovalgGjsn[2],
             datoUt = as.numeric(input$datoUtGjsn),
@@ -1120,7 +1131,7 @@ server_nordicscir <- function(input, output, session) {
       )
 
       UtDataGjsnTid <- NSFigGjsnTid(
-        RegData = RegData, reshID = reshID, preprosess = 0,
+        RegData = RegData, reshID = user$org(), preprosess = 0,
         valgtVar = input$valgtVarGjsn,
         datoFra = input$datovalgGjsn[1], datoTil = input$datovalgGjsn[2],
         datoUt = as.numeric(input$datoUtGjsn),
@@ -1207,7 +1218,7 @@ server_nordicscir <- function(input, output, session) {
           file,
           srcFil = "NSmndRapp.Rnw",
           tmpFile = "tmpNSmndRapp.Rnw",
-          reshID = reshID
+          reshID = user$org()
         )
       }
     )
@@ -1218,7 +1229,7 @@ server_nordicscir <- function(input, output, session) {
           file,
           srcFil = "NSsamleRappLand.Rnw",
           tmpFile = "tmpNSsamleRappLand.Rnw",
-          reshID = reshID,
+          reshID = user$org(),
           datoFra = as.Date(input$datovalgSamleRapp[1]),
           datoTil = as.Date(input$datovalgSamleRapp[2])
         )
@@ -1231,7 +1242,7 @@ server_nordicscir <- function(input, output, session) {
           file,
           srcFil = "NSsamleRapp.Rnw",
           tmpFile = "tmpNSsamleRapp.Rnw",
-          reshID = reshID,
+          reshID = user$org(),
           datoFra = as.Date(input$datovalgSamleRapp[1]),
           datoTil = as.Date(input$datovalgSamleRapp[2])
         )

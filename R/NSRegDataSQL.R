@@ -3,35 +3,35 @@
 #' Spørring som henter og kobler sammen data fra ulike skjema i valgt register
 #'
 #' Aktuelle skjema:
-#' MainFormDataContract: HOVEDSKJEMA
-#' BowelFunctionFormDataContract: Tarmfunksjon (?)
-#' LifeQualityFormDataContract: Livskvalitet
-#' UrinaryTractFunctionFormDataContract: Urinfunksjon
+#' mainformdatacontract: HOVEDSKJEMA
+#' bowelfunctionformdatacontract: Tarmfunksjon (?)
+#' lifequalityformdatacontract: Livskvalitet
+#' urinarytractfunctionformdatacontract: Urinfunksjon
 #' ActivityAndParticipationPerformanceFormDataContract: Aktivitetsfunksjon.
 #'      Skjema kun i det norske registeret
 #' ActivityAndParticipationSatisfactionFormDataContract: Aktivitetsfornøydhet.
 #'      Skjema kun i det norske registeret
-#' ControlFormDataContract: Kontroll. Noen variable er oppfølging av målinger i hovedskjema.
+#' controlformdatacontract: Kontroll. Noen variable er oppfølging av målinger i hovedskjema.
 #'      Skjema kun i det norske registeret
 #' @param valgtVar Valg av variabel angir hvilket skjema som skal knyttes til hovedskjema
 #'        siden de fire første bokstavene i variabelnavnet utgjør et prefiks for
 #'        å identifisere hvilken tabell variabelen skal hentes fraaktuell tabell. Eks LivsAlder
 #'        Variabler uten prefiks hentes fra hovedtabellen (Main...)
 #' @param register Hvilket register det skal hentes data for: 'norscir' (standard) eller 'nordicscir'
-#' @param koblSkjema Hvilket skjema skal regnes som "hovedskjema". Standard: 'Hoved' (MainFormDataContract),
-#'  'Kont' (ControlFormDataContract). Bare NorScir har kontrollskjema
+#' @param koblSkjema Hvilket skjema skal regnes som "hovedskjema". Standard: 'Hoved' (mainformdatacontract),
+#'  'Kont' (controlformdatacontract). Bare NorScir har kontrollskjema
 #' @return RegData data frame
 #' @export
 
 NSRegDataSQL <- function(valgtVar='Alder', register='norscir', koblSkjema = 'Hoved', ...) {
 
-   #HovedSkjema: MainFormDataContract
-   #Livs: LifeQualityFormDataContract
-   #Urin: UrinaryTractFunctionFormDataContract
-   #Tarm: BowelFunctionFormDataContract
+   #HovedSkjema: mainformdatacontract
+   #Livs: lifequalityformdatacontract
+   #Urin: urinarytractfunctionformdatacontract
+   #Tarm: bowelfunctionformdatacontract
    #Sati: ActivityAndParticipationSatisfactionFormDataContract (bare NorScir)
    #Perf: ActivityAndParticipationPerformanceFormDataContract (bare NorScir)
-   #Kont: ControlFormDataContract (bare NorScir)
+   #Kont: controlformdatacontract (bare NorScir)
    #Eq5d: Eq5dlFormDataContract (bare NorScir)
 
    if ("session" %in% names(list(...))) {
@@ -345,33 +345,33 @@ Kont.CAis
                          Kont = varKont)
     variable <- paste0(', ', variable)
       qSkjema <- paste0(switch(valgtSkjema, #Dette vil bare fungere hvis konsekvent med navngiving i valgtVar
-                               Livs = 'INNER JOIN LifeQualityFormDataContract Livs ',
-                               Urin = 'INNER JOIN UrinaryTractFunctionFormDataContract Urin ',
-                               Tarm = 'INNER JOIN BowelFunctionFormDataContract Tarm ',
+                               Livs = 'INNER JOIN lifequalityformdatacontract Livs ',
+                               Urin = 'INNER JOIN urinarytractfunctionformdatacontract Urin ',
+                               Tarm = 'INNER JOIN bowelfunctionformdatacontract Tarm ',
                                Funk = 'INNER JOIN ActivityAndParticipationPerformanceFormDataContract Funk ',
                                Eq5d = 'INNER JOIN Eq5dlFormDataContract Eq5d ',
-                               Kont = 'INNER JOIN ControlFormDataContract Kont '
+                               Kont = 'INNER JOIN controlformdatacontract Kont '
       ),
        'ON UPPER(',koblSkjema ,'.SkjemaGUID) = UPPER(',valgtSkjema , '.HovedskjemaGUID) ')
       #'ON UPPER(',koblSkjema ,'.SkjemaGUID', koblSkjema,') = UPPER(',valgtSkjema , '.HovedskjemaGUID) ')
       }
-#KontData <- rapbase::loadRegData(registryName = register, query='select * from ControlFormDataContract', dbType="mysql")
+#KontData <- rapbase::loadRegData(registryName = register, query='select * from controlformdatacontract', dbType="mysql")
 #TilfData <-  rapbase::loadRegData(registryName = register, query='select * from ActivityAndParticipationSatisfactionFormDataContract', dbType="mysql")
-#HovedSkjema <- rapbase::loadRegData(registryName = register, query='select * from MainFormDataContract', dbType="mysql")
-#LivsSkjema <- rapbase::loadRegData(registryName = register, query='select * from LifeQualityFormDataContract', dbType="mysql")
+#HovedSkjema <- rapbase::loadRegData(registryName = register, query='select * from mainformdatacontract', dbType="mysql")
+#LivsSkjema <- rapbase::loadRegData(registryName = register, query='select * from lifequalityformdatacontract', dbType="mysql")
 
 if (koblSkjema=='Hoved'){
    query <- paste0('SELECT ',
                    varHoved,
                    variable,
-                   ' FROM MainFormDataContract Hoved ',
+                   ' FROM mainformdatacontract Hoved ',
                    qSkjema)
    }
 if (koblSkjema=='Kont'){
   query <- paste0('SELECT ',
                   varKont,
                   variable,
-                  ' FROM ControlFormDataContract Kont ',
+                  ' FROM controlformdatacontract Kont ',
                   qSkjema
   )
   }
