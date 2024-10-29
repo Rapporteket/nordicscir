@@ -43,7 +43,7 @@ CREATE DATABASE IF NOT EXISTS db_autoreport
 
 use db_autoreport;
 
-CREATE TABLE `autoreport` (
+CREATE TABLE IF NOT EXISTS `autoreport` (
   `j` JSON
   CHECK (JSON_VALID(j))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
