@@ -1,11 +1,10 @@
 FROM rapporteket/base-r:main
 
-LABEL maintainer "Are Edvardsen <are.edvardsen@helse-nord.no>"
+LABEL maintainer="Arnfinn Hykkerud Steindal <arnfinn.hykkerud.steindal@helse-nord.no>"
 LABEL no.rapporteket.cd.enable="true"
 
 WORKDIR /app/R
 
-# hadolint ignore=DL3010
 COPY *.tar.gz .
 
 RUN R -e "remotes::install_local(list.files(pattern = \"*.tar.gz\"))" \
