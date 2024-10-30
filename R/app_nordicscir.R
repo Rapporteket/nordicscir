@@ -656,9 +656,6 @@ server_nordicscir <- function(input, output, session) {
 
 
   #--------------Startside------------------------------
-  # rapbase::navbarWidgetServer2(
-  #   id = "navbar-widget", orgName = "nordicscir", caller = "nordicscir"
-  # )
 
   output$guide <- shiny::renderText(
     rapbase::renderRmd(
