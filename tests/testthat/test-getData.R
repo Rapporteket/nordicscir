@@ -28,7 +28,7 @@ test_that("warning and NULL is provided on processing error", {
 })
 
 test_that("fake data can be processed", {
-  expect_true(class(processAllData(getFakeData())) == "list")
+  expect_true(class(processAllData(getFakeData(), register = 'nordiscir')) == "list")
 })
 
 
