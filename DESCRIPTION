@@ -29,16 +29,14 @@ Imports:
     knitr,
     lubridate,
     magrittr,
-    rapbase,
-    rapFigurer,
     rlang,
     shiny,
     shinyalert,
     shinyjs,
     xtable
 Remotes: 
-    rapporteket/rapbase@main,
-    rapporteket/rapFigurer
+    Rapporteket/rapbase@main,
+    Rapporteket/rapFigurer
 Suggests:
     testthat (>= 3.0.0)
 RoxygenNote: 7.2.3
