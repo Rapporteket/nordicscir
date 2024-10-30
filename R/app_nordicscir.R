@@ -549,19 +549,19 @@ ui_nordicscir <- function() {
               shiny::br()
             )
           ),
-          shiny::tabPanel(
-            "Utsendinger",
-            title = "Utsending av rapporter",
-            shiny::sidebarLayout(
-              shiny::sidebarPanel(
-                rapbase::autoReportOrgInput("NSuts"),
-                rapbase::autoReportInput("NSuts")
-              ),
-              shiny::mainPanel(
-                rapbase::autoReportUI("NSuts")
-              )
-            )
-          ),
+#          shiny::tabPanel(
+#            "Utsendinger",
+#            title = "Utsending av rapporter",
+#            shiny::sidebarLayout(
+#              shiny::sidebarPanel(
+#                rapbase::autoReportOrgInput("NSuts"),
+#                rapbase::autoReportInput("NSuts")
+#              ),
+#              shiny::mainPanel(
+#                rapbase::autoReportUI("NSuts")
+#              )
+#            )
+#          ),
           shiny::tabPanel(
             "Eksport, krypterte data",
             shiny::sidebarPanel(
@@ -1244,23 +1244,23 @@ server_nordicscir <- function(input, output, session) {
   }
 
   #------------------ Abonnement -----------------------------------------------
-  subReports <- list(
-    `Månedsrapport` = list(
-      synopsis = "Rapporteket-NordicSCIR: månedsrapport, abonnement",
-      fun = "abonnement",
-      paramNames = c("rnwFil", "brukernavn", "reshID", "datoTil", "register"),
-      paramValues = c("NSmndRapp.Rnw", brukernavn, reshID, datoTil=Sys.Date(), 'nordicscir')
-    )
-  )
+#  subReports <- list(
+#    `Månedsrapport` = list(
+#      synopsis = "Rapporteket-NordicSCIR: månedsrapport, abonnement",
+#      fun = "abonnement",
+#      paramNames = c("rnwFil", "brukernavn", "reshID", "datoTil", "register"),
+#      paramValues = c("NSmndRapp.Rnw", brukernavn, reshID, datoTil=Sys.Date(), 'nordicscir')
+#    )
+#  )
 
-  rapbase::autoReportServer(
-    id = "ns-subscription",
-    registryName = "nordicscir",
-    type = "subscription",
-    paramNames = paramNames,
-    paramValues = paramValues,
-    reports = subReports
-  )
+#  rapbase::autoReportServer(
+#    id = "ns-subscription",
+#    registryName = "nordicscir",
+#    type = "subscription",
+#    paramNames = paramNames,
+#    paramValues = paramValues,
+#    reports = subReports
+#  )
 
   #---Utsendinger---------------
   if (isDataOk) {
@@ -1298,11 +1298,11 @@ server_nordicscir <- function(input, output, session) {
   paramNames <- shiny::reactive("reshID")
   paramValues <- shiny::reactive(org$value())
 
-  rapbase::autoReportServer(
-    id = "NSuts", registryName = "nordicscir", type = "dispatchment",
-    org = org$value, paramNames = paramNames, paramValues = paramValues,
-    reports = disReports, orgs = orgs, eligible = (rolle == "SC")
-  )
+#  rapbase::autoReportServer(
+#    id = "NSuts", registryName = "nordicscir", type = "dispatchment",
+#    org = org$value, paramNames = paramNames, paramValues = paramValues,
+#    reports = disReports, orgs = orgs, eligible = (rolle == "SC")
+#  )
 
 
 
