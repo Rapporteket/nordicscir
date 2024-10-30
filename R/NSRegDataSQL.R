@@ -35,7 +35,7 @@ NSRegDataSQL <- function(valgtVar='Alder', register='norscir', koblSkjema = 'Hov
    #Eq5d: Eq5dlFormDataContract (bare NorScir)
 
    if ("session" %in% names(list(...))) {
-      raplog::repLogger(session = list(...)[["session"]],
+      rapbase::repLogger(session = list(...)[["session"]],
                         msg = "Starter SQL-funksjon")
    }
 
@@ -403,7 +403,7 @@ if (koblSkjema=='Kont'){
    }
 
    if ("session" %in% names(list(...))) {
-      raplog::repLogger(session = list(...)[["session"]],
+      rapbase::repLogger(session = list(...)[["session"]],
                         msg = paste0('Har hentet skjema ', valgtSkjema, 'fra database'))
    }
 
