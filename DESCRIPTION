@@ -37,8 +37,8 @@ Imports:
     shinyjs,
     xtable
 Remotes: 
-    Rapporteket/rapbase@main,
-    Rapporteket/rapFigurer
+    rapporteket/rapbase@main,
+    rapporteket/rapFigurer
 Suggests:
     testthat (>= 3.0.0)
 RoxygenNote: 7.2.3
