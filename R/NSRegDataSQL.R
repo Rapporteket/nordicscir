@@ -376,7 +376,7 @@ if (koblSkjema=='Kont'){
   )
   }
 
-   RegData <- rapbase::loadRegData(registryName = register, query=query, dbType="mysql")
+   RegData <- rapbase::loadRegData(registryName = 'data', query = query, dbType="mysql")
 
    if (valgtSkjema=='Kont' | koblSkjema=='Kont'){
      RegData <- RegData[RegData$ControlStatus==0, ] #Bare de med gjennomført kontroll
@@ -387,12 +387,12 @@ if (koblSkjema=='Kont'){
      qTilf <- 'SELECT UPPER(HovedskjemaGUID) AS FunkskjemaGUID,
                     DataClDtS, DreslbdyS, FeedingS, FirstTimeClosed, MobilmodS, ToiletinS
               FROM ActivityAndParticipationSatisfactionFormDataContract'
-     TilfData <- rapbase::loadRegData(registryName = 'norscir', query=qTilf, dbType="mysql")
+     TilfData <- rapbase::loadRegData(registryName = 'data', query = qTilf, dbType = "mysql")
 
      qFunkTilf <- 'SELECT UPPER(HovedskjemaGUID) AS HovedskjemaGUID,
                           SkjemaGUID AS FunkskjemaGUID FROM
                           ActivityAndParticipationPerformanceFormDataContract'
-     FunkVarKobl <- rapbase::loadRegData(registryName = 'norscir', query=qFunkTilf, dbType="mysql")
+     FunkVarKobl <- rapbase::loadRegData(registryName = 'data', query = qFunkTilf, dbType = "mysql")
 
      FunkTilf <- FunkVarKobl %>%
        dplyr::inner_join(TilfData, by = dplyr::join_by(FunkskjemaGUID))
