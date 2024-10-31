@@ -24,18 +24,6 @@ r :
   staging:
     target: db
     key: staging
-
-  # User data for testing purposes
-  testUser :
-    user : ttester
-    groups : rapbase
-    role : accessLevel
-    resh_id : '999999'
-    email: rapporteket@skde.no
-    full_name: Tore Tester
-    phone: '04050607'
-
-
   # Scedule
   schedule :
     nocturnal :
@@ -43,66 +31,49 @@ r :
       endHour: 8
       funs :
       - rapbase::runAutoReport
+      #- norgast::norgastMakeStagingData
+      - rapbase::sanitizeLog
     diurnal:
       startHour: 8
       endHour: 24
       funs:
       - rapbase::runBulletin
-
-
-## Network
-network :
-
-  # Proxy server and port
-  proxy :
-    http :
-    port :
-    # http : http://dummy_proxy_hostname.no
-    # port : 8080
-    # ip : 192.168.0.100
-
   # email
   smtp :
     server : localhost
     port : 2525
   sender : rapporteket@skde.no
 
-## GitHub
-github :
-
-  # Github organization
-  organization : Rapporteket
-
-  # Dummy gist
-  gistId :
-    reportName : reportNameGistId
-
-  # Dummy PAT
-  PAT :
-    githubUserName : PAT
-
-
-## Database
-db :
-  # Dummy config entry
-  nordummy:
-    host : dummy_db_hostname.no
-    name : dummy_db_name
-    user : dummy_db_username
-    pass : dummy_db_password
-    disp : dummy_display_name
-
-  # For testing, on localhost
-  rapbase:
-    host : 127.0.0.1
-    name : rapbase
-    user : rapbase
-    pass : rapbase
-    disp : ForTestingOnly
-
+## Github stuff
+github:
+  # github organization
+  organization: Rapporteket
+  # gist
+  gistId:
+    RegPulseReport: 1bcbbededd8c0b1ff26e08054f318f97
+    RegDelayReport: 58126cca9efd3d373b59bc6c2a6445f1
+## Registry stuff
+reg:
+  noric:
+    nationalAccess:
+      reshId: 0
+      userRole: SC
+      nameKey: Nasjonal
+  smerte:
+    nationalAccess:
+      reshId: 0
+      userRole: SC
+      nameKey: Nasjonal
+    ousAccess:
+      reshId:
+        - 705758
+        - 705652
+        - 4207789
+      userRole: LC
+      nameKey: 4207789
 ## Access tree
 accesstree:
-  file: accesstree.json
+  file: accesstree/accesstree.json
   list:
     unit: AccessUnits.UnitId
     resh: AccessUnits.HealthUnitId
