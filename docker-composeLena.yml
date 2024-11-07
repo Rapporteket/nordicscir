@@ -25,6 +25,7 @@ services:
       MYSQL_PASSWORD: password
     volumes:
       - ./dev/db:/docker-entrypoint-initdb.d
+      - /d/dbNy:/var/lib/mysql
     entrypoint:
       sh -c "
         /usr/local/bin/docker-entrypoint.sh  --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
@@ -49,10 +50,11 @@ services:
       - db
     image: rapporteket/pilot-dev:main
     volumes:
-      - ~/.ssh:/home/rstudio/.ssh
       - ~/.gitconfig:/home/rstudio/.gitconfig
       - .:/home/rstudio/nordicscir
       - ../rapbase/.:/home/rstudio/rapbase
+      - /c/Users/Lena Ringstad Olsen/.ssh:/home/rstudio/speiler_.ssh
+      - /d/mydata:/home/rstudio/mydata
     ports:
       - "8787:8787"
     restart: "no"
