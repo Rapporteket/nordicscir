@@ -118,17 +118,17 @@ ui_nordicscir <- function() {
                 shiny::tableOutput("tabLiggetider")
               ),
               shiny::fluidRow(
-                  shiny::h3("Nevrologisk klassifikasjon", align = "center"),
-                  shiny::h4("alle pasienter", align = "center"),
-                  #shiny::br(),
-                  shiny::tableOutput("tabNevrKlass")),
-                shiny::fluidRow(
-                  shiny::h3("Nevrologisk klassifikasjon", align = "center"),
-                  shiny::h4("pasienter med liggetid over 28 dager i
+                shiny::h3("Nevrologisk klassifikasjon", align = "center"),
+                shiny::h4("alle pasienter", align = "center"),
+                #shiny::br(),
+                shiny::tableOutput("tabNevrKlass")),
+              shiny::fluidRow(
+                shiny::h3("Nevrologisk klassifikasjon", align = "center"),
+                shiny::h4("pasienter med liggetid over 28 dager i
                                    ryggmargsskadeavdeling", align = "center"),
-                  shiny::tableOutput("tabNevrKlass28")
-                )
+                shiny::tableOutput("tabNevrKlass28")
               )
+            )
           )
         ) #main
       ), #tab
@@ -145,7 +145,7 @@ ui_nordicscir <- function() {
               "Alder" = "Alder",
               "Ais ved innleggelse" = "AAis" ,
               "Ais ved utskriving" = "FAis",
-             # "Anbefalt tid til kontroll" = "AnbefTidKtr",
+              # "Anbefalt tid til kontroll" = "AnbefTidKtr",
               "Lengde på rehab.opphold" = "DagerRehab",
               "Opphold, totalt antall dager" = "OpphTot",
               "Planlagt utskrevet til" = "PPlaceDis",
@@ -159,10 +159,10 @@ ui_nordicscir <- function() {
               "Livskval.: Tilfredshet med fysisk helse" = "LivsFys",
               "Livskval.: Tilfredshet med psykisk helse" = "LivsPsyk",
               "Urin: Ufrivillig urinlekkasje (fra 2019)" = "UrinInkontinens",
-            #  "Urin: Ufrivillig urinlekkasje (t.o.m. 2018)" = "UrinInkontinensTom2018",
+              #  "Urin: Ufrivillig urinlekkasje (t.o.m. 2018)" = "UrinInkontinensTom2018",
               "Urin: Kirurgiske inngrep" = "UrinKirInngr",
               "Urin: Legemiddelbruk (fra 2019)" = "UrinLegemidler",
-             # "Urin: Legemiddelbruk (t.o.m. 2018)" = "UrinLegemidlerTom2018",
+              # "Urin: Legemiddelbruk (t.o.m. 2018)" = "UrinLegemidlerTom2018",
               "Urin: Legemiddelbruk, hvilke" = "UrinLegemidlerHvilke",
               "Urin: Blæretømming, hovedmetode" = "UrinTomBlareHoved",
               "Urin: Blæretømming, tilleggsmetode" = "UrinTomBlareTillegg",
@@ -171,10 +171,10 @@ ui_nordicscir <- function() {
               "Tarm: Avføringsmiddelbruk" = "TarmAvfmiddel",
               "Tarm: Avføringsmidler, hvilke" = "TarmAvfmiddelHvilke",
               "Tarm: Fekal inkontinens (fra 2019)" = "TarmInkontinensFra2019",
-            #  "Tarm: Fekal inkontinens (t.o.m. 2018)" = "TarmInkontinensTom2018",
+              #  "Tarm: Fekal inkontinens (t.o.m. 2018)" = "TarmInkontinensTom2018",
               "Tarm: Kirurgisk inngrep" = "TarmKirInngrep",
               "Tarm: Kirurgiske inngrep, hvilke" = "TarmKirInngrepHvilke",
-            "Tarm: NBD" = "TarmNBD"
+              "Tarm: NBD" = "TarmNBD"
             ),
             selected = c("Registreringsforsinkelse" = "RegForsinkelse")
           ),
@@ -214,7 +214,7 @@ ui_nordicscir <- function() {
               label = "Egen enhet og/eller landet",
               choices = enhetsUtvalg,
               selected = 1)
-            ),
+          ),
 
           shiny::selectInput(
             inputId = "AIS",
@@ -549,19 +549,19 @@ ui_nordicscir <- function() {
               shiny::br()
             )
           ),
-#          shiny::tabPanel(
-#            "Utsendinger",
-#            title = "Utsending av rapporter",
-#            shiny::sidebarLayout(
-#              shiny::sidebarPanel(
-#                rapbase::autoReportOrgInput("NSuts"),
-#                rapbase::autoReportInput("NSuts")
-#              ),
-#              shiny::mainPanel(
-#                rapbase::autoReportUI("NSuts")
-#              )
-#            )
-#          ),
+          shiny::tabPanel(
+            "Utsendinger",
+            title = "Utsending av rapporter",
+            shiny::sidebarLayout(
+              shiny::sidebarPanel(
+                rapbase::autoReportOrgInput("NSuts"),
+                rapbase::autoReportInput("NSuts")
+              ),
+              shiny::mainPanel(
+                rapbase::autoReportUI("NSuts")
+              )
+            )
+          ),
           shiny::tabPanel(
             "Eksport, krypterte data",
             shiny::sidebarPanel(
@@ -572,22 +572,22 @@ ui_nordicscir <- function() {
             )
           ) #Eksport-tab
         ) #tabsetPanel
-      ) #Registeradm-tab
-
-      #------------------Abonnement------------------------
-      # shiny::tabPanel(
-      #   shiny::p(
-      #     "Abonnement",
-      #     title="Bestill automatisk utsending av månedsrapport på e-post"),
-      #   shiny::sidebarLayout(
-      #     shiny::sidebarPanel(
-      #       rapbase::autoReportInput("ns-subscription")
-      #     ),
-      #     shiny::mainPanel(
-      #       rapbase::autoReportUI("ns-subscription")
-      #     )
-      #   )
-      # )
+      ), #Registeradm-tab
+      # ------------------Abonnement------------------------
+      shiny::tabPanel(
+        shiny::p(
+          "Abonnement",
+          title="Bestill automatisk utsending av månedsrapport på e-post"
+        ),
+        shiny::sidebarLayout(
+          shiny::sidebarPanel(
+            rapbase::autoReportInput("ns-subscription")
+          ),
+          shiny::mainPanel(
+            rapbase::autoReportUI("ns-subscription")
+          )
+        )
+      )
     ) #navbar
   ) #tagList
 }
@@ -645,11 +645,11 @@ server_nordicscir <- function(input, output, session) {
   #                 'Uidentifisert enhet')
 
   observeEvent(user$role(), {
-  if (user$role() == 'SC') {
-    showTab(inputId = "hovedark", target = "Registeradministrasjon")
-  } else {
-    hideTab(inputId = "hovedark", target = "Registeradministrasjon")
-   }
+    if (user$role() == 'SC') {
+      showTab(inputId = "hovedark", target = "Registeradministrasjon")
+    } else {
+      hideTab(inputId = "hovedark", target = "Registeradministrasjon")
+    }
   })
 
 
@@ -1250,24 +1250,23 @@ server_nordicscir <- function(input, output, session) {
   }
 
   #------------------ Abonnement -----------------------------------------------
-#  subReports <- list(
-#    `Månedsrapport` = list(
-#      synopsis = "Rapporteket-NordicSCIR: månedsrapport, abonnement",
-#      fun = "abonnement",
-#      paramNames = c("rnwFil", "brukernavn", "reshID", "datoTil", "register"),
-#      paramValues = c("NSmndRapp.Rnw", brukernavn, reshID, datoTil=Sys.Date(), 'nordicscir')
-#    )
-#  )
-
-#  rapbase::autoReportServer(
-#    id = "ns-subscription",
-#    registryName = "nordicscir",
-#    type = "subscription",
-#    paramNames = paramNames,
-#    paramValues = paramValues,
-#    reports = subReports
-#  )
-
+  shiny::observe(
+  rapbase::autoReportServer(
+    id = "ns-subscription",
+    registryName = "nordicscir",
+    type = "subscription",
+    paramNames = paramNames,
+    paramValues = paramValues,
+    reports = list(
+      `Månedsrapport` = list(
+        synopsis = "Rapporteket-NordicSCIR: månedsrapport, abonnement",
+        fun = "abonnement",
+        paramNames = c("rnwFil", "brukernavn", "reshID", "datoTil", "register"),
+        paramValues = c("NSmndRapp.Rnw", user$name(), user$org(), datoTil=Sys.Date(), 'nordicscir')
+      )
+    )
+  )
+  )
   #---Utsendinger---------------
   if (isDataOk) {
     sykehusNavn <- sort(
@@ -1304,12 +1303,13 @@ server_nordicscir <- function(input, output, session) {
   paramNames <- shiny::reactive("reshID")
   paramValues <- shiny::reactive(org$value())
 
-#  rapbase::autoReportServer(
-#    id = "NSuts", registryName = "nordicscir", type = "dispatchment",
-#    org = org$value, paramNames = paramNames, paramValues = paramValues,
-#    reports = disReports, orgs = orgs, eligible = (rolle == "SC")
-#  )
-
+  shiny::observe(
+  rapbase::autoReportServer(
+    id = "NSuts", registryName = "nordicscir", type = "dispatchment",
+    org = org$value, paramNames = paramNames, paramValues = paramValues,
+    reports = disReports, orgs = orgs, eligible = (user$role() == "SC")
+  )
+  )
 
 
   #----------- Eksport ----------------
