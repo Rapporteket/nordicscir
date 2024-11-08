@@ -1251,7 +1251,7 @@ server_nordicscir <- function(input, output, session) {
 
   #------------------ Abonnement -----------------------------------------------
   shiny::observe(
-  rapbase::autoReportServer(
+  rapbase::autoReportServer2(
     id = "ns-subscription",
     registryName = "nordicscir",
     type = "subscription",
@@ -1264,7 +1264,8 @@ server_nordicscir <- function(input, output, session) {
         paramNames = c("rnwFil", "brukernavn", "reshID", "datoTil", "register"),
         paramValues = c("NSmndRapp.Rnw", user$name(), user$org(), datoTil=Sys.Date(), 'nordicscir')
       )
-    )
+    ),
+    user = user
   )
   )
   #---Utsendinger---------------
@@ -1304,10 +1305,11 @@ server_nordicscir <- function(input, output, session) {
   paramValues <- shiny::reactive(org$value())
 
   shiny::observe(
-  rapbase::autoReportServer(
+  rapbase::autoReportServer2(
     id = "NSuts", registryName = "nordicscir", type = "dispatchment",
     org = org$value, paramNames = paramNames, paramValues = paramValues,
-    reports = disReports, orgs = orgs, eligible = (user$role() == "SC")
+    reports = disReports, orgs = orgs, eligible = (user$role() == "SC"),
+    user = user
   )
   )
 
