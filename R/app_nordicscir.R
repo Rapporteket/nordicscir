@@ -250,17 +250,17 @@ ui_nordicscir <- function() {
               em("(Høyreklikk på figuren for å laste den ned)"),
               shiny::br(),
               shiny::br(),
-              shiny::plotOutput("fordelinger", height = "auto"),
-              shiny::downloadButton(
-                outputId = "lastNed_figFord", label="Last ned figur"
-              ),
+#              shiny::plotOutput("fordelinger", height = "auto"),
+#              shiny::downloadButton(
+#                outputId = "lastNed_figFord", label="Last ned figur"
+#              ),
               hr()
             ),
             shiny::tabPanel(
-              "Figur, alle sykehus",
-              shiny::plotOutput("fordelingPrSh", height = "auto"),
-              shiny::downloadButton(
-                outputId = "lastNed_figFordSh", label = "Last ned figur")
+              "Figur, alle sykehus"
+#              shiny::plotOutput("fordelingPrSh", height = "auto"),
+#              shiny::downloadButton(
+#                outputId = "lastNed_figFordSh", label = "Last ned figur")
             ),
             shiny::tabPanel(
               "Tabell",
@@ -381,15 +381,15 @@ ui_nordicscir <- function() {
               "Figur",
               shiny::br(),
               shiny::h3(shiny::em("Utvikling over tid")),
-              shiny::plotOutput("gjsnTid", height = "auto"),
-              shiny::downloadButton(
-                outputId = "lastNed_figGjsnTid", label="Last ned figur"
-              ),
+#              shiny::plotOutput("gjsnTid", height = "auto"),
+#              shiny::downloadButton(
+#                outputId = "lastNed_figGjsnTid", label="Last ned figur"
+#              ),
               shiny::br(),
-              shiny::h3(em("Sykehusvise resultater")),
-              shiny::plotOutput("gjsnGrVar", height = "auto"),
-              shiny::downloadButton(
-                outputId = "lastNed_figGjsnGrVar", label = "Last ned figur")
+              shiny::h3(em("Sykehusvise resultater"))
+#              shiny::plotOutput("gjsnGrVar", height = "auto"),
+#              shiny::downloadButton(
+#                outputId = "lastNed_figGjsnGrVar", label = "Last ned figur")
             ),
             shiny::tabPanel(
               "Tabell",
@@ -535,16 +535,16 @@ ui_nordicscir <- function() {
               shiny::br(),
               shiny::br(),
               shiny::h3("Resultater, hele landet"), #),
-              shiny::downloadButton(
-                outputId = "samleRappLand.pdf",
-                label="Last ned samlerapport, hele landet", class = "butt"
-              ),
+#              shiny::downloadButton(
+#                outputId = "samleRappLand.pdf",
+#                label="Last ned samlerapport, hele landet", class = "butt"
+#              ),
               shiny::br(),
               shiny::h3("Resultater eget sykehus"), #),
-              shiny::downloadButton(
-                outputId = "samleRappEgen.pdf",
-                label="Last ned egen samlerapport", class = "butt"
-              ),
+#              shiny::downloadButton(
+#                outputId = "samleRappEgen.pdf",
+#                label="Last ned egen samlerapport", class = "butt"
+#              ),
               shiny::br(),
               shiny::br()
             )
