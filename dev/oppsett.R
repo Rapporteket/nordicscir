@@ -24,20 +24,8 @@ devtools::install(upgrade = FALSE, dependencies = FALSE)
 # dekoding av database-dump
 # sship::dec("c://Users/ast046/Downloads/nordicscir573c60536ce3.sql.gz__20241107_122831.tar.gz", keyfile = "p://.ssh/id_rsa")
 
-Sys.setenv(FALK_EXTENDED_USER_RIGHTS="[{\"A\":80,\"R\":\"LC\",\"U\":106896},{\"A\":80,\"R\":\"SC\",\"U\":105593},{\"A\":81,\"R\":\"LC\",\"U\":2}]")
-Sys.setenv(MYSQL_DB_LOG="db_log")
-Sys.setenv(MYSQL_DB_AUTOREPORT="db_autoreport")
-Sys.setenv(MYSQL_DB_DATA="NordicScirReportDataStaging")
-Sys.setenv(MYSQL_HOST="localhost")
-Sys.setenv(MYSQL_USER="root")
-Sys.setenv(MYSQL_PASSWORD="root")
-Sys.setenv(FALK_APP_ID="80")
-Sys.setenv(USERORGID="pilot")
-Sys.setenv(SHINYPROXY_USERNAME="test@tester.no")
-Sys.setenv(SHINYPROXY_USERGROUPS="pilot")
-Sys.setenv(R_RAP_INSTANCE="QAC")
-Sys.setenv(R_RAP_CONFIG_PATH="data-raw/config")
 
+source("dev/sysSetenv.R")
 nordicscir::kjor_NSapper(register='nordicscir')
 
 
@@ -51,4 +39,14 @@ tmp_json <- jsonlite::serializeJSON(tmp_yml)
 query <- paste0("INSERT INTO `autoreport` VALUES ('", tmp_json, "');")
 
 
+Sys.setenv(R_LIBCURL_SSL_REVOKE_BEST_EFFORT=TRUE)
+install.packages("ggplot2")
+devtools::install("../rapadm/.", upgrade = FALSE, dependencies = FALSE)
+
+# enten
+rapadm::run_app()
+# eller
+
+source("dev/sysSetenv.R")
+shiny::shinyApp(ui = rapadm::app_ui, server = rapadm::app_server, options = list(launch.browser = TRUE))
 
