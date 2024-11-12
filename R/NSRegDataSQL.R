@@ -25,7 +25,8 @@
 
 NSRegDataSQL <- function(valgtVar='Alder', register='norscir', koblSkjema = 'Hoved', ...) {
 
-   #HovedSkjema: mainformdatacontract
+  datakilde <- ifelse(exists('datakilde'), datakilde, register)
+    #HovedSkjema: mainformdatacontract
    #Livs: lifequalityformdatacontract
    #Urin: urinarytractfunctionformdatacontract
    #Tarm: bowelfunctionformdatacontract
@@ -376,7 +377,7 @@ if (koblSkjema=='Kont'){
   )
   }
 
-   RegData <- rapbase::loadRegData(registryName = 'data', query = query, dbType="mysql")
+   RegData <- rapbase::loadRegData(registryName = datakilde, query = query, dbType="mysql")
 
    if (valgtSkjema=='Kont' | koblSkjema=='Kont'){
      RegData <- RegData[RegData$ControlStatus==0, ] #Bare de med gjennomført kontroll
@@ -387,12 +388,12 @@ if (koblSkjema=='Kont'){
      qTilf <- 'SELECT UPPER(HovedskjemaGUID) AS FunkskjemaGUID,
                     DataClDtS, DreslbdyS, FeedingS, FirstTimeClosed, MobilmodS, ToiletinS
               FROM ActivityAndParticipationSatisfactionFormDataContract'
-     TilfData <- rapbase::loadRegData(registryName = 'data', query = qTilf, dbType = "mysql")
+     TilfData <- rapbase::loadRegData(registryName = datakilde, query = qTilf, dbType = "mysql")
 
      qFunkTilf <- 'SELECT UPPER(HovedskjemaGUID) AS HovedskjemaGUID,
                           SkjemaGUID AS FunkskjemaGUID FROM
                           ActivityAndParticipationPerformanceFormDataContract'
-     FunkVarKobl <- rapbase::loadRegData(registryName = 'data', query = qFunkTilf, dbType = "mysql")
+     FunkVarKobl <- rapbase::loadRegData(registryName = datakilde, query = qFunkTilf, dbType = "mysql")
 
      FunkTilf <- FunkVarKobl %>%
        dplyr::inner_join(TilfData, by = dplyr::join_by(FunkskjemaGUID))
