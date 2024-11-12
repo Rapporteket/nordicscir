@@ -250,17 +250,17 @@ ui_nordicscir <- function() {
               em("(Høyreklikk på figuren for å laste den ned)"),
               shiny::br(),
               shiny::br(),
-#              shiny::plotOutput("fordelinger", height = "auto"),
-#              shiny::downloadButton(
-#                outputId = "lastNed_figFord", label="Last ned figur"
-#              ),
+              shiny::plotOutput("fordelinger", height = "auto"),
+             shiny::downloadButton(
+               outputId = "lastNed_figFord", label="Last ned figur"
+             ),
               hr()
             ),
             shiny::tabPanel(
-              "Figur, alle sykehus"
-#              shiny::plotOutput("fordelingPrSh", height = "auto"),
-#              shiny::downloadButton(
-#                outputId = "lastNed_figFordSh", label = "Last ned figur")
+              "Figur, alle sykehus",
+             shiny::plotOutput("fordelingPrSh", height = "auto"),
+             shiny::downloadButton(
+               outputId = "lastNed_figFordSh", label = "Last ned figur")
             ),
             shiny::tabPanel(
               "Tabell",
@@ -517,39 +517,6 @@ ui_nordicscir <- function() {
         shiny::tabsetPanel(
           id = "ark",
           shiny::tabPanel(
-            "Samlerapporter",
-            shiny::sidebarPanel(
-              width=3,
-              shiny::h3("Utvalg"),
-              shiny::dateRangeInput(
-                inputId = "datovalgSamleRapp",
-                start = startDato-150,
-                end = Sys.Date(),
-                label = "Tidsperiode",
-                separator="t.o.m.",
-                language="nb"
-              )
-            ),
-
-            shiny::mainPanel(
-              shiny::br(),
-              shiny::br(),
-              shiny::h3("Resultater, hele landet"), #),
-#              shiny::downloadButton(
-#                outputId = "samleRappLand.pdf",
-#                label="Last ned samlerapport, hele landet", class = "butt"
-#              ),
-              shiny::br(),
-              shiny::h3("Resultater eget sykehus"), #),
-#              shiny::downloadButton(
-#                outputId = "samleRappEgen.pdf",
-#                label="Last ned egen samlerapport", class = "butt"
-#              ),
-              shiny::br(),
-              shiny::br()
-            )
-          ),
-          shiny::tabPanel(
             "Utsendinger",
             title = "Utsending av rapporter",
             shiny::sidebarLayout(
@@ -805,14 +772,17 @@ server_nordicscir <- function(input, output, session) {
 
 
   #---------Fordelinger:--fordelingsfigurer og tabeller----------
-  shiny::observe({
+ # shiny::observe({
     if (isDataOk) {
-      RegData <- finnRegData(valgtVar = input$valgtVar, Data = AlleTab)
-      RegData <- TilLogiskeVar(RegData)
+
+      RegDataFord <- reactive(finnRegData(valgtVar = input$valgtVar, Data = AlleTab))
+        #RegDataFord <- TilLogiskeVar(RegDataFord)
+
+#print(dim(RegDataFord()))
 
       output$fordelinger <- shiny::renderPlot({
         NSFigAndeler(
-          RegData = RegData, valgtVar = input$valgtVar, preprosess = 0,
+          RegData = RegDataFord(), valgtVar = input$valgtVar, preprosess = 0,
           datoFra = input$datovalg[1], datoTil = input$datovalg[2],
           reshID = user$org(),
           AIS = as.numeric(input$AIS), traume = input$traume,
@@ -834,7 +804,7 @@ server_nordicscir <- function(input, output, session) {
         },
         content = function(file) {
           NSFigAndeler(
-            RegData = RegData, valgtVar = input$valgtVar, preprosess = 0,
+            RegData = RegDataFord(), valgtVar = input$valgtVar, preprosess = 0,
             datoFra = input$datovalg[1], datoTil = input$datovalg[2],
             datoUt = as.numeric(input$datoUt), reshID = user$org(),
             AIS = as.numeric(input$AIS), traume = input$traume,
@@ -849,8 +819,9 @@ server_nordicscir <- function(input, output, session) {
         }
       )
 
-      UtDataFord <- NSFigAndeler(
-        RegData = RegData, preprosess = 0, valgtVar = input$valgtVar,
+      #observe({
+      UtDataFord <- reactive(NSFigAndeler(
+        RegData = RegDataFord(), preprosess = 0, valgtVar = input$valgtVar,
         datoFra = input$datovalg[1], datoTil = input$datovalg[2],
         datoUt = as.numeric(input$datoUt),
         reshID = user$org(),
@@ -862,20 +833,22 @@ server_nordicscir <- function(input, output, session) {
         enhetsUtvalg = as.numeric(input$enhetsUtvalg),
         session = session
       )
+      )
 
       output$tittelFord <- shiny::renderUI({
         shiny::tagList(
-          shiny::h3(UtDataFord$tittel),
-          shiny::h5(shiny::HTML(paste0(UtDataFord$utvalgTxt, "<br />")))
+          shiny::h3(UtDataFord()$tittel),
+          shiny::h5(shiny::HTML(paste0(UtDataFord()$utvalgTxt, "<br />")))
         )
       })
 
-      tabFord <- lagTabavFigAndeler(UtDataFraFig = UtDataFord)
+      tabFord <- reactive(lagTabavFigAndeler(UtDataFraFig = UtDataFord()))
+      #})
 
       output$fordelingTab <- function() {
-        antKol <- ncol(tabFord)
+        antKol <- ncol(tabFord())
         kableExtra::kable(
-          tabFord, format = "html",
+          tabFord(), format = "html",
           full_width = FALSE,
           digits = c(0, 1, 0, 1)[1:antKol]
         ) %>%
@@ -884,20 +857,20 @@ server_nordicscir <- function(input, output, session) {
           ) %>%
           kableExtra::column_spec(column = 1, width_min = "7em") %>%
           kableExtra::column_spec(
-            column = 2:(ncol(tabFord) + 1), width = "7em"
+            column = 2:(ncol(tabFord()) + 1), width = "7em"
           ) %>%
           kableExtra::row_spec(0, bold = TRUE)
       }
       output$lastNed_tabFord <- shiny::downloadHandler(
         filename = function() {paste0(input$valgtVar, '_fordeling.csv')},
         content = function(file, filename) {
-          write.csv2(tabFord, file, row.names = FALSE, na = "")
+          write.csv2(tabFord(), file, row.names = FALSE, na = "")
         }
       )
 
       output$fordelingPrSh <- shiny::renderPlot({
         NSFigAndelerSh(
-          RegData = RegData, preprosess = 0,
+          RegData = RegDataFord(), preprosess = 0,
           register = 'nordicscir',
           valgtVar = input$valgtVar,
           datoFra = input$datovalg[1], datoTil = input$datovalg[2],
@@ -919,7 +892,7 @@ server_nordicscir <- function(input, output, session) {
         },
         content = function(file) {
           NSFigAndelerSh(
-            RegData = RegData, preprosess = 0,
+            RegData = RegDataFord(), preprosess = 0,
             register = 'nordicscir',
             valgtVar = input$valgtVar,
             datoFra = input$datovalg[1], datoTil = input$datovalg[2],
@@ -935,8 +908,8 @@ server_nordicscir <- function(input, output, session) {
         }
       )
 
-      UtDataFordSh <- NSFigAndelerSh(
-        RegData = RegData, preprosess = 0,
+      UtDataFordSh <- reactive(NSFigAndelerSh(
+        RegData = RegDataFord(), preprosess = 0,
         register = 'nordicscir',
         valgtVar = input$valgtVar,
         datoFra = input$datovalg[1], datoTil = input$datovalg[2],
@@ -948,13 +921,14 @@ server_nordicscir <- function(input, output, session) {
         erMann = as.numeric(input$erMann),
         session = session
       )
+      )
 
-      tabFordSh <- lagTabavFigAndelerSh(UtDataFraFig = UtDataFordSh)
+      tabFordSh <- reactive(lagTabavFigAndelerSh(UtDataFraFig = UtDataFordSh()))
 
       output$fordelingShTab <- function() {
-        antKol <- ncol(tabFordSh)/2
+        antKol <- ncol(tabFordSh())/2
         kableExtra::kable(
-          tabFordSh,
+          tabFordSh(),
           format = "html",
           full_width = FALSE,
           digits = c(rep(0, antKol), rep(1, antKol))
@@ -964,14 +938,14 @@ server_nordicscir <- function(input, output, session) {
           ) %>%
           kableExtra::column_spec(column = 1, width_min = "7em") %>%
           kableExtra::column_spec(
-            column = 2:(ncol(tabFordSh) + 1), width = "7em"
+            column = 2:(ncol(tabFordSh()) + 1), width = "7em"
           ) %>%
           kableExtra::row_spec(0, bold = TRUE)
       }
       output$lastNed_tabFordSh <- shiny::downloadHandler(
         filename = function() {paste0(input$valgtVar, "_fordelingSh.csv")},
         content = function(file, filename) {
-          write.csv2(tabFordSh, file, row.names = FALSE, na = "")
+          write.csv2(tabFordSh(), file, row.names = FALSE, na = "")
         }
       )
     } else {
@@ -985,7 +959,7 @@ server_nordicscir <- function(input, output, session) {
       output$fordelingShTab <- NULL
       output$lastNed_tabFordSh <- NULL
     }
-  }) #observe Fordeling
+#  }) #observe Fordeling
 
 
   #-----------------Sykehusvise gjennomsnitt, figur og tabell-------------------
@@ -1217,36 +1191,8 @@ server_nordicscir <- function(input, output, session) {
         )
       }
     )
-    output$samleRappLand.pdf <- shiny::downloadHandler(
-      filename = function() {"NordicScirSamleRapportLand.pdf"},
-      content = function(file) {
-        contentFile(
-          file,
-          srcFil = "NSsamleRappLand.Rnw",
-          tmpFile = "tmpNSsamleRappLand.Rnw",
-          reshID = user$org(),
-          datoFra = as.Date(input$datovalgSamleRapp[1]),
-          datoTil = as.Date(input$datovalgSamleRapp[2])
-        )
-      }
-    )
-    output$samleRappEgen.pdf <- shiny::downloadHandler(
-      filename = function() {"NordicScirSamleRapportEgen.pdf"},
-      content = function(file) {
-        contentFile(
-          file,
-          srcFil = "NSsamleRapp.Rnw",
-          tmpFile = "tmpNSsamleRapp.Rnw",
-          reshID = user$org(),
-          datoFra = as.Date(input$datovalgSamleRapp[1]),
-          datoTil = as.Date(input$datovalgSamleRapp[2])
-        )
-      }
-    )
   } else {
     output$mndRapp.pdf <- NULL
-    output$samleRappLand.pdf <- NULL
-    output$samleRappEgen.pdf <- NULL
   }
 
   #------------------ Abonnement -----------------------------------------------
