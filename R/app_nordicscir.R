@@ -381,15 +381,15 @@ ui_nordicscir <- function() {
               "Figur",
               shiny::br(),
               shiny::h3(shiny::em("Utvikling over tid")),
-#              shiny::plotOutput("gjsnTid", height = "auto"),
-#              shiny::downloadButton(
-#                outputId = "lastNed_figGjsnTid", label="Last ned figur"
-#              ),
+             shiny::plotOutput("gjsnTid", height = "auto"),
+             shiny::downloadButton(
+               outputId = "lastNed_figGjsnTid", label="Last ned figur"
+             ),
               shiny::br(),
               shiny::h3(em("Sykehusvise resultater"))
-#              shiny::plotOutput("gjsnGrVar", height = "auto"),
-#              shiny::downloadButton(
-#                outputId = "lastNed_figGjsnGrVar", label = "Last ned figur")
+             shiny::plotOutput("gjsnGrVar", height = "auto"),
+             shiny::downloadButton(
+               outputId = "lastNed_figGjsnGrVar", label = "Last ned figur")
             ),
             shiny::tabPanel(
               "Tabell",
@@ -772,7 +772,7 @@ server_nordicscir <- function(input, output, session) {
 
 
   #---------Fordelinger:--fordelingsfigurer og tabeller----------
- # shiny::observe({
+
     if (isDataOk) {
 
       RegDataFord <- reactive(finnRegData(valgtVar = input$valgtVar, Data = AlleTab))
@@ -819,7 +819,7 @@ server_nordicscir <- function(input, output, session) {
         }
       )
 
-      #observe({
+
       UtDataFord <- reactive(NSFigAndeler(
         RegData = RegDataFord(), preprosess = 0, valgtVar = input$valgtVar,
         datoFra = input$datovalg[1], datoTil = input$datovalg[2],
@@ -959,15 +959,15 @@ server_nordicscir <- function(input, output, session) {
       output$fordelingShTab <- NULL
       output$lastNed_tabFordSh <- NULL
     }
-#  }) #observe Fordeling
 
 
   #-----------------Sykehusvise gjennomsnitt, figur og tabell-------------------
-  observe({
+  #observe({
     if (isDataOk) {
-      RegData <- finnRegData(valgtVar = input$valgtVarGjsn, Data = AlleTab)
+      RegData <- reactive(finnRegData(valgtVar = input$valgtVarGjsn, Data = AlleTab))
+
       output$gjsnGrVar <- shiny::renderPlot(
-        NSFigGjsnGrVar(RegData = RegData, preprosess = 0,
+        NSFigGjsnGrVar(RegData = RegData(), preprosess = 0,
                        valgtVar = input$valgtVarGjsn,
                        datoFra = input$datovalgGjsn[1],
                        datoTil = input$datovalgGjsn[2],
@@ -989,7 +989,7 @@ server_nordicscir <- function(input, output, session) {
                  ".", input$bildeformatGjsn)
         },
         content = function(file) {
-          NSFigGjsnGrVar(RegData = RegData, preprosess = 0,
+          NSFigGjsnGrVar(RegData = RegData(), preprosess = 0,
                          valgtVar = input$valgtVarGjsn,
                          datoFra = input$datovalgGjsn[1],
                          datoTil = input$datovalgGjsn[2],
@@ -1004,8 +1004,8 @@ server_nordicscir <- function(input, output, session) {
                          outfile = file)
         })
 
-      UtDataGjsnGrVar <- NSFigGjsnGrVar(
-        RegData = RegData, preprosess = 0,
+      UtDataGjsnGrVar <- reactive(NSFigGjsnGrVar(
+        RegData = RegData(), preprosess = 0,
         valgtVar = input$valgtVarGjsn,
         datoFra = input$datovalgGjsn[1],
         datoTil = input$datovalgGjsn[2],
@@ -1018,44 +1018,46 @@ server_nordicscir <- function(input, output, session) {
         erMann = as.numeric(input$erMannGjsn),
         valgtMaal = input$sentralmaal,
         session = session
-      )
+      ))
 
-      tabGjsnGrVar <- lagTabavFigGjsnGrVar(UtDataFraFig = UtDataGjsnGrVar)
+      tabGjsnGrVar <- reactive(
+        lagTabavFigGjsnGrVar(UtDataFraFig = UtDataGjsnGrVar()))
 
       output$tittelGjsnGrVar <- shiny::renderUI({
         shiny::tagList(
-          shiny::h3(UtDataGjsnGrVar$tittel),
-          shiny::h5(shiny::HTML(paste0(UtDataGjsnGrVar$utvalgTxt, "<br />")))
+          shiny::h3(UtDataGjsnGrVar()$tittel),
+          shiny::h5(shiny::HTML(paste0(UtDataGjsnGrVar()$utvalgTxt, "<br />")))
         )
       })
 
       output$gjsnGrVarTab <- function() {
-        antKol <- ncol(tabGjsnGrVar)
-        kableExtra::kable(tabGjsnGrVar, format = "html", digits = c(0, 1)) %>%
+        antKol <- ncol(tabGjsnGrVar())
+        kableExtra::kable(tabGjsnGrVar(), format = "html", digits = c(0, 1)) %>%
           kableExtra::column_spec(column = 1, width_min = "5em") %>%
           kableExtra::column_spec(column = 2:(antKol + 1), width = "4em") %>%
           kableExtra::row_spec(0, bold = TRUE)
       }
+
       output$lastNed_tabGjsnGrVar <- shiny::downloadHandler(
         filename = function() {
           paste0(input$valgtVar, "_tabGjsnSh.csv")
         },
         content = function(file, filename) {
-          write.csv2(tabGjsnGrVar, file, row.names = TRUE, na = "")
+          write.csv2(tabGjsnGrVar(), file, row.names = TRUE, na = "")
         }
       )
 
       output$titteltabGjsnGrVar <- shiny::renderUI({
         shiny::tagList(
-          shiny::h3(tabGjsnGrVar$tittel),
-          shiny::h5(shiny::HTML(paste0(tabGjsnGrVar$utvalgTxt, "<br />")))
+          shiny::h3(tabGjsnGrVar()$tittel),
+          shiny::h5(shiny::HTML(paste0(tabGjsnGrVar()$utvalgTxt, "<br />")))
         )
       })
 
       #------gjsnTid
       output$gjsnTid <- shiny::renderPlot(
         NSFigGjsnTid(
-          RegData = RegData, reshID = user$org(), preprosess = 0,
+          RegData = RegData(), reshID = user$org(), preprosess = 0,
           valgtVar = input$valgtVarGjsn,
           datoFra = input$datovalgGjsn[1], datoTil = input$datovalgGjsn[2],
           datoUt = as.numeric(input$datoUtGjsn),
@@ -1080,7 +1082,7 @@ server_nordicscir <- function(input, output, session) {
         },
         content = function(file) {
           NSFigGjsnTid(
-            RegData = RegData, reshID = user$org(), preprosess = 0,
+            RegData = RegData(), reshID = user$org(), preprosess = 0,
             valgtVar = input$valgtVarGjsn,
             datoFra = input$datovalgGjsn[1], datoTil = input$datovalgGjsn[2],
             datoUt = as.numeric(input$datoUtGjsn),
@@ -1099,8 +1101,8 @@ server_nordicscir <- function(input, output, session) {
         }
       )
 
-      UtDataGjsnTid <- NSFigGjsnTid(
-        RegData = RegData, reshID = user$org(), preprosess = 0,
+      UtDataGjsnTid <- reactive(NSFigGjsnTid(
+        RegData = RegData(), reshID = user$org(), preprosess = 0,
         valgtVar = input$valgtVarGjsn,
         datoFra = input$datovalgGjsn[1], datoTil = input$datovalgGjsn[2],
         datoUt = as.numeric(input$datoUtGjsn),
@@ -1114,10 +1116,11 @@ server_nordicscir <- function(input, output, session) {
         enhetsUtvalg = as.numeric(input$enhetsUtvalgGjsn),
         tidsenhet = input$tidsenhetGjsn,
         session = session
-      )
+      ))
 
-      tabGjsnTid <- t(UtDataGjsnTid$AggVerdier)
-      grtxt <- UtDataGjsnTid$grtxt
+      observe({
+      tabGjsnTid <- t(UtDataGjsnTid()$AggVerdier)
+      grtxt <- UtDataGjsnTid()$grtxt
       if ((min(nchar(grtxt)) == 5) && (max(nchar(grtxt)) == 5)) {
         grtxt <- paste(substr(grtxt, 1, 3), substr(grtxt, 4, 5))
       }
@@ -1152,6 +1155,7 @@ server_nordicscir <- function(input, output, session) {
           write.csv2(tabGjsnTid, file, row.names = TRUE, na = "")
         }
       )
+      }) #observe
     } else {
       output$gjsnGrVar <- NULL
       output$lastNed_figGjsnGrVar <- NULL
@@ -1164,7 +1168,7 @@ server_nordicscir <- function(input, output, session) {
       output$gjsnTidTab <- NULL
       output$lastNed_gjsnTidTab <- NULL
     }
-  }) #observe gjsn
+ # }) #observe gjsn
 
 
   #-------Samlerapporter--------------------
@@ -1234,13 +1238,13 @@ server_nordicscir <- function(input, output, session) {
       fun = "abonnement",
       paramNames = c('rnwFil', "reshID", "register"),
       paramValues = c('NSmndRapp.Rnw', 0, 'nordicscir')
+    ),
+    SamleRapp = list(
+      synopsis = "Rapporteket-NordicSCIR: Samlerapp IKKE tilpasset Nordic!",
+      fun = "abonnement",
+      paramNames = c("rnwFil", "reshID"),
+      paramValues = c("NSsamleRapp.Rnw", 0)
     )
-    # SamleRapp = list(
-    #   synopsis = "Rapporteket-NordicSCIR: Samlerapp IKKE tilpasset Nordic!",
-    #   fun = "abonnement",
-    #   paramNames = c("rnwFil", "reshID"),
-    #   paramValues = c("NSsamleRapp.Rnw", 0)
-    # )
   )
 
   org <- rapbase::autoReportOrgServer("NSuts", orgs)
@@ -1252,7 +1256,7 @@ server_nordicscir <- function(input, output, session) {
   shiny::observe(
   rapbase::autoReportServer(
     id = "NSuts", registryName = "nordicscir", type = "dispatchment",
-    org = org$value, paramNames = paramNames, paramValues = paramValues,
+    org = org$value, paramNames = paramNames(), paramValues = paramValues(),
     reports = disReports, orgs = orgs, eligible = (user$role() == "SC")
   )
   )
