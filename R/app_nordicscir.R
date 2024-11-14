@@ -386,7 +386,7 @@ ui_nordicscir <- function() {
                outputId = "lastNed_figGjsnTid", label="Last ned figur"
              ),
               shiny::br(),
-              shiny::h3(em("Sykehusvise resultater"))
+              shiny::h3(em("Sykehusvise resultater")),
              shiny::plotOutput("gjsnGrVar", height = "auto"),
              shiny::downloadButton(
                outputId = "lastNed_figGjsnGrVar", label = "Last ned figur")
@@ -517,6 +517,21 @@ ui_nordicscir <- function() {
         shiny::tabsetPanel(
           id = "ark",
           shiny::tabPanel(
+            "Månedsrapport",
+            #title = "Månedsrapport",
+          shiny::h3("Månedsrapport"),
+          shiny::sidebarLayout(
+            shiny::sidebarPanel(
+              shiny::downloadButton(
+            outputId = "mndRapp.pdf",
+            label = "Last ned MÅNEDSRAPPORT",
+            class = "butt")
+            ),
+            shiny::mainPanel()
+          )
+          ),
+
+          shiny::tabPanel(
             "Utsendinger",
             title = "Utsending av rapporter",
             shiny::sidebarLayout(
@@ -525,6 +540,10 @@ ui_nordicscir <- function() {
                 rapbase::autoReportInput("NSuts")
               ),
               shiny::mainPanel(
+                h4('NB: Samlerapporten er ikke tilpasset nordiske data'),
+                h4('Månedsrapporten er tilpasset nordiske data'),
+                br(),
+                br(),
                 rapbase::autoReportUI("NSuts")
               )
             )
@@ -614,8 +633,10 @@ server_nordicscir <- function(input, output, session) {
   observeEvent(user$role(), {
     if (user$role() == 'SC') {
       showTab(inputId = "hovedark", target = "Registeradministrasjon")
+      showTab(inputId = "hovedark", target = "Abonnement")
     } else {
       hideTab(inputId = "hovedark", target = "Registeradministrasjon")
+      hideTab(inputId = "hovedark", target = "Abonnement")
     }
   })
 
@@ -1256,7 +1277,7 @@ server_nordicscir <- function(input, output, session) {
   shiny::observe(
   rapbase::autoReportServer(
     id = "NSuts", registryName = "nordicscir", type = "dispatchment",
-    org = org$value, paramNames = paramNames(), paramValues = paramValues(),
+    org = org$value, paramNames = paramNames, paramValues = paramValues,
     reports = disReports, orgs = orgs, eligible = (user$role() == "SC")
   )
   )

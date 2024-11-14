@@ -19,8 +19,8 @@ Variabler uten prefiks hentes fra hovedtabellen (Main...)}
 
 \item{register}{Hvilket register det skal hentes data for: 'norscir' (standard) eller 'nordicscir'}
 
-\item{koblSkjema}{Hvilket skjema skal regnes som "hovedskjema". Standard: 'Hoved' (MainFormDataContract),
-'Kont' (ControlFormDataContract). Bare NorScir har kontrollskjema}
+\item{koblSkjema}{Hvilket skjema skal regnes som "hovedskjema". Standard: 'Hoved' (mainformdatacontract),
+'Kont' (controlformdatacontract). Bare NorScir har kontrollskjema}
 }
 \value{
 RegData data frame
@@ -30,14 +30,14 @@ Spørring som henter og kobler sammen data fra ulike skjema i valgt register
 }
 \details{
 Aktuelle skjema:
-MainFormDataContract: HOVEDSKJEMA
-BowelFunctionFormDataContract: Tarmfunksjon (?)
-LifeQualityFormDataContract: Livskvalitet
-UrinaryTractFunctionFormDataContract: Urinfunksjon
+mainformdatacontract: HOVEDSKJEMA
+bowelfunctionformdatacontract: Tarmfunksjon (?)
+lifequalityformdatacontract: Livskvalitet
+urinarytractfunctionformdatacontract: Urinfunksjon
 ActivityAndParticipationPerformanceFormDataContract: Aktivitetsfunksjon.
      Skjema kun i det norske registeret
 ActivityAndParticipationSatisfactionFormDataContract: Aktivitetsfornøydhet.
      Skjema kun i det norske registeret
-ControlFormDataContract: Kontroll. Noen variable er oppfølging av målinger i hovedskjema.
+controlformdatacontract: Kontroll. Noen variable er oppfølging av målinger i hovedskjema.
      Skjema kun i det norske registeret
 }

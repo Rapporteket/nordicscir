@@ -13,7 +13,8 @@ tabSkjemaTilknyttet(
 )
 }
 \arguments{
-\item{moderSkjema}{Hvilket skjema man skal knytte oppfølgingene til}
+\item{moderSkjema}{Hvilket skjema man skal knytte oppfølgingene til
+'Hoved' - hovedskjema, 'Kont' - Kontrollskjema}
 
 \item{datoUt}{datofiltrering basert på innleggelse (0), utskriving (1)}
 
