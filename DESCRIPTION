@@ -27,6 +27,7 @@ Depends:
 Imports:
     kableExtra,
     knitr,
+    logger,
     lubridate,
     magrittr,
     rapFigurer,
