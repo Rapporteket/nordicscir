@@ -353,7 +353,6 @@ Kont.CAis
                                Kont = 'INNER JOIN controlformdatacontract Kont '
       ),
        'ON UPPER(',koblSkjema ,'.SkjemaGUID) = UPPER(',valgtSkjema , '.HovedskjemaGUID) ')
-      #'ON UPPER(',koblSkjema ,'.SkjemaGUID', koblSkjema,') = UPPER(',valgtSkjema , '.HovedskjemaGUID) ')
       }
 #KontData <- rapbase::loadRegData(registryName = register, query='select * from controlformdatacontract', dbType="mysql")
 #TilfData <-  rapbase::loadRegData(registryName = register, query='select * from ActivityAndParticipationSatisfactionFormDataContract', dbType="mysql")
