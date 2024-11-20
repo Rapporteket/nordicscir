@@ -24,6 +24,6 @@ __Gjennomsnitt per sykehus og over tid__ viser gjennomsnittsverdier per sykehus.
 
 __Registreringsoversikter__ viser aktivitet i registeret. Også her kan man gjøre filtreringer.
 
-__Abonnement__ inneholder oversikt over rapporter du abbonerer på. Her kan du også bestille abonnement, dvs. rapporter tilsendt på e-post.
+__Abonnement__ inneholder oversikt over rapporter du abonnerer på. Her kan du også bestille abonnement, dvs. rapporter tilsendt på e-post.
                             
 Alle pasienter med nyervervet ryggmargsskade eller Cauda equina syndrom som legges inn til spesialisert rehabilitering ved en ryggmargsskadeavdeling, blir forespurt om samtykke til å bli registrert i Nordisk ryggmargsskaderegister. Dette registeret har til hensikt å sikre og forbedre ryggmargsskadeomsorgen i Norden. Mer informasjon om selve registeret finnes på hjemmesiden: [Nordisk ryggmargsskaderegister (NordicSCIR) - St. Olavs hospital (stolav.no)](http://www.nordicscir.no).
