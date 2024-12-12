@@ -6,12 +6,22 @@
 #' @return Et objekt som representerer den aktuelle app'en
 #' @export
 
-kjor_NSapper <- function(register = 'norscir') {
+kjor_NSapper <- function(register = 'norscir', browser = FALSE, logAsJson = FALSE) {
 
-  loggerSetup()
+  if (logAsJson) {
+    rapbase::loggerSetup()
+  }
   app <- switch(register,
-         'norscir' = shiny::shinyApp(ui = norscir::ui_norscir, server = norscir::server_norscir),
-         'nordicscir' = shiny::shinyApp(ui = nordicscir::ui_nordicscir, server = nordicscir::server_nordicscir)
+                'norscir' = shiny::shinyApp(
+                  ui = norscir::ui_norscir,
+                  server = norscir::server_norscir,
+                  options = list(launch.browser = browser)
+                ),
+                'nordicscir' = shiny::shinyApp(
+                  ui = nordicscir::ui_nordicscir,
+                  server = nordicscir::server_nordicscir,
+                  options = list(launch.browser = browser)
+                )
   )
 
   if (!(register %in% c('norscir','nordicscir'))){
