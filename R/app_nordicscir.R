@@ -1224,13 +1224,16 @@ server_nordicscir <- function(input, output, session) {
   }
 
   #------------------ Abonnement -----------------------------------------------
+  subParamNames <- shiny::reactive(c("orgId", "orgName"))
+  subParamValues <- shiny::reactive(c(user$org(), user$orgName()))
+
   shiny::observe({
   rapbase::autoReportServer2(
     id = "ns-subscription",
     registryName = "nordicscir",
     type = "subscription",
-    paramNames = paramNames,
-    paramValues = paramValues,
+    paramNames = subParamNames,
+    paramValues = subParamValues,
     reports = list(
       `Månedsrapport` = list(
         synopsis = "Rapporteket-NordicSCIR: månedsrapport, abonnement",
