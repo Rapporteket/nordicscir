@@ -74,7 +74,7 @@ services:
   rapadm:
     depends_on:
       - db
-    image: rapporteket/rapadm:0.8.4
+    image: rapporteket/rapadm:0.9.0
     restart: "no"
     environment:
       << : *environment
