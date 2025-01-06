@@ -588,6 +588,9 @@ ui_nordicscir <- function() {
 #' @return Server-delen til nordicscir-appen
 #' @export
 server_nordicscir <- function(input, output, session) {
+  # Logg alle endringene bruker gjør
+  logger::log_shiny_input_changes(input)
+
 #print(session)
   rapbase::appLogger(
     session = session,
@@ -1221,13 +1224,16 @@ server_nordicscir <- function(input, output, session) {
   }
 
   #------------------ Abonnement -----------------------------------------------
-  shiny::observe(
-  rapbase::autoReportServer(
+  subParamNames <- shiny::reactive(c("orgId", "orgName"))
+  subParamValues <- shiny::reactive(c(user$org(), user$orgName()))
+
+  shiny::observe({
+  rapbase::autoReportServer2(
     id = "ns-subscription",
     registryName = "nordicscir",
     type = "subscription",
-    paramNames = paramNames,
-    paramValues = paramValues,
+    paramNames = subParamNames,
+    paramValues = subParamValues,
     reports = list(
       `Månedsrapport` = list(
         synopsis = "Rapporteket-NordicSCIR: månedsrapport, abonnement",
@@ -1235,9 +1241,10 @@ server_nordicscir <- function(input, output, session) {
         paramNames = c("rnwFil", "brukernavn", "reshID", "datoTil", "register"),
         paramValues = c("NSmndRapp.Rnw", user$name(), user$org(), datoTil=Sys.Date(), 'nordicscir')
       )
-    )
+    ),
+    user = user
   )
-  )
+  })
   #---Utsendinger---------------
   if (isDataOk) {
     sykehusNavn <- sort(
@@ -1274,12 +1281,11 @@ server_nordicscir <- function(input, output, session) {
   paramNames <- shiny::reactive("reshID")
   paramValues <- shiny::reactive(org$value())
 
-  shiny::observe(
-  rapbase::autoReportServer(
+  rapbase::autoReportServer2(
     id = "NSuts", registryName = "nordicscir", type = "dispatchment",
     org = org$value, paramNames = paramNames, paramValues = paramValues,
-    reports = disReports, orgs = orgs, eligible = (user$role() == "SC")
-  )
+    reports = disReports, orgs = orgs, eligible = (user$role() == "SC"),
+    user = user
   )
 
 

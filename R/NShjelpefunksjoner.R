@@ -6,11 +6,22 @@
 #' @return Et objekt som representerer den aktuelle app'en
 #' @export
 
-kjor_NSapper <- function(register = 'norscir') {
+kjor_NSapper <- function(register = 'norscir', browser = FALSE, logAsJson = FALSE) {
 
+  if (logAsJson) {
+    rapbase::loggerSetup()
+  }
   app <- switch(register,
-         'norscir' = shiny::shinyApp(ui = norscir::ui_norscir, server = norscir::server_norscir),
-         'nordicscir' = shiny::shinyApp(ui = nordicscir::ui_nordicscir, server = nordicscir::server_nordicscir)
+                'norscir' = shiny::shinyApp(
+                  ui = norscir::ui_norscir,
+                  server = norscir::server_norscir,
+                  options = list(launch.browser = browser)
+                ),
+                'nordicscir' = shiny::shinyApp(
+                  ui = nordicscir::ui_nordicscir,
+                  server = nordicscir::server_nordicscir,
+                  options = list(launch.browser = browser)
+                )
   )
 
   if (!(register %in% c('norscir','nordicscir'))){
@@ -198,3 +209,28 @@ abonnement <- function(rnwFil, brukernavn='ukjent', reshID=0, register='nordicsc
   return(utfil)
 }
 
+#' Settings for logging as json
+#'
+#' @export
+#'
+loggerSetup <- function() {
+  logger::log_threshold(logger::INFO)
+  formatterJson <- function(level, message, ...) {
+    shinyproxyUsername <- Sys.getenv("SHINYPROXY_USERNAME", unset = "unknown")
+    appid <- Sys.getenv("FALK_APP_ID", unset = "unknown")
+    return(jsonlite::toJSON(
+      list(
+        time = format(Sys.time(), "%Y-%m-%d %H:%M:%OS3"),
+        level = attr(level, "level"),
+        app = appid,
+        user = shinyproxyUsername,
+        message = message),
+      auto_unbox = TRUE
+    )
+    )
+  }
+  logger::log_layout(formatterJson)
+  logger::log_messages()
+  logger::log_warnings()
+  logger::log_errors()
+}
