@@ -288,7 +288,6 @@ Eq5d.FormDate
 ')
 
    varKont <- c('
-# UPPER(Kont.HovedskjemaGUID) AS HovedskjemaGUID
 Kont.CAis
 ,Kont.CMtrLvlAreaL
 ,Kont.CMtrLvlAreaR
@@ -321,8 +320,8 @@ Kont.CAis
 ,Kont.FormStatus
 ,Kont.FormTypeId
 ,Kont.LastUpdate
-,Kont.NoControl
-,Kont.NoControlReason
+-- ,Kont.NoControl Fjernet jan -25
+-- ,Kont.NoControlReason Fjernet jan -25
 ,Kont.ProceedingID
 -- ,Kont.SkjemaGUID
 ,Kont.SkjemaGUID AS SkjemaGUIDKont
@@ -353,7 +352,6 @@ Kont.CAis
                                Kont = 'INNER JOIN controlformdatacontract Kont '
       ),
        'ON UPPER(',koblSkjema ,'.SkjemaGUID) = UPPER(',valgtSkjema , '.HovedskjemaGUID) ')
-      #'ON UPPER(',koblSkjema ,'.SkjemaGUID', koblSkjema,') = UPPER(',valgtSkjema , '.HovedskjemaGUID) ')
       }
 #KontData <- rapbase::loadRegData(registryName = register, query='select * from controlformdatacontract', dbType="mysql")
 #TilfData <-  rapbase::loadRegData(registryName = register, query='select * from ActivityAndParticipationSatisfactionFormDataContract', dbType="mysql")
