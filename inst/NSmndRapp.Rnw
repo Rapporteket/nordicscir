@@ -162,9 +162,6 @@ xtable::xtable(tabTilknHovedSkjema$Andeler, digits=1, align=c('l', rep('r', ncol
 
 
 \begin{frame}<0>[noframenumbering]
-%[fragile]
-%[exclude]{Kontrollskjema er nå filtrert på NoControll=FALSE og CNum=1}
-
 
 <<'AndelKtrMOppfolg', results='asis'>>=
 #Tabell: Andel kontrollskjema med oppfølging

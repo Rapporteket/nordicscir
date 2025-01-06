@@ -321,8 +321,8 @@ Kont.CAis
 ,Kont.FormStatus
 ,Kont.FormTypeId
 ,Kont.LastUpdate
-,Kont.NoControl
-,Kont.NoControlReason
+-- ,Kont.NoControl #Fjernet jan25
+-- ,Kont.NoControlReason #Fjernet jan25
 ,Kont.ProceedingID
 -- ,Kont.SkjemaGUID
 ,Kont.SkjemaGUID AS SkjemaGUIDKont
@@ -353,7 +353,6 @@ Kont.CAis
                                Kont = 'INNER JOIN ControlFormDataContract Kont '
       ),
        'ON UPPER(',koblSkjema ,'.SkjemaGUID) = UPPER(',valgtSkjema , '.HovedskjemaGUID) ')
-      #'ON UPPER(',koblSkjema ,'.SkjemaGUID', koblSkjema,') = UPPER(',valgtSkjema , '.HovedskjemaGUID) ')
       }
 #KontData <- rapbase::loadRegData(registryName = register, query='select * from ControlFormDataContract', dbType="mysql")
 #TilfData <-  rapbase::loadRegData(registryName = register, query='select * from ActivityAndParticipationSatisfactionFormDataContract', dbType="mysql")
