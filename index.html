@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">nordicscir</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.0.5</span>
       </span>
     </div>
 
@@ -66,10 +66,10 @@
 </h2>
 <p>You can install the released version of nordicscir from <a href="https://github.com/Rapporteket/nordicscir" class="external-link">GitHub</a> with:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"Rapporteket/nordicscir@*release"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"Rapporteket/nordicscir@*release"</span><span class="op">)</span></span></code></pre></div>
 <p>Siste/ønsket utviklingsversjon kan installeres ved:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"Rapporteket/nordicscir"</span>, ref<span class="op">=</span><span class="st">'navn på aktuell grein'</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"Rapporteket/nordicscir"</span>, ref<span class="op">=</span><span class="st">'navn på aktuell grein'</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
@@ -86,7 +86,7 @@
 <div class="section level2">
 <h2 id="develop">Develop<a class="anchor" aria-label="anchor" href="#develop"></a>
 </h2>
-<p>Contributors submit their code by branching from the <em>master</em> branch and issuing a pull request. After acceptance by peer review the pull request may be merged to the master branch. Changes that are accepted in TEST and/or QA environments may be tagged as a new release of the package.</p>
+<p>Contributors submit their code by branching from the <em>main</em> branch and issuing a pull request. After acceptance by peer review the pull request may be merged to the main branch. Changes that are accepted in TEST and/or QA environments may be tagged as a new release of the package.</p>
 <p>A development environment is provided as a <em>docker-compose.yml</em> file found in the root of this repository. The container can be run from a system command prompt, <em>e.g.</em></p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="ex">docker-compose</span> up</span></code></pre></div>
 <p>and the development environment will then be served by localhost through a web browser. By default, RStudio will accessible at <a href="http://localhost:8787" class="external-link">localhost:8787</a>, the database server at <a href="http://localhost:8888" class="external-link">localhost:8888</a> and Shiny-Server at <a href="http://localhost:3838" class="external-link">localhost:3838</a>.</p>
@@ -98,7 +98,7 @@
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>The <a href="https://github.com/Rapporteket/docker/blob/master/rap-dev/docker-compose.yml" class="external-link">docker-compose.yml file</a>, evt. se: <a href="https://github.com/Rapporteket/rapbase/blob/make-dev/docker-compose.yml" class="external-link uri">https://github.com/Rapporteket/rapbase/blob/make-dev/docker-compose.yml</a> kombinerer<br><a href="https://github.com/Rapporteket/docker/tree/master/rap-dev" class="external-link">utviklingsmiljø i R for Rapporteket</a> and a <a href="https://hub.docker.com/_/mysql/" class="external-link">docker mysql image</a> to form a development environment where data also can be explored. Hence, this set of docker containers will be suitable to develop content/reports at Rapporteket.</p>
+<p>The <a href="https://github.com/Rapporteket/docker/blob/main/rap-dev/docker-compose.yml" class="external-link">docker-compose.yml file</a>, evt. se: <a href="https://github.com/Rapporteket/rapbase/blob/make-dev/docker-compose.yml" class="external-link uri">https://github.com/Rapporteket/rapbase/blob/make-dev/docker-compose.yml</a> kombinerer<br><a href="https://github.com/Rapporteket/docker/tree/main/rap-dev" class="external-link">utviklingsmiljø i R for Rapporteket</a> and a <a href="https://hub.docker.com/_/mysql/" class="external-link">docker mysql image</a> to form a development environment where data also can be explored. Hence, this set of docker containers will be suitable to develop content/reports at Rapporteket.</p>
 </div>
 <div class="section level2">
 <h2 id="hvordan-etablerer-man-et-utviklingsmiljø">Hvordan etablerer man et utviklingsmiljø?<a class="anchor" aria-label="anchor" href="#hvordan-etablerer-man-et-utviklingsmilj%C3%B8"></a>
@@ -116,7 +116,7 @@
 <div class="section level3">
 <h3 id="adjustments-to-reflect-your-environment">Adjustments to reflect your environment<a class="anchor" aria-label="anchor" href="#adjustments-to-reflect-your-environment"></a>
 </h3>
-<p>The below sections might or might not apply to your use cases. If you have it wrong, just start over again. Every adjustment you make will be done in either of the files <a href="https://github.com/Rapporteket/docker/blob/master/rap-dev-data/docker-compose.yml" class="external-link">docker-compose.yml</a> or <a href="https://github.com/Rapporteket/docker/blob/master/rap-dev-data/Dockerfile" class="external-link">Dockerfile</a>. Likely, both will come in handy, so you might as well download them right away (along with rest of the repository):</p>
+<p>The below sections might or might not apply to your use cases. If you have it wrong, just start over again. Every adjustment you make will be done in either of the files <a href="https://github.com/Rapporteket/docker/blob/main/rap-dev-data/docker-compose.yml" class="external-link">docker-compose.yml</a> or <a href="https://github.com/Rapporteket/docker/blob/main/rap-dev-data/Dockerfile" class="external-link">Dockerfile</a>. Likely, both will come in handy, so you might as well download them right away (along with rest of the repository):</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/Rapporteket/docker.git <span class="at">--config</span> core.autocrlf=input</span></code></pre></div>
 <p>Before you proceed, move into the directory <em>rap-dev</em> where you will find both of the above mentioned files.</p>
 <div class="section level4">
@@ -307,7 +307,7 @@
 <ul class="list-unstyled">
 <li><a href="https://github.com/rapporteket/nordicscir/releases" class="external-link"><img src="https://img.shields.io/github/v/release/rapporteket/nordicscir?sort=semver" alt="Version"></a></li>
 <li><a href="https://github.com/rapporteket/nordicscir/actions" class="external-link"><img src="https://github.com/rapporteket/nordicscir/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
-<li><a href="https://codecov.io/gh/Rapporteket/nordicscir?branch=master" class="external-link"><img src="https://codecov.io/gh/Rapporteket/nordicscir/branch/master/graph/badge.svg" alt="Codecov test coverage"></a></li>
+<li><a href="https://codecov.io/gh/Rapporteket/nordicscir?branch=main" class="external-link"><img src="https://codecov.io/gh/Rapporteket/nordicscir/branch/main/graph/badge.svg" alt="Codecov test coverage"></a></li>
 <li><a href="https://www.tidyverse.org/lifecycle/#maturing" class="external-link"><img src="https://img.shields.io/badge/lifecycle-maturing-blue.svg" alt="Lifecycle: maturing"></a></li>
 <li><a href="https://www.gnu.org/licenses/gpl-3.0" class="external-link"><img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="License: GPL v3"></a></li>
 <li><a href="https://github.com/rapporteket/nordicscir/issues" class="external-link"><img src="https://img.shields.io/github/issues/rapporteket/nordicscir.svg" alt="GitHub open issues"></a></li>
