@@ -1,7 +1,7 @@
 Package: nordicscir
 Type: Package
 Title: R-pakke for å generere resultater fra NordicScir
-Version: 4.0.9
+Version: 4.0.10
 Date: 2024-11-14
 Authors@R: c(
      person(given = "Lena Ringstad",
@@ -37,7 +37,7 @@ Imports:
     shinyjs,
     xtable
 Remotes: 
-    Rapporteket/rapbase@dirty-fix,
+    Rapporteket/rapbase@main,
     Rapporteket/rapFigurer
 Suggests:
     testthat (>= 3.0.0)
