@@ -589,7 +589,7 @@ ui_nordicscir <- function() {
 #' @export
 server_nordicscir <- function(input, output, session) {
   # Logg alle endringene bruker gjør
-  logger::log_shiny_input_changes(input)
+  rapbase::logShinyInputChanges(input)
 
 #print(session)
   rapbase::appLogger(

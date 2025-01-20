@@ -4,7 +4,7 @@
 \alias{kjor_NSapper}
 \title{Kjør Shiny Application}
 \usage{
-kjor_NSapper(register = "norscir")
+kjor_NSapper(register = "norscir", browser = FALSE, logAsJson = FALSE)
 }
 \arguments{
 \item{register}{Angi hvilket register som skal startes}
