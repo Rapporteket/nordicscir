@@ -1,5 +1,5 @@
 
-Sys.setenv(FALK_EXTENDED_USER_RIGHTS="[{\"A\":80,\"R\":\"LC\",\"U\":106896},{\"A\":80,\"R\":\"SC\",\"U\":105593},{\"A\":81,\"R\":\"LC\",\"U\":2}]")
+Sys.setenv(FALK_EXTENDED_USER_RIGHTS="[{\"A\":80,\"R\":\"SC\",\"U\":105593},{\"A\":80,\"R\":\"LC\",\"U\":106896},{\"A\":81,\"R\":\"LC\",\"U\":2}]")
 Sys.setenv(MYSQL_DB_LOG="db_log")
 Sys.setenv(MYSQL_DB_AUTOREPORT="db_autoreport")
 Sys.setenv(MYSQL_DB_DATA="NordicScirReportDataStaging")
