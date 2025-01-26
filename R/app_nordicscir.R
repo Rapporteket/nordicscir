@@ -486,22 +486,6 @@ ui_nordicscir <- function() {
                 outputId = "lastNed_tabOppfHovedPst", label="Last ned"
               )
             )
-            #,
-            # shiny::tabPanel(
-            #   "Antall kontrollskjema med tilknyttede skjema",
-            #   shiny::h3("Antall kontrollskjema med tilknyttede skjema"),
-            #   shiny::h5("Datoutvalg er basert på dato for kontroll"),
-            #   shiny::tableOutput("tabAntTilknyttedeKtrSkjema"),
-            #   shiny::downloadButton(
-            #     outputId = "lastNed_tabOppfKtrAnt", label="Last ned"
-            #   ),
-            #   shiny::br(),
-            #   shiny::h3("Andel (%) kontrollskjema med tilknyttede skjema"),
-            #   shiny::tableOutput("tabAndelTilknyttedeKtrSkjema"),
-            #   shiny::downloadButton(
-            #     outputId = "lastNed_tabOppfKtrPst", label="Last ned"
-            #   )
-            # )
           )
         )
       ), #tab Registreringsoversikter
@@ -597,22 +581,12 @@ server_nordicscir <- function(input, output, session) {
     msg = "Starter nordicscir-app'en"
   )
 
+  #user inneholder både reshID: user$org() og  rolle: user$role()
   user <- rapbase::navbarWidgetServer2(
     id = "navbar-widget",
     orgName = "nordicscir",
     caller = "nordicscir"
   )
-
-  # session persistent objects
-  # if (rapbase::isRapContext()) {
-  #   reshID <- as.numeric(rapbase::getUserReshId(session))
-  #   rolle <- rapbase::getUserRole(session)
-  #   brukernavn <- rapbase::getUserName(session)
-  # } else {
-  #   reshID <- 0
-  #   rolle <- 'ukjent'
-  #   brukernavn <- 'ukjent'
-  # }
 
   isGetDataOk <- TRUE
   isProcessDataOk <- TRUE
