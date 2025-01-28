@@ -26,9 +26,10 @@ devtools::install(upgrade = FALSE)
 # dekoding av database-dump
 # sship::dec("c://Users/ast046/Downloads/nordicscir573c60536ce3.sql.gz__20241107_122831.tar.gz", keyfile = "p://.ssh/id_rsa")
 
-Sys.setlocale(locale = 'nb_NO.UTF-8')
+Sys.setlocale(locale = "nb_NO.UTF-8")
 source("dev/sysSetenv.R")
 
-Sys.setenv(MYSQL_HOST="localhost") # for mobilt kontor
+Sys.setenv(MYSQL_HOST = "localhost") # for mobilt kontor
+Sys.setenv(MYSQL_DB_DATA = "NordicScirReportDataStaging") # for mobilt kontor
 
-nordicscir::kjor_NSapper(register='nordicscir', browser = TRUE)
+nordicscir::kjor_NSapper(register = "nordicscir", browser = TRUE)
