@@ -603,9 +603,6 @@ server_nordicscir <- function(input, output, session) {
   }
   isDataOk <- all(c(isGetDataOk, isProcessDataOk))
   attach(AlleTab)
-  # enhet <- ifelse(exists('reshID'),
-  #                 as.character(AlleTab$HovedSkjema$ShNavn[match(reshID, AlleTab$HovedSkjema$ReshId)]),
-  #                 'Uidentifisert enhet')
 
   observeEvent(user$role(), {
     if (user$role() == 'SC') {

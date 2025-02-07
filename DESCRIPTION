@@ -25,6 +25,9 @@ LazyData: false
 Depends:
     R (>= 3.5.0)
 Imports:
+    dplyr,
+    devtools,
+    ggplot2,
     kableExtra,
     knitr,
     lubridate,
@@ -34,6 +37,7 @@ Imports:
     shiny,
     shinyalert,
     shinyjs,
+    synthpop,
     xtable
 Remotes: 
     Rapporteket/rapbase@main,
