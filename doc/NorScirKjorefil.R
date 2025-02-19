@@ -36,13 +36,13 @@ Tarm <- rapbase::loadRegData(registryName = register, dbType="mysql",
                              query= 'Select * from BowelFunctionFormDataContract ')
 #mister 0
 Funk <- rapbase::loadRegData(registryName = register, dbType="mysql",
-                             query= 'Select * from ActivityAndParticipationPerformanceFormDataContract ')
+                             query= 'Select * from activityandparticipationperformanceformdatacontract ')
 #Mister 0
 Tilf <- rapbase::loadRegData(registryName = register, dbType="mysql",
-                             query= 'Select * from ActivityAndParticipationSatisfactionFormDataContract ')
+                             query= 'Select * from activityandparticipationsatisfactionformdatacontract ')
 # Mister 0
 Eq5d <- rapbase::loadRegData(registryName = register, dbType="mysql",
-                             query= 'Select * from Eq5dlFormDataContract ')
+                             query= 'Select * from eq5dlformdatacontract ')
 #Mister 0
 
 tabH <- tabSkjemaTilknyttet(Data=AlleTab, moderSkjema='Hoved')

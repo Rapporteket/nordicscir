@@ -7,9 +7,9 @@
 #' bowelfunctionformdatacontract: Tarmfunksjon (?)
 #' lifequalityformdatacontract: Livskvalitet
 #' urinarytractfunctionformdatacontract: Urinfunksjon
-#' ActivityAndParticipationPerformanceFormDataContract: Aktivitetsfunksjon.
+#' activityandparticipationperformanceformdatacontract: Aktivitetsfunksjon.
 #'      Skjema kun i det norske registeret
-#' ActivityAndParticipationSatisfactionFormDataContract: Aktivitetsfornøydhet.
+#' activityandparticipationsatisfactionformdatacontract: Aktivitetsfornøydhet.
 #'      Skjema kun i det norske registeret
 #' controlformdatacontract: Kontroll. Noen variable er oppfølging av målinger i hovedskjema.
 #'      Skjema kun i det norske registeret
@@ -29,10 +29,10 @@ NSRegDataSQL <- function(valgtVar='Alder', register='norscir', koblSkjema = 'Hov
    #Livs: lifequalityformdatacontract
    #Urin: urinarytractfunctionformdatacontract
    #Tarm: bowelfunctionformdatacontract
-   #Sati: ActivityAndParticipationSatisfactionFormDataContract (bare NorScir)
-   #Perf: ActivityAndParticipationPerformanceFormDataContract (bare NorScir)
+   #Sati: activityandparticipationsatisfactionformdatacontract (bare NorScir)
+   #Perf: activityandparticipationperformanceformdatacontract (bare NorScir)
    #Kont: controlformdatacontract (bare NorScir)
-   #Eq5d: Eq5dlFormDataContract (bare NorScir)
+   #Eq5d: eq5dlformdatacontract (bare NorScir)
 
    if ("session" %in% names(list(...))) {
       rapbase::repLogger(session = list(...)[["session"]],
@@ -347,14 +347,14 @@ Kont.CAis
                                Livs = 'INNER JOIN lifequalityformdatacontract Livs ',
                                Urin = 'INNER JOIN urinarytractfunctionformdatacontract Urin ',
                                Tarm = 'INNER JOIN bowelfunctionformdatacontract Tarm ',
-                               Funk = 'INNER JOIN ActivityAndParticipationPerformanceFormDataContract Funk ',
-                               Eq5d = 'INNER JOIN Eq5dlFormDataContract Eq5d ',
+                               Funk = 'INNER JOIN activityandparticipationperformanceformdatacontract Funk ',
+                               Eq5d = 'INNER JOIN eq5dlformdatacontract Eq5d ',
                                Kont = 'INNER JOIN controlformdatacontract Kont '
       ),
        'ON UPPER(',koblSkjema ,'.SkjemaGUID) = UPPER(',valgtSkjema , '.HovedskjemaGUID) ')
       }
 #KontData <- rapbase::loadRegData(registryName = register, query='select * from controlformdatacontract', dbType="mysql")
-#TilfData <-  rapbase::loadRegData(registryName = register, query='select * from ActivityAndParticipationSatisfactionFormDataContract', dbType="mysql")
+#TilfData <-  rapbase::loadRegData(registryName = register, query='select * from activityandparticipationsatisfactionformdatacontract', dbType="mysql")
 #HovedSkjema <- rapbase::loadRegData(registryName = register, query='select * from mainformdatacontract', dbType="mysql")
 #LivsSkjema <- rapbase::loadRegData(registryName = register, query='select * from lifequalityformdatacontract', dbType="mysql")
 
@@ -384,12 +384,12 @@ if (koblSkjema=='Kont'){
      #RegData er nå Hovedskjema eller Kontrollskjema
      qTilf <- 'SELECT UPPER(HovedskjemaGUID) AS FunkskjemaGUID,
                     DataClDtS, DreslbdyS, FeedingS, FirstTimeClosed, MobilmodS, ToiletinS
-              FROM ActivityAndParticipationSatisfactionFormDataContract'
+              FROM activityandparticipationsatisfactionformdatacontract'
      TilfData <- rapbase::loadRegData(registryName = 'data', query = qTilf, dbType = "mysql")
 
      qFunkTilf <- 'SELECT UPPER(HovedskjemaGUID) AS HovedskjemaGUID,
                           SkjemaGUID AS FunkskjemaGUID FROM
-                          ActivityAndParticipationPerformanceFormDataContract'
+                          activityandparticipationperformanceformdatacontract'
      FunkVarKobl <- rapbase::loadRegData(registryName = 'data', query = qFunkTilf, dbType = "mysql")
 
      FunkTilf <- FunkVarKobl %>%
