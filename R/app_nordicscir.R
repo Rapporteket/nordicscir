@@ -581,13 +581,6 @@ server_nordicscir <- function(input, output, session) {
     msg = "Starter nordicscir-app'en"
   )
 
-  #user inneholder både reshID: user$org() og  rolle: user$role()
-  user <- rapbase::navbarWidgetServer2(
-    id = "navbar-widget",
-    orgName = "nordicscir",
-    caller = "nordicscir"
-  )
-
   isGetDataOk <- TRUE
   isProcessDataOk <- TRUE
   AlleTab <- getRealData(register = 'nordicscir')
@@ -603,6 +596,21 @@ server_nordicscir <- function(input, output, session) {
   }
   isDataOk <- all(c(isGetDataOk, isProcessDataOk))
   attach(AlleTab)
+
+  map_avdeling <- AlleTab$HovedSkjema %>%
+    dplyr::transmute(
+      UnitId = ReshId,
+      orgname = ShNavn
+    ) %>%
+    dplyr::distinct(UnitId, orgname)
+
+  #user inneholder både reshID: user$org() og  rolle: user$role()
+  user <- rapbase::navbarWidgetServer2(
+    id = "navbar-widget",
+    orgName = "nordicscir",
+    map_orgname = shiny::req(map_avdeling),
+    caller = "nordicscir"
+  )
 
   observeEvent(user$role(), {
     if (user$role() == 'SC') {
