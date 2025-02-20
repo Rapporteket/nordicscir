@@ -585,7 +585,6 @@ server_nordicscir <- function(input, output, session) {
   user <- rapbase::navbarWidgetServer2(
     id = "navbar-widget",
     orgName = "nordicscir",
-    map_orgname = shiny::req(map_avdeling),
     caller = "nordicscir"
   )
 
