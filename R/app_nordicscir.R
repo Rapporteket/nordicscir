@@ -1203,11 +1203,10 @@ server_nordicscir <- function(input, output, session) {
   }
 
   #------------------ Abonnement -----------------------------------------------
-  subParamNames <- shiny::reactive(c("orgId", "orgName"))
-  subParamValues <- shiny::reactive(c(user$org(), user$orgName()))
+  subParamNames <- shiny::reactive(c("brukernavn", "reshID"))
+  subParamValues <- shiny::reactive(c(user$name(), user$org()))
 
-  shiny::observe({
-  rapbase::autoReportServer2(
+  rapbase::autoReportServer(
     id = "ns-subscription",
     registryName = "nordicscir",
     type = "subscription",
@@ -1218,12 +1217,11 @@ server_nordicscir <- function(input, output, session) {
         synopsis = "Rapporteket-NordicSCIR: månedsrapport, abonnement",
         fun = "abonnement",
         paramNames = c("rnwFil", "brukernavn", "reshID", "datoTil", "register"),
-        paramValues = c("NSmndRapp.Rnw", user$name(), user$org(), datoTil=Sys.Date(), 'nordicscir')
+        paramValues = c("NSmndRapp.Rnw", "user$name()", "user$org()", datoTil = Sys.Date(), 'nordicscir')
       )
     ),
     user = user
   )
-  })
   #---Utsendinger---------------
   if (isDataOk) {
     sykehusNavn <- sort(
@@ -1259,14 +1257,16 @@ server_nordicscir <- function(input, output, session) {
   # oppdatere reaktive parametre, for å få inn valgte verdier
   paramNames <- shiny::reactive("reshID")
   paramValues <- shiny::reactive(org$value())
-
-  rapbase::autoReportServer2(
+  visRapp <- shiny::reactiveVal(FALSE)
+  shiny::observeEvent(user$role(), {
+    visRapp(user$role() == "SC")
+  })
+  rapbase::autoReportServer(
     id = "NSuts", registryName = "nordicscir", type = "dispatchment",
     org = org$value, paramNames = paramNames, paramValues = paramValues,
-    reports = disReports, orgs = orgs, eligible = (user$role() == "SC"),
+    reports = disReports, orgs = orgs, eligible = visRapp,
     user = user
   )
-
 
   #----------- Eksport ----------------
   registryName <- "nordicscir"
