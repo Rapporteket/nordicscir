@@ -37,7 +37,6 @@ Imports:
     shiny,
     shinyalert,
     shinyjs,
-    synthpop,
     xtable
 Remotes: 
     Rapporteket/rapbase@main,
