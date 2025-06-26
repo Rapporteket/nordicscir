@@ -11,7 +11,7 @@ Sys.setenv(MYSQL_DB_DATA="nordicscirreportdatastaging")
 nordicscir::kjor_NSapper(register='nordicscir')
 RegData <- rapbase::loadRegData(
   registryName = "data",
-  query = "SELECT * FROM mainformdatacontract",
+  query = "SELECT * FROM spinal_cord_injury_core_data_set",
   dbType = "mysql"
 )
 
