@@ -1,9 +1,4 @@
 
-
-##############################
-## Kjøring på mobilt kontor ##
-##############################
-
 devtools::install("../rapbase/.")
 devtools::install(upgrade = FALSE)
 
