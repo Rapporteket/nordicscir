@@ -23,9 +23,9 @@ NSFigGjsnTid <- function(RegData, valgtVar='Alder', datoFra='2011-01-01', datoTi
                            enhetsUtvalg=0, valgtMaal='gjsn', AIS='', traume='alle', nivaaUt=99,
                          preprosess=1, outfile='', hentData=0, lagFigur=1,...){
 
-  if ("session" %in% names(list(...))) {
-    rapbase::repLogger(session = list(...)[["session"]], msg = paste0('FigGjsnTid: ',valgtVar))
-  }
+  # if ("session" %in% names(list(...))) {
+  #   rapbase::repLogger(session = list(...)[["session"]], msg = paste0('FigGjsnTid: ',valgtVar))
+  # }
   if (hentData == 1) {
     RegData <- NSRegDataSQL(valgtVar = valgtVar)
   }
