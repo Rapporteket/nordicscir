@@ -51,9 +51,9 @@ NSFigAndeler <- function(RegData, outfile='', valgtVar='Alder',
                          enhetsUtvalg=0, reshID=0, hentData=0, preprosess=1, datoUt=0,
                          ...) {
 
-   if ("session" %in% names(list(...))) {
-      rapbase::repLogger(session = list(...)[["session"]], msg = "Fordelingsfigur")
-   }
+   # if ("session" %in% names(list(...))) {
+   #    rapbase::repLogger(session = list(...)[["session"]], msg = "Fordelingsfigur")
+   # }
       if (hentData == 1) {
             RegData <- NSRegDataSQL(valgtVar=valgtVar)
       }

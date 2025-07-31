@@ -23,9 +23,9 @@ NSFigStabelAnt <- function(RegData, outfile='', valgtVar='AAisFAis',
                           enhetsUtvalg=0, reshID = 0,
                           minald=0, maxald=130, erMann=99, traume='alle',nivaaUt=99, ...) {
 
-  if ("session" %in% names(list(...))) {
-    rapbase::repLogger(session = list(...)[["session"]], msg = "AndelStabel, figur")
-  }
+  # if ("session" %in% names(list(...))) {
+  #   rapbase::repLogger(session = list(...)[["session"]], msg = "AndelStabel, figur")
+  # }
   if (hentData == 1) {
     RegData <- NSRegDataSQL(valgtVar=valgtVar, register = register)
   }

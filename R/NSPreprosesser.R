@@ -16,7 +16,7 @@ NSPreprosesser <- function(RegData)
       RegData$erMann <- RegData$PatientGender
       RegData$erMann[RegData$PatientGender == 2] <- 0 #Ingen manglende verdier i variabelen
 
-      #****'Tetraplegi*****.
+      # ****'Tetraplegi*****.
       #      0: 'Paraplegi', 1: 'Tetraplegi', 9: 'Ukjent'.
       '%u%' <- union
       RegData$TetraplegiInn <- 0
@@ -27,7 +27,7 @@ NSPreprosesser <- function(RegData)
       RegData$TetraplegiInn[(RegData$ASensLvlAreaL == -1) & (RegData$ASensLvlAreaR == -1) &
                 (RegData$AMtrLvlAreaL == -1) & (RegData$AMtrLvlAreaR == -1)]  <- 9
 
-      #****'Tetraplegi ved utskrivning*****.
+      # ****'Tetraplegi ved utskrivning*****.
        RegData$TetraplegiUt <- 0
        RegData$TetraplegiUt[which(RegData$FSensLvlAreaL==1) %u% which(RegData$FSensLvlAreaR==1) %u%
             which(RegData$FMtrLvlAreaL==1) %u% which(RegData$FMtrLvlAreaR==1)] <-1

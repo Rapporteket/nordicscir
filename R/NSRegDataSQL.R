@@ -80,6 +80,7 @@ try(if(register == 'nordicscir' & koblSkjema == 'Kont') stop("NordicScir har ikk
       Hoved.RehabDy,
       Hoved.RecCtrl,
       Hoved.Scietiol,
+      -- UPPER(Hoved.SkjemaGUID) AS SkjemaGUIDHoved,
       Hoved.SkjemaGUID AS SkjemaGUIDHoved,
       Hoved.UnitId,
       Hoved.VentAssi
@@ -90,7 +91,8 @@ try(if(register == 'nordicscir' & koblSkjema == 'Kont') stop("NordicScir har ikk
 
    varLivs <- c('
 Livs.FormDate
-,UPPER(Livs.HovedskjemaGUID) AS HovedskjemaGUID
+-- ,UPPER(Livs.HovedskjemaGUID) AS HovedskjemaGUID
+,Livs.HovedskjemaGUID
 ,Livs.QolDt
 ,Livs.SatGenrl
 ,Livs.SatPhys
@@ -101,7 +103,8 @@ Livs.FormDate
    #,Livs.PasientGUID
 
    varFunk <- c('
-UPPER(Funk.HovedskjemaGUID) AS HovedskjemaGUID
+Funk.HovedskjemaGUID
+-- UPPER(Funk.HovedskjemaGUID) AS HovedskjemaGUID
 ,Funk.DataClDt
 ,Funk.Dreslbdy
 ,Funk.Feeding
@@ -113,7 +116,8 @@ UPPER(Funk.HovedskjemaGUID) AS HovedskjemaGUID
 ')
 
    varUrin <- c("
-UPPER(Urin.HovedskjemaGUID) AS HovedskjemaGUID
+Urin.HovedskjemaGUID
+-- UPPER(Urin.HovedskjemaGUID) AS HovedskjemaGUID
 ,Urin.Antiprop
 ,Urin.Antiuti
 ,Urin.AnyDrugs
@@ -197,7 +201,8 @@ UPPER(Urin.HovedskjemaGUID) AS HovedskjemaGUID
    #,Urin.PasientGUID
 
    varTarm <- c('
- UPPER(Tarm.HovedskjemaGUID) AS HovedskjemaGUID
+ Tarm.HovedskjemaGUID
+ -- UPPER(Tarm.HovedskjemaGUID) AS HovedskjemaGUID
  ,Tarm.Antichol
  ,Tarm.Apndec
  ,Tarm.Apndic
@@ -270,7 +275,7 @@ UPPER(Urin.HovedskjemaGUID) AS HovedskjemaGUID
  ,Tarm.SurgicalIntervention
  ,Tarm.Wrpadplg
  ')
-   # ,Tarm.PasientGUID
+
 
    varEQ5D <- c('
 Eq5d.FormDate
@@ -284,7 +289,8 @@ Eq5d.FormDate
 ,Eq5d.Eq5d5lDt
 ,Eq5d.ProceedingID
 ,Eq5d.ParentCNum
-,UPPER(Eq5d.HovedskjemaGUID) AS HovedskjemaGUID
+,Eq5d.HovedskjemaGUID
+-- ,UPPER(Eq5d.HovedskjemaGUID) AS HovedskjemaGUID
 ')
 
    varKont <- c('
@@ -351,7 +357,7 @@ Kont.CAis
                                Eq5d = 'INNER JOIN eq_5d_5l Eq5d ',
                                Kont = 'INNER JOIN control_form Kont '
       ),
-       'ON UPPER(',koblSkjema ,'.SkjemaGUID) = UPPER(',valgtSkjema , '.HovedskjemaGUID) ')
+       'ON ',koblSkjema ,'.SkjemaGUID = ',valgtSkjema , '.HovedskjemaGUID ')
       }
 #KontData <- rapbase::loadRegData(registryName = register, query='select * from control_form', dbType="mysql")
 #TilfData <-  rapbase::loadRegData(registryName = register, query='select * from activities_and_participation_satisfaction', dbType="mysql")
@@ -382,13 +388,12 @@ if (koblSkjema=='Kont'){
 
    if (valgtSkjema=='Tilf') {
      #RegData er nå Hovedskjema eller Kontrollskjema
-     qTilf <- 'SELECT UPPER(HovedskjemaGUID) AS FunkskjemaGUID,
+     qTilf <- 'SELECT HovedskjemaGUID AS FunkskjemaGUID,
                     DataClDtS, DreslbdyS, FeedingS, FirstTimeClosed, MobilmodS, ToiletinS
               FROM activities_and_participation_satisfaction'
      TilfData <- rapbase::loadRegData(registryName = 'data', query = qTilf, dbType = "mysql")
 
-     qFunkTilf <- 'SELECT UPPER(HovedskjemaGUID) AS HovedskjemaGUID,
-                          SkjemaGUID AS FunkskjemaGUID FROM
+     qFunkTilf <- 'SELECT HovedskjemaGUID, SkjemaGUID AS FunkskjemaGUID FROM
                           activities_and_participation_performance'
      FunkVarKobl <- rapbase::loadRegData(registryName = 'data', query = qFunkTilf, dbType = "mysql")
 
