@@ -32,13 +32,12 @@ Imports:
     knitr,
     lubridate,
     magrittr,
-    rapFigurer,
     rlang,
     shiny,
     shinyalert,
     shinyjs,
     xtable
-Remotes: 
+Remotes:
     Rapporteket/rapbase@main,
     Rapporteket/rapFigurer
 Suggests:
