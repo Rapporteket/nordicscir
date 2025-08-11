@@ -86,23 +86,23 @@ SorterOgNavngiTidsEnhet <- function(RegData, tidsenhet='Aar', tab=0, datoUt=0) {
 
 
 
-#' Lage tulledata (simulerte data). Takler ikke posixlt- type data.
-#' @export
-lageTulleData <- function(RegData, varBort='ShNavn', antSh=27) {
-      #FUNKER IKKE !!!
-      library(synthpop)
-      library(dplyr)
-      #ForlopsID <- RegData$ForlopsID
-
-      RegData <- RegData[,-which(names(RegData) %in% varBort)]
-      sykehus <- paste('Sykehus', LETTERS[1:antSh])
-      fordelingPasienter <- sample(1:antSh,antSh)
-      RegData$HealthUnitShortName <- sample(sykehus, prob=fordelingPasienter/sum(fordelingPasienter), size=dim(RegData)[1], replace=T)
-      RegDataSyn <- synthpop::syn(RegData, method = "sample") #, seed = 500) #Trekker med tilbakelegging
-      RegData <- data.frame(RegDataSyn$syn) # FÅR feilmld...
-	  return(RegData)
-
-      }
+# Lage tulledata (simulerte data). Takler ikke posixlt- type data.
+# @export
+# lageTulleData <- function(RegData, varBort='ShNavn', antSh=27) {
+#       #FUNKER IKKE !!!
+#       library(synthpop)
+#       library(dplyr)
+#       #ForlopsID <- RegData$ForlopsID
+#
+#       RegData <- RegData[,-which(names(RegData) %in% varBort)]
+#       sykehus <- paste('Sykehus', LETTERS[1:antSh])
+#       fordelingPasienter <- sample(1:antSh,antSh)
+#       RegData$HealthUnitShortName <- sample(sykehus, prob=fordelingPasienter/sum(fordelingPasienter), size=dim(RegData)[1], replace=T)
+#       RegDataSyn <- synthpop::syn(RegData, method = "sample") #, seed = 500) #Trekker med tilbakelegging
+#       RegData <- data.frame(RegDataSyn$syn) # FÅR feilmld...
+# 	  return(RegData)
+#
+#       }
 
 #' Automatisk linjebryting av lange tekstetiketter
 #' @param x En tekststreng eller vektor av tekststrenger
@@ -150,6 +150,7 @@ finnRegData <- function(valgtVar='Alder', Data = AlleTab){
 }
 
 #' Konvertere boolske variable fra tekst til boolske variable...
+#' Boolske variabler kommer fra jun 2025 som 0-1. Funksjonen kan ikke brukes lenger
 #' @param valgtVar Angir hvilke(n) variable det skal vises resultat for.
 #' @param Data Liste med alle skjema/tabeller
 #' @export

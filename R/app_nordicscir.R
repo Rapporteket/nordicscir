@@ -573,9 +573,8 @@ ui_nordicscir <- function() {
 #' @export
 server_nordicscir <- function(input, output, session) {
   # Logg alle endringene bruker gjør
-  rapbase::logShinyInputChanges(input)
+  # rapbase::logShinyInputChanges(input)
 
-#print(session)
   rapbase::appLogger(
     session = session,
     msg = "Starter nordicscir-app'en"
@@ -597,12 +596,19 @@ server_nordicscir <- function(input, output, session) {
   isDataOk <- all(c(isGetDataOk, isProcessDataOk))
   attach(AlleTab)
 
-  map_avdeling <- AlleTab$HovedSkjema %>%
-    dplyr::transmute(
-      UnitId = ReshId,
-      orgname = ShNavn
-    ) %>%
-    dplyr::distinct(UnitId, orgname)
+  # map_avdeling <- AlleTab$HovedSkjema %>%
+  #   dplyr::transmute(
+  #     UnitId = ReshId,
+  #     orgname = ShNavn
+  #   ) %>%
+  #   dplyr::distinct(UnitId, orgname)
+
+  AlleResh <- unique(HovedSkjema$ReshId)
+  map_avdeling <- data.frame(
+    UnitId = AlleResh,
+    orgname = HovedSkjema$ShNavn[
+      match(AlleResh, HovedSkjema$ReshId)])
+
 
   #user inneholder både reshID: user$org() og  rolle: user$role()
   user <- rapbase::navbarWidgetServer2(
@@ -779,9 +785,6 @@ server_nordicscir <- function(input, output, session) {
     if (isDataOk) {
 
       RegDataFord <- reactive(finnRegData(valgtVar = input$valgtVar, Data = AlleTab))
-        #RegDataFord <- TilLogiskeVar(RegDataFord)
-
-#print(dim(RegDataFord()))
 
       output$fordelinger <- shiny::renderPlot({
         NSFigAndeler(
