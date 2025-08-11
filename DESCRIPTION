@@ -1,7 +1,7 @@
 Package: nordicscir
 Type: Package
 Title: R-pakke for å generere resultater fra NordicScir
-Version: 4.0.18
+Version: 4.0.19
 Date: 2025-08-11
 Authors@R: c(
      person(given = "Lena Ringstad",
