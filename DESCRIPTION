@@ -1,8 +1,8 @@
 Package: nordicscir
 Type: Package
 Title: R-pakke for å generere resultater fra NordicScir
-Version: 4.0.19
-Date: 2025-08-11
+Version: 4.1.0
+Date: 2025-08-12
 Authors@R: c(
      person(given = "Lena Ringstad",
            family = "Olsen",
@@ -32,7 +32,6 @@ Imports:
     knitr,
     lubridate,
     magrittr,
-    norscir,
     rapbase,
     rapFigurer,
     rlang,
@@ -42,8 +41,7 @@ Imports:
     xtable
 Remotes: 
     Rapporteket/rapbase@main,
-    Rapporteket/rapFigurer,
-    Rapporteket/norscir@main
+    Rapporteket/rapFigurer
 Suggests:
     testthat (>= 3.0.0)
 RoxygenNote: 7.3.2

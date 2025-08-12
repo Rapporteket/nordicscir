@@ -13,8 +13,10 @@ kjor_NSapper <- function(register = 'norscir', browser = FALSE, logAsJson = FALS
   }
   app <- switch(register,
                 'norscir' = shiny::shinyApp(
-                  ui = norscir::ui_norscir,
-                  server = norscir::server_norscir,
+                  ui = nordicscir::ui_norscir,
+                  server = nordicscir::server_norscir,
+                  # ui = norscir::ui_norscir,
+                  # server = norscir::server_norscir,
                   options = list(launch.browser = browser)
                 ),
                 'nordicscir' = shiny::shinyApp(
