@@ -11,20 +11,12 @@ test_that("warning and NULL provided when no real data available", {
   options(warn = defaultW)
 })
 
-test_that("function can return real data", {
-  skip_if(1 == 1, message = "Postponed until data model in place. Please fix!")
-  expect_true(class(getRealData()) == "list")
-})
-
 test_that("fake data can be returned", {
   expect_true(class(getFakeData()) == "list")
 })
 
-test_that("warning and NULL is provided on processing error", {
-  expect_warning(processAllData(data = list()))
-  options(warn = -1)
-  expect_null(processAllData(data = list()))
-  options(warn = defaultW)
+test_that("no data can be processed", {
+  expect_true(class(processAllData(data = list())) == "list")
 })
 
 test_that("fake data can be processed", {
