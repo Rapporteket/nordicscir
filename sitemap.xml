@@ -27,6 +27,7 @@
 <url><loc>/reference/force_names.html</loc></url>
 <url><loc>/reference/getData.html</loc></url>
 <url><loc>/reference/index.html</loc></url>
+<url><loc>/reference/kjorApp.html</loc></url>
 <url><loc>/reference/kjor_NSapper.html</loc></url>
 <url><loc>/reference/lagTabNevrKlass.html</loc></url>
 <url><loc>/reference/lagTabavFigAndeler.html</loc></url>
@@ -35,6 +36,7 @@
 <url><loc>/reference/pipe.html</loc></url>
 <url><loc>/reference/pronoun.html</loc></url>
 <url><loc>/reference/server_nordicscir.html</loc></url>
+<url><loc>/reference/server_norscir.html</loc></url>
 <url><loc>/reference/subtract_month.html</loc></url>
 <url><loc>/reference/tabAntOpphPasSh5Aar.html</loc></url>
 <url><loc>/reference/tabAntOpphSh5Aar.html</loc></url>
@@ -44,5 +46,6 @@
 <url><loc>/reference/tabLiggetider.html</loc></url>
 <url><loc>/reference/tabSkjemaTilknyttet.html</loc></url>
 <url><loc>/reference/ui_nordicscir.html</loc></url>
+<url><loc>/reference/ui_norscir.html</loc></url>
 </urlset>
 
