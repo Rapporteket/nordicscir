@@ -39,7 +39,7 @@ Imports:
     shinyalert,
     shinyjs,
     xtable
-Remotes: 
+Remotes:
     Rapporteket/rapbase@main,
     Rapporteket/rapFigurer
 Suggests:
