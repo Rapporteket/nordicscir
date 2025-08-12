@@ -99,8 +99,8 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
     #-1: Velg verdi, 1:A Komplett skade, 2:B Inkomplett, 3:C Inkomplett, 4:D Inkomplett, 5:E Normal,
     #9: U Ukjent eller ikke anvendbar
     #Fra 01.01.2015
-    #Aais == 9 & ANeuNoMeasure = FALSE: Ukjent/Ikke klassifiserbar
-    #Aais == -1 & ANeuNoMeasure = TRUE: Ikke utført. Tilsv. F
+    #Aais == 9 & ANeuNoMeasure = 0: Ukjent/Ikke klassifiserbar
+    #Aais == -1 & ANeuNoMeasure = 1: Ikke utført. Tilsv. F
     RegData <- RegData[RegData$InnDato >= as.Date('2015-01-01'), ]
     retn <- ifelse(figurtype == 'antGr', 'V', 'H')
 
@@ -114,14 +114,14 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
     xAkseTxt <- 'AIS-kategori'
     if (valgtVar == 'AAis') {
       RegData$VariabelGr <- RegData[,valgtVar]
-      RegData$VariabelGr[which((RegData$AAis == 9) & (RegData$ANeuNoMeasure == FALSE))] <- 6
-      RegData$VariabelGr[which((RegData$AAis == -1) & (RegData$ANeuNoMeasure == TRUE))] <- 7
+      RegData$VariabelGr[which((RegData$AAis == 9) & (RegData$ANeuNoMeasure == 0))] <- 6
+      RegData$VariabelGr[which((RegData$AAis == -1) & (RegData$ANeuNoMeasure == 1))] <- 7
       RegData$VariabelGr <- factor(RegData$VariabelGr, levels = 1:7, labels = grtxt)
     }
     if (valgtVar == 'FAis') {
       RegData$VariabelGr <- RegData$FAis
-      RegData$VariabelGr[which((RegData$FAis == 9) & (RegData$FNeuNoMeasure == FALSE))] <- 6
-      RegData$VariabelGr[which((RegData$FAis == -1) & (RegData$FNeuNoMeasure == TRUE))] <- 7
+      RegData$VariabelGr[which((RegData$FAis == 9) & (RegData$FNeuNoMeasure == 0))] <- 6
+      RegData$VariabelGr[which((RegData$FAis == -1) & (RegData$FNeuNoMeasure == 1))] <- 7
       RegData$VariabelGr <- factor(RegData$VariabelGr, levels = 1:7, labels = grtxt)
     }
     if (valgtVar == 'AAisFAis') {
@@ -487,11 +487,6 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
   if (valgtVar=='TarmInkontinensFra2019') {
     retn <- 'H'
     tittel <- 'Hyppighet av fekal inkontinens'
-    # gr <- c(1:4,7:9)
-    # grtxt <- c('Daglig', '1-6 ganger/uke', '1-4 ganger/måned',
-    #            'Sjeldnere enn månedlig', 'Aldri', 'Ikke relevant', 'Ukjent' )
-    # RegData <- RegData[RegData$Fcincfrq2 %in% gr,]
-    #RegData$VariabelGr <- factor(RegData$Fcincfrq2, levels = gr, labels = grtxt)
 
     RegData$Fcincfrq2[RegData$Fcincfrq2 %in% c(4,7)] <- 4
     RegData$Fcincfrq3[RegData$Fcincfrq2 != -1] <- RegData$Fcincfrq2[RegData$Fcincfrq2 != -1]

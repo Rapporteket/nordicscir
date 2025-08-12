@@ -264,13 +264,13 @@ NevrKlass <- rbind(
       'Utført og klassifiserbar, inn: ' =
             addmargins(table(HovedSkjema$ShNavn[HovedSkjema$AAis %in% 1:5])),
       'Ikke utført  ved innkomst:' =
-            addmargins(table(HovedSkjema$ShNavn[HovedSkjema$ANeuNoMeasure == TRUE & HovedSkjema$AAis == -1])),
+            addmargins(table(HovedSkjema$ShNavn[HovedSkjema$ANeuNoMeasure == 1 & HovedSkjema$AAis == -1])),
       'Utført, ikke klassifiserbar, inn: ' =
             addmargins(table(HovedSkjema$ShNavn[HovedSkjema$AAis==9])),
        'Utført og klassifiserbar, ut: ' =
              addmargins(table(HovedSkjema$ShNavn[HovedSkjema$FAis %in% 1:5])),
       'Ikke utført ved utreise:' =
-            addmargins(table(HovedSkjema$ShNavn[HovedSkjema$FNeuNoMeasure == TRUE
+            addmargins(table(HovedSkjema$ShNavn[HovedSkjema$FNeuNoMeasure == 1
                                                      & HovedSkjema$FAis == -1])),
       'Utført, ikke klassifiserbar, ut: ' =
             addmargins(table(HovedSkjema$ShNavn[HovedSkjema$FAis==9])),
