@@ -6,15 +6,9 @@ devtools::install(upgrade = FALSE)
 source("dev/sysSetenv.R")
 nordicscir::kjor_NSapper(register = "nordicscir", browser = TRUE)
 
-Sys.setenv(MYSQL_DB_DATA="norscir")
-nordicscir::kjor_NSapper(register = "norscir", browser = TRUE)
-
 source("dev/sysSetenv.R")
-nordicscir::kjor_NSapper(register = "nordicscir", browser = TRUE)
-
 Sys.setenv(MYSQL_DB_DATA="norscir")
 nordicscir::kjor_NSapper(register = "norscir", browser = TRUE)
-
 
 
 

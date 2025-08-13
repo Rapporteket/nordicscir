@@ -1455,14 +1455,14 @@ rapbase::appLogger(
     #Must correspond to the registry R package name.
     #Når norscir benyttes som registryName, kommer bestilte utsendinger opp i den norske appen. Men fungerer utsendinga...? N E I !!
     type = "subscription",
-    paramNames = paramNames,
-    paramValues = paramValues,
+    paramNames = paramNamesAbb,
+    paramValues = paramNamesAbb,
     reports = list(
       `Månedsrapport` = list(
         synopsis = "Rapporteket-NorSCIR: månedsrapport, abonnement",
         fun = "abonnement",
-        paramNamesAbb = c("rnwFil", "brukernavn", "reshID", "register"),
-        paramNamesAbb = c("NSmndRapp.Rnw", "user$name()", "user$org()", 'norscir')
+        paramNames = c("rnwFil", "brukernavn", "reshID", "register"),
+        paramNames = c("NSmndRapp.Rnw", "user$name()", "user$org()", 'norscir')
       )
     ),
     user = user
