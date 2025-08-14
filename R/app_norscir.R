@@ -1091,6 +1091,7 @@ rapbase::appLogger(
   #----------Før/etter--------------
 
   shiny::observe({
+    print(user$org())
     if (isDataOk) {
       RegData <- nordicscir::finnRegData(valgtVar = input$valgtVarPP, Data = AlleTab)
       #RegData <- nordicscir::TilLogiskeVar(RegData)
@@ -1445,29 +1446,6 @@ rapbase::appLogger(
     output$samleRappEgen.pdf <- NULL
   }
 
-  #------------------ Abonnement -----------------------------------------------
-  paramNamesAbb <- shiny::reactive(c("brukernavn", "reshID"))
-  paramValuesAbb <- shiny::reactive(c(user$name(), user$org()))
-
-  rapbase::autoReportServer(
-    id = "ns-subscription",
-    registryName = "norscir", #Character string with the registry name key.
-    #Must correspond to the registry R package name.
-    #Når norscir benyttes som registryName, kommer bestilte utsendinger opp i den norske appen. Men fungerer utsendinga...? N E I !!
-    type = "subscription",
-    paramNames = paramNamesAbb,
-    paramValues = paramNamesAbb,
-    reports = list(
-      `Månedsrapport` = list(
-        synopsis = "Rapporteket-NorSCIR: månedsrapport, abonnement",
-        fun = "abonnement",
-        paramNames = c("rnwFil", "brukernavn", "reshID", "register"),
-        paramNames = c("NSmndRapp.Rnw", "user$name()", "user$org()", 'norscir')
-      )
-    ),
-    user = user
-  )
-
 
   #---Utsendinger---------------
   if (isDataOk) {
@@ -1495,7 +1473,7 @@ rapbase::appLogger(
   })
   rapbase::autoReportServer(
     id = "NSuts",
-    registryName = "norscir",
+    registryName = "nordicscir",
     type = "dispatchment",
     org = org$value,
     paramNames = paramNames,
@@ -1519,7 +1497,29 @@ rapbase::appLogger(
     user = user
   )
 
-  #----------- Eksport ----------------
+  #------------------ Abonnement -----------------------------------------------
+  paramNamesAbb <- shiny::reactive("reshID")
+  paramValuesAbb <- shiny::reactive(user$org())
+
+  rapbase::autoReportServer(
+    id = "ns-subscription",
+    registryName = "nordicscir", #Must correspond to the registry R package name.
+    type = "subscription",
+    paramNames = paramNamesAbb,
+    paramValues = paramValuesAbb,
+    reports = list(
+      # `Månedsrapport` = list(
+      Maanedsrapport = list(
+          synopsis = "Rapporteket-NorSCIR: månedsrapport, abonnement",
+        fun = "abonnement",
+        paramNames = c("rnwFil", "reshID", "register"),
+        paramValues = c("NSsamleRapp.Rnw", 0, 'norscir')
+      )
+    ),
+    user = user
+  )
+
+    #----------- Eksport ----------------
   ## brukerkontroller
   rapbase::exportUCServer("norscirExport",
                           registryName = 'norscir', #i dbConfig
