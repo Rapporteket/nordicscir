@@ -606,7 +606,8 @@ ui_norscir <- function() {
                 label = "Tidsperiode",
                 separator="t.o.m.",
                 language="nb"
-              )
+              ),
+              br()
             ),
 
             shiny::mainPanel(
@@ -623,8 +624,8 @@ ui_norscir <- function() {
                 outputId = "samleRappEgen.pdf",
                 label="Last ned egen samlerapport", class = "butt"
               ),
-              shiny::br(),
               shiny::br()
+
             )
           ),
           shiny::tabPanel(
@@ -633,10 +634,27 @@ ui_norscir <- function() {
             shiny::sidebarLayout(
               shiny::sidebarPanel(
                 rapbase::autoReportOrgInput("NSuts"),
-                rapbase::autoReportInput("NSuts")
+                rapbase::autoReportInput("NSuts"),
+                br(),
+                br(),
+                shiny::actionButton(inputId = "run_autoreport",
+                                    label = "Kjør autorapporter"),
+                shiny::dateInput(inputId = "rapportdato",
+                                 label = "Kjør rapporter med dato:",
+                                 value = Sys.Date(),
+                                 min = Sys.Date(),
+                                 max = Sys.Date() + 366
+                ),
+                shiny::checkboxInput(inputId = "dryRun", label = "Send e-post")
               ),
               shiny::mainPanel(
-                rapbase::autoReportUI("NSuts")
+                rapbase::autoReportUI("NSuts"),
+                shiny::br(),
+                  p(em("System message:")),
+                  verbatimTextOutput("sysMessage"),
+                  p(em("Function message:")),
+                  verbatimTextOutput("funMessage")
+              #  )
               )
             )
           ),
@@ -1497,6 +1515,24 @@ rapbase::appLogger(
     user = user
   )
 
+
+  #Tørrkjøring av abonnement
+
+  kjor_autorapport <- shiny::observeEvent(input$run_autoreport, {
+    dato <- input$rapportdato
+    dryRun <- !(input$dryRun)
+    withCallingHandlers({
+      shinyjs::html("sysMessage", "")
+      shinyjs::html("funMessage", "")
+      shinyjs::html("funMessage",
+                    rapbase::runAutoReport(group = "nordicscir",
+                                           dato = dato, dryRun = dryRun))
+    },
+    message = function(m) {
+      shinyjs::html(id = "sysMessage", html = m$message, add = TRUE)
+    })
+  })
+
   #------------------ Abonnement -----------------------------------------------
   paramNamesAbb <- shiny::reactive("reshID")
   paramValuesAbb <- shiny::reactive(user$org())
@@ -1527,24 +1563,4 @@ rapbase::appLogger(
   ## veileding
   rapbase::exportGuideServer("norscirExportGuide",
                              registryName = 'norscir')
-}
-# Run the application
-#shiny::shinyApp(ui = ui_norscir, server = server_norscir)
-
-#' Run the application
-#'
-#' @param browser Run app in browser
-#' @param logAsJson Log in json format
-#'
-#' @return Shiny app
-#' @export
-kjorApp <- function(browser = FALSE, logAsJson = FALSE) {
-  if (logAsJson) {
-    rapbase::loggerSetup()
-  }
-  shiny::shinyApp(
-    ui = ui_norscir,
-    server = server_norscir,
-    options = list(launch.browser = browser)
-  )
 }
