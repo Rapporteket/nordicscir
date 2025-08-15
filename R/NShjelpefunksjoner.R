@@ -177,7 +177,7 @@ TilLogiskeVar <- function(Skjema){
 #' @param datoTil - sluttdato for data som hentes til bruk i rapporten
 #'
 #' @export
-abonnement <- function(rnwFil, brukernavn='ukjent', reshID=0, register='nordicscir',
+abonnement <- function(rnwFil, brukernavn='ikke angitt', reshID=0, register='nordicscir',
                        datoFra=Sys.Date()-400, datoTil=Sys.Date()) {
 
   #NB: register må angis!

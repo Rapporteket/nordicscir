@@ -12,12 +12,6 @@ nordicscir::kjor_NSapper(register = "norscir", browser = TRUE)
 
 
 
-RegData <- rapbase::loadRegData(
-  registryName = "data",
-  query = "SELECT * FROM spinal_cord_injury_core_data_set",
-  dbType = "mysql"
-)
-
 RegData <- nordicscir::NSPreprosesser(RegData)
 
 
@@ -28,6 +22,8 @@ RegData <- rapbase::loadRegData(
 )
 
 RegData <- nordicscir::NSPreprosesser(RegData)
+
+table(RegData$Land)
 
 AlleTab <- nordicscir::getRealData(register = 'norscir')
 sapply(RegData, class)

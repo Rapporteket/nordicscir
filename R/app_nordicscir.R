@@ -1219,8 +1219,8 @@ server_nordicscir <- function(input, output, session) {
       `Månedsrapport` = list(
         synopsis = "Rapporteket-NordicSCIR: månedsrapport, abonnement",
         fun = "abonnement",
-        paramNames = c("rnwFil", "brukernavn", "reshID", "datoTil", "register"),
-        paramValues = c("NSmndRapp.Rnw", "user$name()", "user$org()", datoTil = Sys.Date(), 'nordicscir')
+        paramNames = c("rnwFil", "brukernavn", "reshID", "register"),
+        paramValues = c("NSmndRapp.Rnw", "user$name()", "user$org()", 'nordicscir')
       )
     ),
     user = user
@@ -1265,9 +1265,15 @@ server_nordicscir <- function(input, output, session) {
     visRapp(user$role() == "SC")
   })
   rapbase::autoReportServer(
-    id = "NSuts", registryName = "nordicscir", type = "dispatchment",
-    org = org$value, paramNames = paramNames, paramValues = paramValues,
-    reports = disReports, orgs = orgs, eligible = visRapp,
+    id = "NSuts",
+    registryName = "nordicscir",
+    type = "dispatchment",
+    org = org$value,
+    paramNames = paramNames,
+    paramValues = paramValues,
+    reports = disReports,
+    orgs = orgs,
+    eligible = visRapp,
     user = user
   )
 
