@@ -544,9 +544,8 @@ ui_nordicscir <- function() {
         ) #tabsetPanel
       ), #Registeradm-tab
       # ------------------Abonnement------------------------
-      shiny::tabPanel(
-        shiny::p(
-          "Abonnement",
+      shiny::tabPanel("Abonnement",
+        shiny::p("Abonnement",
           title="Bestill automatisk utsending av månedsrapport på e-post"
         ),
         shiny::sidebarLayout(

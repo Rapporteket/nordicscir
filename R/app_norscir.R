@@ -1109,7 +1109,6 @@ rapbase::appLogger(
   #----------Før/etter--------------
 
   shiny::observe({
-    print(user$org())
     if (isDataOk) {
       RegData <- nordicscir::finnRegData(valgtVar = input$valgtVarPP, Data = AlleTab)
       #RegData <- nordicscir::TilLogiskeVar(RegData)
