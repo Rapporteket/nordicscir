@@ -218,6 +218,26 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
     RegData$VariabelGr <- factor(as.numeric(RegData$Ntsci), levels=c(1:6,8:9), labels = grtxt)
     retn <- 'H'
   }
+
+  if (valgtVar == 'KomplPrim'){
+  tittel <- 'Komplikasjoner, primærrehab.'
+  RegData <- RegData[which(RegData$Aar >= 2022), ]
+  flerevar <- 1
+  retn <- 'H'
+  variable <- c(
+    'PressureUlcer', 'VTE', 'UTI', 'Sepsis', 'Pneumonia',
+    'Spasticity', 'Syringomyelia',
+    'HeterotopicOssification', 'AutonomicDysreflexia', 'OrthostaticHypotension',
+    'Osteoporosis', 'ComplicOther', 'ComplicNone')
+  grtxt <- c('Trykksår', 'Tromboembolisme', 'Beh.krevende UVI (≥3)', 'Sepsis', 'Pneumoni',
+    'Invalidiserende spastisitet', 'Symptomgivende syringomyeli',
+    'Heterotope ossifikasjoner', 'Autonom dysrefleksi', 'Ortostatisk hypotensjon',
+    'Osteoporose', 'Andre komplikasjoner', 'Ingen av disse kompl.')
+  ind1 <- which(RegData[,variable]==1, arr.ind=T)  #& indDato==TRUE
+  RegData[ ,variable] <- 0
+   RegData[ ,variable][ind1] <- 1
+  }
+
   if (valgtVar == 'SkadeArsak') { #Andeler
     tittel <- 'Skadeårsaker'
     #gr <- (1:6,9) - Kodene som registereres
@@ -330,6 +350,17 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
     RegData$Variabel <- as.numeric(RegData$SatPsych)
     sortAvtagende <- TRUE
   }
+  if (valgtVar == 'LivsSosLiv') {
+    tittel <- ifelse(figurtype == 'andeler',
+                     'Tilfredshet med sosialt liv',
+                     'tilfredshet med sosialt liv')
+    RegData <- RegData[RegData$SatSocIf %in% 0:10, ]
+    grtxt <- 0:10
+    RegData$VariabelGr <- factor(as.numeric(RegData$SatSocIf), levels=0:10, labels = grtxt)
+    RegData$Variabel <- as.numeric(RegData$SatSocIf)
+    sortAvtagende <- TRUE
+  }
+
 
   #----------------URIN-skjema (start 01.01.2015)--------------
   if (substr(valgtVar,1,4)=='Urin') {

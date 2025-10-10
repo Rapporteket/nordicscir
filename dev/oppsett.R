@@ -10,18 +10,12 @@ source("dev/sysSetenv.R")
 Sys.setenv(MYSQL_DB_DATA="norscir")
 nordicscir::kjor_NSapper(register = "norscir", browser = TRUE)
 
-
-
-RegData <- nordicscir::NSPreprosesser(RegData)
-
-
-RegData <- rapbase::loadRegData(
-  registryName = "data",
-  query = "SELECT * FROM spinal_cord_injury_core_data_set",
-  dbType = "mysql"
-)
+RegData <- nordicscir::NSPreprosesser(RegData=NSRegDataSQL())
+RegData <- RegData[RegData$Aar >= 2022, ]
 
 RegData <- nordicscir::NSPreprosesser(RegData)
+NSFigAndeler(RegData = NSRegDataSQL(valgtVar = 'KomplPrim'), valgtVar = 'KomplPrim')
+NSFigAndeler(RegData = NSRegDataSQL(valgtVar = 'UrinKirInngr'), valgtVar = 'UrinKirInngr')
 
 table(RegData$Land)
 

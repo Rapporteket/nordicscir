@@ -166,14 +166,13 @@ ui_norscir <- function() {
               "Lengde på rehab.opphold" = "DagerRehab",
               "Opphold, totalt antall dager" = "OpphTot",
               "Planlagt utskrevet til" = "PPlaceDis",
-              #"Fjern? Permisjon (ant. døgn ute av sykehus) " = "Permisjon",
               "Registreringsforsinkelse" = "RegForsinkelse",
+              "Komplikasjoner, primæropph" = "KomplPrim",
               "Skadeårsak " = "SkadeArsak",
               "Skadeårsak, ikke-traumatisk" = "Ntsci",
               "Tid fra skade til oppstart rehab." = "DagerTilRehab",
               "Tid med rehabilitering" = "DagerRehab",
               "Utskrevet til" = "UtTil",
-              #"Fjern? Pustehjelp" = "Pustehjelp[VentAssi]",
               "A&D Funksjon: Mobilitet" = "FunkMob",
               "A&D Funksjon: Påkledning" = "FunkKler",
               "A&D Funksjon: Spising" = "FunkSpis",
@@ -185,12 +184,11 @@ ui_norscir <- function() {
               "Livskval.: Tilfredshet med livet" = "LivsGen",
               "Livskval.: Tilfredshet med fysisk helse" = "LivsFys",
               "Livskval.: Tilfredshet med psykisk helse" = "LivsPsyk",
+              "Livskval.: Tilfredshet med sosialt liv" = "LivsSosLiv",
               "Urin: Ufrivillig urinlekkasje (fra 2019)" = "UrinInkontinens",
               "Urin: Ufrivillig urinlekkasje (t.o.m. 2018)" = "UrinInkontinensTom2018",
               "Urin: Kirurgiske inngrep" = "UrinKirInngr",
               "Urin: Legemiddelbruk (fra 2019)" = "UrinLegemidler",
-              #  "Urin: Legemiddelbruk (t.o.m. 2018)" = "UrinLegemidlerTom2018",
-              "Urin: Legemiddelbruk, hvilke" = "UrinLegemidlerHvilke",
               "Urin: Blæretømming, hovedmetode" = "UrinTomBlareHoved",
               "Urin: Blæretømming, tilleggsmetode" = "UrinTomBlareTillegg",
               "Tarm: Avføring, hovedmetode" = "TarmAvfHoved",
@@ -198,7 +196,6 @@ ui_norscir <- function() {
               "Tarm: Avføringsmiddelbruk" = "TarmAvfmiddel",
               "Tarm: Avføringsmidler, hvilke" = "TarmAvfmiddelHvilke",
               "Tarm: Fekal inkontinens (fra 2019)" = "TarmInkontinensFra2019",
-              "Tarm: Fekal inkontinens (t.o.m. 2018)" = "TarmInkontinensTom2018",
               "Tarm: Kirurgisk inngrep" = "TarmKirInngrep",
               "Tarm: Kirurgiske inngrep, hvilke" = "TarmKirInngrepHvilke",
               "Tarm: NBD" = "TarmNBD",
@@ -224,13 +221,7 @@ ui_norscir <- function() {
             max = 110,
             value = c(0, 110)
           ),
-          # shiny::selectInput(
-          #   inputId = "enhetsUtvalg",
-          #   label = "Egen enhet og/eller landet",
-          #   choices = c("Egen mot resten av landet" = 1, "Hele landet" = 0,
-          #               "Egen enhet" = 2)
-          # ),
-          shiny::conditionalPanel(
+           shiny::conditionalPanel(
             condition = "input.fordeling == 'Figur' | input.fordeling == 'Tabell' ",
             shiny::selectInput(
               inputId = "enhetsUtvalg",
@@ -270,8 +261,6 @@ ui_norscir <- function() {
             id="fordeling",
             shiny::tabPanel(
               "Figur",
-              shiny::br(),
-              em("(Høyreklikk på figuren for å laste den ned)"),
               shiny::br(),
               shiny::br(),
               shiny::plotOutput("fordelinger", height = "auto"),
