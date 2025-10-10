@@ -28,4 +28,4 @@ __Abonnement__ inneholder oversikt over rapporter du abbonerer på. Her kan du o
                             
 Oversikt over registerets kvalitetsindikatorer og resultater finner du på www.kvalitetsregistre.no: [NorSCIR](https://apps.skde.no/behandlingskvalitet/?indicator=reg-norscir).
 
-Alle pasienter med nyervervet ryggmargsskade eller Cauda equina syndrom som legges inn til spesialisert rehabilitering ved en ryggmargsskadeavdeling, blir forespurt om samtykke til å bli registrert i Norsk ryggmargsskaderegister. Dette registeret har til hensikt å sikre og forbedre ryggmargsskadeomsorgen i Norge. Mer informasjon om selve registeret finnes på [NorSCIRs hjemmeside](http://www.stolav.no/norscir).
+Alle pasienter med nyervervet ryggmargsskade eller Cauda equina syndrom som legges inn til spesialisert rehabilitering ved en ryggmargsskadeavdeling, blir forespurt om samtykke til å bli registrert i Norsk ryggmargsskaderegister. Dette registeret har til hensikt å sikre og forbedre ryggmargsskadeomsorgen i Norge. Mer informasjon om selve registeret finnes på [NorSCIRs hjemmeside](https://www.stolav.no/norscir).

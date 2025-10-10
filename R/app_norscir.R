@@ -32,6 +32,10 @@ ui_norscir <- function() {
       "Måned" = "Mnd")
   )
 
+ enhetsUtvalg <- list("Egen mot resten av landet" = 1,
+                      "Hele landet" = 0,
+                      "Egen enhet" = 2)
+
   shiny::tagList(
     shinyjs::useShinyjs(),
     shiny::navbarPage(
@@ -220,11 +224,19 @@ ui_norscir <- function() {
             max = 110,
             value = c(0, 110)
           ),
-          shiny::selectInput(
-            inputId = "enhetsUtvalg",
-            label = "Egen enhet og/eller landet",
-            choices = c("Egen mot resten av landet" = 1, "Hele landet" = 0,
-                        "Egen enhet" = 2)
+          # shiny::selectInput(
+          #   inputId = "enhetsUtvalg",
+          #   label = "Egen enhet og/eller landet",
+          #   choices = c("Egen mot resten av landet" = 1, "Hele landet" = 0,
+          #               "Egen enhet" = 2)
+          # ),
+          shiny::conditionalPanel(
+            condition = "input.fordeling == 'Figur' | input.fordeling == 'Tabell' ",
+            shiny::selectInput(
+              inputId = "enhetsUtvalg",
+              label = "Egen enhet og/eller landet",
+              choices = enhetsUtvalg)
+              # , selected = 1)
           ),
           shiny::selectInput(
             inputId = "AIS",
@@ -494,25 +506,19 @@ ui_norscir <- function() {
           width=3,
           shiny::h3("Utvalg"),
           shiny::conditionalPanel(
-            condition = "input.ark == 'Antall personer med ryggmargsskade'",
+            condition = "input.reg == 'Antall personer med ryggmargsskade'",
             shiny::dateInput(
               inputId = "sluttDatoReg",
               label = "Velg sluttdato",
               language="nb",
               value = Sys.Date(),
               max = Sys.Date()
-            )
-          ),
-          shiny::conditionalPanel(
-            condition = "input.ark == 'Antall personer med ryggmargsskade'",
+            ),
             shiny::selectInput(
               inputId = "tidsenhetReg",
               label="Velg tidsenhet",
               choices = rev(c("År"= "Aar", "Måned"="Mnd"))
-            )
           ),
-          shiny::conditionalPanel(
-            condition = "input.ark == 'Antall personer med ryggmargsskade'",
             shiny::selectInput(
               inputId = "traumeReg",
               label="Traume",
@@ -522,8 +528,8 @@ ui_norscir <- function() {
           ),
           shiny::conditionalPanel(
             condition = paste0(
-              "input.ark == 'Antall hovedskjema med tilknyttede skjema' | ",
-              "input.ark == 'Antall kontrollskjema med tilknyttede skjema' "
+              "input.reg == 'Antall hovedskjema med tilknyttede skjema' | ",
+              "input.reg == 'Antall kontrollskjema med tilknyttede skjema' "
             ),
             shiny::dateRangeInput(
               inputId = "datovalgReg",
@@ -538,7 +544,7 @@ ui_norscir <- function() {
 
         shiny::mainPanel(
           shiny::tabsetPanel(
-            id = "ark",
+            id = "reg",
             shiny::tabPanel(
               "Antall personer med ryggmargsskade",
               shiny::uiOutput("undertittelReg"),
@@ -810,7 +816,7 @@ rapbase::appLogger(
         input$tidsenhetReg,
         Mnd = paste0(t1, "siste 12 måneder før ", input$sluttDatoReg, t2,
                      "<br />"),
-        Aar = paste0(t1, "siste 5 år før ", input$sluttDatoReg, t2, "<br />")
+        Aar = paste0(t1, "siste 10 år før ", input$sluttDatoReg, t2, "<br />")
       )
     ))
   })
@@ -825,7 +831,7 @@ rapbase::appLogger(
             traume = input$traumeReg,
             antMnd = 12
           ),
-          Aar = nordicscir::tabAntOpphSh5Aar(
+          Aar = nordicscir::tabAntOpphShAar(
             RegData = HovedSkjema,
             datoTil = input$sluttDatoReg,
             traume = input$traumeReg

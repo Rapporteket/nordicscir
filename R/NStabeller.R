@@ -57,8 +57,6 @@ tabLiggetider <- function(RegData, datoFra='2018-01-01', datoTil=Sys.Date(), enh
 }
 
 #' tabAntOpphShMnd antall opphold siste X (antMnd) mnd
-#' -tabAntOpphSh12mnd: Antall opphold per måned og enhet siste 12 måneder fram til datoTil.
-#' -tabAntOpphSh5Aar:Antall opphold per år og enhet siste 5 år (inkl. inneværende år) fram til datoTil.
 #' RegData må inneholde Aar.
 #' @inheritParams NSUtvalgEnh
 #' @export
@@ -80,16 +78,15 @@ tabAntOpphShMnd <- function(RegData, datoTil=Sys.Date(), traume='', antMnd=12){
 	return(tabAvdMnd)
 }
 
-#' Antall opphold siste 5 år
+#' Antall opphold siste år
 #' @inheritParams NSUtvalgEnh
 #' @export
-tabAntOpphSh5Aar <- function(RegData, datoTil=Sys.Date(), traume=''){
+tabAntOpphShAar <- function(RegData, datoTil=Sys.Date(), antAar=10, traume=''){
       AarNaa <- as.numeric(format.Date(datoTil, "%Y"))
-      #sep23: NSUtvalg -> NSUtvalgEnh
       RegData <- NSUtvalgEnh(RegData = RegData, traume=traume)$RegData
-      tabAvdAarN <- addmargins(table(RegData[which(RegData$Aar %in% (AarNaa-4):AarNaa), c('ShNavn','Aar')]))
+      tabAvdAarN <- addmargins(table(RegData[which(RegData$Aar %in% (AarNaa-antAar-1):AarNaa), c('ShNavn','Aar')]))
       rownames(tabAvdAarN)[dim(tabAvdAarN)[1] ]<- 'TOTALT, alle enheter:'
-      colnames(tabAvdAarN)[dim(tabAvdAarN)[2] ]<- 'Siste 5 år'
+      colnames(tabAvdAarN)[dim(tabAvdAarN)[2] ]<- paste0('Siste ', antAar, ' år')
       tabAvdAarN <- xtable::xtable(tabAvdAarN)
       return(tabAvdAarN)
 }

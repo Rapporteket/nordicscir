@@ -413,37 +413,30 @@ ui_nordicscir <- function() {
         shiny::sidebarPanel(
           width=3,
           shiny::h3("Utvalg"),
-          shiny::conditionalPanel(
-            condition = "input.ark == 'Antall personer med ryggmargsskade'",
-            shiny::dateInput(
+           shiny::conditionalPanel(
+             condition = "input.reg == 'Antall personer med ryggmargsskade' ",
+             shiny::dateInput(
               inputId = "sluttDatoReg",
               label = "Velg sluttdato",
               language="nb",
               value = Sys.Date(),
               max = Sys.Date()
-            )
-          ),
-          shiny::conditionalPanel(
-            condition = "input.ark == 'Antall personer med ryggmargsskade'",
+            ),
             shiny::selectInput(
               inputId = "tidsenhetReg",
               label="Velg tidsenhet",
               choices = rev(c("År"= "Aar", "Måned"="Mnd"))
-            )
-          ),
-          shiny::conditionalPanel(
-            condition = "input.ark == 'Antall personer med ryggmargsskade'",
+            ),
             shiny::selectInput(
               inputId = "traumeReg",
               label="Traume",
               choices = c("Alle"=" ", #"ikke"
                           "Traume"="ja",
-                          "Ikke traume"="nei"))
-          ),
+                          "Ikke traume"="nei")
+              )
+           ),
           shiny::conditionalPanel(
-            condition = paste0(
-              "input.ark == 'Antall hovedskjema med tilknyttede skjema' "
-            ),
+            condition = "input.reg == 'Antall hovedskjema med tilknyttede skjema' ",
             shiny::dateRangeInput(
               inputId = "datovalgReg",
               start = startDato,
@@ -458,7 +451,7 @@ ui_nordicscir <- function() {
 
         shiny::mainPanel(
           shiny::tabsetPanel(
-            id = "ark",
+            id = "reg",
             shiny::tabPanel(
               "Antall personer med ryggmargsskade",
               shiny::uiOutput("undertittelReg"),
@@ -695,7 +688,7 @@ server_nordicscir <- function(input, output, session) {
         input$tidsenhetReg,
         Mnd = paste0(t1, "siste 12 måneder før ", input$sluttDatoReg, t2,
                      "<br />"),
-        Aar = paste0(t1, "siste 5 år før ", input$sluttDatoReg, t2, "<br />")
+        Aar = paste0(t1, "siste 10 år før ", input$sluttDatoReg, t2, "<br />")
       )
     ))
   })
@@ -710,7 +703,7 @@ server_nordicscir <- function(input, output, session) {
             traume = input$traumeReg,
             antMnd = 12
           ),
-          Aar = tabAntOpphSh5Aar(
+          Aar = tabAntOpphShAar(
             RegData = HovedSkjema,
             datoTil = input$sluttDatoReg,
             traume = input$traumeReg
