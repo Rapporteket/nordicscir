@@ -6,7 +6,7 @@
 #' @export
 ui_norscir <- function() {
 
-  shiny::addResourcePath("rap", system.file("www", package = "rapbase"))
+  # shiny::addResourcePath("rap", system.file("www", package = "rapbase"))
 
   startDato <- as.Date(
     paste0(as.numeric(format(Sys.Date()-400, "%Y")), '-01-01')
@@ -40,16 +40,17 @@ ui_norscir <- function() {
     shinyjs::useShinyjs(),
     shiny::navbarPage(
       id = "hovedark",
-      title = shiny::div(
-        shiny::a(
-          shiny::includeHTML(
-            system.file("www/logo.svg", package = "rapbase")
-          )
-        ),
-        regTitle),
+      title = rapbase::title(regTitle),
+      # title = shiny::div(
+      #   shiny::a(
+      #     shiny::includeHTML(
+      #       system.file("www/logo.svg", package = "rapbase")
+      #     )
+      #   ),
+      #   regTitle),
       # sett inn tittel også i browser-vindu
       windowTitle = regTitle,
-      theme = "rap/bootstrap.css",
+      theme = rapbase::theme(),  # "rap/bootstrap.css",
 
       #----startside--------
       shiny::tabPanel(
@@ -165,7 +166,9 @@ ui_norscir <- function() {
               "Anbefalt tid til kontroll" = "AnbefTidKtr",
               "Lengde på rehab.opphold" = "DagerRehab",
               "Opphold, totalt antall dager" = "OpphTot",
+              "Operasjon på ryggsøylen" = "SpnlSurg2",
               "Planlagt utskrevet til" = "PPlaceDis",
+              "Pustehjelp (f.o.m. 2024)" = "VentAssi2",
               "Registreringsforsinkelse" = "RegForsinkelse",
               "Komplikasjoner, primæropph" = "KomplPrim",
               "Skadeårsak " = "SkadeArsak",
@@ -204,7 +207,8 @@ ui_norscir <- function() {
               "EQ5D: Daglige gjøremål" = "Eq5dQ3UsualActivities",
               "EQ5D: Smerter, ubehag" = "Eq5dQ4PainDiscomfort",
               "EQ5D: Angst og depresjon" = "Eq5dQ5AnxietyDepression",
-              "EQ5D: Generell helsetilstand" = "Eq5dQ6HealthToday"
+              "EQ5D: Generell helsetilstand" = "Eq5dQ6HealthToday",
+              "Kontroll: Komplikasjoner" = "KontrKompl"
             ),
             selected = c("Registreringsforsinkelse" = "RegForsinkelse")
           ),

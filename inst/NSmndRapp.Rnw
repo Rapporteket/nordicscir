@@ -238,11 +238,11 @@ NSFigAndeler(RegData=HovedSkjema, valgtVar=valgtVar,
                    outfile=outfile, reshID=reshID, enhetsUtvalg=enhetsUtvalg,
                    hentData=0, preprosess=0)
 
-NSFigGjsnTid(RegData=HovedSkjema, valgtVar='RegForsinkelse',
-             preprosess=0, datoFra=datoFra,datoTil=datoTilReg,
-             datoUt = 1, tidsenhet='Kvartal', reshID=reshID,
-             enhetsUtvalg=1, valgtMaal='gjsn',
-             outfile='RegForsinkelseGjsnTid.pdf')
+# NSFigGjsnTid(RegData=HovedSkjema, valgtVar='RegForsinkelse',
+#              preprosess=0, datoFra=datoFra,datoTil=datoTilReg,
+#              datoUt = 1, tidsenhet='Kvartal', reshID=reshID,
+#              enhetsUtvalg=1, valgtMaal='gjsn',
+#              outfile='RegForsinkelseGjsnTid.pdf')
 
 NSFigGjsnGrVar(RegData=HovedSkjema12mnd, valgtVar='RegForsinkelse', valgtMaal='gjsn', grVar=grVar,
                               datoFra=datoFra, datoTil=datoTilReg, datoUt=1,
@@ -259,13 +259,13 @@ NSFigGjsnGrVar(RegData=HovedSkjema12mnd, valgtVar='RegForsinkelse', valgtMaal='g
 \end{figure}
 \end{frame}
 
-\begin{frame}[fragile]
-\begin{figure}[ht]
-\centering
-\includegraphics[scale=0.35]{RegForsinkelseGjsnTid.pdf}
-\caption{Registreringsforsinkelse, utvikling over tid.}
-\end{figure}
-\end{frame}
+% \begin{frame}[fragile]
+% \begin{figure}[ht]
+% \centering
+% \includegraphics[scale=0.35]{RegForsinkelseGjsnTid.pdf}
+% \caption{Registreringsforsinkelse, utvikling over tid.}
+% \end{figure}
+% \end{frame}
 
 \begin{frame}[fragile]
 \begin{figure}[ht]

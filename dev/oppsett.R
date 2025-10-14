@@ -10,14 +10,17 @@ source("dev/sysSetenv.R")
 Sys.setenv(MYSQL_DB_DATA="norscir")
 nordicscir::kjor_NSapper(register = "norscir", browser = TRUE)
 
-RegData <- nordicscir::NSPreprosesser(RegData=NSRegDataSQL())
-RegData <- RegData[RegData$Aar >= 2022, ]
+RegData <- nordicscir::NSPreprosesser(RegData=NSRegDataSQL(valgtVar = 'Kont'))
 
-RegData <- nordicscir::NSPreprosesser(RegData)
-NSFigAndeler(RegData = NSRegDataSQL(valgtVar = 'KomplPrim'), valgtVar = 'KomplPrim')
-NSFigAndeler(RegData = NSRegDataSQL(valgtVar = 'UrinKirInngr'), valgtVar = 'UrinKirInngr')
+NSFigAndeler(RegData = NSRegDataSQL(valgtVar = 'KontrKompl'), valgtVar = 'KontrKompl')
+table(RegData$CPressureUlcer, RegData$Aar)
 
-table(RegData$Land)
 
 AlleTab <- nordicscir::getRealData(register = 'norscir')
 sapply(RegData, class)
+
+
+sship::dec("c://Users/lro2402unn/RegistreGIT/data/deformitet16ab69750.sql.gz__20251009_122654.tar.gz",
+                     keyfile = "c://Users/lro2402unn/.ssh/id_rsa",
+                     target_dir = "c://Users/lro2402unn/RegistreGIT/data/."
+                     )

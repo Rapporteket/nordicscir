@@ -311,7 +311,7 @@ for (k in 1:length(PasID)) {
 RegData <- HovedSkjema
 valgtVar <- 'UtTil'	#AAis, FAis, Alder, DagerRehab, DagerTilRehab, NivaaInn, Ntsci,
 					#OpphTot[HosptlDy], Permisjon[OutOfHosptlDy], UtTil[PlaceDis],
-                             	#Pustehjelp[VentAssi], PPlaceDis, RegForsinkelse,  #SkadeArsak[Scietiol]
+                             	#VentAssi, PPlaceDis, RegForsinkelse,  #SkadeArsak[Scietiol]
 #UrinSkjema:
 RegData <- KobleMedHoved(HovedSkjema,Urin)
 valgtVar <- 'UrinTomBlareHoved'   #'UrinInkontinens', 'UrinLegemidler','UrinLegemidlerHvilke', 'UrinKirInngr',
@@ -502,7 +502,7 @@ IMV_ABC_C0104 <- length(intersect(I_ABC, which(RegData$AMtrLvlLC %in% c('C01','C
 #A,B,C+T,L,S
 IMV_ABC_TLS <- length(intersect(I_ABC, union(which(RegData$AMtrLvlAreaL %in% c('Lumbal', 'Sacral', 'Thoracic')))/N
 D
-#Pustehjelp VentAssi (0-3,9)- andel 1-3 av 0-3
+#Pustehjelp, VentAssi (0-3,9)- andel 1-3 av 0-3
 Pustehjelp <- length(which(RegData$VentAssi %in% 1:3))/length(which(RegData$VentAssi %in% 0:3)
 
 

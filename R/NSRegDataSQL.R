@@ -46,6 +46,7 @@ NSRegDataSQL <- function(valgtVar='Alder', register='norscir', koblSkjema = 'Hov
 
   varHoved <- c("
       Hoved.AAis,
+      Hoved.ABMI,
       Hoved.AdmitDt,
       Hoved.AdmitRehDt,
       Hoved.AMtrLvlAreaL,
@@ -58,6 +59,7 @@ NSRegDataSQL <- function(valgtVar='Alder', register='norscir', koblSkjema = 'Hov
       Hoved.BeforeRehDy,
       Hoved.DischgDt,
       Hoved.FAis,
+      Hoved.FBMI,
       Hoved.FirstTimeClosed,
       Hoved.FMtrLvlAreaL,
       Hoved.FMtrLvlAreaR,
@@ -80,6 +82,8 @@ NSRegDataSQL <- function(valgtVar='Alder', register='norscir', koblSkjema = 'Hov
       Hoved.RehabDy,
       Hoved.RecCtrl,
       Hoved.Scietiol,
+      Hoved.SpnlSurg2,
+      Hoved.VentAssi2,
       -- Komplikasjoner:
       Hoved.PressureUlcer,
       Hoved.VTE,
@@ -96,8 +100,7 @@ NSRegDataSQL <- function(valgtVar='Alder', register='norscir', koblSkjema = 'Hov
       Hoved.ComplicNone,
       -- UPPER(Hoved.SkjemaGUID) AS SkjemaGUIDHoved,
       Hoved.SkjemaGUID AS SkjemaGUIDHoved,
-      Hoved.UnitId,
-      Hoved.VentAssi
+      Hoved.UnitId
 ")
   #Hoved.SkjemaGUID,
   #Hoved.PasientGUID,
@@ -310,6 +313,8 @@ Eq5d.FormDate
 
   varKont <- c('
 Kont.CAis
+,Kont.CAutonomicDysreflexia
+,Kont.CHeterotopicOssification
 ,Kont.CMtrLvlAreaL
 ,Kont.CMtrLvlAreaR
 ,Kont.CMtrLvlLC
@@ -323,8 +328,15 @@ Kont.CAis
 ,Kont.CNeuExmDt
 ,Kont.CNeuNoMeasure
 ,Kont.CNum
+,Kont.CComplicNone
+,Kont.CComplicOther
+,Kont.ControlInterruptedReason
 ,Kont.ControlStatus
+,Kont.COrthostaticHypotension
+,Kont.COsteoporosis
 ,Kont.CPlaceDis
+,Kont.CPneumonia
+,Kont.CPressureUlcer
 ,Kont.CSensLvlAreaL
 ,Kont.CSensLvlAreaR
 ,Kont.CSensLvlLC
@@ -335,21 +347,23 @@ Kont.CAis
 ,Kont.CSensLvlRL
 ,Kont.CSensLvlRS
 ,Kont.CSensLvlRT
+,Kont.CSepsis
+,Kont.CSpasticity
+,Kont.CSyringomyelia
+,Kont.CUTI
 ,Kont.CVentAssi
+,Kont.CVTE
 ,Kont.FirstTimeClosed
 ,Kont.FormDate
 ,Kont.FormStatus
 ,Kont.FormTypeId
 ,Kont.LastUpdate
--- ,Kont.NoControl Fjernet jan -25
--- ,Kont.NoControlReason Fjernet jan -25
 ,Kont.ProceedingID
 -- ,Kont.SkjemaGUID
 ,Kont.SkjemaGUID AS SkjemaGUIDKont
 ,Kont.UnitId
 ')
   #"HealthUnitId","HealthUnitName","HealthUnitShortName","HF" ,"Hospital","RHF"
-
 
   variable <- ''
   qSkjema <- ''
@@ -398,7 +412,7 @@ Kont.CAis
   RegData <- rapbase::loadRegData(registryName = 'data', query = query, dbType="mysql")
 
   if (valgtSkjema=='Kont' | koblSkjema=='Kont'){
-    RegData <- RegData[RegData$ControlStatus==0, ] #Bare de med gjennomført kontroll
+    RegData <- RegData[RegData$ControlStatus==0, ] #Bare de med gjennomført kontroll, 0-Aktiv, 1-Avbrutt
   }
 
   if (valgtSkjema=='Tilf') {

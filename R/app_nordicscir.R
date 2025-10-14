@@ -6,7 +6,7 @@
 #' @export
 ui_nordicscir <- function() {
 
-  shiny::addResourcePath("rap", system.file("www", package = "rapbase"))
+  # shiny::addResourcePath("rap", system.file("www", package = "rapbase"))
 
   startDato <- as.Date(
     paste0(as.numeric(format(Sys.Date()-400, "%Y")), '-01-01')
@@ -41,17 +41,18 @@ ui_nordicscir <- function() {
     shinyjs::useShinyjs(),
     shiny::navbarPage(
       id = "hovedark",
-      title = shiny::div(
-        shiny::a(
-          shiny::includeHTML(
-            system.file("www/logo.svg", package = "rapbase")
-          )
-        ),
-        regTitle),
+      title = rapbase::title(regTitle),
+      # title = shiny::div(
+      #   shiny::a(
+      #     shiny::includeHTML(
+      #       system.file("www/logo.svg", package = "rapbase")
+      #     )
+      #   ),
+      #   regTitle),
       # sett inn tittel også i browser-vindu
       windowTitle = regTitle,
       # velg css (foreløpig den eneste bortsett fra "naken" utgave)
-      theme = "rap/bootstrap.css",
+      theme = rapbase::theme(), # "rap/bootstrap.css",
 
       #----startside--------
       shiny::tabPanel(
@@ -147,8 +148,10 @@ ui_nordicscir <- function() {
               "Ais ved utskriving" = "FAis",
               # "Anbefalt tid til kontroll" = "AnbefTidKtr",
               "Lengde på rehab.opphold" = "DagerRehab",
+              "Operasjon på ryggsøylen" = "SpnlSurg2",
               "Opphold, totalt antall dager" = "OpphTot",
               "Planlagt utskrevet til" = "PPlaceDis",
+              "Pustehjelp (f.o.m. 2024)" = "VentAssi2",
               "Registreringsforsinkelse" = "RegForsinkelse",
               "Komplikasjoner, primæropph" = "KomplPrim",
               "Skadeårsak " = "SkadeArsak",
