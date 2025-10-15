@@ -208,9 +208,10 @@ ui_norscir <- function() {
               "EQ5D: Smerter, ubehag" = "Eq5dQ4PainDiscomfort",
               "EQ5D: Angst og depresjon" = "Eq5dQ5AnxietyDepression",
               "EQ5D: Generell helsetilstand" = "Eq5dQ6HealthToday",
-              "Kontroll: Komplikasjoner" = "KontrKompl"
+              "Kontroll: Komplikasjoner" = "KontrKompl",
+              "Kontroll: Årsak, ikke gj.ført kontroll" = "KontControlInterruptedReason"
             ),
-            selected = c("Registreringsforsinkelse" = "RegForsinkelse")
+             selected = c("Registreringsforsinkelse" = "RegForsinkelse")
           ),
 
           shiny::selectInput(
@@ -928,7 +929,6 @@ rapbase::appLogger(
   shiny::observe({
     if (isDataOk) {
       RegData <- nordicscir::finnRegData(valgtVar = input$valgtVar, Data = AlleTab)
-      #RegData <- nordicscir::TilLogiskeVar(RegData)
 
       output$fordelinger <- shiny::renderPlot({
         nordicscir::NSFigAndeler(
@@ -946,6 +946,8 @@ rapbase::appLogger(
         )},
         height = 800, width = 800
       )
+
+
 
       output$lastNed_figFord <- shiny::downloadHandler(
         filename = function() {

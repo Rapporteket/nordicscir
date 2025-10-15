@@ -763,10 +763,18 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
 
   if (valgtVar=='KontControlInterruptedReason') {
     tittel <- 'Årsak til ikke gjennomført kontroll ved utreise'
-    gr <- c(0:9)
+    gr <- c(1:9)
     RegData <- RegData[RegData$ControlInterruptedReason %in% gr,]
-    grtxt <- c('Nei', 'Ja', 'Ukjent')
-    RegData$VariabelGr <- factor(RegData$SurgicalIntervention, levels = gr, labels = grtxt)
+    grtxt <- c('Ikke møtt',
+               'Pasient utsatt kontr.',
+               'Ikke kontakt med pasient',
+               'Helsemessig årsak',
+               'Avd. ikke kapasitet',
+               'Kontroll v/annet sykehus',
+               'Ønsker ikke kontroll',
+               'Dødsfall',
+               'Annen årsak')
+    RegData$VariabelGr <- factor(RegData$ControlInterruptedReason, levels = gr, labels = grtxt)
   }
 
 

@@ -388,7 +388,7 @@ Kont.CAis
     ),
     'ON ',koblSkjema ,'.SkjemaGUID = ',valgtSkjema , '.HovedskjemaGUID ')
   }
-  #KontData <- rapbase::loadRegData(registryName = register, query='select * from control_form', dbType="mysql")
+  #KontData <- rapbase::loadRegData(registryNam register, query='select * from control_form', dbType="mysql")
   #TilfData <-  rapbase::loadRegData(registryName = register, query='select * from activities_and_participation_satisfaction', dbType="mysql")
   #HovedSkjema <- rapbase::loadRegData(registryName = register, query='select * from spinal_cord_injury_core_data_set', dbType="mysql")
   #LivsSkjema <- rapbase::loadRegData(registryName = register, query='select * from registration_of_quality_of_life', dbType="mysql")

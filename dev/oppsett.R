@@ -12,13 +12,14 @@ nordicscir::kjor_NSapper(register = "norscir", browser = TRUE)
 
 RegData <- nordicscir::NSPreprosesser(RegData=NSRegDataSQL(valgtVar = 'Kont'))
 
-NSFigAndeler(RegData = NSRegDataSQL(valgtVar = 'KontrKompl'), valgtVar = 'KontrKompl')
-table(RegData$CPressureUlcer, RegData$Aar)
+NSFigAndeler(RegData = NSRegDataSQL(valgtVar = 'KontControlInterruptedReason'), valgtVar = 'KontControlInterruptedReason')
+table(RegData$ControlInterruptedReason, RegData$Aar)
 
 
 AlleTab <- nordicscir::getRealData(register = 'norscir')
 sapply(RegData, class)
 
+RegDataKtr <- rapbase::loadRegData(registryName = 'data', query = 'select *  FROM control_form', dbType="mysql")
 
 sship::dec("c://Users/lro2402unn/RegistreGIT/data/deformitet16ab69750.sql.gz__20251009_122654.tar.gz",
                      keyfile = "c://Users/lro2402unn/.ssh/id_rsa",
