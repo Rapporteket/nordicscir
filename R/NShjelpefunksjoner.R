@@ -185,13 +185,6 @@ abonnement <- function(rnwFil, brukernavn='ikke angitt', reshID=0, register='nor
   AlleTab <- nordicscir::processAllData(AlleTab, register = register)
   attach(AlleTab)
 
-  # comment(reshID)
-  # reshID <- reshID[[1]]
-  # datoFra <- datoFra[[1]]
-  # datoTil <- datoTil[[1]]
-  # comment(brukernavn)
-  # brukernavn <- brukernavn[[1]]
-
   filbase <- substr(rnwFil[[1]], 1, nchar(rnwFil[[1]])-4)
   tmpFile <- paste0(filbase, Sys.Date(),'_',digest::digest(brukernavn)[[1]], '.Rnw')
   src <- normalizePath(system.file(rnwFil[[1]], package='nordicscir'))

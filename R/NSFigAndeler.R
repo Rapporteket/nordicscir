@@ -11,7 +11,7 @@
 #'     \item Permisjon: Antall døgn ute av sykehus
 #'     \item UtTil: Hva pasienten skrives ut til. [PlaceDis]
 #'     \item SkadeArsak: Årsak til skade [variabel: Scietiol]
-#'     \item Pustehjelp[VentAssi]
+#'     \item Pustehjelp[VentAssi2]
 #'     \item LivsGen:  Fornøydhet med livet
 #'     \item LivsFys:  Fornøydhet med fysisk helse
 #'     \item LivsPsyk:  Fornøydhet med psykisk helse
@@ -64,7 +64,6 @@ NSFigAndeler <- function(RegData, outfile='', valgtVar='Alder',
                                  N=0,
                                  Ngr=0,
                                  KImaal <- '',
-                                 #soyletxt=soyletxt,
                                  grtxt2='',
                                  grtxt='',
                                  tittel='Ingen registreringer',

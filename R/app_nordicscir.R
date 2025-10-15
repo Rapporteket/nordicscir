@@ -6,7 +6,7 @@
 #' @export
 ui_nordicscir <- function() {
 
-  shiny::addResourcePath("rap", system.file("www", package = "rapbase"))
+  # shiny::addResourcePath("rap", system.file("www", package = "rapbase"))
 
   startDato <- as.Date(
     paste0(as.numeric(format(Sys.Date()-400, "%Y")), '-01-01')
@@ -41,17 +41,18 @@ ui_nordicscir <- function() {
     shinyjs::useShinyjs(),
     shiny::navbarPage(
       id = "hovedark",
-      title = shiny::div(
-        shiny::a(
-          shiny::includeHTML(
-            system.file("www/logo.svg", package = "rapbase")
-          )
-        ),
-        regTitle),
+      title = rapbase::title(regTitle),
+      # title = shiny::div(
+      #   shiny::a(
+      #     shiny::includeHTML(
+      #       system.file("www/logo.svg", package = "rapbase")
+      #     )
+      #   ),
+      #   regTitle),
       # sett inn tittel også i browser-vindu
       windowTitle = regTitle,
       # velg css (foreløpig den eneste bortsett fra "naken" utgave)
-      theme = "rap/bootstrap.css",
+      theme = rapbase::theme(), # "rap/bootstrap.css",
 
       #----startside--------
       shiny::tabPanel(
@@ -147,9 +148,12 @@ ui_nordicscir <- function() {
               "Ais ved utskriving" = "FAis",
               # "Anbefalt tid til kontroll" = "AnbefTidKtr",
               "Lengde på rehab.opphold" = "DagerRehab",
+              "Operasjon på ryggsøylen" = "SpnlSurg2",
               "Opphold, totalt antall dager" = "OpphTot",
               "Planlagt utskrevet til" = "PPlaceDis",
+              "Pustehjelp (f.o.m. 2024)" = "VentAssi2",
               "Registreringsforsinkelse" = "RegForsinkelse",
+              "Komplikasjoner, primæropph" = "KomplPrim",
               "Skadeårsak " = "SkadeArsak",
               "Skadeårsak, ikke-traumatisk" = "Ntsci",
               "Tid fra skade til oppstart rehab." = "DagerTilRehab",
@@ -158,11 +162,10 @@ ui_nordicscir <- function() {
               "Livskval.: Tilfredshet med livet" = "LivsGen",
               "Livskval.: Tilfredshet med fysisk helse" = "LivsFys",
               "Livskval.: Tilfredshet med psykisk helse" = "LivsPsyk",
+              "Livskval.: Tilfredshet med sosialt liv" = "LivsSosLiv",
               "Urin: Ufrivillig urinlekkasje (fra 2019)" = "UrinInkontinens",
-              #  "Urin: Ufrivillig urinlekkasje (t.o.m. 2018)" = "UrinInkontinensTom2018",
               "Urin: Kirurgiske inngrep" = "UrinKirInngr",
               "Urin: Legemiddelbruk (fra 2019)" = "UrinLegemidler",
-              # "Urin: Legemiddelbruk (t.o.m. 2018)" = "UrinLegemidlerTom2018",
               "Urin: Legemiddelbruk, hvilke" = "UrinLegemidlerHvilke",
               "Urin: Blæretømming, hovedmetode" = "UrinTomBlareHoved",
               "Urin: Blæretømming, tilleggsmetode" = "UrinTomBlareTillegg",
@@ -171,7 +174,6 @@ ui_nordicscir <- function() {
               "Tarm: Avføringsmiddelbruk" = "TarmAvfmiddel",
               "Tarm: Avføringsmidler, hvilke" = "TarmAvfmiddelHvilke",
               "Tarm: Fekal inkontinens (fra 2019)" = "TarmInkontinensFra2019",
-              #  "Tarm: Fekal inkontinens (t.o.m. 2018)" = "TarmInkontinensTom2018",
               "Tarm: Kirurgisk inngrep" = "TarmKirInngrep",
               "Tarm: Kirurgiske inngrep, hvilke" = "TarmKirInngrepHvilke",
               "Tarm: NBD" = "TarmNBD"
@@ -246,8 +248,6 @@ ui_nordicscir <- function() {
             id="fordeling",
             shiny::tabPanel(
               "Figur",
-              shiny::br(),
-              em("(Høyreklikk på figuren for å laste den ned)"),
               shiny::br(),
               shiny::br(),
               shiny::plotOutput("fordelinger", height = "auto"),
@@ -413,37 +413,30 @@ ui_nordicscir <- function() {
         shiny::sidebarPanel(
           width=3,
           shiny::h3("Utvalg"),
-          shiny::conditionalPanel(
-            condition = "input.ark == 'Antall personer med ryggmargsskade'",
-            shiny::dateInput(
+           shiny::conditionalPanel(
+             condition = "input.reg == 'Antall personer med ryggmargsskade' ",
+             shiny::dateInput(
               inputId = "sluttDatoReg",
               label = "Velg sluttdato",
               language="nb",
               value = Sys.Date(),
               max = Sys.Date()
-            )
-          ),
-          shiny::conditionalPanel(
-            condition = "input.ark == 'Antall personer med ryggmargsskade'",
+            ),
             shiny::selectInput(
               inputId = "tidsenhetReg",
               label="Velg tidsenhet",
               choices = rev(c("År"= "Aar", "Måned"="Mnd"))
-            )
-          ),
-          shiny::conditionalPanel(
-            condition = "input.ark == 'Antall personer med ryggmargsskade'",
+            ),
             shiny::selectInput(
               inputId = "traumeReg",
               label="Traume",
               choices = c("Alle"=" ", #"ikke"
                           "Traume"="ja",
-                          "Ikke traume"="nei"))
-          ),
+                          "Ikke traume"="nei")
+              )
+           ),
           shiny::conditionalPanel(
-            condition = paste0(
-              "input.ark == 'Antall hovedskjema med tilknyttede skjema' "
-            ),
+            condition = "input.reg == 'Antall hovedskjema med tilknyttede skjema' ",
             shiny::dateRangeInput(
               inputId = "datovalgReg",
               start = startDato,
@@ -458,7 +451,7 @@ ui_nordicscir <- function() {
 
         shiny::mainPanel(
           shiny::tabsetPanel(
-            id = "ark",
+            id = "reg",
             shiny::tabPanel(
               "Antall personer med ryggmargsskade",
               shiny::uiOutput("undertittelReg"),
@@ -695,7 +688,7 @@ server_nordicscir <- function(input, output, session) {
         input$tidsenhetReg,
         Mnd = paste0(t1, "siste 12 måneder før ", input$sluttDatoReg, t2,
                      "<br />"),
-        Aar = paste0(t1, "siste 5 år før ", input$sluttDatoReg, t2, "<br />")
+        Aar = paste0(t1, "siste 10 år før ", input$sluttDatoReg, t2, "<br />")
       )
     ))
   })
@@ -710,7 +703,7 @@ server_nordicscir <- function(input, output, session) {
             traume = input$traumeReg,
             antMnd = 12
           ),
-          Aar = tabAntOpphSh5Aar(
+          Aar = tabAntOpphShAar(
             RegData = HovedSkjema,
             datoTil = input$sluttDatoReg,
             traume = input$traumeReg

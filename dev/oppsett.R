@@ -10,20 +10,18 @@ source("dev/sysSetenv.R")
 Sys.setenv(MYSQL_DB_DATA="norscir")
 nordicscir::kjor_NSapper(register = "norscir", browser = TRUE)
 
+RegData <- nordicscir::NSPreprosesser(RegData=NSRegDataSQL(valgtVar = 'Kont'))
 
+NSFigAndeler(RegData = NSRegDataSQL(valgtVar = 'KontControlInterruptedReason'), valgtVar = 'KontControlInterruptedReason')
+table(RegData$ControlInterruptedReason, RegData$Aar)
 
-RegData <- nordicscir::NSPreprosesser(RegData)
-
-
-RegData <- rapbase::loadRegData(
-  registryName = "data",
-  query = "SELECT * FROM spinal_cord_injury_core_data_set",
-  dbType = "mysql"
-)
-
-RegData <- nordicscir::NSPreprosesser(RegData)
-
-table(RegData$Land)
 
 AlleTab <- nordicscir::getRealData(register = 'norscir')
 sapply(RegData, class)
+
+RegDataKtr <- rapbase::loadRegData(registryName = 'data', query = 'select *  FROM control_form', dbType="mysql")
+
+sship::dec("c://Users/lro2402unn/RegistreGIT/data/deformitet16ab69750.sql.gz__20251009_122654.tar.gz",
+                     keyfile = "c://Users/lro2402unn/.ssh/id_rsa",
+                     target_dir = "c://Users/lro2402unn/RegistreGIT/data/."
+                     )

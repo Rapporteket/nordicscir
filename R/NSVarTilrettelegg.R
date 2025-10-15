@@ -80,6 +80,9 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
 
   tittel <- '' #I AndelerGrVar genereres tittel i beregningsfunksjonen
 
+
+  #-----------------------Hovedskjema--------------------------------------
+
   if (valgtVar=='Alder') { #Fordeling, gjsn
     tittel <- ifelse(figurtype == 'andeler',
                      'Alder ved innleggelse',
@@ -218,6 +221,26 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
     RegData$VariabelGr <- factor(as.numeric(RegData$Ntsci), levels=c(1:6,8:9), labels = grtxt)
     retn <- 'H'
   }
+
+  if (valgtVar == 'KomplPrim'){
+  tittel <- 'Komplikasjoner, primærrehab.'
+  RegData <- RegData[which(RegData$Aar >= 2022), ]
+  flerevar <- 1
+  retn <- 'H'
+  variable <- c(
+    'PressureUlcer', 'VTE', 'UTI', 'Sepsis', 'Pneumonia',
+    'Spasticity', 'Syringomyelia',
+    'HeterotopicOssification', 'AutonomicDysreflexia', 'OrthostaticHypotension',
+    'Osteoporosis', 'ComplicOther', 'ComplicNone')
+  grtxt <- c('Trykksår', 'Tromboembolisme', 'Beh.krevende UVI (≥3)', 'Sepsis', 'Pneumoni',
+    'Invalidiserende spastisitet', 'Symptomgivende syringomyeli',
+    'Heterotope ossifikasjoner', 'Autonom dysrefleksi', 'Ortostatisk hypotensjon',
+    'Osteoporose', 'Andre komplikasjoner', 'Ingen av disse kompl.')
+  ind1 <- which(RegData[,variable]==1, arr.ind=T)  #& indDato==TRUE
+  RegData[ ,variable] <- 0
+   RegData[ ,variable][ind1] <- 1
+  }
+
   if (valgtVar == 'SkadeArsak') { #Andeler
     tittel <- 'Skadeårsaker'
     #gr <- (1:6,9) - Kodene som registereres
@@ -282,7 +305,32 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
     sortAvtagende <- FALSE
   }
 
-  #----------------Livskvalitet-skjema (start 01.01.2015):
+  if (valgtVar == 'SpnlSurg2') {
+    # -1 = Velg verdi, 0 Nei, 1 Ja, 8 Ikke relevant (ikke-traumatisk skade), 9 Ukjent
+    tittel <- 'Operasjon på ryggsøylen'
+    RegData <- RegData[which(RegData$SpnlSurg2 %in% c(0,1,8,9)) %i%
+                         which(RegData$InnDato >= as.Date('2024-01-01')), ]
+    grtxt <- c('Nei', 'Ja', 'Ikke relevant', 'Ukjent')
+    RegData$VariabelGr <- factor(as.numeric(RegData$SpnlSurg2), levels=c(0,1,8,9), labels = grtxt)
+    retn <- 'H'
+  }
+
+  if (valgtVar == 'VentAssi2') {
+    # -1 = Velg verdi, 0 = Nei, 1 = Ja, < 24 timer/dag v/utskr, 2 = Ja, 24 timer/dag v utskrivning
+    # 3 = Ja, ukjent antall timer/dag ved utskrivning, 4 = Ventilasjonsstøtte kun ved pusteforstyrrelser under søvn
+    # 9 = Ukjent
+
+    tittel <- 'Ventilasjonsstøtte ved utskriving'
+    RegData <- RegData[which(RegData$VentAssi2 %in% c(1:4,0,9)) %i%
+                         which(RegData$InnDato >= as.Date('2024-01-01')), ]
+    grtxt <- c('Ja, < 24 t/døgn', 'Ja, hele døgnet', 'Ja, ukjent ant. t/døgn',
+               'Ja, v/pusteforstyrr. søvn', 'Nei', 'Ukjent')
+    RegData$VariabelGr <- factor(as.numeric(RegData$VentAssi2), levels=c(1:4,0,9), labels = grtxt)
+    retn <- 'H'
+  }
+
+
+  #----------------Livskvalitet-skjema (start 01.01.2015)---------------
   #For flerevar=1 må vi omdefinere variablene slik at alle gyldige registreringer
   #(dvs. alle registreringer som skal telles med) er 0 eller 1. De som har oppfylt spørsmålet
   # er 1, mens ugyldige registreringer er NA. Det betyr at hvis vi skal ta bort registreringer
@@ -330,6 +378,17 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
     RegData$Variabel <- as.numeric(RegData$SatPsych)
     sortAvtagende <- TRUE
   }
+  if (valgtVar == 'LivsSosLiv') {
+    tittel <- ifelse(figurtype == 'andeler',
+                     'Tilfredshet med sosialt liv',
+                     'tilfredshet med sosialt liv')
+    RegData <- RegData[RegData$SatSocIf %in% 0:10, ]
+    grtxt <- 0:10
+    RegData$VariabelGr <- factor(as.numeric(RegData$SatSocIf), levels=0:10, labels = grtxt)
+    RegData$Variabel <- as.numeric(RegData$SatSocIf)
+    sortAvtagende <- TRUE
+  }
+
 
   #----------------URIN-skjema (start 01.01.2015)--------------
   if (substr(valgtVar,1,4)=='Urin') {
@@ -699,6 +758,47 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
     RegData <- RegData[RegData$FeedingS %in% gr, ]
     RegData$VariabelGr <- factor(as.numeric(RegData$FeedingS), levels=gr, labels = grtxt)
   }
+
+#---------Kontrollskjema-----------------
+
+  if (valgtVar=='KontControlInterruptedReason') {
+    tittel <- 'Årsak til ikke gjennomført kontroll ved utreise'
+    gr <- c(1:9)
+    RegData <- RegData[RegData$ControlInterruptedReason %in% gr,]
+    grtxt <- c('Ikke møtt',
+               'Pasient utsatt kontr.',
+               'Ikke kontakt med pasient',
+               'Helsemessig årsak',
+               'Avd. ikke kapasitet',
+               'Kontroll v/annet sykehus',
+               'Ønsker ikke kontroll',
+               'Dødsfall',
+               'Annen årsak')
+    RegData$VariabelGr <- factor(RegData$ControlInterruptedReason, levels = gr, labels = grtxt)
+  }
+
+
+  if (valgtVar == 'KontrKompl'){
+    tittel <- 'Komplikasjoner, kontroll'
+    RegData <- RegData[which(RegData$Aar >= 2022), ]
+    flerevar <- 1
+    retn <- 'H'
+    variable <- c(
+      'CPressureUlcer', 'CVTE', 'CUTI', 'CSepsis', 'CPneumonia',
+      'CSpasticity', 'CSyringomyelia',
+      'CHeterotopicOssification', 'CAutonomicDysreflexia', 'COrthostaticHypotension',
+      'COsteoporosis', 'CComplicOther', 'CComplicNone')
+    grtxt <- c('Trykksår', 'Tromboembolisme', 'Beh.krevende UVI (≥3)', 'Sepsis', 'Pneumoni',
+               'Invalidiserende spastisitet', 'Symptomgivende syringomyeli',
+               'Heterotope ossifikasjoner', 'Autonom dysrefleksi', 'Ortostatisk hypotensjon',
+               'Osteoporose', 'Andre komplikasjoner', 'Ingen av disse kompl.')
+    ind1 <- which(RegData[,variable]==1, arr.ind=T)
+    RegData[ ,variable] <- 0
+    RegData[ ,variable][ind1] <- 1
+  }
+
+
+
   UtData <- list(RegData=RegData, grtxt=grtxt, xAkseTxt=xAkseTxt, cexgr=cexgr, KImaal=KImaal, retn=retn,
                  tittel=tittel, flerevar=flerevar, variable=variable, sortAvtagende=sortAvtagende,
                  grPP=grPP)

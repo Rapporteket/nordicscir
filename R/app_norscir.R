@@ -6,7 +6,7 @@
 #' @export
 ui_norscir <- function() {
 
-  shiny::addResourcePath("rap", system.file("www", package = "rapbase"))
+  # shiny::addResourcePath("rap", system.file("www", package = "rapbase"))
 
   startDato <- as.Date(
     paste0(as.numeric(format(Sys.Date()-400, "%Y")), '-01-01')
@@ -32,20 +32,25 @@ ui_norscir <- function() {
       "Måned" = "Mnd")
   )
 
+ enhetsUtvalg <- list("Egen mot resten av landet" = 1,
+                      "Hele landet" = 0,
+                      "Egen enhet" = 2)
+
   shiny::tagList(
     shinyjs::useShinyjs(),
     shiny::navbarPage(
       id = "hovedark",
-      title = shiny::div(
-        shiny::a(
-          shiny::includeHTML(
-            system.file("www/logo.svg", package = "rapbase")
-          )
-        ),
-        regTitle),
+      title = rapbase::title(regTitle),
+      # title = shiny::div(
+      #   shiny::a(
+      #     shiny::includeHTML(
+      #       system.file("www/logo.svg", package = "rapbase")
+      #     )
+      #   ),
+      #   regTitle),
       # sett inn tittel også i browser-vindu
       windowTitle = regTitle,
-      theme = "rap/bootstrap.css",
+      theme = rapbase::theme(),  # "rap/bootstrap.css",
 
       #----startside--------
       shiny::tabPanel(
@@ -161,15 +166,16 @@ ui_norscir <- function() {
               "Anbefalt tid til kontroll" = "AnbefTidKtr",
               "Lengde på rehab.opphold" = "DagerRehab",
               "Opphold, totalt antall dager" = "OpphTot",
+              "Operasjon på ryggsøylen" = "SpnlSurg2",
               "Planlagt utskrevet til" = "PPlaceDis",
-              #"Fjern? Permisjon (ant. døgn ute av sykehus) " = "Permisjon",
+              "Pustehjelp (f.o.m. 2024)" = "VentAssi2",
               "Registreringsforsinkelse" = "RegForsinkelse",
+              "Komplikasjoner, primæropph" = "KomplPrim",
               "Skadeårsak " = "SkadeArsak",
               "Skadeårsak, ikke-traumatisk" = "Ntsci",
               "Tid fra skade til oppstart rehab." = "DagerTilRehab",
               "Tid med rehabilitering" = "DagerRehab",
               "Utskrevet til" = "UtTil",
-              #"Fjern? Pustehjelp" = "Pustehjelp[VentAssi]",
               "A&D Funksjon: Mobilitet" = "FunkMob",
               "A&D Funksjon: Påkledning" = "FunkKler",
               "A&D Funksjon: Spising" = "FunkSpis",
@@ -181,12 +187,11 @@ ui_norscir <- function() {
               "Livskval.: Tilfredshet med livet" = "LivsGen",
               "Livskval.: Tilfredshet med fysisk helse" = "LivsFys",
               "Livskval.: Tilfredshet med psykisk helse" = "LivsPsyk",
+              "Livskval.: Tilfredshet med sosialt liv" = "LivsSosLiv",
               "Urin: Ufrivillig urinlekkasje (fra 2019)" = "UrinInkontinens",
               "Urin: Ufrivillig urinlekkasje (t.o.m. 2018)" = "UrinInkontinensTom2018",
               "Urin: Kirurgiske inngrep" = "UrinKirInngr",
               "Urin: Legemiddelbruk (fra 2019)" = "UrinLegemidler",
-              #  "Urin: Legemiddelbruk (t.o.m. 2018)" = "UrinLegemidlerTom2018",
-              "Urin: Legemiddelbruk, hvilke" = "UrinLegemidlerHvilke",
               "Urin: Blæretømming, hovedmetode" = "UrinTomBlareHoved",
               "Urin: Blæretømming, tilleggsmetode" = "UrinTomBlareTillegg",
               "Tarm: Avføring, hovedmetode" = "TarmAvfHoved",
@@ -194,7 +199,6 @@ ui_norscir <- function() {
               "Tarm: Avføringsmiddelbruk" = "TarmAvfmiddel",
               "Tarm: Avføringsmidler, hvilke" = "TarmAvfmiddelHvilke",
               "Tarm: Fekal inkontinens (fra 2019)" = "TarmInkontinensFra2019",
-              "Tarm: Fekal inkontinens (t.o.m. 2018)" = "TarmInkontinensTom2018",
               "Tarm: Kirurgisk inngrep" = "TarmKirInngrep",
               "Tarm: Kirurgiske inngrep, hvilke" = "TarmKirInngrepHvilke",
               "Tarm: NBD" = "TarmNBD",
@@ -203,9 +207,11 @@ ui_norscir <- function() {
               "EQ5D: Daglige gjøremål" = "Eq5dQ3UsualActivities",
               "EQ5D: Smerter, ubehag" = "Eq5dQ4PainDiscomfort",
               "EQ5D: Angst og depresjon" = "Eq5dQ5AnxietyDepression",
-              "EQ5D: Generell helsetilstand" = "Eq5dQ6HealthToday"
+              "EQ5D: Generell helsetilstand" = "Eq5dQ6HealthToday",
+              "Kontroll: Komplikasjoner" = "KontrKompl",
+              "Kontroll: Årsak, ikke gj.ført kontroll" = "KontControlInterruptedReason"
             ),
-            selected = c("Registreringsforsinkelse" = "RegForsinkelse")
+             selected = c("Registreringsforsinkelse" = "RegForsinkelse")
           ),
 
           shiny::selectInput(
@@ -220,11 +226,13 @@ ui_norscir <- function() {
             max = 110,
             value = c(0, 110)
           ),
-          shiny::selectInput(
-            inputId = "enhetsUtvalg",
-            label = "Egen enhet og/eller landet",
-            choices = c("Egen mot resten av landet" = 1, "Hele landet" = 0,
-                        "Egen enhet" = 2)
+           shiny::conditionalPanel(
+            condition = "input.fordeling == 'Figur' | input.fordeling == 'Tabell' ",
+            shiny::selectInput(
+              inputId = "enhetsUtvalg",
+              label = "Egen enhet og/eller landet",
+              choices = enhetsUtvalg)
+              # , selected = 1)
           ),
           shiny::selectInput(
             inputId = "AIS",
@@ -258,8 +266,6 @@ ui_norscir <- function() {
             id="fordeling",
             shiny::tabPanel(
               "Figur",
-              shiny::br(),
-              em("(Høyreklikk på figuren for å laste den ned)"),
               shiny::br(),
               shiny::br(),
               shiny::plotOutput("fordelinger", height = "auto"),
@@ -494,25 +500,19 @@ ui_norscir <- function() {
           width=3,
           shiny::h3("Utvalg"),
           shiny::conditionalPanel(
-            condition = "input.ark == 'Antall personer med ryggmargsskade'",
+            condition = "input.reg == 'Antall personer med ryggmargsskade'",
             shiny::dateInput(
               inputId = "sluttDatoReg",
               label = "Velg sluttdato",
               language="nb",
               value = Sys.Date(),
               max = Sys.Date()
-            )
-          ),
-          shiny::conditionalPanel(
-            condition = "input.ark == 'Antall personer med ryggmargsskade'",
+            ),
             shiny::selectInput(
               inputId = "tidsenhetReg",
               label="Velg tidsenhet",
               choices = rev(c("År"= "Aar", "Måned"="Mnd"))
-            )
           ),
-          shiny::conditionalPanel(
-            condition = "input.ark == 'Antall personer med ryggmargsskade'",
             shiny::selectInput(
               inputId = "traumeReg",
               label="Traume",
@@ -522,8 +522,8 @@ ui_norscir <- function() {
           ),
           shiny::conditionalPanel(
             condition = paste0(
-              "input.ark == 'Antall hovedskjema med tilknyttede skjema' | ",
-              "input.ark == 'Antall kontrollskjema med tilknyttede skjema' "
+              "input.reg == 'Antall hovedskjema med tilknyttede skjema' | ",
+              "input.reg == 'Antall kontrollskjema med tilknyttede skjema' "
             ),
             shiny::dateRangeInput(
               inputId = "datovalgReg",
@@ -538,7 +538,7 @@ ui_norscir <- function() {
 
         shiny::mainPanel(
           shiny::tabsetPanel(
-            id = "ark",
+            id = "reg",
             shiny::tabPanel(
               "Antall personer med ryggmargsskade",
               shiny::uiOutput("undertittelReg"),
@@ -810,7 +810,7 @@ rapbase::appLogger(
         input$tidsenhetReg,
         Mnd = paste0(t1, "siste 12 måneder før ", input$sluttDatoReg, t2,
                      "<br />"),
-        Aar = paste0(t1, "siste 5 år før ", input$sluttDatoReg, t2, "<br />")
+        Aar = paste0(t1, "siste 10 år før ", input$sluttDatoReg, t2, "<br />")
       )
     ))
   })
@@ -825,7 +825,7 @@ rapbase::appLogger(
             traume = input$traumeReg,
             antMnd = 12
           ),
-          Aar = nordicscir::tabAntOpphSh5Aar(
+          Aar = nordicscir::tabAntOpphShAar(
             RegData = HovedSkjema,
             datoTil = input$sluttDatoReg,
             traume = input$traumeReg
@@ -929,7 +929,6 @@ rapbase::appLogger(
   shiny::observe({
     if (isDataOk) {
       RegData <- nordicscir::finnRegData(valgtVar = input$valgtVar, Data = AlleTab)
-      #RegData <- nordicscir::TilLogiskeVar(RegData)
 
       output$fordelinger <- shiny::renderPlot({
         nordicscir::NSFigAndeler(
@@ -947,6 +946,8 @@ rapbase::appLogger(
         )},
         height = 800, width = 800
       )
+
+
 
       output$lastNed_figFord <- shiny::downloadHandler(
         filename = function() {

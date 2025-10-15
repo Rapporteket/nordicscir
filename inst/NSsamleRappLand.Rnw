@@ -235,7 +235,7 @@ Nutv <- length(utvalg)
 Kjonn <- table(NSdata$erMann[utvalg])
 AntTilHjem <- c(sum(NSdata$PlaceDis[utvalg]==1), sum(NSdata$PlaceDis[utvalg] %in% 1:10))
 AntAssSkade <-c(sum(NSdata$AssocInj[utvalg]==1), sum(NSdata$AssocInj[utvalg] %in% 0:1))
-AntSpinkir <- c(sum(NSdata$SpnlSurg[utvalg]==1), sum(NSdata$SpnlSurg[utvalg] %in% 0:1))
+AntSpinkir <- c(sum(NSdata$SpnlSurg2[utvalg]==1), sum(NSdata$SpnlSurg2[utvalg] %in% 0:1))
 AntTraumer <- c(sum(NSdata$SkadeArsak[utvalg] %in% 1:5), sum(NSdata$SkadeArsak[utvalg] %in% 1:6))
 
 Andeler <- rbind('Kvinner' = c(Kjonn[1], Kjonn[1]/Nutv),
@@ -332,8 +332,6 @@ dum <- NSFigAndeler(NSdata, preprosess=0, valgtVar='UtTil', outfile='FigUtTil.pd
 		datoFra=datoFra, datoTil=datoTil, traume=traume, enhetsUtvalg=0, reshID=reshID, hentData=0)
 dum <- NSFigAndeler(NSdata, preprosess=0, valgtVar='SkadeArsak', outfile='FigSkadeArsak.pdf',
 		datoFra=datoFra, datoTil=datoTil, traume=traume, enhetsUtvalg=0, reshID=reshID, hentData=0)
-#dum <- NSFigAndeler(NSdata, preprosess=0, valgtVar='Pustehjelp', outfile='FigPustehjelp.pdf',
-#		datoFra=datoFra, datoTil=datoTil, traume=traume, enhetsUtvalg=0, reshID=reshID, hentData=0)
 dum <- NSFigAndeler(NSdata, preprosess=0, valgtVar='AAis', outfile='FigAISinn.pdf',
 		datoFra=datoFra, datoTil=datoTil, traume=traume, enhetsUtvalg=0, reshID=reshID, hentData=0)
 dum <- 	NSFigAndeler(NSdata, preprosess=0, valgtVar='FAis', outfile='FigAISut.pdf',
@@ -376,10 +374,6 @@ dum <- 	NSFigAndeler(NSdata, preprosess=0, valgtVar='FAis', outfile='FigAISut.pd
  \caption{\label{fig:SkadeArsak} Skadeårsak.}
 \end{figure}
 
-%\begin{figure}[ht]
-% \centerline{ \scalebox{\Sexpr{s1}}{\includegraphics{FigPustehjelp.pdf}}  }
-% \caption{\label{fig:Pustehjelp} Ventilasjonsstøtte.}
-%\end{figure}
 
 \begin{figure}[ht]
  \centerline{ \scalebox{\Sexpr{s1}}{\includegraphics{FigAISinn.pdf}}  }
