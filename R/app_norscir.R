@@ -41,14 +41,6 @@ ui_norscir <- function() {
     shiny::navbarPage(
       id = "hovedark",
       title = rapbase::title(regTitle),
-      # title = shiny::div(
-      #   shiny::a(
-      #     shiny::includeHTML(
-      #       system.file("www/logo.svg", package = "rapbase")
-      #     )
-      #   ),
-      #   regTitle),
-      # sett inn tittel også i browser-vindu
       windowTitle = regTitle,
       theme = rapbase::theme(),  # "rap/bootstrap.css",
 
@@ -384,7 +376,8 @@ ui_norscir <- function() {
                         "Tid fra skade til oppstart rehab." = "DagerTilRehab",
                         "Livskval.: Tilfredshet med livet" = "LivsGen",
                         "Livskval.: Tilfredshet med fysisk helse" = "LivsFys",
-                        "Livskval.: Tilfredshet med psykisk helse" = "LivsPsyk"
+                        "Livskval.: Tilfredshet med psykisk helse" = "LivsPsyk",
+                        "Livskval.: Tilfredshet med sosialt liv" = "LivsSosLiv"
             ),
             selected = c("Registreringsforsinkelse" = "RegForsinkelse")
           ),
