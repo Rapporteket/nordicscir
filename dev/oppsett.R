@@ -10,7 +10,22 @@ source("dev/sysSetenv.R")
 Sys.setenv(MYSQL_DB_DATA="norscir")
 nordicscir::kjor_NSapper(register = "norscir", browser = TRUE)
 
-RegData <- nordicscir::NSPreprosesser(RegData=NSRegDataSQL(valgtVar = 'Kont'))
+RegData <- nordicscir::NSPreprosesser(RegData=nordicscir::NSRegDataSQL(valgtVar = 'Alder'))
+
+test <- tabAntOpphShTid(RegData=RegData,
+                datoTil=Sys.Date(),
+                tidsenhet = 'Kvartal',
+                antTidsenh=12,
+                datoUt = 1)
+                traume=input$traumeReg)
+
+Kvartal = c(lubridate::quarter(seq.Date(as.Date(lubridate::floor_date(min(RegData$RapDato), 'month')),
+                                        max(RegData$RapDato),
+                                        by = "quarter"), with_year = T),
+            lubridate::quarter(max(RegData$RapDato),, with_year = T),
+            lubridate::quarter(max(RegData$RapDato),, with_year = T))
+
+sort(unique(Kvartal))
 
 NSFigAndeler(RegData = NSRegDataSQL(valgtVar = 'KontControlInterruptedReason'), valgtVar = 'KontControlInterruptedReason')
 table(RegData$ControlInterruptedReason, RegData$Aar)

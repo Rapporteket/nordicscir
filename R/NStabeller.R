@@ -61,10 +61,8 @@ tabLiggetider <- function(RegData, datoFra='2018-01-01', datoTil=Sys.Date(), enh
 #' @inheritParams NSUtvalgEnh
 #' @export
 tabAntOpphShMnd <- function(RegData, datoTil=Sys.Date(), traume='', antMnd=12){
-      #RegData må inneholde DateAdmittedIntensive, DateDischargedIntensive
       datoFra <- lubridate::floor_date(as.Date(datoTil)%m-% months(antMnd, abbreviate = T), 'month') #as.Date(paste0(as.numeric(substr(datoTil,1,4))-1, substr(datoTil,5,8), '01'), tz='UTC')
       aggVar <-  c('ShNavn', 'InnDato')
-      #sep23: NSUtvalg -> NSUtvalgEnh
       RegData <- NSUtvalgEnh(RegData = RegData, traume=traume)$RegData
       RegDataDum <- RegData[RegData$InnDato <= as.Date(datoTil, tz='UTC')
                               & RegData$InnDato > as.Date(datoFra, tz='UTC'), aggVar]
@@ -72,8 +70,6 @@ tabAntOpphShMnd <- function(RegData, datoTil=Sys.Date(), traume='', antMnd=12){
       tabAvdMnd1 <- table(RegDataDum[ , c('ShNavn', 'Maaned1')])
       colnames(tabAvdMnd1) <- format(lubridate::ymd(colnames(tabAvdMnd1)), '%b%y') #month(ymd(colnames(tabAvdMnd1)), label = T)
       tabAvdMnd <- addmargins(tabAvdMnd1)
-      #tabAvdMnd1 <- RegDataDum %>% group_by(Maaned = lubridate::floor_date(InnDato, "month"), ShNavn) %>%
-      #      summarize(Antall=length(ShNavn))
       tabAvdMnd <- xtable::xtable(tabAvdMnd)
 	return(tabAvdMnd)
 }
@@ -90,6 +86,35 @@ tabAntOpphShAar <- function(RegData, datoTil=Sys.Date(), antAar=10, traume=''){
       tabAvdAarN <- xtable::xtable(tabAvdAarN)
       return(tabAvdAarN)
 }
+
+
+#' Antall opphold siste år/kvartal/måneder
+#' @inheritParams NSUtvalgEnh
+#' @export
+tabAntOpphShTid <- function(RegData, datoTil=Sys.Date(), tidsenhet='Aar', antTidsenh=10,
+                                datoUt=0, traume=''){
+
+  RegData <- NSUtvalgEnh(RegData = RegData, datoTil = datoTil, traume=traume)$RegData
+
+  tid <- SorterOgNavngiTidsEnhet(RegData, tidsenhet=tidsenhet, tab=0, datoUt=datoUt)
+  sluttTid <- max(tid$RegData$TidsEnhetSort)
+  startTid <- sluttTid-antTidsenh+1
+  RegData <- tid$RegData
+  tabAvdTid <- table(RegData[ , c('ShNavn', 'TidsEnhet')])
+
+  colnames(tabAvdTid) <- tid$tidtxt
+  tabAvdTid <- tabAvdTid[ ,startTid:sluttTid] #Filtrering bør komme tidligere...
+  tabAvdTid <- addmargins(tabAvdTid)
+  tabAvdTid <- xtable::xtable(tabAvdTid)
+
+  rownames(tabAvdTid)[dim(tabAvdTid)[1] ] <- 'TOTALT, alle enheter:'
+  colnames(tabAvdTid)[dim(tabAvdTid)[2] ] <- paste('Siste', antTidsenh, tidsenhet, sep = ' ')
+  tabAvdTid <- xtable::xtable(tabAvdTid)
+  return(tabAvdTid)
+}
+
+
+
 
 #' Antall registreringer/pasienter siste 5 år
 #' @param gr gruppering 'opph'-opphold, 'pas'-pasient

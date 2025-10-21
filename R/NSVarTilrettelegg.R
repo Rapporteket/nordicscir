@@ -268,6 +268,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
       RegData$CPlaceDis[which(RegData$CPlaceDis==99)] <- 12
       RegData <- RegData[RegData$CPlaceDis %in% 1:12, ]
       RegData$VariabelGrPost <- factor(as.numeric(RegData$CPlaceDis), levels=1:12, labels = grtxt)
+      grPP <- c('Utskriving', '1.kontroll')
     }
     retn <- 'H'
   }
@@ -306,11 +307,11 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
   }
 
   if (valgtVar == 'SpnlSurg2') {
-    # -1 = Velg verdi, 0 Nei, 1 Ja, 8 Ikke relevant (ikke-traumatisk skade), 9 Ukjent
+    # -1 = Velg verdi, 0 Nei, 1 Ja, 8 Ikke relevant (ikke-traumatisk skade)[FEIL!], 9 Ukjent
     tittel <- 'Operasjon på ryggsøylen'
-    RegData <- RegData[which(RegData$SpnlSurg2 %in% c(0,1,8,9)) %i%
+    RegData <- RegData[which(RegData$SpnlSurg2 %in% c(0,1,9)) %i%
                          which(RegData$InnDato >= as.Date('2024-01-01')), ]
-    grtxt <- c('Nei', 'Ja', 'Ikke relevant', 'Ukjent')
+    grtxt <- c('Nei', 'Ja', 'Ukjent')
     RegData$VariabelGr <- factor(as.numeric(RegData$SpnlSurg2), levels=c(0,1,8,9), labels = grtxt)
     retn <- 'H'
   }
@@ -779,7 +780,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
 
 
   if (valgtVar == 'KontrKompl'){
-    tittel <- 'Komplikasjoner, kontroll'
+    tittel <- 'Komplikasjoner, kontroll ?'
     RegData <- RegData[which(RegData$Aar >= 2022), ]
     flerevar <- 1
     retn <- 'H'

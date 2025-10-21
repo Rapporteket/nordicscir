@@ -39,15 +39,14 @@ kjor_NSapper <- function(register = 'norscir', browser = FALSE, logAsJson = FALS
 SorterOgNavngiTidsEnhet <- function(RegData, tidsenhet='Aar', tab=0, datoUt=0) {
 
   RegData$RapDato <- as.Date(RegData[ ,c('InnDato', 'DischgDt')[datoUt+1]])
+  RegData <- RegData[!is.na(RegData$RapDato), ]
 
   if (datoUt == 1) {
-    RegData$DischgDt <- strptime(RegData$DischgDt, format="%Y-%m-%d")
-  RegData$MndNum <- RegData$DischgDt$mon +1
-  #head(format(RegData$DischgDt, '%b'))
-  RegData$MndAar <- format(RegData$DischgDt, '%b%y')
+  RegData$MndNum <- lubridate::month(RegData$RapDato) #RegData$RapDato$mon +1
+  RegData$MndAar <- format(RegData$RapDato, '%b%y')
   RegData$Kvartal <- ceiling(RegData$MndNum/3)
   RegData$Halvaar <- ceiling(RegData$MndNum/6)
-  RegData$Aar <- lubridate::year(RegData$DischgDt) #strptime(RegData$Innleggelsestidspunkt, format="%Y")$year
+  RegData$Aar <- lubridate::year(RegData$RapDato)
   }
 
 
@@ -65,15 +64,13 @@ SorterOgNavngiTidsEnhet <- function(RegData, tidsenhet='Aar', tab=0, datoUt=0) {
       tidtxt <- switch(tidsenhet,
                        Mnd = format.Date(seq(from=lubridate::floor_date(as.Date(min(as.Date(RegData$RapDato), na.rm = T)), 'month'),
                                              to=max(as.Date(RegData$RapDato), na.rm = T), by='month'), format = '%B%y'), #Hele måneden
-                       Kvartal = lubridate::quarter(seq.Date(as.Date(lubridate::floor_date(min(RegData$RapDato), 'month')),
+                       Kvartal = unique(c(lubridate::quarter(seq.Date(as.Date(lubridate::floor_date(min(RegData$RapDato), 'month')),
                                                              max(RegData$RapDato),
                                                  by = "quarter"), with_year = T),
-                       #NGER: Kvartal = paste(substr(RegData$Aar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)], 3,4),
-                       #                sprintf('%01.0f', RegData$Kvartal[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)]), sep='-'),
+                                          lubridate::quarter(max(RegData$RapDato),, with_year = T))),
                        Halvaar = paste(substr(RegData$Aar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)], 3,4),
                                        sprintf('%01.0f', RegData$Halvaar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)]), sep='-'),
                        Aar = min(RegData$Aar):max(RegData$Aar)
-                       #NGER: Aar = as.character(RegData$Aar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)]))
       )
 
       substrRight <- function(x, n){substr(x, nchar(x)-n+1, nchar(x))}

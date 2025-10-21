@@ -299,7 +299,8 @@ ui_nordicscir <- function() {
                         "Tid fra skade til oppstart rehab." = "DagerTilRehab",
                         "Livskval.: Tilfredshet med livet" = "LivsGen",
                         "Livskval.: Tilfredshet med fysisk helse" = "LivsFys",
-                        "Livskval.: Tilfredshet med psykisk helse" = "LivsPsyk"
+                        "Livskval.: Tilfredshet med psykisk helse" = "LivsPsyk",
+                        "Livskval.: Tilfredshet med sosialt liv" = "LivsSosLiv"
             ),
             selected = c("Registreringsforsinkelse" = "RegForsinkelse")
           ),

@@ -15,7 +15,7 @@ ui_norscir <- function() {
     paste0(as.numeric(format(Sys.Date()-700, "%Y")), '-01-01')
   )
 
-  context <- Sys.getenv("R_RAP_INSTANCE") #Blir tom hvis jobber lokalt
+  # context <- Sys.getenv("R_RAP_INSTANCE") #Blir tom hvis jobber lokalt
   regTitle = "Norsk ryggmargsskaderegister"
 
   #----Valg
@@ -83,9 +83,9 @@ ui_norscir <- function() {
         ),
         shiny::mainPanel(
           width = 8,
-          if (context %in% c("DEV", "TEST", "QA", "PRODUCTION", "QAC", "PRODUCTIONC")) {
-            rapbase::navbarWidgetInput("navbar-widget", selectOrganization = TRUE)
-          },
+          # if (context %in% c("DEV", "TEST", "QA", "PRODUCTION", "QAC", "PRODUCTIONC")) {
+            rapbase::navbarWidgetInput("navbar-widget", selectOrganization = TRUE),
+          #},
           shiny::h2("Velkommen til Rapporteket - Norsk Ryggmargsskaderegister!",
                     align='center'),
           shiny::br(),
@@ -446,7 +446,8 @@ ui_norscir <- function() {
           shiny::selectInput(
             inputId = "tidsenhetGjsn",
             label = "Velg tidsenhet",
-            choices = tidsenheter
+            choices = tidsenheter,
+            selected = 'Kvartal'
           ),
           shiny::selectInput(
             inputId = "bildeformatGjsn",
@@ -501,10 +502,17 @@ ui_norscir <- function() {
               value = Sys.Date(),
               max = Sys.Date()
             ),
+            shiny::radioButtons(
+              inputId = "datoUtReg",
+              label = "Bruk utskrivingsdato til datofiltrering?",
+              choiceNames = c("nei", "ja"),
+              choiceValues = 0:1,
+              selected = 0
+            ),
             shiny::selectInput(
               inputId = "tidsenhetReg",
               label="Velg tidsenhet",
-              choices = rev(c("År"= "Aar", "Måned"="Mnd"))
+              choices = tidsenheter #rev(c("År"= "Aar", "Måned"="Mnd"))
           ),
             shiny::selectInput(
               inputId = "traumeReg",
@@ -539,7 +547,7 @@ ui_norscir <- function() {
                              "i menyen til venstre")),
               shiny::br(),
               shiny::fluidRow(
-                shiny::tableOutput("tabAntOpphShMnd12"),
+                shiny::tableOutput("tabAntOpphTid"),
                 shiny::downloadButton(
                   outputId = "lastNed_tabAntOpph", label="Last ned"
                 )
@@ -798,40 +806,49 @@ rapbase::appLogger(
     shiny::br()
     t1 <- "Tabellen viser innleggelser "
     t2 <- ", basert på første akutte innleggelse"
-    shiny::h4(shiny::HTML(
-      switch(
-        input$tidsenhetReg,
-        Mnd = paste0(t1, "siste 12 måneder før ", input$sluttDatoReg, t2,
-                     "<br />"),
-        Aar = paste0(t1, "siste 10 år før ", input$sluttDatoReg, t2, "<br />")
-      )
-    ))
+    # shiny::h4(shiny::HTML(
+    #   switch(
+    #     input$tidsenhetReg,
+    #     Mnd = paste0(t1, "siste 12 måneder før ", input$sluttDatoReg, t2,
+    #                  "<br />"),
+    #     Aar = paste0(t1, "siste 10 år før ", input$sluttDatoReg, t2, "<br />")
+    #   )
+    # ))
   })
   shiny::observe({
     if (isDataOk) {
-      tabAntOpphShMndAar <-
-        switch(
-          input$tidsenhetReg,
-          Mnd = nordicscir::tabAntOpphShMnd(
-            RegData = HovedSkjema,
-            datoTil = input$sluttDatoReg,
-            traume = input$traumeReg,
-            antMnd = 12
-          ),
-          Aar = nordicscir::tabAntOpphShAar(
-            RegData = HovedSkjema,
-            datoTil = input$sluttDatoReg,
-            traume = input$traumeReg
-          )
-        )
+      # tabAntOpphShMndAar <-
+      #   switch(
+      #     input$tidsenhetReg,
+      #     Mnd = nordicscir::tabAntOpphShMnd(
+      #       RegData = HovedSkjema,
+      #       datoTil = input$sluttDatoReg,
+      #       traume = input$traumeReg,
+      #       antMnd = 12
+      #     ),
+      #     Aar = nordicscir::tabAntOpphShAar(
+      #       RegData = HovedSkjema,
+      #       datoTil = input$sluttDatoReg,
+      #       traume = input$traumeReg
+      #     )
+      #   )
 
-      output$tabAntOpphShMnd12 <- shiny::renderTable(
-        tabAntOpphShMndAar, rownames = TRUE, digits = 0, spacing = "xs"
+
+      tabAntOpphShTid <- tabAntOpphShTid(RegData=HovedSkjema,
+                                         datoTil=input$sluttDatoReg,
+                                         tidsenhet = input$tidsenhetReg,
+                                         antTidsenh=12,
+                                         datoUt = as.numeric(input$datoUtReg),
+                                         traume=input$traumeReg)
+
+      output$tabAntOpphTid <- shiny::renderTable(
+        tabAntOpphShTid, rownames = TRUE, digits = 0, spacing = "xs"
       )
+
       output$lastNed_tabAntOpph <- shiny::downloadHandler(
         filename = function() {paste0("tabAntOpph.csv")},
         content = function(file, filename) {
-          write.csv2(tabAntOpphShMndAar, file, row.names = TRUE, na = "")
+          write.csv2(tabAntOpphShTid, file, row.names = TRUE, na = "")
         }
       )
 
@@ -905,7 +922,7 @@ rapbase::appLogger(
         }
       )
     } else {
-      output$tabAntOpphShMnd12 <- NULL
+      output$tabAntOpphTid <- NULL
       output$lastNed_tabAntOpph <- NULL
       output$tabAntTilknyttedeHovedSkjema <- NULL
       output$lastNed_tabOppfHovedAnt <- NULL
