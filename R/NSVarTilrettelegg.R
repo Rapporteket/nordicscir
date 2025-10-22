@@ -148,6 +148,15 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
       }
     }
 
+  if (valgtVar %in% c('ABMI', 'FBMI')) {
+    tittel <- paste0('Målt høyde og vekt ved ',
+                     ifelse(valgtVar == 'ABMI', 'innleggelse', 'utskriving'))
+    varTxt <- 'registrert med BMI'
+    RegData <- RegData[RegData$InnDato >= '2024-01-01', ]
+    ind <- which(!is.na(RegData[,valgtVar]))
+    RegData$Variabel[ind] <- 1
+  }
+
 
   if (valgtVar == 'AnbefTidKtr') {
     tittel <- 'Anbefalt tid til kontroll'

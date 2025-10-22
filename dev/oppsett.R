@@ -13,18 +13,11 @@ nordicscir::kjor_NSapper(register = "norscir", browser = TRUE)
 RegData <- nordicscir::NSPreprosesser(RegData=nordicscir::NSRegDataSQL(valgtVar = 'Alder'))
 
 
-
-Kvartal = c(lubridate::quarter(seq.Date(as.Date(lubridate::floor_date(min(RegData$RapDato), 'month')),
-                                        max(RegData$RapDato),
-                                        by = "quarter"), with_year = T),
-            lubridate::quarter(max(RegData$RapDato),, with_year = T),
-            lubridate::quarter(max(RegData$RapDato),, with_year = T))
-
-sort(unique(Kvartal))
-
-NSFigAndeler(RegData = NSRegDataSQL(valgtVar = 'KontControlInterruptedReason'), valgtVar = 'KontControlInterruptedReason')
-table(RegData$ControlInterruptedReason, RegData$Aar)
-
+NSFigAndelerGrVar(RegData=RegData,preprosess=0,
+                              valgtVar='ABMI', datoFra='2015-01-01', datoTil=Sys.Date(),
+                              minald=0, maxald=130, erMann='',
+                              enhetsUtvalg=0,
+                              Ngrense=10, reshID=0)
 
 AlleTab <- nordicscir::getRealData(register = 'norscir')
 sapply(RegData, class)
