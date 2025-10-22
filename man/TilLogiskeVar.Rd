@@ -2,7 +2,8 @@
 % Please edit documentation in R/NShjelpefunksjoner.R
 \name{TilLogiskeVar}
 \alias{TilLogiskeVar}
-\title{Konvertere boolske variable fra tekst til boolske variable...}
+\title{Konvertere boolske variable fra tekst til boolske variable...
+Boolske variabler kommer fra jun 2025 som 0-1. Funksjonen kan ikke brukes lenger}
 \usage{
 TilLogiskeVar(Skjema)
 }
@@ -13,4 +14,5 @@ TilLogiskeVar(Skjema)
 }
 \description{
 Konvertere boolske variable fra tekst til boolske variable...
+Boolske variabler kommer fra jun 2025 som 0-1. Funksjonen kan ikke brukes lenger
 }

@@ -23,9 +23,9 @@ NSFigGjsnTid <- function(RegData, valgtVar='Alder', datoFra='2011-01-01', datoTi
                            enhetsUtvalg=0, valgtMaal='gjsn', AIS='', traume='alle', nivaaUt=99,
                          preprosess=1, outfile='', hentData=0, lagFigur=1,...){
 
-  if ("session" %in% names(list(...))) {
-    rapbase::repLogger(session = list(...)[["session"]], msg = paste0('FigGjsnTid: ',valgtVar))
-  }
+  # if ("session" %in% names(list(...))) {
+  #   rapbase::repLogger(session = list(...)[["session"]], msg = paste0('FigGjsnTid: ',valgtVar))
+  # }
   if (hentData == 1) {
     RegData <- NSRegDataSQL(valgtVar = valgtVar)
   }
@@ -50,12 +50,9 @@ NSFigGjsnTid <- function(RegData, valgtVar='Alder', datoFra='2011-01-01', datoTi
   medSml <- NSUtvalg$medSml
   #------------------------Klargjøre tidsenhet--------------
   N <- list(Hoved = dim(RegData)[1], Rest=0)
-  #N <- list(Hoved = 0, Rest =0)
-  #if (N$Hoved>9) {
-    RegDataFunk <- SorterOgNavngiTidsEnhet(RegData=RegData, tidsenhet = tidsenhet, datoUt=datoUt)
-    RegData <- RegDataFunk$RegData
-    #tidtxt <- RegDataFunk$tidtxt
-    tidNum <- min(as.numeric(RegData$TidsEnhetSort), na.rm=T):max(as.numeric(RegData$TidsEnhetSort), na.rm = T) #as.numeric(levels(RegData$TidsEnhetSort))
+  RegDataFunk <- SorterOgNavngiTidsEnhet(RegData=RegData, tidsenhet = tidsenhet, datoUt=datoUt)
+  RegData <- RegDataFunk$RegData
+  tidNum <- min(as.numeric(RegData$TidsEnhetSort), na.rm=T):max(as.numeric(RegData$TidsEnhetSort), na.rm = T) #as.numeric(levels(RegData$TidsEnhetSort))
 
     #--------------- Gjøre beregniNS ------------------------------
     KIekstrem <- NULL

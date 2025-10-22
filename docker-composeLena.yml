@@ -2,7 +2,7 @@ x-environment: &environment
   MYSQL_DB_LOG: db_log
   NORDICSCIR_DB: db_data
   MYSQL_DB_AUTOREPORT: db_autoreport
-  MYSQL_DB_DATA: db_data
+  MYSQL_DB_DATA: nordicscirreportdatastaging
   MYSQL_HOST: db
   MYSQL_USER: root
   MYSQL_PASSWORD: root
@@ -16,7 +16,7 @@ x-environment: &environment
 
 services:
 
-   db:
+  db:
     image: mysql:8
     restart: "no"
     environment:
@@ -33,7 +33,7 @@ services:
     ports:
       - 3306:3306
 
-   app:
+  app:
     depends_on:
       - db
     image: rapporteket/nordicscir:latest
@@ -45,7 +45,7 @@ services:
       R_RAP_CONFIG_PATH: /app/R
       << : *environment
 
-   dev:
+  dev:
     depends_on:
       - db
     image: rapporteket/pilot-dev:main
@@ -63,7 +63,7 @@ services:
       DISABLE_AUTH: "true"
       R_RAP_CONFIG_PATH: /home/rstudio/nordicscir/data-raw/config
 
-   adminer:
+  adminer:
     depends_on:
       - db
     image: adminer
@@ -73,7 +73,7 @@ services:
     ports:
       - 8888:8080
 
-   rapadm:
+  rapadm:
     depends_on:
       - db
     image: rapporteket/rapadm:latest

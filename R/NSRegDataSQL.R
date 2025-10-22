@@ -3,49 +3,50 @@
 #' Spørring som henter og kobler sammen data fra ulike skjema i valgt register
 #'
 #' Aktuelle skjema:
-#' mainformdatacontract: HOVEDSKJEMA
-#' bowelfunctionformdatacontract: Tarmfunksjon (?)
-#' lifequalityformdatacontract: Livskvalitet
-#' urinarytractfunctionformdatacontract: Urinfunksjon
-#' ActivityAndParticipationPerformanceFormDataContract: Aktivitetsfunksjon.
+#' spinal_cord_injury_core_data_set: HOVEDSKJEMA
+#' bowel_function: Tarmfunksjon (?)
+#' registration_of_quality_of_life: Livskvalitet
+#' lower_urinary_tract_function: Urinfunksjon
+#' activities_and_participation_performance: Aktivitetsfunksjon.
 #'      Skjema kun i det norske registeret
-#' ActivityAndParticipationSatisfactionFormDataContract: Aktivitetsfornøydhet.
+#' activities_and_participation_satisfaction: Aktivitetsfornøydhet.
 #'      Skjema kun i det norske registeret
-#' controlformdatacontract: Kontroll. Noen variable er oppfølging av målinger i hovedskjema.
+#' control_form: Kontroll. Noen variable er oppfølging av målinger i hovedskjema.
 #'      Skjema kun i det norske registeret
 #' @param valgtVar Valg av variabel angir hvilket skjema som skal knyttes til hovedskjema
 #'        siden de fire første bokstavene i variabelnavnet utgjør et prefiks for
 #'        å identifisere hvilken tabell variabelen skal hentes fraaktuell tabell. Eks LivsAlder
 #'        Variabler uten prefiks hentes fra hovedtabellen (Main...)
 #' @param register Hvilket register det skal hentes data for: 'norscir' (standard) eller 'nordicscir'
-#' @param koblSkjema Hvilket skjema skal regnes som "hovedskjema". Standard: 'Hoved' (mainformdatacontract),
-#'  'Kont' (controlformdatacontract). Bare NorScir har kontrollskjema
+#' @param koblSkjema Hvilket skjema skal regnes som "hovedskjema". Standard: 'Hoved' (spinal_cord_injury_core_data_set),
+#'  'Kont' (control_form). Bare NorScir har kontrollskjema
 #' @return RegData data frame
 #' @export
 
 NSRegDataSQL <- function(valgtVar='Alder', register='norscir', koblSkjema = 'Hoved', ...) {
 
-   #HovedSkjema: mainformdatacontract
-   #Livs: lifequalityformdatacontract
-   #Urin: urinarytractfunctionformdatacontract
-   #Tarm: bowelfunctionformdatacontract
-   #Sati: ActivityAndParticipationSatisfactionFormDataContract (bare NorScir)
-   #Perf: ActivityAndParticipationPerformanceFormDataContract (bare NorScir)
-   #Kont: controlformdatacontract (bare NorScir)
-   #Eq5d: Eq5dlFormDataContract (bare NorScir)
+  #HovedSkjema: spinal_cord_injury_core_data_set
+  #Livs: registration_of_quality_of_life
+  #Urin: lower_urinary_tract_function
+  #Tarm: bowel_function
+  #Sati: activities_and_participation_satisfaction (bare NorScir)
+  #Perf: activities_and_participation_performance (bare NorScir)
+  #Kont: control_form (bare NorScir)
+  #Eq5d: eq_5d_5l (bare NorScir)
 
-   if ("session" %in% names(list(...))) {
-      rapbase::repLogger(session = list(...)[["session"]],
-                        msg = "Starter SQL-funksjon")
-   }
+  if ("session" %in% names(list(...))) {
+    rapbase::repLogger(session = list(...)[["session"]],
+                       msg = "Starter SQL-funksjon")
+  }
 
   valgtSkjema <- substr(valgtVar,1,4)
 
-try(if(register == 'nordicscir' & koblSkjema == 'Kont') stop("NordicScir har ikke koblingsskjema"))
+  try(if(register == 'nordicscir' & koblSkjema == 'Kont') stop("NordicScir har ikke koblingsskjema"))
   try(if(koblSkjema == 'Kont' & valgtSkjema=='Kont') stop("Ingen vits i å koble kontrollskjema til kontrollskjema!"))
 
-   varHoved <- c("
+  varHoved <- c("
       Hoved.AAis,
+      Hoved.ABMI,
       Hoved.AdmitDt,
       Hoved.AdmitRehDt,
       Hoved.AMtrLvlAreaL,
@@ -58,6 +59,7 @@ try(if(register == 'nordicscir' & koblSkjema == 'Kont') stop("NordicScir har ikk
       Hoved.BeforeRehDy,
       Hoved.DischgDt,
       Hoved.FAis,
+      Hoved.FBMI,
       Hoved.FirstTimeClosed,
       Hoved.FMtrLvlAreaL,
       Hoved.FMtrLvlAreaR,
@@ -80,28 +82,47 @@ try(if(register == 'nordicscir' & koblSkjema == 'Kont') stop("NordicScir har ikk
       Hoved.RehabDy,
       Hoved.RecCtrl,
       Hoved.Scietiol,
+      Hoved.SpnlSurg2,
+      Hoved.VentAssi2,
+      -- Komplikasjoner:
+      Hoved.PressureUlcer,
+      Hoved.VTE,
+      Hoved.UTI,
+      Hoved.Sepsis,
+      Hoved.Pneumonia,
+      Hoved.Spasticity,
+      Hoved.Syringomyelia,
+      Hoved.HeterotopicOssification,
+      Hoved.AutonomicDysreflexia,
+      Hoved.OrthostaticHypotension,
+      Hoved.Osteoporosis,
+      Hoved.ComplicOther,
+      Hoved.ComplicNone,
+      -- UPPER(Hoved.SkjemaGUID) AS SkjemaGUIDHoved,
       Hoved.SkjemaGUID AS SkjemaGUIDHoved,
-      Hoved.UnitId,
-      Hoved.VentAssi
+      Hoved.UnitId
 ")
-   #Hoved.SkjemaGUID,
-   #Hoved.PasientGUID,
-   #Hoved.UnitId AS ReshId,
+  #Hoved.SkjemaGUID,
+  #Hoved.PasientGUID,
+  #Hoved.UnitId AS ReshId,
 
-   varLivs <- c('
-Livs.FormDate
-,UPPER(Livs.HovedskjemaGUID) AS HovedskjemaGUID
-,Livs.QolDt
-,Livs.SatGenrl
-,Livs.SatPhys
-,Livs.SatPsych
--- ,Livs.SkjemaGUID AS SkjemaGUID
--- ,Livs.SkjemaGUID AS SkjemaGUIDLivs
-')
-   #,Livs.PasientGUID
+  varLivs <- c("
+    Livs.FormDate
+    -- ,UPPER(Livs.HovedskjemaGUID) AS HovedskjemaGUID
+    ,Livs.HovedskjemaGUID
+    ,Livs.QolDt
+    ,Livs.SatGenrl
+    ,Livs.SatPhys
+    ,Livs.SatPsych
+    ,Livs.SatSocIf
+    -- ,Livs.SkjemaGUID AS SkjemaGUID
+    -- ,Livs.SkjemaGUID AS SkjemaGUIDLivs
+")
+  #,Livs.PasientGUID
 
-   varFunk <- c('
-UPPER(Funk.HovedskjemaGUID) AS HovedskjemaGUID
+  varFunk <- c('
+Funk.HovedskjemaGUID
+-- UPPER(Funk.HovedskjemaGUID) AS HovedskjemaGUID
 ,Funk.DataClDt
 ,Funk.Dreslbdy
 ,Funk.Feeding
@@ -112,8 +133,9 @@ UPPER(Funk.HovedskjemaGUID) AS HovedskjemaGUID
 ,Funk.Toiletin
 ')
 
-   varUrin <- c("
-UPPER(Urin.HovedskjemaGUID) AS HovedskjemaGUID
+  varUrin <- c("
+Urin.HovedskjemaGUID
+-- UPPER(Urin.HovedskjemaGUID) AS HovedskjemaGUID
 ,Urin.Antiprop
 ,Urin.Antiuti
 ,Urin.AnyDrugs
@@ -194,10 +216,11 @@ UPPER(Urin.HovedskjemaGUID) AS HovedskjemaGUID
 ,Urin.UstnrmDt
 ,Urin.Utimprun
 ")
-   #,Urin.PasientGUID
+  #,Urin.PasientGUID
 
-   varTarm <- c('
- UPPER(Tarm.HovedskjemaGUID) AS HovedskjemaGUID
+  varTarm <- c('
+ Tarm.HovedskjemaGUID
+ -- UPPER(Tarm.HovedskjemaGUID) AS HovedskjemaGUID
  ,Tarm.Antichol
  ,Tarm.Apndec
  ,Tarm.Apndic
@@ -270,9 +293,9 @@ UPPER(Urin.HovedskjemaGUID) AS HovedskjemaGUID
  ,Tarm.SurgicalIntervention
  ,Tarm.Wrpadplg
  ')
-   # ,Tarm.PasientGUID
 
-   varEQ5D <- c('
+
+  varEQ5D <- c('
 Eq5d.FormDate
 ,Eq5d.SkjemaGUID
 ,Eq5d.Eq5dQ1Mobility
@@ -284,11 +307,14 @@ Eq5d.FormDate
 ,Eq5d.Eq5d5lDt
 ,Eq5d.ProceedingID
 ,Eq5d.ParentCNum
-,UPPER(Eq5d.HovedskjemaGUID) AS HovedskjemaGUID
+,Eq5d.HovedskjemaGUID
+-- ,UPPER(Eq5d.HovedskjemaGUID) AS HovedskjemaGUID
 ')
 
-   varKont <- c('
+  varKont <- c('
 Kont.CAis
+,Kont.CAutonomicDysreflexia
+,Kont.CHeterotopicOssification
 ,Kont.CMtrLvlAreaL
 ,Kont.CMtrLvlAreaR
 ,Kont.CMtrLvlLC
@@ -302,8 +328,15 @@ Kont.CAis
 ,Kont.CNeuExmDt
 ,Kont.CNeuNoMeasure
 ,Kont.CNum
+,Kont.CComplicNone
+,Kont.CComplicOther
+,Kont.ControlInterruptedReason
 ,Kont.ControlStatus
+,Kont.COrthostaticHypotension
+,Kont.COsteoporosis
 ,Kont.CPlaceDis
+,Kont.CPneumonia
+,Kont.CPressureUlcer
 ,Kont.CSensLvlAreaL
 ,Kont.CSensLvlAreaR
 ,Kont.CSensLvlLC
@@ -314,96 +347,97 @@ Kont.CAis
 ,Kont.CSensLvlRL
 ,Kont.CSensLvlRS
 ,Kont.CSensLvlRT
+,Kont.CSepsis
+,Kont.CSpasticity
+,Kont.CSyringomyelia
+,Kont.CUTI
 ,Kont.CVentAssi
+,Kont.CVTE
 ,Kont.FirstTimeClosed
 ,Kont.FormDate
 ,Kont.FormStatus
 ,Kont.FormTypeId
 ,Kont.LastUpdate
--- ,Kont.NoControl Fjernet jan -25
--- ,Kont.NoControlReason Fjernet jan -25
 ,Kont.ProceedingID
 -- ,Kont.SkjemaGUID
 ,Kont.SkjemaGUID AS SkjemaGUIDKont
 ,Kont.UnitId
 ')
-   #"HealthUnitId","HealthUnitName","HealthUnitShortName","HF" ,"Hospital","RHF"
+  #"HealthUnitId","HealthUnitName","HealthUnitShortName","HF" ,"Hospital","RHF"
 
+  variable <- ''
+  qSkjema <- ''
 
-   variable <- ''
-   qSkjema <- ''
-
-   if (valgtSkjema %in% c('Livs', 'Urin', 'Tarm', 'Funk', 'Eq5d', 'Kont')) { # 'Tilf'
-      variable <- switch(valgtSkjema,
-                         Livs = varLivs,
-                         Urin = varUrin,
-                         Tarm = varTarm,
-                         Funk = varFunk,
-                         #Tilf = varTilf,
-                         Eq5d = varEQ5D,
-                         Kont = varKont)
+  if (valgtSkjema %in% c('Livs', 'Urin', 'Tarm', 'Funk', 'Eq5d', 'Kont')) { # 'Tilf'
+    variable <- switch(valgtSkjema,
+                       Livs = varLivs,
+                       Urin = varUrin,
+                       Tarm = varTarm,
+                       Funk = varFunk,
+                       #Tilf = varTilf,
+                       Eq5d = varEQ5D,
+                       Kont = varKont)
     variable <- paste0(', ', variable)
-      qSkjema <- paste0(switch(valgtSkjema, #Dette vil bare fungere hvis konsekvent med navngiving i valgtVar
-                               Livs = 'INNER JOIN lifequalityformdatacontract Livs ',
-                               Urin = 'INNER JOIN urinarytractfunctionformdatacontract Urin ',
-                               Tarm = 'INNER JOIN bowelfunctionformdatacontract Tarm ',
-                               Funk = 'INNER JOIN ActivityAndParticipationPerformanceFormDataContract Funk ',
-                               Eq5d = 'INNER JOIN Eq5dlFormDataContract Eq5d ',
-                               Kont = 'INNER JOIN controlformdatacontract Kont '
-      ),
-       'ON UPPER(',koblSkjema ,'.SkjemaGUID) = UPPER(',valgtSkjema , '.HovedskjemaGUID) ')
-      }
-#KontData <- rapbase::loadRegData(registryName = register, query='select * from controlformdatacontract', dbType="mysql")
-#TilfData <-  rapbase::loadRegData(registryName = register, query='select * from ActivityAndParticipationSatisfactionFormDataContract', dbType="mysql")
-#HovedSkjema <- rapbase::loadRegData(registryName = register, query='select * from mainformdatacontract', dbType="mysql")
-#LivsSkjema <- rapbase::loadRegData(registryName = register, query='select * from lifequalityformdatacontract', dbType="mysql")
+    qSkjema <- paste0(switch(valgtSkjema, #Dette vil bare fungere hvis konsekvent med navngiving i valgtVar
+                             Livs = 'INNER JOIN registration_of_quality_of_life Livs ',
+                             Urin = 'INNER JOIN lower_urinary_tract_function Urin ',
+                             Tarm = 'INNER JOIN bowel_function Tarm ',
+                             Funk = 'INNER JOIN activities_and_participation_performance Funk ',
+                             Eq5d = 'INNER JOIN eq_5d_5l Eq5d ',
+                             Kont = 'INNER JOIN control_form Kont '
+    ),
+    'ON ',koblSkjema ,'.SkjemaGUID = ',valgtSkjema , '.HovedskjemaGUID ')
+  }
+  #KontData <- rapbase::loadRegData(registryNam register, query='select * from control_form', dbType="mysql")
+  #TilfData <-  rapbase::loadRegData(registryName = register, query='select * from activities_and_participation_satisfaction', dbType="mysql")
+  #HovedSkjema <- rapbase::loadRegData(registryName = register, query='select * from spinal_cord_injury_core_data_set', dbType="mysql")
+  #LivsSkjema <- rapbase::loadRegData(registryName = register, query='select * from registration_of_quality_of_life', dbType="mysql")
 
-if (koblSkjema=='Hoved'){
-   query <- paste0('SELECT ',
-                   varHoved,
-                   variable,
-                   ' FROM mainformdatacontract Hoved ',
-                   qSkjema)
-   }
-if (koblSkjema=='Kont'){
-  query <- paste0('SELECT ',
-                  varKont,
-                  variable,
-                  ' FROM controlformdatacontract Kont ',
-                  qSkjema
-  )
+  if (koblSkjema=='Hoved'){
+    query <- paste0('SELECT ',
+                    varHoved,
+                    variable,
+                    ' FROM spinal_cord_injury_core_data_set Hoved ',
+                    qSkjema)
+  }
+  if (koblSkjema=='Kont'){
+    query <- paste0('SELECT ',
+                    varKont,
+                    variable,
+                    ' FROM control_form Kont ',
+                    qSkjema
+    )
   }
 
-   RegData <- rapbase::loadRegData(registryName = 'data', query = query, dbType="mysql")
+  RegData <- rapbase::loadRegData(registryName = 'data', query = query, dbType="mysql")
 
-   if (valgtSkjema=='Kont' | koblSkjema=='Kont'){
-     RegData <- RegData[RegData$ControlStatus==0, ] #Bare de med gjennomført kontroll
-   }
+  if (valgtSkjema=='Kont' | koblSkjema=='Kont'){
+    RegData <- RegData[RegData$ControlStatus==0, ] #Bare de med gjennomført kontroll, 0-Aktiv, 1-Avbrutt
+  }
 
-   if (valgtSkjema=='Tilf') {
-     #RegData er nå Hovedskjema eller Kontrollskjema
-     qTilf <- 'SELECT UPPER(HovedskjemaGUID) AS FunkskjemaGUID,
+  if (valgtSkjema=='Tilf') {
+    #RegData er nå Hovedskjema eller Kontrollskjema
+    qTilf <- 'SELECT HovedskjemaGUID AS FunkskjemaGUID,
                     DataClDtS, DreslbdyS, FeedingS, FirstTimeClosed, MobilmodS, ToiletinS
-              FROM ActivityAndParticipationSatisfactionFormDataContract'
-     TilfData <- rapbase::loadRegData(registryName = 'data', query = qTilf, dbType = "mysql")
+              FROM activities_and_participation_satisfaction'
+    TilfData <- rapbase::loadRegData(registryName = 'data', query = qTilf, dbType = "mysql")
 
-     qFunkTilf <- 'SELECT UPPER(HovedskjemaGUID) AS HovedskjemaGUID,
-                          SkjemaGUID AS FunkskjemaGUID FROM
-                          ActivityAndParticipationPerformanceFormDataContract'
-     FunkVarKobl <- rapbase::loadRegData(registryName = 'data', query = qFunkTilf, dbType = "mysql")
+    qFunkTilf <- 'SELECT HovedskjemaGUID, SkjemaGUID AS FunkskjemaGUID FROM
+                          activities_and_participation_performance'
+    FunkVarKobl <- rapbase::loadRegData(registryName = 'data', query = qFunkTilf, dbType = "mysql")
 
-     FunkTilf <- FunkVarKobl %>%
-       dplyr::inner_join(TilfData, by = dplyr::join_by(FunkskjemaGUID))
+    FunkTilf <- FunkVarKobl %>%
+      dplyr::inner_join(TilfData, by = dplyr::join_by(FunkskjemaGUID))
 
-     RegData$SkjemaGUID <- RegData[ , paste0('SkjemaGUID', koblSkjema)]
-     RegData <- RegData %>%
-       dplyr::inner_join(FunkTilf, by = dplyr::join_by(SkjemaGUID == HovedskjemaGUID))
-   }
+    RegData$SkjemaGUID <- RegData[ , paste0('SkjemaGUID', koblSkjema)]
+    RegData <- RegData %>%
+      dplyr::inner_join(FunkTilf, by = dplyr::join_by(SkjemaGUID == HovedskjemaGUID))
+  }
 
-   if ("session" %in% names(list(...))) {
-      rapbase::repLogger(session = list(...)[["session"]],
-                        msg = paste0('Har hentet skjema ', valgtSkjema, 'fra database'))
-   }
+  if ("session" %in% names(list(...))) {
+    rapbase::repLogger(session = list(...)[["session"]],
+                       msg = paste0('Har hentet skjema ', valgtSkjema, 'fra database'))
+  }
 
-   return(RegData)
+  return(RegData)
 }

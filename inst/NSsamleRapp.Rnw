@@ -282,7 +282,7 @@ Nutv <- length(utvalg)
 Kjonn <- table(NSdata$erMann[utvalg])
 AntTilHjem <- c(sum(NSdata$PlaceDis[utvalg]==1), sum(NSdata$PlaceDis[utvalg] %in% 1:10))
 AntAssSkade <-c(sum(NSdata$AssocInj[utvalg]==1), sum(NSdata$AssocInj[utvalg] %in% 0:1))
-AntSpinkir <- c(sum(NSdata$SpnlSurg[utvalg]==1), sum(NSdata$SpnlSurg[utvalg] %in% 0:1))
+AntSpinkir <- c(sum(NSdata$SpnlSurg2[utvalg]==1), sum(NSdata$SpnlSurg2[utvalg] %in% 0:1))
 AntTraumer <- c(sum(NSdata$SkadeArsak[utvalg] %in% 1:5), sum(NSdata$SkadeArsak[utvalg] %in% 1:6))
 
 Andeler <- rbind('Kvinner' = c(Kjonn[1], Kjonn[1]/Nutv),
@@ -483,18 +483,6 @@ av data til figurene.
   \label{fig:SkadeArsak}
 \end{center}
 \end{figure}
-
-%\begin{figure}[ht]
-%\begin{center}
-%\scalebox{\Sexpr{s1}}{
-%<<FigPustehjelp, echo=FALSE>>=
-%	NSFigAndeler(NSdata,   valgtVar='Pustehjelp', datoFra=datoFra, datoTil=datoTil,
-%			minald=minald, maxald=maxald, traume=traume, enhetsUtvalg=1, reshID=reshID, preprosess=0, hentData=0)
-%@
-%}
-%  \caption{\label{fig:Pustehjelp} Ventilasjonsstøtte}
-%\end{center}
-%\end{figure}
 
 
 \begin{figure}[ht]

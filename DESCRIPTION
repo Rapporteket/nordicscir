@@ -1,8 +1,8 @@
 Package: nordicscir
 Type: Package
 Title: R-pakke for å generere resultater fra NordicScir
-Version: 4.0.12
-Date: 2024-11-14
+Version: 4.2.0
+Date: 2025-10-22
 Authors@R: c(
      person(given = "Lena Ringstad",
            family = "Olsen",
@@ -25,17 +25,21 @@ LazyData: false
 Depends:
     R (>= 3.5.0)
 Imports:
+    dplyr,
+    devtools,
+    ggplot2,
     kableExtra,
     knitr,
     lubridate,
     magrittr,
+    rapbase,
     rapFigurer,
     rlang,
     shiny,
     shinyalert,
     shinyjs,
     xtable
-Remotes: 
+Remotes:
     Rapporteket/rapbase@main,
     Rapporteket/rapFigurer
 Suggests:

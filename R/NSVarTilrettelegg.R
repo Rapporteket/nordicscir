@@ -80,6 +80,9 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
 
   tittel <- '' #I AndelerGrVar genereres tittel i beregningsfunksjonen
 
+
+  #-----------------------Hovedskjema--------------------------------------
+
   if (valgtVar=='Alder') { #Fordeling, gjsn
     tittel <- ifelse(figurtype == 'andeler',
                      'Alder ved innleggelse',
@@ -99,8 +102,8 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
     #-1: Velg verdi, 1:A Komplett skade, 2:B Inkomplett, 3:C Inkomplett, 4:D Inkomplett, 5:E Normal,
     #9: U Ukjent eller ikke anvendbar
     #Fra 01.01.2015
-    #Aais == 9 & ANeuNoMeasure = FALSE: Ukjent/Ikke klassifiserbar
-    #Aais == -1 & ANeuNoMeasure = TRUE: Ikke utført. Tilsv. F
+    #Aais == 9 & ANeuNoMeasure = 0: Ukjent/Ikke klassifiserbar
+    #Aais == -1 & ANeuNoMeasure = 1: Ikke utført. Tilsv. F
     RegData <- RegData[RegData$InnDato >= as.Date('2015-01-01'), ]
     retn <- ifelse(figurtype == 'antGr', 'V', 'H')
 
@@ -114,14 +117,14 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
     xAkseTxt <- 'AIS-kategori'
     if (valgtVar == 'AAis') {
       RegData$VariabelGr <- RegData[,valgtVar]
-      RegData$VariabelGr[which((RegData$AAis == 9) & (RegData$ANeuNoMeasure == FALSE))] <- 6
-      RegData$VariabelGr[which((RegData$AAis == -1) & (RegData$ANeuNoMeasure == TRUE))] <- 7
+      RegData$VariabelGr[which((RegData$AAis == 9) & (RegData$ANeuNoMeasure == 0))] <- 6
+      RegData$VariabelGr[which((RegData$AAis == -1) & (RegData$ANeuNoMeasure == 1))] <- 7
       RegData$VariabelGr <- factor(RegData$VariabelGr, levels = 1:7, labels = grtxt)
     }
     if (valgtVar == 'FAis') {
       RegData$VariabelGr <- RegData$FAis
-      RegData$VariabelGr[which((RegData$FAis == 9) & (RegData$FNeuNoMeasure == FALSE))] <- 6
-      RegData$VariabelGr[which((RegData$FAis == -1) & (RegData$FNeuNoMeasure == TRUE))] <- 7
+      RegData$VariabelGr[which((RegData$FAis == 9) & (RegData$FNeuNoMeasure == 0))] <- 6
+      RegData$VariabelGr[which((RegData$FAis == -1) & (RegData$FNeuNoMeasure == 1))] <- 7
       RegData$VariabelGr <- factor(RegData$VariabelGr, levels = 1:7, labels = grtxt)
     }
     if (valgtVar == 'AAisFAis') {
@@ -144,6 +147,15 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
         grPP <- c('Utskriving', '1.kontroll')
       }
     }
+
+  if (valgtVar %in% c('ABMI', 'FBMI')) {
+    tittel <- paste0('Målt høyde og vekt ved ',
+                     ifelse(valgtVar == 'ABMI', 'innleggelse', 'utskriving'))
+    varTxt <- 'registrert med BMI'
+    RegData <- RegData[RegData$InnDato >= '2024-01-01', ]
+    ind <- which(!is.na(RegData[,valgtVar]))
+    RegData$Variabel[ind] <- 1
+  }
 
 
   if (valgtVar == 'AnbefTidKtr') {
@@ -218,6 +230,26 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
     RegData$VariabelGr <- factor(as.numeric(RegData$Ntsci), levels=c(1:6,8:9), labels = grtxt)
     retn <- 'H'
   }
+
+  if (valgtVar == 'KomplPrim'){
+  tittel <- 'Komplikasjoner, primærrehab.'
+  RegData <- RegData[which(RegData$Aar >= 2022), ]
+  flerevar <- 1
+  retn <- 'H'
+  variable <- c(
+    'PressureUlcer', 'VTE', 'UTI', 'Sepsis', 'Pneumonia',
+    'Spasticity', 'Syringomyelia',
+    'HeterotopicOssification', 'AutonomicDysreflexia', 'OrthostaticHypotension',
+    'Osteoporosis', 'ComplicOther', 'ComplicNone')
+  grtxt <- c('Trykksår', 'Tromboembolisme', 'Beh.krevende UVI (≥3)', 'Sepsis', 'Pneumoni',
+    'Invalidiserende spastisitet', 'Symptomgivende syringomyeli',
+    'Heterotope ossifikasjoner', 'Autonom dysrefleksi', 'Ortostatisk hypotensjon',
+    'Osteoporose', 'Andre komplikasjoner', 'Ingen av disse kompl.')
+  ind1 <- which(RegData[,variable]==1, arr.ind=T)  #& indDato==TRUE
+  RegData[ ,variable] <- 0
+   RegData[ ,variable][ind1] <- 1
+  }
+
   if (valgtVar == 'SkadeArsak') { #Andeler
     tittel <- 'Skadeårsaker'
     #gr <- (1:6,9) - Kodene som registereres
@@ -245,6 +277,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
       RegData$CPlaceDis[which(RegData$CPlaceDis==99)] <- 12
       RegData <- RegData[RegData$CPlaceDis %in% 1:12, ]
       RegData$VariabelGrPost <- factor(as.numeric(RegData$CPlaceDis), levels=1:12, labels = grtxt)
+      grPP <- c('Utskriving', '1.kontroll')
     }
     retn <- 'H'
   }
@@ -282,7 +315,32 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
     sortAvtagende <- FALSE
   }
 
-  #----------------Livskvalitet-skjema (start 01.01.2015):
+  if (valgtVar == 'SpnlSurg2') {
+    # -1 = Velg verdi, 0 Nei, 1 Ja, 8 Ikke relevant (ikke-traumatisk skade)[FEIL!], 9 Ukjent
+    tittel <- 'Operasjon på ryggsøylen'
+    RegData <- RegData[which(RegData$SpnlSurg2 %in% c(0,1,9)) %i%
+                         which(RegData$InnDato >= as.Date('2024-01-01')), ]
+    grtxt <- c('Nei', 'Ja', 'Ukjent')
+    RegData$VariabelGr <- factor(as.numeric(RegData$SpnlSurg2), levels=c(0,1,8,9), labels = grtxt)
+    retn <- 'H'
+  }
+
+  if (valgtVar == 'VentAssi2') {
+    # -1 = Velg verdi, 0 = Nei, 1 = Ja, < 24 timer/dag v/utskr, 2 = Ja, 24 timer/dag v utskrivning
+    # 3 = Ja, ukjent antall timer/dag ved utskrivning, 4 = Ventilasjonsstøtte kun ved pusteforstyrrelser under søvn
+    # 9 = Ukjent
+
+    tittel <- 'Ventilasjonsstøtte ved utskriving'
+    RegData <- RegData[which(RegData$VentAssi2 %in% c(1:4,0,9)) %i%
+                         which(RegData$InnDato >= as.Date('2024-01-01')), ]
+    grtxt <- c('Ja, < 24 t/døgn', 'Ja, hele døgnet', 'Ja, ukjent ant. t/døgn',
+               'Ja, v/pusteforstyrr. søvn', 'Nei', 'Ukjent')
+    RegData$VariabelGr <- factor(as.numeric(RegData$VentAssi2), levels=c(1:4,0,9), labels = grtxt)
+    retn <- 'H'
+  }
+
+
+  #----------------Livskvalitet-skjema (start 01.01.2015)---------------
   #For flerevar=1 må vi omdefinere variablene slik at alle gyldige registreringer
   #(dvs. alle registreringer som skal telles med) er 0 eller 1. De som har oppfylt spørsmålet
   # er 1, mens ugyldige registreringer er NA. Det betyr at hvis vi skal ta bort registreringer
@@ -330,6 +388,17 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
     RegData$Variabel <- as.numeric(RegData$SatPsych)
     sortAvtagende <- TRUE
   }
+  if (valgtVar == 'LivsSosLiv') {
+    tittel <- ifelse(figurtype == 'andeler',
+                     'Tilfredshet med sosialt liv',
+                     'tilfredshet med sosialt liv')
+    RegData <- RegData[RegData$SatSocIf %in% 0:10, ]
+    grtxt <- 0:10
+    RegData$VariabelGr <- factor(as.numeric(RegData$SatSocIf), levels=0:10, labels = grtxt)
+    RegData$Variabel <- as.numeric(RegData$SatSocIf)
+    sortAvtagende <- TRUE
+  }
+
 
   #----------------URIN-skjema (start 01.01.2015)--------------
   if (substr(valgtVar,1,4)=='Urin') {
@@ -487,11 +556,6 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
   if (valgtVar=='TarmInkontinensFra2019') {
     retn <- 'H'
     tittel <- 'Hyppighet av fekal inkontinens'
-    # gr <- c(1:4,7:9)
-    # grtxt <- c('Daglig', '1-6 ganger/uke', '1-4 ganger/måned',
-    #            'Sjeldnere enn månedlig', 'Aldri', 'Ikke relevant', 'Ukjent' )
-    # RegData <- RegData[RegData$Fcincfrq2 %in% gr,]
-    #RegData$VariabelGr <- factor(RegData$Fcincfrq2, levels = gr, labels = grtxt)
 
     RegData$Fcincfrq2[RegData$Fcincfrq2 %in% c(4,7)] <- 4
     RegData$Fcincfrq3[RegData$Fcincfrq2 != -1] <- RegData$Fcincfrq2[RegData$Fcincfrq2 != -1]
@@ -704,6 +768,47 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
     RegData <- RegData[RegData$FeedingS %in% gr, ]
     RegData$VariabelGr <- factor(as.numeric(RegData$FeedingS), levels=gr, labels = grtxt)
   }
+
+#---------Kontrollskjema-----------------
+
+  if (valgtVar=='KontControlInterruptedReason') {
+    tittel <- 'Årsak til ikke gjennomført kontroll ved utreise'
+    gr <- c(1:9)
+    RegData <- RegData[RegData$ControlInterruptedReason %in% gr,]
+    grtxt <- c('Ikke møtt',
+               'Pasient utsatt kontr.',
+               'Ikke kontakt med pasient',
+               'Helsemessig årsak',
+               'Avd. ikke kapasitet',
+               'Kontroll v/annet sykehus',
+               'Ønsker ikke kontroll',
+               'Dødsfall',
+               'Annen årsak')
+    RegData$VariabelGr <- factor(RegData$ControlInterruptedReason, levels = gr, labels = grtxt)
+  }
+
+
+  if (valgtVar == 'KontrKompl'){
+    tittel <- 'Komplikasjoner, kontroll ?'
+    RegData <- RegData[which(RegData$Aar >= 2022), ]
+    flerevar <- 1
+    retn <- 'H'
+    variable <- c(
+      'CPressureUlcer', 'CVTE', 'CUTI', 'CSepsis', 'CPneumonia',
+      'CSpasticity', 'CSyringomyelia',
+      'CHeterotopicOssification', 'CAutonomicDysreflexia', 'COrthostaticHypotension',
+      'COsteoporosis', 'CComplicOther', 'CComplicNone')
+    grtxt <- c('Trykksår', 'Tromboembolisme', 'Beh.krevende UVI (≥3)', 'Sepsis', 'Pneumoni',
+               'Invalidiserende spastisitet', 'Symptomgivende syringomyeli',
+               'Heterotope ossifikasjoner', 'Autonom dysrefleksi', 'Ortostatisk hypotensjon',
+               'Osteoporose', 'Andre komplikasjoner', 'Ingen av disse kompl.')
+    ind1 <- which(RegData[,variable]==1, arr.ind=T)
+    RegData[ ,variable] <- 0
+    RegData[ ,variable][ind1] <- 1
+  }
+
+
+
   UtData <- list(RegData=RegData, grtxt=grtxt, xAkseTxt=xAkseTxt, cexgr=cexgr, KImaal=KImaal, retn=retn,
                  tittel=tittel, flerevar=flerevar, variable=variable, sortAvtagende=sortAvtagende,
                  grPP=grPP)

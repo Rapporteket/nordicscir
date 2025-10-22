@@ -13,8 +13,10 @@ kjor_NSapper <- function(register = 'norscir', browser = FALSE, logAsJson = FALS
   }
   app <- switch(register,
                 'norscir' = shiny::shinyApp(
-                  ui = norscir::ui_norscir,
-                  server = norscir::server_norscir,
+                  ui = nordicscir::ui_norscir,
+                  server = nordicscir::server_norscir,
+                  # ui = norscir::ui_norscir,
+                  # server = norscir::server_norscir,
                   options = list(launch.browser = browser)
                 ),
                 'nordicscir' = shiny::shinyApp(
@@ -37,15 +39,14 @@ kjor_NSapper <- function(register = 'norscir', browser = FALSE, logAsJson = FALS
 SorterOgNavngiTidsEnhet <- function(RegData, tidsenhet='Aar', tab=0, datoUt=0) {
 
   RegData$RapDato <- as.Date(RegData[ ,c('InnDato', 'DischgDt')[datoUt+1]])
+  RegData <- RegData[!is.na(RegData$RapDato), ]
 
   if (datoUt == 1) {
-    RegData$DischgDt <- strptime(RegData$DischgDt, format="%Y-%m-%d")
-  RegData$MndNum <- RegData$DischgDt$mon +1
-  #head(format(RegData$DischgDt, '%b'))
-  RegData$MndAar <- format(RegData$DischgDt, '%b%y')
+  RegData$MndNum <- lubridate::month(RegData$RapDato) #RegData$RapDato$mon +1
+  RegData$MndAar <- format(RegData$RapDato, '%b%y')
   RegData$Kvartal <- ceiling(RegData$MndNum/3)
   RegData$Halvaar <- ceiling(RegData$MndNum/6)
-  RegData$Aar <- lubridate::year(RegData$DischgDt) #strptime(RegData$Innleggelsestidspunkt, format="%Y")$year
+  RegData$Aar <- lubridate::year(RegData$RapDato)
   }
 
 
@@ -63,15 +64,13 @@ SorterOgNavngiTidsEnhet <- function(RegData, tidsenhet='Aar', tab=0, datoUt=0) {
       tidtxt <- switch(tidsenhet,
                        Mnd = format.Date(seq(from=lubridate::floor_date(as.Date(min(as.Date(RegData$RapDato), na.rm = T)), 'month'),
                                              to=max(as.Date(RegData$RapDato), na.rm = T), by='month'), format = '%B%y'), #Hele måneden
-                       Kvartal = lubridate::quarter(seq.Date(as.Date(lubridate::floor_date(min(RegData$RapDato), 'month')),
+                       Kvartal = unique(c(lubridate::quarter(seq.Date(as.Date(lubridate::floor_date(min(RegData$RapDato), 'month')),
                                                              max(RegData$RapDato),
                                                  by = "quarter"), with_year = T),
-                       #NGER: Kvartal = paste(substr(RegData$Aar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)], 3,4),
-                       #                sprintf('%01.0f', RegData$Kvartal[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)]), sep='-'),
+                                          lubridate::quarter(max(RegData$RapDato),, with_year = T))),
                        Halvaar = paste(substr(RegData$Aar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)], 3,4),
                                        sprintf('%01.0f', RegData$Halvaar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)]), sep='-'),
                        Aar = min(RegData$Aar):max(RegData$Aar)
-                       #NGER: Aar = as.character(RegData$Aar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)]))
       )
 
       substrRight <- function(x, n){substr(x, nchar(x)-n+1, nchar(x))}
@@ -86,23 +85,23 @@ SorterOgNavngiTidsEnhet <- function(RegData, tidsenhet='Aar', tab=0, datoUt=0) {
 
 
 
-#' Lage tulledata (simulerte data). Takler ikke posixlt- type data.
-#' @export
-lageTulleData <- function(RegData, varBort='ShNavn', antSh=27) {
-      #FUNKER IKKE !!!
-      library(synthpop)
-      library(dplyr)
-      #ForlopsID <- RegData$ForlopsID
-
-      RegData <- RegData[,-which(names(RegData) %in% varBort)]
-      sykehus <- paste('Sykehus', LETTERS[1:antSh])
-      fordelingPasienter <- sample(1:antSh,antSh)
-      RegData$HealthUnitShortName <- sample(sykehus, prob=fordelingPasienter/sum(fordelingPasienter), size=dim(RegData)[1], replace=T)
-      RegDataSyn <- synthpop::syn(RegData, method = "sample") #, seed = 500) #Trekker med tilbakelegging
-      RegData <- data.frame(RegDataSyn$syn) # FÅR feilmld...
-	  return(RegData)
-
-      }
+# Lage tulledata (simulerte data). Takler ikke posixlt- type data.
+# @export
+# lageTulleData <- function(RegData, varBort='ShNavn', antSh=27) {
+#       #FUNKER IKKE !!!
+#       library(synthpop)
+#       library(dplyr)
+#       #ForlopsID <- RegData$ForlopsID
+#
+#       RegData <- RegData[,-which(names(RegData) %in% varBort)]
+#       sykehus <- paste('Sykehus', LETTERS[1:antSh])
+#       fordelingPasienter <- sample(1:antSh,antSh)
+#       RegData$HealthUnitShortName <- sample(sykehus, prob=fordelingPasienter/sum(fordelingPasienter), size=dim(RegData)[1], replace=T)
+#       RegDataSyn <- synthpop::syn(RegData, method = "sample") #, seed = 500) #Trekker med tilbakelegging
+#       RegData <- data.frame(RegDataSyn$syn) # FÅR feilmld...
+# 	  return(RegData)
+#
+#       }
 
 #' Automatisk linjebryting av lange tekstetiketter
 #' @param x En tekststreng eller vektor av tekststrenger
@@ -150,6 +149,7 @@ finnRegData <- function(valgtVar='Alder', Data = AlleTab){
 }
 
 #' Konvertere boolske variable fra tekst til boolske variable...
+#' Boolske variabler kommer fra jun 2025 som 0-1. Funksjonen kan ikke brukes lenger
 #' @param valgtVar Angir hvilke(n) variable det skal vises resultat for.
 #' @param Data Liste med alle skjema/tabeller
 #' @export
@@ -174,27 +174,17 @@ TilLogiskeVar <- function(Skjema){
 #' @param datoTil - sluttdato for data som hentes til bruk i rapporten
 #'
 #' @export
-abonnement <- function(rnwFil, brukernavn='ukjent', reshID=0, register='nordicscir',
+abonnement <- function(rnwFil, brukernavn='ikke angitt', reshID=0, register='nordicscir',
                        datoFra=Sys.Date()-400, datoTil=Sys.Date()) {
 
-      # rapbase::subLogger(author = brukernavn, registryName = register,
-      #               reshId = reshID[[1]],
-      #               msg = paste0("1)starter abonnementkjøring: ", rnwFil))
-
+  #NB: register må angis!
   AlleTab <- nordicscir::getRealData(register = register)
   AlleTab <- nordicscir::processAllData(AlleTab, register = register)
   attach(AlleTab)
 
-  reshID <- reshID[[1]]
-  datoFra <- datoFra[[1]]
-  datoTil <- datoTil[[1]]
-
   filbase <- substr(rnwFil[[1]], 1, nchar(rnwFil[[1]])-4)
   tmpFile <- paste0(filbase, Sys.Date(),'_',digest::digest(brukernavn)[[1]], '.Rnw')
   src <- normalizePath(system.file(rnwFil[[1]], package='nordicscir'))
-  # rapbase::subLogger(author = brukernavn, registryName = 'NorScir',
-  #                   reshId = reshID[[1]],
-  #                   msg = "2) filbase, tmpFile, src ok")
 
   setwd(tempdir()) # gå til tempdir. Har ikke skriverettigheter i arbeidskatalog
   file.copy(src, tmpFile, overwrite = TRUE)
@@ -203,8 +193,5 @@ abonnement <- function(rnwFil, brukernavn='ukjent', reshID=0, register='nordicsc
 
   #gc() #Opprydning gc-"garbage collection"
   utfil <- paste0( getwd(), '/', substr(tmpFile, 1, nchar(tmpFile)-3), 'pdf') #
-  # rapbase::subLogger(author = brukernavn, registryName = 'NorScir',
-  #                                      reshId = reshID[[1]],
-  #                                      msg = paste("5) Leverer abonnementsfil: ", utfil))
   return(utfil)
 }

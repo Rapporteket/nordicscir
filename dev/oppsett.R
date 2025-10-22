@@ -1,22 +1,32 @@
-RegData <- rapbase::loadRegData(
-  registryName = "data",
-  query="SELECT * FROM mainformdatacontract",
-  dbType="mysql")
-RegData <- NSPreprosesser(RegData)
-
-##############################
-## Kjøring på mobilt kontor ##
-##############################
 
 devtools::install("../rapbase/.")
 devtools::install(upgrade = FALSE)
 
-# dekoding av database-dump
-# sship::dec("c://Users/ast046/Downloads/nordicscir573c60536ce3.sql.gz__20241107_122831.tar.gz", keyfile = "p://.ssh/id_rsa")
 
-Sys.setlocale(locale = 'nb_NO.UTF-8')
 source("dev/sysSetenv.R")
+nordicscir::kjor_NSapper(register = "nordicscir", browser = TRUE)
 
-Sys.setenv(MYSQL_HOST="localhost") # for mobilt kontor
+source("dev/sysSetenv.R")
+Sys.setenv(MYSQL_DB_DATA="norscir")
+nordicscir::kjor_NSapper(register = "norscir", browser = TRUE)
 
-nordicscir::kjor_NSapper(register='nordicscir', browser = TRUE)
+RegData <- nordicscir::NSPreprosesser(RegData=nordicscir::NSRegDataSQL(valgtVar = 'Alder'))
+
+NSFigAndeler(RegData = NSRegDataSQL(valgtVar = 'KontControlInterruptedReason'), valgtVar = 'KontControlInterruptedReason')
+table(RegData$ControlInterruptedReason, RegData$Aar)
+
+NSFigAndelerGrVar(RegData=RegData,preprosess=0,
+                              valgtVar='ABMI', datoFra='2015-01-01', datoTil=Sys.Date(),
+                              minald=0, maxald=130, erMann='',
+                              enhetsUtvalg=0,
+                              Ngrense=10, reshID=0)
+
+AlleTab <- nordicscir::getRealData(register = 'norscir')
+sapply(RegData, class)
+
+RegDataKtr <- rapbase::loadRegData(registryName = 'data', query = 'select *  FROM control_form', dbType="mysql")
+
+sship::dec("c://Users/lro2402unn/RegistreGIT/data/deformitet16ab69750.sql.gz__20251009_122654.tar.gz",
+                     keyfile = "c://Users/lro2402unn/.ssh/id_rsa",
+                     target_dir = "c://Users/lro2402unn/RegistreGIT/data/."
+                     )

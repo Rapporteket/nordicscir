@@ -57,16 +57,12 @@ tabLiggetider <- function(RegData, datoFra='2018-01-01', datoTil=Sys.Date(), enh
 }
 
 #' tabAntOpphShMnd antall opphold siste X (antMnd) mnd
-#' -tabAntOpphSh12mnd: Antall opphold per måned og enhet siste 12 måneder fram til datoTil.
-#' -tabAntOpphSh5Aar:Antall opphold per år og enhet siste 5 år (inkl. inneværende år) fram til datoTil.
 #' RegData må inneholde Aar.
 #' @inheritParams NSUtvalgEnh
 #' @export
 tabAntOpphShMnd <- function(RegData, datoTil=Sys.Date(), traume='', antMnd=12){
-      #RegData må inneholde DateAdmittedIntensive, DateDischargedIntensive
       datoFra <- lubridate::floor_date(as.Date(datoTil)%m-% months(antMnd, abbreviate = T), 'month') #as.Date(paste0(as.numeric(substr(datoTil,1,4))-1, substr(datoTil,5,8), '01'), tz='UTC')
       aggVar <-  c('ShNavn', 'InnDato')
-      #sep23: NSUtvalg -> NSUtvalgEnh
       RegData <- NSUtvalgEnh(RegData = RegData, traume=traume)$RegData
       RegDataDum <- RegData[RegData$InnDato <= as.Date(datoTil, tz='UTC')
                               & RegData$InnDato > as.Date(datoFra, tz='UTC'), aggVar]
@@ -74,25 +70,51 @@ tabAntOpphShMnd <- function(RegData, datoTil=Sys.Date(), traume='', antMnd=12){
       tabAvdMnd1 <- table(RegDataDum[ , c('ShNavn', 'Maaned1')])
       colnames(tabAvdMnd1) <- format(lubridate::ymd(colnames(tabAvdMnd1)), '%b%y') #month(ymd(colnames(tabAvdMnd1)), label = T)
       tabAvdMnd <- addmargins(tabAvdMnd1)
-      #tabAvdMnd1 <- RegDataDum %>% group_by(Maaned = lubridate::floor_date(InnDato, "month"), ShNavn) %>%
-      #      summarize(Antall=length(ShNavn))
       tabAvdMnd <- xtable::xtable(tabAvdMnd)
 	return(tabAvdMnd)
 }
 
-#' Antall opphold siste 5 år
+#' Antall opphold siste år
 #' @inheritParams NSUtvalgEnh
 #' @export
-tabAntOpphSh5Aar <- function(RegData, datoTil=Sys.Date(), traume=''){
+tabAntOpphShAar <- function(RegData, datoTil=Sys.Date(), antAar=10, traume=''){
       AarNaa <- as.numeric(format.Date(datoTil, "%Y"))
-      #sep23: NSUtvalg -> NSUtvalgEnh
       RegData <- NSUtvalgEnh(RegData = RegData, traume=traume)$RegData
-      tabAvdAarN <- addmargins(table(RegData[which(RegData$Aar %in% (AarNaa-4):AarNaa), c('ShNavn','Aar')]))
+      tabAvdAarN <- addmargins(table(RegData[which(RegData$Aar %in% (AarNaa-antAar-1):AarNaa), c('ShNavn','Aar')]))
       rownames(tabAvdAarN)[dim(tabAvdAarN)[1] ]<- 'TOTALT, alle enheter:'
-      colnames(tabAvdAarN)[dim(tabAvdAarN)[2] ]<- 'Siste 5 år'
+      colnames(tabAvdAarN)[dim(tabAvdAarN)[2] ]<- paste0('Siste ', antAar, ' år')
       tabAvdAarN <- xtable::xtable(tabAvdAarN)
       return(tabAvdAarN)
 }
+
+
+#' Antall opphold siste år/kvartal/måneder
+#' @inheritParams NSUtvalgEnh
+#' @export
+tabAntOpphShTid <- function(RegData, datoTil=Sys.Date(), tidsenhet='Aar', antTidsenh=10,
+                                datoUt=0, traume=''){
+
+  RegData <- NSUtvalgEnh(RegData = RegData, datoTil = datoTil, traume=traume)$RegData
+
+  tid <- SorterOgNavngiTidsEnhet(RegData, tidsenhet=tidsenhet, tab=0, datoUt=datoUt)
+  sluttTid <- max(tid$RegData$TidsEnhetSort)
+  startTid <- sluttTid-antTidsenh+1
+  RegData <- tid$RegData
+  tabAvdTid <- table(RegData[ , c('ShNavn', 'TidsEnhet')])
+
+  colnames(tabAvdTid) <- tid$tidtxt
+  tabAvdTid <- tabAvdTid[ ,startTid:sluttTid] #Filtrering bør komme tidligere...
+  tabAvdTid <- addmargins(tabAvdTid)
+  tabAvdTid <- xtable::xtable(tabAvdTid)
+
+  rownames(tabAvdTid)[dim(tabAvdTid)[1] ] <- 'TOTALT, alle enheter:'
+  colnames(tabAvdTid)[dim(tabAvdTid)[2] ] <- paste('Siste', antTidsenh, tidsenhet, sep = ' ')
+  tabAvdTid <- xtable::xtable(tabAvdTid)
+  return(tabAvdTid)
+}
+
+
+
 
 #' Antall registreringer/pasienter siste 5 år
 #' @param gr gruppering 'opph'-opphold, 'pas'-pasient
@@ -264,13 +286,13 @@ NevrKlass <- rbind(
       'Utført og klassifiserbar, inn: ' =
             addmargins(table(HovedSkjema$ShNavn[HovedSkjema$AAis %in% 1:5])),
       'Ikke utført  ved innkomst:' =
-            addmargins(table(HovedSkjema$ShNavn[HovedSkjema$ANeuNoMeasure == TRUE & HovedSkjema$AAis == -1])),
+            addmargins(table(HovedSkjema$ShNavn[HovedSkjema$ANeuNoMeasure == 1 & HovedSkjema$AAis == -1])),
       'Utført, ikke klassifiserbar, inn: ' =
             addmargins(table(HovedSkjema$ShNavn[HovedSkjema$AAis==9])),
        'Utført og klassifiserbar, ut: ' =
              addmargins(table(HovedSkjema$ShNavn[HovedSkjema$FAis %in% 1:5])),
       'Ikke utført ved utreise:' =
-            addmargins(table(HovedSkjema$ShNavn[HovedSkjema$FNeuNoMeasure == TRUE
+            addmargins(table(HovedSkjema$ShNavn[HovedSkjema$FNeuNoMeasure == 1
                                                      & HovedSkjema$FAis == -1])),
       'Utført, ikke klassifiserbar, ut: ' =
             addmargins(table(HovedSkjema$ShNavn[HovedSkjema$FAis==9])),

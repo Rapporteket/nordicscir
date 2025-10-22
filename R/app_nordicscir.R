@@ -6,7 +6,7 @@
 #' @export
 ui_nordicscir <- function() {
 
-  shiny::addResourcePath("rap", system.file("www", package = "rapbase"))
+  # shiny::addResourcePath("rap", system.file("www", package = "rapbase"))
 
   startDato <- as.Date(
     paste0(as.numeric(format(Sys.Date()-400, "%Y")), '-01-01')
@@ -41,17 +41,18 @@ ui_nordicscir <- function() {
     shinyjs::useShinyjs(),
     shiny::navbarPage(
       id = "hovedark",
-      title = shiny::div(
-        shiny::a(
-          shiny::includeHTML(
-            system.file("www/logo.svg", package = "rapbase")
-          )
-        ),
-        regTitle),
+      title = rapbase::title(regTitle),
+      # title = shiny::div(
+      #   shiny::a(
+      #     shiny::includeHTML(
+      #       system.file("www/logo.svg", package = "rapbase")
+      #     )
+      #   ),
+      #   regTitle),
       # sett inn tittel også i browser-vindu
       windowTitle = regTitle,
       # velg css (foreløpig den eneste bortsett fra "naken" utgave)
-      theme = "rap/bootstrap.css",
+      theme = rapbase::theme(), # "rap/bootstrap.css",
 
       #----startside--------
       shiny::tabPanel(
@@ -147,9 +148,12 @@ ui_nordicscir <- function() {
               "Ais ved utskriving" = "FAis",
               # "Anbefalt tid til kontroll" = "AnbefTidKtr",
               "Lengde på rehab.opphold" = "DagerRehab",
+              "Operasjon på ryggsøylen" = "SpnlSurg2",
               "Opphold, totalt antall dager" = "OpphTot",
               "Planlagt utskrevet til" = "PPlaceDis",
+              "Pustehjelp (f.o.m. 2024)" = "VentAssi2",
               "Registreringsforsinkelse" = "RegForsinkelse",
+              "Komplikasjoner, primæropph" = "KomplPrim",
               "Skadeårsak " = "SkadeArsak",
               "Skadeårsak, ikke-traumatisk" = "Ntsci",
               "Tid fra skade til oppstart rehab." = "DagerTilRehab",
@@ -158,11 +162,10 @@ ui_nordicscir <- function() {
               "Livskval.: Tilfredshet med livet" = "LivsGen",
               "Livskval.: Tilfredshet med fysisk helse" = "LivsFys",
               "Livskval.: Tilfredshet med psykisk helse" = "LivsPsyk",
+              "Livskval.: Tilfredshet med sosialt liv" = "LivsSosLiv",
               "Urin: Ufrivillig urinlekkasje (fra 2019)" = "UrinInkontinens",
-              #  "Urin: Ufrivillig urinlekkasje (t.o.m. 2018)" = "UrinInkontinensTom2018",
               "Urin: Kirurgiske inngrep" = "UrinKirInngr",
               "Urin: Legemiddelbruk (fra 2019)" = "UrinLegemidler",
-              # "Urin: Legemiddelbruk (t.o.m. 2018)" = "UrinLegemidlerTom2018",
               "Urin: Legemiddelbruk, hvilke" = "UrinLegemidlerHvilke",
               "Urin: Blæretømming, hovedmetode" = "UrinTomBlareHoved",
               "Urin: Blæretømming, tilleggsmetode" = "UrinTomBlareTillegg",
@@ -171,7 +174,6 @@ ui_nordicscir <- function() {
               "Tarm: Avføringsmiddelbruk" = "TarmAvfmiddel",
               "Tarm: Avføringsmidler, hvilke" = "TarmAvfmiddelHvilke",
               "Tarm: Fekal inkontinens (fra 2019)" = "TarmInkontinensFra2019",
-              #  "Tarm: Fekal inkontinens (t.o.m. 2018)" = "TarmInkontinensTom2018",
               "Tarm: Kirurgisk inngrep" = "TarmKirInngrep",
               "Tarm: Kirurgiske inngrep, hvilke" = "TarmKirInngrepHvilke",
               "Tarm: NBD" = "TarmNBD"
@@ -247,8 +249,6 @@ ui_nordicscir <- function() {
             shiny::tabPanel(
               "Figur",
               shiny::br(),
-              em("(Høyreklikk på figuren for å laste den ned)"),
-              shiny::br(),
               shiny::br(),
               shiny::plotOutput("fordelinger", height = "auto"),
              shiny::downloadButton(
@@ -286,7 +286,7 @@ ui_nordicscir <- function() {
 
       #------------ Gjennomsnitt ------------
       shiny::tabPanel(
-        "Gjennomsnitt per sykehus og over tid",
+        "Gj.sn./median per sykehus og over tid",
         shiny::sidebarPanel(
           width = 3,
           shiny::selectInput(
@@ -299,7 +299,8 @@ ui_nordicscir <- function() {
                         "Tid fra skade til oppstart rehab." = "DagerTilRehab",
                         "Livskval.: Tilfredshet med livet" = "LivsGen",
                         "Livskval.: Tilfredshet med fysisk helse" = "LivsFys",
-                        "Livskval.: Tilfredshet med psykisk helse" = "LivsPsyk"
+                        "Livskval.: Tilfredshet med psykisk helse" = "LivsPsyk",
+                        "Livskval.: Tilfredshet med sosialt liv" = "LivsSosLiv"
             ),
             selected = c("Registreringsforsinkelse" = "RegForsinkelse")
           ),
@@ -351,7 +352,7 @@ ui_nordicscir <- function() {
           shiny::selectInput(
             inputId = "sentralmaal",
             label="Velg gjennomsnitt/median ",
-            choices = c("Gjennomsnitt"="gjsn", "Median"="med")
+            choices = c("Median"="med", "Gjennomsnitt"="gjsn")
           ),
           shiny::br(),
           shiny::p(
@@ -413,37 +414,42 @@ ui_nordicscir <- function() {
         shiny::sidebarPanel(
           width=3,
           shiny::h3("Utvalg"),
-          shiny::conditionalPanel(
-            condition = "input.ark == 'Antall personer med ryggmargsskade'",
-            shiny::dateInput(
+           shiny::conditionalPanel(
+             condition = "input.reg == 'Antall personer med ryggmargsskade' ",
+             shiny::dateInput(
               inputId = "sluttDatoReg",
               label = "Velg sluttdato",
               language="nb",
               value = Sys.Date(),
               max = Sys.Date()
-            )
-          ),
-          shiny::conditionalPanel(
-            condition = "input.ark == 'Antall personer med ryggmargsskade'",
+            ),
+            shiny::radioButtons(
+              inputId = "datoUtReg",
+              label = "Bruk utskrivingsdato til datofiltrering?",
+              choiceNames = c("nei", "ja"),
+              choiceValues = 0:1,
+              selected = 0
+            ),
             shiny::selectInput(
               inputId = "tidsenhetReg",
               label="Velg tidsenhet",
-              choices = rev(c("År"= "Aar", "Måned"="Mnd"))
-            )
-          ),
-          shiny::conditionalPanel(
-            condition = "input.ark == 'Antall personer med ryggmargsskade'",
+              choices = tidsenheter
+            ),
+            shiny::selectInput(
+              inputId = "antTidsenhReg",
+              label="Antall tidsenheter",
+              choices = rev(c(5:12))
+            ),
             shiny::selectInput(
               inputId = "traumeReg",
               label="Traume",
               choices = c("Alle"=" ", #"ikke"
                           "Traume"="ja",
-                          "Ikke traume"="nei"))
-          ),
+                          "Ikke traume"="nei")
+              )
+           ),
           shiny::conditionalPanel(
-            condition = paste0(
-              "input.ark == 'Antall hovedskjema med tilknyttede skjema' "
-            ),
+            condition = "input.reg == 'Antall hovedskjema med tilknyttede skjema' ",
             shiny::dateRangeInput(
               inputId = "datovalgReg",
               start = startDato,
@@ -458,7 +464,7 @@ ui_nordicscir <- function() {
 
         shiny::mainPanel(
           shiny::tabsetPanel(
-            id = "ark",
+            id = "reg",
             shiny::tabPanel(
               "Antall personer med ryggmargsskade",
               shiny::uiOutput("undertittelReg"),
@@ -466,7 +472,7 @@ ui_nordicscir <- function() {
                              "i menyen til venstre")),
               shiny::br(),
               shiny::fluidRow(
-                shiny::tableOutput("tabAntOpphShMnd12"),
+                shiny::tableOutput("tabAntOpphTid"),
                 shiny::downloadButton(
                   outputId = "lastNed_tabAntOpph", label="Last ned"
                 )
@@ -486,22 +492,6 @@ ui_nordicscir <- function() {
                 outputId = "lastNed_tabOppfHovedPst", label="Last ned"
               )
             )
-            #,
-            # shiny::tabPanel(
-            #   "Antall kontrollskjema med tilknyttede skjema",
-            #   shiny::h3("Antall kontrollskjema med tilknyttede skjema"),
-            #   shiny::h5("Datoutvalg er basert på dato for kontroll"),
-            #   shiny::tableOutput("tabAntTilknyttedeKtrSkjema"),
-            #   shiny::downloadButton(
-            #     outputId = "lastNed_tabOppfKtrAnt", label="Last ned"
-            #   ),
-            #   shiny::br(),
-            #   shiny::h3("Andel (%) kontrollskjema med tilknyttede skjema"),
-            #   shiny::tableOutput("tabAndelTilknyttedeKtrSkjema"),
-            #   shiny::downloadButton(
-            #     outputId = "lastNed_tabOppfKtrPst", label="Last ned"
-            #   )
-            # )
           )
         )
       ), #tab Registreringsoversikter
@@ -560,9 +550,8 @@ ui_nordicscir <- function() {
         ) #tabsetPanel
       ), #Registeradm-tab
       # ------------------Abonnement------------------------
-      shiny::tabPanel(
-        shiny::p(
-          "Abonnement",
+      shiny::tabPanel("Abonnement",
+        shiny::p("Abonnement",
           title="Bestill automatisk utsending av månedsrapport på e-post"
         ),
         shiny::sidebarLayout(
@@ -589,30 +578,12 @@ ui_nordicscir <- function() {
 #' @export
 server_nordicscir <- function(input, output, session) {
   # Logg alle endringene bruker gjør
-  rapbase::logShinyInputChanges(input)
+  # rapbase::logShinyInputChanges(input)
 
-#print(session)
   rapbase::appLogger(
     session = session,
     msg = "Starter nordicscir-app'en"
   )
-
-  user <- rapbase::navbarWidgetServer2(
-    id = "navbar-widget",
-    orgName = "nordicscir",
-    caller = "nordicscir"
-  )
-
-  # session persistent objects
-  # if (rapbase::isRapContext()) {
-  #   reshID <- as.numeric(rapbase::getUserReshId(session))
-  #   rolle <- rapbase::getUserRole(session)
-  #   brukernavn <- rapbase::getUserName(session)
-  # } else {
-  #   reshID <- 0
-  #   rolle <- 'ukjent'
-  #   brukernavn <- 'ukjent'
-  # }
 
   isGetDataOk <- TRUE
   isProcessDataOk <- TRUE
@@ -629,9 +600,28 @@ server_nordicscir <- function(input, output, session) {
   }
   isDataOk <- all(c(isGetDataOk, isProcessDataOk))
   attach(AlleTab)
-  # enhet <- ifelse(exists('reshID'),
-  #                 as.character(AlleTab$HovedSkjema$ShNavn[match(reshID, AlleTab$HovedSkjema$ReshId)]),
-  #                 'Uidentifisert enhet')
+
+  # map_avdeling <- AlleTab$HovedSkjema %>%
+  #   dplyr::transmute(
+  #     UnitId = ReshId,
+  #     orgname = ShNavn
+  #   ) %>%
+  #   dplyr::distinct(UnitId, orgname)
+
+  AlleResh <- unique(HovedSkjema$ReshId)
+  map_avdeling <- data.frame(
+    UnitId = AlleResh,
+    orgname = HovedSkjema$ShNavn[
+      match(AlleResh, HovedSkjema$ReshId)])
+
+
+  #user inneholder både reshID: user$org() og  rolle: user$role()
+  user <- rapbase::navbarWidgetServer2(
+    id = "navbar-widget",
+    orgName = "nordicscir",
+    map_orgname = shiny::req(map_avdeling),
+    caller = "nordicscir"
+  )
 
   observeEvent(user$role(), {
     if (user$role() == 'SC') {
@@ -704,42 +694,62 @@ server_nordicscir <- function(input, output, session) {
   #----------Tabeller, registreringsoversikter ----------------------
   output$undertittelReg <- shiny::renderUI({
     shiny::br()
-    t1 <- "Tabellen viser innleggelser "
-    t2 <- ", basert på første akutte innleggelse"
-    shiny::h4(shiny::HTML(
-      switch(
-        input$tidsenhetReg,
-        Mnd = paste0(t1, "siste 12 måneder før ", input$sluttDatoReg, t2,
-                     "<br />"),
-        Aar = paste0(t1, "siste 5 år før ", input$sluttDatoReg, t2, "<br />")
-      )
-    ))
+    t1 <- paste0("Tabellen viser antall opphold basert på ",
+                 c("første akutte innleggelse.", "utskrivingsdato.")[as.numeric(input$datoUtReg)+1])
+    h4(HTML(t1))
+    # t1 <- "Tabellen viser innleggelser "
+    # t2 <- ", basert på første akutte innleggelse"
+    # shiny::h4(shiny::HTML(
+    #   switch(
+    #     input$tidsenhetReg,
+    #     Mnd = paste0(t1, "siste 12 måneder før ", input$sluttDatoReg, t2,
+    #                  "<br />"),
+    #     Aar = paste0(t1, "siste 10 år før ", input$sluttDatoReg, t2, "<br />")
+    #   )
+    # ))
   })
   shiny::observe({
     if (isDataOk) {
-      tabAntOpphShMndAar <-
-        switch(
-          input$tidsenhetReg,
-          Mnd = tabAntOpphShMnd(
-            RegData = HovedSkjema,
-            datoTil = input$sluttDatoReg,
-            traume = input$traumeReg,
-            antMnd = 12
-          ),
-          Aar = tabAntOpphSh5Aar(
-            RegData = HovedSkjema,
-            datoTil = input$sluttDatoReg,
-            traume = input$traumeReg
-          )
-        )
+      # tabAntOpphShMndAar <-
+      #   switch(
+      #     input$tidsenhetReg,
+      #     Mnd = tabAntOpphShMnd(
+      #       RegData = HovedSkjema,
+      #       datoTil = input$sluttDatoReg,
+      #       traume = input$traumeReg,
+      #       antMnd = 12
+      #     ),
+      #     Aar = tabAntOpphShAar(
+      #       RegData = HovedSkjema,
+      #       datoTil = input$sluttDatoReg,
+      #       traume = input$traumeReg
+      #     )
+      #   )
+      #
+      # output$tabAntOpphShMnd12 <- shiny::renderTable(
+      #   tabAntOpphShMndAar, rownames = TRUE, digits = 0, spacing = "xs"
+      # )
+      # output$lastNed_tabAntOpph <- shiny::downloadHandler(
+      #   filename = function() {paste0("tabAntOpph.csv")},
+      #   content = function(file, filename) {
+      #     write.csv2(tabAntOpphShMndAar, file, row.names = TRUE, na = "")
+      #   }
+      # )
+      tabAntOpphShTid <- tabAntOpphShTid(RegData=HovedSkjema,
+                                         datoTil=input$sluttDatoReg,
+                                         tidsenhet = input$tidsenhetReg,
+                                         antTidsenh = as.numeric(input$antTidsenhReg),
+                                         datoUt = as.numeric(input$datoUtReg),
+                                         traume=input$traumeReg)
 
-      output$tabAntOpphShMnd12 <- shiny::renderTable(
-        tabAntOpphShMndAar, rownames = TRUE, digits = 0, spacing = "xs"
+      output$tabAntOpphTid <- shiny::renderTable(
+        tabAntOpphShTid, rownames = TRUE, digits = 0, spacing = "xs"
       )
+
       output$lastNed_tabAntOpph <- shiny::downloadHandler(
         filename = function() {paste0("tabAntOpph.csv")},
         content = function(file, filename) {
-          write.csv2(tabAntOpphShMndAar, file, row.names = TRUE, na = "")
+          write.csv2(tabAntOpphShTid, file, row.names = TRUE, fileEncoding = 'latin1', na = "")
         }
       )
 
@@ -763,7 +773,7 @@ server_nordicscir <- function(input, output, session) {
         filename = function() {'tabOppfHovedAnt.csv'},
         content = function(file, filename) {
           write.csv2(
-            tabTilknHovedSkjema$Antall, file, row.names = TRUE, na = ""
+            tabTilknHovedSkjema$Antall, file, row.names = TRUE, fileEncoding = 'latin1', na = ""
           )
         }
       )
@@ -779,7 +789,7 @@ server_nordicscir <- function(input, output, session) {
         filename = function() {'tabOppfHovedPst.csv'},
         content = function(file, filename) {
           write.csv2(
-            tabTilknHovedSkjema$Andeler, file, row.names = TRUE, na = ""
+            tabTilknHovedSkjema$Andeler, file, row.names = TRUE, fileEncoding = 'latin1', na = ""
           )
         }
       )
@@ -800,9 +810,6 @@ server_nordicscir <- function(input, output, session) {
     if (isDataOk) {
 
       RegDataFord <- reactive(finnRegData(valgtVar = input$valgtVar, Data = AlleTab))
-        #RegDataFord <- TilLogiskeVar(RegDataFord)
-
-#print(dim(RegDataFord()))
 
       output$fordelinger <- shiny::renderPlot({
         NSFigAndeler(
@@ -888,7 +895,7 @@ server_nordicscir <- function(input, output, session) {
       output$lastNed_tabFord <- shiny::downloadHandler(
         filename = function() {paste0(input$valgtVar, '_fordeling.csv')},
         content = function(file, filename) {
-          write.csv2(tabFord(), file, row.names = FALSE, na = "")
+          write.csv2(tabFord(), file, row.names = FALSE, fileEncoding = 'latin1', na = "")
         }
       )
 
@@ -969,7 +976,7 @@ server_nordicscir <- function(input, output, session) {
       output$lastNed_tabFordSh <- shiny::downloadHandler(
         filename = function() {paste0(input$valgtVar, "_fordelingSh.csv")},
         content = function(file, filename) {
-          write.csv2(tabFordSh(), file, row.names = FALSE, na = "")
+          write.csv2(tabFordSh(), file, row.names = FALSE, fileEncoding = 'latin1', na = "")
         }
       )
     } else {
@@ -1067,7 +1074,7 @@ server_nordicscir <- function(input, output, session) {
           paste0(input$valgtVar, "_tabGjsnSh.csv")
         },
         content = function(file, filename) {
-          write.csv2(tabGjsnGrVar(), file, row.names = TRUE, na = "")
+          write.csv2(tabGjsnGrVar(), file, row.names = TRUE, fileEncoding = 'latin1', na = "")
         }
       )
 
@@ -1176,7 +1183,7 @@ server_nordicscir <- function(input, output, session) {
           paste0(input$valgtVarGjsn, "_tabGjsnTid.csv")
         },
         content = function(file, filename) {
-          write.csv2(tabGjsnTid, file, row.names = TRUE, na = "")
+          write.csv2(tabGjsnTid, file, row.names = TRUE, fileEncoding = 'latin1', na = "")
         }
       )
       }) #observe
@@ -1234,11 +1241,10 @@ server_nordicscir <- function(input, output, session) {
   }
 
   #------------------ Abonnement -----------------------------------------------
-  subParamNames <- shiny::reactive(c("orgId", "orgName"))
-  subParamValues <- shiny::reactive(c(user$org(), user$orgName()))
+  subParamNames <- shiny::reactive(c("brukernavn", "reshID"))
+  subParamValues <- shiny::reactive(c(user$name(), user$org()))
 
-  shiny::observe({
-  rapbase::autoReportServer2(
+  rapbase::autoReportServer(
     id = "ns-subscription",
     registryName = "nordicscir",
     type = "subscription",
@@ -1248,13 +1254,12 @@ server_nordicscir <- function(input, output, session) {
       `Månedsrapport` = list(
         synopsis = "Rapporteket-NordicSCIR: månedsrapport, abonnement",
         fun = "abonnement",
-        paramNames = c("rnwFil", "brukernavn", "reshID", "datoTil", "register"),
-        paramValues = c("NSmndRapp.Rnw", user$name(), user$org(), datoTil=Sys.Date(), 'nordicscir')
+        paramNames = c("rnwFil", "brukernavn", "reshID", "register"),
+        paramValues = c("NSmndRapp.Rnw", "user$name()", "user$org()", 'nordicscir')
       )
     ),
     user = user
   )
-  })
   #---Utsendinger---------------
   if (isDataOk) {
     sykehusNavn <- sort(
@@ -1290,14 +1295,22 @@ server_nordicscir <- function(input, output, session) {
   # oppdatere reaktive parametre, for å få inn valgte verdier
   paramNames <- shiny::reactive("reshID")
   paramValues <- shiny::reactive(org$value())
-
-  rapbase::autoReportServer2(
-    id = "NSuts", registryName = "nordicscir", type = "dispatchment",
-    org = org$value, paramNames = paramNames, paramValues = paramValues,
-    reports = disReports, orgs = orgs, eligible = (user$role() == "SC"),
+  visRapp <- shiny::reactiveVal(FALSE)
+  shiny::observeEvent(user$role(), {
+    visRapp(user$role() == "SC")
+  })
+  rapbase::autoReportServer(
+    id = "NSuts",
+    registryName = "nordicscir",
+    type = "dispatchment",
+    org = org$value,
+    paramNames = paramNames,
+    paramValues = paramValues,
+    reports = disReports,
+    orgs = orgs,
+    eligible = visRapp,
     user = user
   )
-
 
   #----------- Eksport ----------------
   registryName <- "nordicscir"

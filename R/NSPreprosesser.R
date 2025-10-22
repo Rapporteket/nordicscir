@@ -16,7 +16,7 @@ NSPreprosesser <- function(RegData)
       RegData$erMann <- RegData$PatientGender
       RegData$erMann[RegData$PatientGender == 2] <- 0 #Ingen manglende verdier i variabelen
 
-      #****'Tetraplegi*****.
+      # ****'Tetraplegi*****.
       #      0: 'Paraplegi', 1: 'Tetraplegi', 9: 'Ukjent'.
       '%u%' <- union
       RegData$TetraplegiInn <- 0
@@ -27,7 +27,7 @@ NSPreprosesser <- function(RegData)
       RegData$TetraplegiInn[(RegData$ASensLvlAreaL == -1) & (RegData$ASensLvlAreaR == -1) &
                 (RegData$AMtrLvlAreaL == -1) & (RegData$AMtrLvlAreaR == -1)]  <- 9
 
-      #****'Tetraplegi ved utskrivning*****.
+      # ****'Tetraplegi ved utskrivning*****.
        RegData$TetraplegiUt <- 0
        RegData$TetraplegiUt[which(RegData$FSensLvlAreaL==1) %u% which(RegData$FSensLvlAreaR==1) %u%
             which(RegData$FMtrLvlAreaL==1) %u% which(RegData$FMtrLvlAreaR==1)] <-1
@@ -41,9 +41,7 @@ NSPreprosesser <- function(RegData)
       names(RegData)[which(names(RegData) == 'PatientInRegistryGuid')] <- 'PasientID'
       names(RegData)[which(names(RegData) == 'HealthUnitShortName')] <- 'ShNavn'
       names(RegData)[which(names(RegData) == 'PatientAge')] <- 'Alder'
-      #names(RegData)[which(names(RegData) == 'PlaceDis')] <- 'UtTil'
       names(RegData)[which(names(RegData) == 'Scietiol')] <- 'SkadeArsak'
-      names(RegData)[which(names(RegData) == 'VentAssi')] <- 'Pustehjelp'
       names(RegData)[which(names(RegData) == 'HosptlDy')] <- 'OpphTot'  #Sjekk forskjell HosptlDy og ..2
       names(RegData)[which(names(RegData) == 'RehabDy')] <- 'DagerRehab'
       names(RegData)[which(names(RegData) == 'BeforeRehDy')] <- 'DagerTilRehab'
@@ -55,8 +53,7 @@ NSPreprosesser <- function(RegData)
       RegData$DischgDt <- as.Date(RegData$DischgDt) #strptime(, format="%Y-%m-%d")
 
       #Kun ferdigstilte registreringer:
-      # Rapporteket får kun levert ferdigstilte registreringer fra MRS/NHN.Men det kan dukke opp ufullstendige registreringer.
-
+      # Rapporteket får kun levert ferdigstilte registreringer fra MRS
 
       # Nye variabler:
       RegData$MndNum <- lubridate::month(RegData$AdmitDt)
@@ -70,7 +67,7 @@ NSPreprosesser <- function(RegData)
                              labels = c('Norge', 'Finland', 'Danmark', 'Island', 'Sverige')))
 
         #Legge til dummynavn for manglende enhetsnavn
-      RegData$ShNavn[which(RegData$ReshId==30000001)] <- 'Finland1'
+      RegData$ShNavn[which(RegData$ReshId==30000001)] <- 'Finland'
       RegData$ShNavn[which(RegData$ReshId==40000001)] <- 'København'
       RegData$ShNavn[which(RegData$ReshId==40000002)] <- 'Viborg'
       RegData$ShNavn[which(RegData$ReshId==50000001)] <- 'Reykjavik'
@@ -99,7 +96,10 @@ NSPreprosesser <- function(RegData)
       #       return(Skjema)
       # }
 
-      RegData <- TilLogiskeVar(RegData)
+# [11.08.2025] Logiske var: Ser ut til at bare ANeuNoMeasure og FNeuNoMeasure er i bruk. Endret til å tolkes 0-1
+
+
+     # RegData <- TilLogiskeVar(RegData)
 
 
 

@@ -11,7 +11,7 @@
 #'     \item Permisjon: Antall døgn ute av sykehus
 #'     \item UtTil: Hva pasienten skrives ut til. [PlaceDis]
 #'     \item SkadeArsak: Årsak til skade [variabel: Scietiol]
-#'     \item Pustehjelp[VentAssi]
+#'     \item Pustehjelp[VentAssi2]
 #'     \item LivsGen:  Fornøydhet med livet
 #'     \item LivsFys:  Fornøydhet med fysisk helse
 #'     \item LivsPsyk:  Fornøydhet med psykisk helse
@@ -51,9 +51,9 @@ NSFigAndelerSh <- function(RegData, outfile='', valgtVar='Alder',
                          datoFra='2010-01-01', datoTil='2050-01-01', datoUt=0, AIS='',
                          minald=0, maxald=130, erMann=99, traume='alle',nivaaUt=99, ...) {
 
-   if ("session" %in% names(list(...))) {
-      rapbase::repLogger(session = list(...)[["session"]], msg = "Andeler per sykehus/land, figur")
-   }
+   # if ("session" %in% names(list(...))) {
+   #    rapbase::repLogger(session = list(...)[["session"]], msg = "Andeler per sykehus/land, figur")
+   # }
    if (hentData == 1) {
             RegData <- NSRegDataSQL(valgtVar=valgtVar, register = register)
       }

@@ -22,9 +22,9 @@ NSFigAndelStabel <- function(RegData, outfile='', valgtVar,
                            enhetsUtvalg=enhetsUtvalg , reshID, hentData=0,...)
 {
 
-  if ("session" %in% names(list(...))) {
-    rapbase::repLogger(session = list(...)[["session"]], msg = "Fordelingsfigur")
-  }
+  # if ("session" %in% names(list(...))) {
+  #   rapbase::repLogger(session = list(...)[["session"]], msg = "Fordelingsfigur")
+  # }
   if (hentData == 1) {
             RegData <- NSRegDataSQL()
       }

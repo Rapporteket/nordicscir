@@ -22,27 +22,27 @@ attach(AlleTab)
 View(AlleTab)
 register <- 'norscir'
 Hoved <- rapbase::loadRegData(registryName = register, dbType="mysql",
-                            query='Select * from MainFormDataContract ')
+                            query='Select * from spinal_cord_injury_core_data_set ')
 Ktr <- rapbase::loadRegData(registryName = register, dbType="mysql",
-                            query='Select * from ControlFormDataContract ')
+                            query='Select * from control_form ')
 Ktr <- Ktr[Ktr$ControlStatus==0, ]
 Livs <- rapbase::loadRegData(registryName = register, dbType="mysql",
-                            query= 'Select * from LifeQualityFormDataContract ')
+                            query= 'Select * from registration_of_quality_of_life ')
 #mister 2 skjema etter kobl H og K
 Urin <- rapbase::loadRegData(registryName = register, dbType="mysql",
-                             query= 'Select * from UrinaryTractFunctionFormDataContract ')
+                             query= 'Select * from lower_urinary_tract_function ')
 #mister 0
 Tarm <- rapbase::loadRegData(registryName = register, dbType="mysql",
-                             query= 'Select * from BowelFunctionFormDataContract ')
+                             query= 'Select * from bowel_function ')
 #mister 0
 Funk <- rapbase::loadRegData(registryName = register, dbType="mysql",
-                             query= 'Select * from ActivityAndParticipationPerformanceFormDataContract ')
+                             query= 'Select * from activities_and_participation_performance ')
 #Mister 0
 Tilf <- rapbase::loadRegData(registryName = register, dbType="mysql",
-                             query= 'Select * from ActivityAndParticipationSatisfactionFormDataContract ')
+                             query= 'Select * from activities_and_participation_satisfaction ')
 # Mister 0
 Eq5d <- rapbase::loadRegData(registryName = register, dbType="mysql",
-                             query= 'Select * from Eq5dlFormDataContract ')
+                             query= 'Select * from eq_5d_5l ')
 #Mister 0
 
 tabH <- tabSkjemaTilknyttet(Data=AlleTab, moderSkjema='Hoved')
@@ -270,7 +270,7 @@ median(RegData$TidUtLiv)
 hist(RegData$SatGenrl)
 
 #Livskvalitetsskjema
-query <- 'select * FROM LifeQualityFormDataContract Livs'
+query <- 'select * FROM registration_of_quality_of_life Livs'
 LivskvalData <- rapbase::LoadRegData(registryName = 'nordicscir', query)
 LivskvalData <- LivskvalData[order(LivskvalData$FormDate), ]
 LivskvalData$FormDate <- as.Date(LivskvalData$FormDate)
@@ -311,7 +311,7 @@ for (k in 1:length(PasID)) {
 RegData <- HovedSkjema
 valgtVar <- 'UtTil'	#AAis, FAis, Alder, DagerRehab, DagerTilRehab, NivaaInn, Ntsci,
 					#OpphTot[HosptlDy], Permisjon[OutOfHosptlDy], UtTil[PlaceDis],
-                             	#Pustehjelp[VentAssi], PPlaceDis, RegForsinkelse,  #SkadeArsak[Scietiol]
+                             	#VentAssi, PPlaceDis, RegForsinkelse,  #SkadeArsak[Scietiol]
 #UrinSkjema:
 RegData <- KobleMedHoved(HovedSkjema,Urin)
 valgtVar <- 'UrinTomBlareHoved'   #'UrinInkontinens', 'UrinLegemidler','UrinLegemidlerHvilke', 'UrinKirInngr',
@@ -502,7 +502,7 @@ IMV_ABC_C0104 <- length(intersect(I_ABC, which(RegData$AMtrLvlLC %in% c('C01','C
 #A,B,C+T,L,S
 IMV_ABC_TLS <- length(intersect(I_ABC, union(which(RegData$AMtrLvlAreaL %in% c('Lumbal', 'Sacral', 'Thoracic')))/N
 D
-#Pustehjelp VentAssi (0-3,9)- andel 1-3 av 0-3
+#Pustehjelp, VentAssi (0-3,9)- andel 1-3 av 0-3
 Pustehjelp <- length(which(RegData$VentAssi %in% 1:3))/length(which(RegData$VentAssi %in% 0:3)
 
 

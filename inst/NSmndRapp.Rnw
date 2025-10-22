@@ -21,7 +21,6 @@ library(nordicscir)
 library(knitr)
 library(tools)
 datoTil <- Sys.Date()
-#dato <- as.POSIXlt(datoTil, tz='UTC')
 aarTil <- lubridate::year(datoTil)
 datoFra <- as.Date(paste0(aarTil-1,'-', lubridate::month(datoTil), '-', '01'))
 aarFra <- paste0(aarTil-5, '-01-01')
@@ -30,7 +29,7 @@ nordisk <- ifelse(sum(as.numeric(unique(HovedSkjema$LandKode)))==1, 0, 1)
 if (nordisk == 0) {
 KontrollH <- KontrollH[KontrollH$ControlStatus==0, ]}
 
-#!!!!!!!!NB: Kanskje må dette gjøre is preprosesseringa!! I så fall må inn/ut inngå som inngangsparameter i funksjonen
+#!!!!!!!!NB: Kanskje må dette gjøre i preprosesseringa!! I så fall må inn/ut inngå som inngangsparameter i funksjonen
 HovedSkjema$MndNum <- lubridate::month(HovedSkjema$DischgDt)
 HovedSkjema$MndAar <- format(HovedSkjema$DischgDt, '%b%y')
 HovedSkjema$Kvartal <- ceiling(HovedSkjema$MndNum/3)
@@ -238,11 +237,11 @@ NSFigAndeler(RegData=HovedSkjema, valgtVar=valgtVar,
                    outfile=outfile, reshID=reshID, enhetsUtvalg=enhetsUtvalg,
                    hentData=0, preprosess=0)
 
-NSFigGjsnTid(RegData=HovedSkjema, valgtVar='RegForsinkelse',
-             preprosess=0, datoFra=datoFra,datoTil=datoTilReg,
-             datoUt = 1, tidsenhet='Kvartal', reshID=reshID,
-             enhetsUtvalg=1, valgtMaal='gjsn',
-             outfile='RegForsinkelseGjsnTid.pdf')
+# NSFigGjsnTid(RegData=HovedSkjema, valgtVar='RegForsinkelse',
+#              preprosess=0, datoFra=datoFra,datoTil=datoTilReg,
+#              datoUt = 1, tidsenhet='Kvartal', reshID=reshID,
+#              enhetsUtvalg=1, valgtMaal='gjsn',
+#              outfile='RegForsinkelseGjsnTid.pdf')
 
 NSFigGjsnGrVar(RegData=HovedSkjema12mnd, valgtVar='RegForsinkelse', valgtMaal='gjsn', grVar=grVar,
                               datoFra=datoFra, datoTil=datoTilReg, datoUt=1,
@@ -259,13 +258,6 @@ NSFigGjsnGrVar(RegData=HovedSkjema12mnd, valgtVar='RegForsinkelse', valgtMaal='g
 \end{figure}
 \end{frame}
 
-\begin{frame}[fragile]
-\begin{figure}[ht]
-\centering
-\includegraphics[scale=0.35]{RegForsinkelseGjsnTid.pdf}
-\caption{Registreringsforsinkelse, utvikling over tid.}
-\end{figure}
-\end{frame}
 
 \begin{frame}[fragile]
 \begin{figure}[ht]
@@ -395,6 +387,7 @@ xtable::xtable(LiggetiderUtraume, digits=0, align=c('l', rep('r', ncol(Liggetide
 \end{frame}
 
 
+
 \begin{frame}[fragile]
 \begin{figure}[ht]
 \centering
@@ -402,6 +395,90 @@ xtable::xtable(LiggetiderUtraume, digits=0, align=c('l', rep('r', ncol(Liggetide
 \caption{Anbefalt tid til kontroll}
 \end{figure}
 \end{frame}
+
+
+<<'Figurerrr', results='asis'>>=
+
+      NSFigAndeler(RegData=TarmH, valgtVar='TarmNBD',
+                   datoFra=datoFra, datoTil=datoTil, datoUt = 1,
+                   outfile='TarmNBD.pdf',
+                   reshID=reshID, enhetsUtvalg=enhetsUtvalg,
+                   hentData=0, preprosess=0)
+
+      NSFigAndeler(RegData=HovedSkjema12mnd, valgtVar='KomplPrim',
+                   datoFra=datoFra, datoTil=datoTil, datoUt = 1,
+                   outfile='KomplPrim.pdf',
+                   reshID=reshID, enhetsUtvalg=enhetsUtvalg,
+                   hentData=0, preprosess=0)
+
+@
+\begin{frame}[fragile]
+\begin{figure}[ht]
+\centering
+\includegraphics[scale=0.35]{TarmNBD.pdf}
+\caption{NBD-skår}
+\end{figure}
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{figure}[ht]
+\centering
+\includegraphics[scale=0.35]{KomplPrim.pdf}
+\caption{Komplikasjoner, primærrehabilitering}
+\end{figure}
+\end{frame}
+
+
+\section{Livskvalitet}
+
+<<'FigLivskval', results='asis'>>=
+
+variabler <- c('LivsGen', 'LivsFys', 'LivsPsyk', 'LivsSosLiv')
+for (valgtVar in variabler) {
+      outfile <- paste0(valgtVar, '.pdf')
+      NSFigAndeler(RegData=LivskvalH, valgtVar=valgtVar,
+                   datoFra=datoFra, datoTil=datoTil, datoUt = 1,
+                   outfile=outfile,
+                   reshID=reshID, enhetsUtvalg=enhetsUtvalg,
+                   hentData=0, preprosess=0)
+}
+
+@
+
+\begin{frame}[fragile]
+\begin{figure}[ht]
+\centering
+\includegraphics[scale=0.35]{LivsGen.pdf}
+\caption{Tilfredshet med livet}
+\end{figure}
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{figure}[ht]
+\centering
+\includegraphics[scale=0.35]{LivsFys.pdf}
+\caption{Tilfredshet med fysisk helse}
+\end{figure}
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{figure}[ht]
+\centering
+\includegraphics[scale=0.35]{LivsPsyk.pdf}
+\caption{Tilfredshet med psykisk helse}
+\end{figure}
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{figure}[ht]
+\centering
+\includegraphics[scale=0.35]{LivsSosLiv.pdf}
+\caption{Tilfredshet med sosialt liv}
+\end{figure}
+\end{frame}
+
+
+
 
 
 \end{tiny}

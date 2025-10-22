@@ -57,7 +57,7 @@ Argumentet \emph{valgtVar} har følgende valgmuligheter:
     \item Permisjon: Antall døgn ute av sykehus
     \item UtTil: Hva pasienten skrives ut til. [PlaceDis]
     \item SkadeArsak: Årsak til skade [variabel: Scietiol]
-    \item Pustehjelp[VentAssi]
+    \item Pustehjelp[VentAssi2]
     \item LivsGen:  Fornøydhet med livet
     \item LivsFys:  Fornøydhet med fysisk helse
     \item LivsPsyk:  Fornøydhet med psykisk helse

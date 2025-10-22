@@ -6,7 +6,7 @@
 \usage{
 abonnement(
   rnwFil,
-  brukernavn = "ukjent",
+  brukernavn = "ikke angitt",
   reshID = 0,
   register = "nordicscir",
   datoFra = Sys.Date() - 400,
