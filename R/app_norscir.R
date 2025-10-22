@@ -363,7 +363,7 @@ ui_norscir <- function() {
       ), #Resultater over tid
       #------------ Gjennomsnitt ------------
       shiny::tabPanel(
-        "Gjennomsnitt per sykehus og over tid",
+        "Gj.sn./median per sykehus og over tid",
         shiny::sidebarPanel(
           width = 3,
           shiny::selectInput(
@@ -429,7 +429,7 @@ ui_norscir <- function() {
           shiny::selectInput(
             inputId = "sentralmaal",
             label="Velg gjennomsnitt/median ",
-            choices = c("Gjennomsnitt"="gjsn", "Median"="med")
+            choices = c("Median"="med", "Gjennomsnitt"="gjsn")
           ),
           shiny::br(),
           shiny::p(
@@ -513,6 +513,11 @@ ui_norscir <- function() {
               inputId = "tidsenhetReg",
               label="Velg tidsenhet",
               choices = tidsenheter #rev(c("År"= "Aar", "Måned"="Mnd"))
+          ),
+          shiny::selectInput(
+            inputId = "antTidsenhReg",
+            label="Antall tidsenheter",
+            choices = rev(c(5:12))
           ),
             shiny::selectInput(
               inputId = "traumeReg",
@@ -804,8 +809,9 @@ rapbase::appLogger(
   #----------Tabeller, registreringsoversikter ----------------------
   output$undertittelReg <- shiny::renderUI({
     shiny::br()
-    t1 <- "Tabellen viser innleggelser "
-    t2 <- ", basert på første akutte innleggelse"
+    t1 <- paste0("Tabellen viser antall opphold basert på ",
+                 c("første akutte innleggelse.", "utskrivingsdato.")[as.numeric(input$datoUtReg)+1])
+    h4(HTML(t1))
     # shiny::h4(shiny::HTML(
     #   switch(
     #     input$tidsenhetReg,
@@ -817,27 +823,10 @@ rapbase::appLogger(
   })
   shiny::observe({
     if (isDataOk) {
-      # tabAntOpphShMndAar <-
-      #   switch(
-      #     input$tidsenhetReg,
-      #     Mnd = nordicscir::tabAntOpphShMnd(
-      #       RegData = HovedSkjema,
-      #       datoTil = input$sluttDatoReg,
-      #       traume = input$traumeReg,
-      #       antMnd = 12
-      #     ),
-      #     Aar = nordicscir::tabAntOpphShAar(
-      #       RegData = HovedSkjema,
-      #       datoTil = input$sluttDatoReg,
-      #       traume = input$traumeReg
-      #     )
-      #   )
-
-
       tabAntOpphShTid <- tabAntOpphShTid(RegData=HovedSkjema,
                                          datoTil=input$sluttDatoReg,
                                          tidsenhet = input$tidsenhetReg,
-                                         antTidsenh=12,
+                                         antTidsenh = as.numeric(input$antTidsenhReg),
                                          datoUt = as.numeric(input$datoUtReg),
                                          traume=input$traumeReg)
 
@@ -848,8 +837,7 @@ rapbase::appLogger(
       output$lastNed_tabAntOpph <- shiny::downloadHandler(
         filename = function() {paste0("tabAntOpph.csv")},
         content = function(file, filename) {
-          write.csv2(tabAntOpphShTid, file, row.names = TRUE, na = "")
-        }
+          write.csv2(tabAntOpphShTid, file, row.names = TRUE, fileEncoding = 'latin1', na = "")}
       )
 
       #Antall skjema av alle typer.
@@ -872,7 +860,7 @@ rapbase::appLogger(
         filename = function() {'tabOppfHovedAnt.csv'},
         content = function(file, filename) {
           write.csv2(
-            tabTilknHovedSkjema$Antall, file, row.names = TRUE, na = ""
+            tabTilknHovedSkjema$Antall, file, row.names = TRUE, fileEncoding = 'latin1', na = ""
           )
         }
       )
@@ -888,7 +876,7 @@ rapbase::appLogger(
         filename = function() {'tabOppfHovedPst.csv'},
         content = function(file, filename) {
           write.csv2(
-            tabTilknHovedSkjema$Andeler, file, row.names = TRUE, na = ""
+            tabTilknHovedSkjema$Andeler, file, row.names = TRUE, fileEncoding = 'latin1', na = ""
           )
         }
       )
@@ -908,7 +896,7 @@ rapbase::appLogger(
       output$lastNed_tabOppfKtrAnt <- shiny::downloadHandler(
         filename = function() {'tabOppfKtrAnt.csv'},
         content = function(file, filename) {
-          write.csv2(tabTilknKtrSkjema$Antall, file, row.names = TRUE, na = "")
+          write.csv2(tabTilknKtrSkjema$Antall, file, row.names = TRUE, fileEncoding = 'latin1', na = "")
         }
       )
       #Andel (prosent) av kontrollskjemaene som har oppfølgingsskjema.
@@ -918,7 +906,7 @@ rapbase::appLogger(
       output$lastNed_tabOppfKtrPst <- shiny::downloadHandler(
         filename = function() {"tabOppfKtrPst.csv"},
         content = function(file, filename) {
-          write.csv2(tabTilknKtrSkjema$Andeler, file, row.names = TRUE, na = "")
+          write.csv2(tabTilknKtrSkjema$Andeler, file, row.names = TRUE, fileEncoding = 'latin1', na = "")
         }
       )
     } else {
@@ -1024,7 +1012,7 @@ rapbase::appLogger(
       output$lastNed_tabFord <- shiny::downloadHandler(
         filename = function() {paste0(input$valgtVar, '_fordeling.csv')},
         content = function(file, filename) {
-          write.csv2(tabFord, file, row.names = FALSE, na = "")
+          write.csv2(tabFord, file, row.names = FALSE, fileEncoding = 'latin1', na = "")
         }
       )
 
@@ -1099,7 +1087,7 @@ rapbase::appLogger(
       output$lastNed_tabFordSh <- shiny::downloadHandler(
         filename = function() {paste0(input$valgtVar, "_fordelingSh.csv")},
         content = function(file, filename) {
-          write.csv2(tabFordSh, file, row.names = FALSE, na = "")
+          write.csv2(tabFordSh, file, row.names = FALSE, fileEncoding = 'latin1', na = "")
         }
       )
     } else {
@@ -1293,7 +1281,7 @@ rapbase::appLogger(
           paste0(input$valgtVar, "_tabGjsnSh.csv")
         },
         content = function(file, filename) {
-          write.csv2(tabGjsnGrVar, file, row.names = TRUE, na = "")
+          write.csv2(tabGjsnGrVar, file, row.names = TRUE, fileEncoding = 'latin1', na = "")
         }
       )
 
@@ -1401,7 +1389,7 @@ rapbase::appLogger(
           paste0(input$valgtVarGjsn, "_tabGjsnTid.csv")
         },
         content = function(file, filename) {
-          write.csv2(tabGjsnTid, file, row.names = TRUE, na = "")
+          write.csv2(tabGjsnTid, file, row.names = TRUE, fileEncoding = 'latin1', na = "")
         }
       )
     } else {

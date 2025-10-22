@@ -12,12 +12,7 @@ nordicscir::kjor_NSapper(register = "norscir", browser = TRUE)
 
 RegData <- nordicscir::NSPreprosesser(RegData=nordicscir::NSRegDataSQL(valgtVar = 'Alder'))
 
-test <- tabAntOpphShTid(RegData=RegData,
-                datoTil=Sys.Date(),
-                tidsenhet = 'Kvartal',
-                antTidsenh=12,
-                datoUt = 1)
-                traume=input$traumeReg)
+
 
 Kvartal = c(lubridate::quarter(seq.Date(as.Date(lubridate::floor_date(min(RegData$RapDato), 'month')),
                                         max(RegData$RapDato),
