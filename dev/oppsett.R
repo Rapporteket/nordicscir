@@ -10,11 +10,16 @@ source("dev/sysSetenv.R")
 Sys.setenv(MYSQL_DB_DATA="norscir")
 nordicscir::kjor_NSapper(register = "norscir", browser = TRUE)
 
-RegData <- nordicscir::NSPreprosesser(RegData=NSRegDataSQL(valgtVar = 'Kont'))
+RegData <- nordicscir::NSPreprosesser(RegData=nordicscir::NSRegDataSQL(valgtVar = 'Alder'))
 
 NSFigAndeler(RegData = NSRegDataSQL(valgtVar = 'KontControlInterruptedReason'), valgtVar = 'KontControlInterruptedReason')
 table(RegData$ControlInterruptedReason, RegData$Aar)
 
+NSFigAndelerGrVar(RegData=RegData,preprosess=0,
+                              valgtVar='ABMI', datoFra='2015-01-01', datoTil=Sys.Date(),
+                              minald=0, maxald=130, erMann='',
+                              enhetsUtvalg=0,
+                              Ngrense=10, reshID=0)
 
 AlleTab <- nordicscir::getRealData(register = 'norscir')
 sapply(RegData, class)

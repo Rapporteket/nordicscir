@@ -88,8 +88,6 @@ NSFigPrePost  <- function(RegData, valgtVar='KontUtTil', datoFra='2019-01-01', d
       pos <- barplot(t(AggVerdierPP), beside=TRUE, horiz=TRUE, main='', las=1,
                      col=farger[c(1,3)], border='white', font.main=1,  xlim=c(0, xmax),
                      cex.names=1, xlab='Andel pasienter (%)')
-      # legend('top', c('Før', 'Etter',paste0('N=',N)), bty='n',
-      #        fill=farger[c(1:3,NA)], border=NA, ncol=3, cex=0.9)
     }
 
     legend('top', c(grPP, paste0('N=', N)), bty='n',

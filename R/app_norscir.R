@@ -15,7 +15,7 @@ ui_norscir <- function() {
     paste0(as.numeric(format(Sys.Date()-700, "%Y")), '-01-01')
   )
 
-  context <- Sys.getenv("R_RAP_INSTANCE") #Blir tom hvis jobber lokalt
+  # context <- Sys.getenv("R_RAP_INSTANCE") #Blir tom hvis jobber lokalt
   regTitle = "Norsk ryggmargsskaderegister"
 
   #----Valg
@@ -41,14 +41,6 @@ ui_norscir <- function() {
     shiny::navbarPage(
       id = "hovedark",
       title = rapbase::title(regTitle),
-      # title = shiny::div(
-      #   shiny::a(
-      #     shiny::includeHTML(
-      #       system.file("www/logo.svg", package = "rapbase")
-      #     )
-      #   ),
-      #   regTitle),
-      # sett inn tittel også i browser-vindu
       windowTitle = regTitle,
       theme = rapbase::theme(),  # "rap/bootstrap.css",
 
@@ -91,9 +83,9 @@ ui_norscir <- function() {
         ),
         shiny::mainPanel(
           width = 8,
-          if (context %in% c("DEV", "TEST", "QA", "PRODUCTION", "QAC", "PRODUCTIONC")) {
-            rapbase::navbarWidgetInput("navbar-widget", selectOrganization = TRUE)
-          },
+          # if (context %in% c("DEV", "TEST", "QA", "PRODUCTION", "QAC", "PRODUCTIONC")) {
+            rapbase::navbarWidgetInput("navbar-widget", selectOrganization = TRUE),
+          #},
           shiny::h2("Velkommen til Rapporteket - Norsk Ryggmargsskaderegister!",
                     align='center'),
           shiny::br(),
@@ -369,9 +361,76 @@ ui_norscir <- function() {
                    )
                  ) ) #main
       ), #Resultater over tid
+
+
+      #----------Andeler-----------------------------
+      tabPanel(p("Andeler: per sykehus og tid", title='Alder, antibiotika, ASA, fedme, gjennomføringsgrad, komplikasjoner,
+           konvertering, oppfølging, registreringsforsinkelse, komplikasjoner, TSS2, utdanning'),
+               h2("Sykehusvise andeler og utvikling over tid for valgt variabel", align='center'),
+               h5("Hvilken variabel man ønsker å se resultater for, velges fra rullegardinmenyen
+            til venstre. Man kan også gjøre ulike filtreringer.", align='center'),
+               br(),
+               sidebarPanel(
+                 width=3,
+                 h3('Utvalg'),
+
+                 selectInput(
+                   inputId = "valgtVarAndel", label="Velg variabel",
+                   choices = c('Målt både høyde og vekt ved innleggelse?' = 'ABMI',
+                               'Målt både høyde og vekt ved utskriving?' = 'FBMI'
+                   ),
+                   selected = 'ABMI'
+                 ),
+                 dateRangeInput(inputId = 'datovalgAndel', start = startDato, end = Sys.Date(),
+                                label = "Tidsperiode", separator="t.o.m.", language="nb"),
+                 # selectInput(inputId = "bildeformatAndel",
+                 #             label = "Velg format for nedlasting av figur",
+                 #             choices = c('pdf', 'png', 'jpg', 'bmp', 'tif', 'svg')),
+                 br(),
+                 br(),
+                 p(em('Følgende utvalg gjelder bare figuren/tabellen som viser utvikling over tid')),
+                 selectInput(inputId = 'enhetsUtvalgAndel', label='Egen enhet og/eller landet',
+                             choices = c("Egen mot resten av landet"=1, "Hele landet"=0, "Egen enhet"=2)),
+                 selectInput(inputId = "tidsenhetAndel", label="Velg tidsenhet",
+                             choices = rev(tidsenheter))
+               ),
+               mainPanel(
+                 tabsetPanel(
+                   tabPanel("Figurer",
+                            h3(em("Utvikling over tid")),
+                            br(),
+                            h4('Kommer...'),
+                            #plotOutput("andelTid", height = 'auto'),
+                            #downloadButton('LastNedFigAndelTid', label='Velg format (til venstre) og last ned figur'),
+                            br(),
+                            h3(em("Sykehusvise resultater")),
+                            plotOutput("andelerGrVar", height='auto'),
+                            #downloadButton('LastNedFigAndelGrVar', label='Velg format (til venstre) og last ned figur')
+                   ),
+                    tabPanel("Tabeller",
+                             uiOutput("tittelAndel"),
+                             br(),
+                             h3('Her kan det komme en tabell med verdier fra figuren på forrige side')
+                   #          column(width = 4,
+                   #                 h3("Sykehusvise resultater"),
+                   #                 tableOutput("andelerGrVarTab"),
+                   #                 downloadButton(outputId = 'lastNed_tabAndelGrVar', label='Last ned tabell')),
+                   #          column(width = 1),
+                   #          column(width = 6,
+                   #                 h3("Utvikling over tid"),
+                   #                 tableOutput("andelTidTab"),
+                   #                 downloadButton(outputId = 'lastNed_tabAndelTid', label='Last ned tabell'))
+                    ))
+               ) #mainPanel
+
+      ), #tab
+
+
+
+
       #------------ Gjennomsnitt ------------
       shiny::tabPanel(
-        "Gjennomsnitt per sykehus og over tid",
+        "Gj.sn./median per sykehus og over tid",
         shiny::sidebarPanel(
           width = 3,
           shiny::selectInput(
@@ -384,7 +443,8 @@ ui_norscir <- function() {
                         "Tid fra skade til oppstart rehab." = "DagerTilRehab",
                         "Livskval.: Tilfredshet med livet" = "LivsGen",
                         "Livskval.: Tilfredshet med fysisk helse" = "LivsFys",
-                        "Livskval.: Tilfredshet med psykisk helse" = "LivsPsyk"
+                        "Livskval.: Tilfredshet med psykisk helse" = "LivsPsyk",
+                        "Livskval.: Tilfredshet med sosialt liv" = "LivsSosLiv"
             ),
             selected = c("Registreringsforsinkelse" = "RegForsinkelse")
           ),
@@ -436,7 +496,7 @@ ui_norscir <- function() {
           shiny::selectInput(
             inputId = "sentralmaal",
             label="Velg gjennomsnitt/median ",
-            choices = c("Gjennomsnitt"="gjsn", "Median"="med")
+            choices = c("Median"="med", "Gjennomsnitt"="gjsn")
           ),
           shiny::br(),
           shiny::p(
@@ -453,7 +513,8 @@ ui_norscir <- function() {
           shiny::selectInput(
             inputId = "tidsenhetGjsn",
             label = "Velg tidsenhet",
-            choices = tidsenheter
+            choices = tidsenheter,
+            selected = 'Kvartal'
           ),
           shiny::selectInput(
             inputId = "bildeformatGjsn",
@@ -508,10 +569,22 @@ ui_norscir <- function() {
               value = Sys.Date(),
               max = Sys.Date()
             ),
+            shiny::radioButtons(
+              inputId = "datoUtReg",
+              label = "Bruk utskrivingsdato til datofiltrering?",
+              choiceNames = c("nei", "ja"),
+              choiceValues = 0:1,
+              selected = 0
+            ),
             shiny::selectInput(
               inputId = "tidsenhetReg",
               label="Velg tidsenhet",
-              choices = rev(c("År"= "Aar", "Måned"="Mnd"))
+              choices = tidsenheter #rev(c("År"= "Aar", "Måned"="Mnd"))
+          ),
+          shiny::selectInput(
+            inputId = "antTidsenhReg",
+            label="Antall tidsenheter",
+            choices = rev(c(5:12))
           ),
             shiny::selectInput(
               inputId = "traumeReg",
@@ -546,7 +619,7 @@ ui_norscir <- function() {
                              "i menyen til venstre")),
               shiny::br(),
               shiny::fluidRow(
-                shiny::tableOutput("tabAntOpphShMnd12"),
+                shiny::tableOutput("tabAntOpphTid"),
                 shiny::downloadButton(
                   outputId = "lastNed_tabAntOpph", label="Last ned"
                 )
@@ -803,43 +876,35 @@ rapbase::appLogger(
   #----------Tabeller, registreringsoversikter ----------------------
   output$undertittelReg <- shiny::renderUI({
     shiny::br()
-    t1 <- "Tabellen viser innleggelser "
-    t2 <- ", basert på første akutte innleggelse"
-    shiny::h4(shiny::HTML(
-      switch(
-        input$tidsenhetReg,
-        Mnd = paste0(t1, "siste 12 måneder før ", input$sluttDatoReg, t2,
-                     "<br />"),
-        Aar = paste0(t1, "siste 10 år før ", input$sluttDatoReg, t2, "<br />")
-      )
-    ))
+    t1 <- paste0("Tabellen viser antall opphold basert på ",
+                 c("første akutte innleggelse.", "utskrivingsdato.")[as.numeric(input$datoUtReg)+1])
+    h4(HTML(t1))
+    # shiny::h4(shiny::HTML(
+    #   switch(
+    #     input$tidsenhetReg,
+    #     Mnd = paste0(t1, "siste 12 måneder før ", input$sluttDatoReg, t2,
+    #                  "<br />"),
+    #     Aar = paste0(t1, "siste 10 år før ", input$sluttDatoReg, t2, "<br />")
+    #   )
+    # ))
   })
   shiny::observe({
     if (isDataOk) {
-      tabAntOpphShMndAar <-
-        switch(
-          input$tidsenhetReg,
-          Mnd = nordicscir::tabAntOpphShMnd(
-            RegData = HovedSkjema,
-            datoTil = input$sluttDatoReg,
-            traume = input$traumeReg,
-            antMnd = 12
-          ),
-          Aar = nordicscir::tabAntOpphShAar(
-            RegData = HovedSkjema,
-            datoTil = input$sluttDatoReg,
-            traume = input$traumeReg
-          )
-        )
+      tabAntOpphShTid <- tabAntOpphShTid(RegData=HovedSkjema,
+                                         datoTil=input$sluttDatoReg,
+                                         tidsenhet = input$tidsenhetReg,
+                                         antTidsenh = as.numeric(input$antTidsenhReg),
+                                         datoUt = as.numeric(input$datoUtReg),
+                                         traume=input$traumeReg)
 
-      output$tabAntOpphShMnd12 <- shiny::renderTable(
-        tabAntOpphShMndAar, rownames = TRUE, digits = 0, spacing = "xs"
+      output$tabAntOpphTid <- shiny::renderTable(
+        tabAntOpphShTid, rownames = TRUE, digits = 0, spacing = "xs"
       )
+
       output$lastNed_tabAntOpph <- shiny::downloadHandler(
         filename = function() {paste0("tabAntOpph.csv")},
         content = function(file, filename) {
-          write.csv2(tabAntOpphShMndAar, file, row.names = TRUE, na = "")
-        }
+          write.csv2(tabAntOpphShTid, file, row.names = TRUE, fileEncoding = 'latin1', na = "")}
       )
 
       #Antall skjema av alle typer.
@@ -862,7 +927,7 @@ rapbase::appLogger(
         filename = function() {'tabOppfHovedAnt.csv'},
         content = function(file, filename) {
           write.csv2(
-            tabTilknHovedSkjema$Antall, file, row.names = TRUE, na = ""
+            tabTilknHovedSkjema$Antall, file, row.names = TRUE, fileEncoding = 'latin1', na = ""
           )
         }
       )
@@ -878,7 +943,7 @@ rapbase::appLogger(
         filename = function() {'tabOppfHovedPst.csv'},
         content = function(file, filename) {
           write.csv2(
-            tabTilknHovedSkjema$Andeler, file, row.names = TRUE, na = ""
+            tabTilknHovedSkjema$Andeler, file, row.names = TRUE, fileEncoding = 'latin1', na = ""
           )
         }
       )
@@ -898,7 +963,7 @@ rapbase::appLogger(
       output$lastNed_tabOppfKtrAnt <- shiny::downloadHandler(
         filename = function() {'tabOppfKtrAnt.csv'},
         content = function(file, filename) {
-          write.csv2(tabTilknKtrSkjema$Antall, file, row.names = TRUE, na = "")
+          write.csv2(tabTilknKtrSkjema$Antall, file, row.names = TRUE, fileEncoding = 'latin1', na = "")
         }
       )
       #Andel (prosent) av kontrollskjemaene som har oppfølgingsskjema.
@@ -908,11 +973,11 @@ rapbase::appLogger(
       output$lastNed_tabOppfKtrPst <- shiny::downloadHandler(
         filename = function() {"tabOppfKtrPst.csv"},
         content = function(file, filename) {
-          write.csv2(tabTilknKtrSkjema$Andeler, file, row.names = TRUE, na = "")
+          write.csv2(tabTilknKtrSkjema$Andeler, file, row.names = TRUE, fileEncoding = 'latin1', na = "")
         }
       )
     } else {
-      output$tabAntOpphShMnd12 <- NULL
+      output$tabAntOpphTid <- NULL
       output$lastNed_tabAntOpph <- NULL
       output$tabAntTilknyttedeHovedSkjema <- NULL
       output$lastNed_tabOppfHovedAnt <- NULL
@@ -1014,7 +1079,7 @@ rapbase::appLogger(
       output$lastNed_tabFord <- shiny::downloadHandler(
         filename = function() {paste0(input$valgtVar, '_fordeling.csv')},
         content = function(file, filename) {
-          write.csv2(tabFord, file, row.names = FALSE, na = "")
+          write.csv2(tabFord, file, row.names = FALSE, fileEncoding = 'latin1', na = "")
         }
       )
 
@@ -1089,7 +1154,7 @@ rapbase::appLogger(
       output$lastNed_tabFordSh <- shiny::downloadHandler(
         filename = function() {paste0(input$valgtVar, "_fordelingSh.csv")},
         content = function(file, filename) {
-          write.csv2(tabFordSh, file, row.names = FALSE, na = "")
+          write.csv2(tabFordSh, file, row.names = FALSE, fileEncoding = 'latin1', na = "")
         }
       )
     } else {
@@ -1204,6 +1269,144 @@ rapbase::appLogger(
 
 
 
+
+
+  #--------------Andeler-----------------------------------
+  shiny::observe({
+    if (isDataOk) {
+      RegData <- nordicscir::finnRegData(valgtVar = input$valgtVarAndel, Data = AlleTab)
+
+  output$andelerGrVar <- renderPlot({
+    NSFigAndelerGrVar(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndel,
+                        datoFra=input$datovalgAndel[1], datoTil=input$datovalgAndel[2],
+                        #minald=as.numeric(input$alderAndel[1]), maxald=as.numeric(input$alderAndel[2]),
+                        #erMann=as.numeric(input$erMannAndel),
+                        hovedkat = as.numeric(input$hovedInngrepAndel),
+                        session=session)
+  }, height = 800, width=700 #height = function() {session$clientData$output_andelerGrVarFig_width} #})
+  )
+
+  # output$LastNedFigAndelGrVar <- downloadHandler(
+  #   filename = function(){
+  #     paste0('AndelTid_', valgtVar=input$valgtVarAndel, '_', Sys.Date(), '.', input$bildeformatAndel)
+  #   },
+  #   content = function(file){
+  #     NSFigAndelerGrVar(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndel,
+  #                         datoFra=input$datovalgAndel[1], datoTil=input$datovalgAndel[2],
+  #                         #minald=as.numeric(input$alderAndel[1]), maxald=as.numeric(input$alderAndel[2]),
+  #                         #erMann=as.numeric(input$erMannAndel),
+  #                         session=session,
+  #                         outfile = file)
+  #   })
+
+  # output$andelTid <- renderPlot({
+  #
+  #   NSFigAndelTid(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndel,
+  #                   reshID = user$org(),
+  #                   datoFra=input$datovalgAndel[1], datoTil=input$datovalgAndel[2],
+  #                   # minald=as.numeric(input$alderAndel[1]), maxald=as.numeric(input$alderAndel[2]),
+  #                   # erMann=as.numeric(input$erMannAndel),
+  #                   tidsenhet = input$tidsenhetAndel,
+  #                   enhetsUtvalg = input$enhetsUtvalgAndel,
+  #                   session=session)
+  # }, height = 300, width = 1000
+  # )
+
+#  observe({
+    # AndelerTid <-
+    #   NSFigAndelTid(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndel,
+    #                   reshID = user$org(),
+    #                   datoFra=as.Date(input$datovalgAndel[1]), datoTil=input$datovalgAndel[2],
+    #                   # minald=as.numeric(input$alderAndel[1]), maxald=as.numeric(input$alderAndel[2]),
+    #                   # erMann=as.numeric(input$erMannAndel),
+    #                   enhetsUtvalg = input$enhetsUtvalgAndel,
+    #                   tidsenhet = input$tidsenhetAndel,
+    #                   session=session) #,lagFig=0)
+    # tabAndelTid <- lagTabavFig(UtDataFraFig = AndelerTid, figurtype = 'andelTid')
+
+
+    # output$andelTidTab <- function() {
+    #   antKol <- ncol(tabAndelTid)
+    #   kableExtra::kable(tabAndelTid, format = 'html'
+    #                     , full_width=F
+    #                     , digits = c(0,0,1,0,0,1)[1:antKol]
+    #   ) %>%
+    #     kableExtra::add_header_above(c(" "=1, 'Egen enhet/gruppe' = 3, 'Resten' = 3)[1:(antKol/3+1)]) %>%
+    #     kableExtra::column_spec(column = 1, width_min = '7em') %>%
+    #     kableExtra::column_spec(column = 2:(antKol+1), width = '7em') %>%
+    #     kableExtra::row_spec(0, bold = T)
+    # }
+
+    # output$lastNed_tabAndelTid <- downloadHandler(
+    #   filename = function(){
+    #     paste0(input$valgtVar, '_andelTid.csv')
+    #   },
+    #   content = function(file, filename){
+    #     write.csv2(tabAndelTid, file, row.names = T, fileEncoding = 'latin1', na = '')
+    #   })
+
+    # output$LastNedFigAndelTid <- downloadHandler(
+    #   filename = function(){
+    #     paste0('AndelTid_', valgtVar=input$valgtVarAndel, '_', Sys.Date(), '.', input$bildeformatAndel)
+    #   },
+    #   content = function(file){
+    #     NSFigAndelTid(RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndel,
+    #                     reshID = user$org(),
+    #                     datoFra=as.Date(input$datovalgAndel[1]), datoTil=input$datovalgAndel[2],
+    #                     #minald=as.numeric(input$alderAndel[1]), maxald=as.numeric(input$alderAndel[2]),
+    #                     #erMann=as.numeric(input$erMannAndel),
+    #                     enhetsUtvalg = input$enhetsUtvalgAndel,
+    #                     tidsenhet = input$tidsenhetAndel,
+    #                     session=session,
+    #                     outfile = file)
+    #   })
+#  })
+
+#  observe({    #AndelGrVar
+    AndelerShus <- NSFigAndelerGrVar(
+      RegData=RegData, preprosess = 0, valgtVar=input$valgtVarAndel,
+      datoFra=input$datovalgAndel[1], datoTil=input$datovalgAndel[2],
+      minald=as.numeric(input$alderAndel[1]), maxald=as.numeric(input$alderAndel[2]),
+      erMann=as.numeric(input$erMannAndel),
+      session=session) #, lagFig = 0))
+
+    tabAndelerShus <- cbind('Antall (n)' = round(AndelerShus$Ngr*AndelerShus$AggVerdier/100),
+                            'Antall (N)' = AndelerShus$Ngr,
+                            Andeler = AndelerShus$AggVerdier)
+
+    # output$andelerGrVarTab <- function() {
+    #   antKol <- ncol(tabAndelerShus)
+    #   kableExtra::kable(tabAndelerShus, format = 'html'
+    #                     , digits = c(0,0,1)
+    #   ) %>%
+    #     kableExtra::column_spec(column = 1:(antKol+1), width = '5em') %>%
+    #     kableExtra::row_spec(0, bold = T)
+    # }
+    # output$lastNed_tabAndelGrVar <- downloadHandler(
+    #   filename = function(){
+    #     paste0(input$valgtVar, '_andelGrVar.csv')
+    #   },
+    #   content = function(file, filename){
+    #     write.csv2(tabAndelerShus, file, row.names = T, fileEncoding = 'latin1', na = '')
+    #   })
+
+
+    output$tittelAndel <- renderUI({
+      tagList(
+        h3(AndelerShus$tittel),
+        h5(HTML(paste0(AndelerShus$utvalgTxt, '<br />')))
+      )}) #, align='center'
+
+    } else {
+      output$tittelAndel <- NULL
+      output$andelerGrVar <- NULL
+      }
+  })
+
+  #------------------ Abonnement ----------------------------------------------
+
+
+
   #-----------------Sykehusvise gjennomsnitt, figur og tabell-------------------
   observe({
     if (isDataOk) {
@@ -1283,7 +1486,7 @@ rapbase::appLogger(
           paste0(input$valgtVar, "_tabGjsnSh.csv")
         },
         content = function(file, filename) {
-          write.csv2(tabGjsnGrVar, file, row.names = TRUE, na = "")
+          write.csv2(tabGjsnGrVar, file, row.names = TRUE, fileEncoding = 'latin1', na = "")
         }
       )
 
@@ -1391,7 +1594,7 @@ rapbase::appLogger(
           paste0(input$valgtVarGjsn, "_tabGjsnTid.csv")
         },
         content = function(file, filename) {
-          write.csv2(tabGjsnTid, file, row.names = TRUE, na = "")
+          write.csv2(tabGjsnTid, file, row.names = TRUE, fileEncoding = 'latin1', na = "")
         }
       )
     } else {
