@@ -12,6 +12,8 @@ nordicscir::kjor_NSapper(register = "norscir", browser = TRUE)
 
 RegData <- nordicscir::NSPreprosesser(RegData=nordicscir::NSRegDataSQL(valgtVar = 'Alder'))
 
+NSFigAndeler(RegData = NSRegDataSQL(valgtVar = 'KontControlInterruptedReason'), valgtVar = 'KontControlInterruptedReason')
+table(RegData$ControlInterruptedReason, RegData$Aar)
 
 NSFigAndelerGrVar(RegData=RegData,preprosess=0,
                               valgtVar='ABMI', datoFra='2015-01-01', datoTil=Sys.Date(),
