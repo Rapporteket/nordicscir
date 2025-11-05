@@ -153,7 +153,6 @@ ui_nordicscir <- function() {
               "Planlagt utskrevet til" = "PPlaceDis",
               "Pustehjelp (f.o.m. 2024)" = "VentAssi2",
               "Registreringsforsinkelse" = "RegForsinkelse",
-              "Komplikasjoner, primæropph" = "KomplPrim",
               "Skadeårsak " = "SkadeArsak",
               "Skadeårsak, ikke-traumatisk" = "Ntsci",
               "Tid fra skade til oppstart rehab." = "DagerTilRehab",

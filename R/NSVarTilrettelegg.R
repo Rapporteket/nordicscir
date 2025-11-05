@@ -232,7 +232,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
   }
 
   if (valgtVar == 'KomplPrim'){
-  tittel <- 'Komplikasjoner, primærrehab.'
+  tittel <- 'Komplikasjoner primærrehab. (f.o.m. 2022)'
   RegData <- RegData[which(RegData$Aar >= 2022), ]
   flerevar <- 1
   retn <- 'H'
@@ -330,7 +330,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
     # 3 = Ja, ukjent antall timer/dag ved utskrivning, 4 = Ventilasjonsstøtte kun ved pusteforstyrrelser under søvn
     # 9 = Ukjent
 
-    tittel <- 'Ventilasjonsstøtte ved utskriving'
+    tittel <- 'Ventilasjonsstøtte ved utskriving (f.o.m. 2024)'
     RegData <- RegData[which(RegData$VentAssi2 %in% c(1:4,0,9)) %i%
                          which(RegData$InnDato >= as.Date('2024-01-01')), ]
     grtxt <- c('Ja, < 24 t/døgn', 'Ja, hele døgnet', 'Ja, ukjent ant. t/døgn',
