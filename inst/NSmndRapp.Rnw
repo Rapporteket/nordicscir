@@ -72,17 +72,19 @@ Datoer/årstall er basert på utskrivingsdato akuttsykehus (DischgDt).
 Rapporten viser følgende:
 \begin{itemize}
 \item Antall hovedskjema per år og avdeling.
-\item	Registreringsoversikt med antall Registreringsskjema (hovedskjema) og tilknyttede skjema.
-\item	Andeler av hovedskjema som har et tilknyttet skjema
+\item Registreringsoversikt med antall Registreringsskjema (hovedskjema) og tilknyttede skjema.
+\item Andeler av hovedskjema som har et tilknyttet skjema
+\item Tid fra utreise til ferdigstilt registrering
+\item Fordeling, skadeårsaker
+\item Fordeling, ikke-traumatiske skadeårsaker
+\item Fordeling, AIS ved innleggelse
+\item Fordeling, AIS ved utskriving
+\item Nevrologisk klassifikasjon på sykehusnivå
+\item Nevrologisk klassifikasjon på sykehusnivå, ved rehabiliteringsopphold over 28 dager
+\item NBD-skår
 \item Liggetider ved eget sykehus
-%\item	Andel som ikke har vært til kontrollopphold
-\item	Fordeling, skadeårsaker
-\item	Fordeling, ikke-traumatiske skadeårsaker
-\item	Fordeling, AIS ved innleggelse
-\item	Fordeling, AIS ved utskriving
-\item	Tid fra utreise til ferdigstilt registrering
-\item	Nevrologisk klassifikasjon på sykehusnivå
-\item	Nevrologisk klassifikasjon på sykehusnivå, ved rehabiliteringsopphold over 28 dager
+\item Livskvalitet
+\item Komplikasjoner
 \item Anbefalt tid til kontroll
 \end{itemize}
 
@@ -109,33 +111,6 @@ xtable::xtable(tabAvdN, digits=0, align=c('l', rep('r', ncol(tabAvdN))),
 
 \begin{frame}[fragile]
 <<'AndelOppfolg', results='asis'>>=
-#Tabell: Andel registreringsskjema med oppfølging siste 12 mnd
-
-# RaaTab <- data.frame(Sykehus = HovedSkjema12mnd$ShNavn,
-#       Livskval = HovedSkjema12mnd$SkjemaGUID %in% LivskvalH$HovedskjemaGUID,
-#       Urin = HovedSkjema12mnd$SkjemaGUID %in% UrinH$HovedskjemaGUID,
-#       Tarm = HovedSkjema12mnd$SkjemaGUID %in% TarmH$HovedskjemaGUID)
-#
-# if (nordisk==0) {
-#   RaaTab <- data.frame(
-#     RaaTab,
-#     Funksjon = HovedSkjema12mnd$SkjemaGUID %in% AktivFunksjonH$HovedskjemaGUID,
-#     Tilfredshet = HovedSkjema12mnd$SkjemaGUID %in%
-#             AktivFunksjonH$HovedskjemaGUID[AktivFunksjonH$SkjemaGUID %in% AktivTilfredshetH$HovedskjemaGUID]
-#   )
-#       }
-#
-# AntReg <- table(HovedSkjema12mnd$ShNavn)
-# AntOppf <- apply(RaaTab[ ,-1], MARGIN=2,
-#                        FUN=function(x) tapply(x,INDEX=RaaTab$Sykehus, sum))
-# AndelOppf <- 100*AntOppf / as.vector(AntReg)
-#
-# xtable::xtable(cbind(Hoved=AntReg, AntOppf), digits=0, align=c('l', rep('r', ncol(AntOppf)+1)),
-# 		caption=paste0('Antall hovedskjema og antall av disse som har tilknyttede skjema. Pasienter utskrevet fra og med ', datoFra, '.'))
-#
-# xtable::xtable(AndelOppf, digits=1, align=c('l', rep('r', ncol(AndelOppf))),
-# 		caption=paste0('Andel (prosent) av registreringsskjemaene som har ulike typer oppfølgingsskjema.'))
-#
 
 tabTilknHovedSkjema <- tabSkjemaTilknyttet(
         Data = AlleTab,
@@ -150,8 +125,6 @@ xtable::xtable(tabTilknHovedSkjema$Antall, digits=0, align=c('l', rep('r', ncol(
 
 xtable::xtable(tabTilknHovedSkjema$Andeler, digits=1, align=c('l', rep('r', ncol(tabTilknHovedSkjema$Andeler))),
 		caption=paste0('Andel (prosent) av registreringsskjemaene som har ulike typer oppfølgingsskjema.'))
-
-
 
 @
 \end{frame}
@@ -352,12 +325,36 @@ xtable::xtable(NevrKlass28, digits=0, align=c('l', rep('r', ncol(NevrKlass28))),
 
 \end{frame}
 
+\section{Tarmfunksjon}
+<<'Figurerrr', results='asis'>>=
+
+      NSFigAndeler(RegData=TarmH, valgtVar='TarmNBD',
+                   datoFra=datoFra, datoTil=datoTil, datoUt = 1,
+                   outfile='TarmNBD.pdf',
+                   reshID=reshID, enhetsUtvalg=enhetsUtvalg,
+                   hentData=0, preprosess=0)
+
+      NSFigAndeler(RegData=HovedSkjema12mnd, valgtVar='KomplPrim',
+                   datoFra=datoFra, datoTil=datoTil, datoUt = 1,
+                   outfile='KomplPrim.pdf',
+                   reshID=reshID, enhetsUtvalg=enhetsUtvalg,
+                   hentData=0, preprosess=0)
+
+@
+\begin{frame}[fragile]
+\begin{figure}[ht]
+\centering
+\includegraphics[scale=0.35]{TarmNBD.pdf}
+\caption{Neurogenic Bowel Dysfunction (NBD) skår kategoriserer alvorlighetsgraden
+(svært liten/liten/moderat/alvorlig) av nevrogen tarmdysfunksjon. }
+\end{figure}
+\end{frame}
+
 
 \section{Liggetider}
 \begin{frame}[fragile]
 <<'Liggetider', results='asis'>>=
 #Tabell: Andel registreringsskjema med oppfølging siste 12 mnd
-
 #!!! Får feil encoding hvis benytter funksjonen tabLiggetider fra NStabeller.R
 
 Liggetider <- function(RegData, datoFra='2018-01-01', datoTil=Sys.Date(), datoUt=1,
@@ -387,50 +384,7 @@ xtable::xtable(LiggetiderUtraume, digits=0, align=c('l', rep('r', ncol(Liggetide
 \end{frame}
 
 
-
-\begin{frame}[fragile]
-\begin{figure}[ht]
-\centering
-\includegraphics[scale=0.35]{AnbefTidKtr.pdf}
-\caption{Anbefalt tid til kontroll}
-\end{figure}
-\end{frame}
-
-
-<<'Figurerrr', results='asis'>>=
-
-      NSFigAndeler(RegData=TarmH, valgtVar='TarmNBD',
-                   datoFra=datoFra, datoTil=datoTil, datoUt = 1,
-                   outfile='TarmNBD.pdf',
-                   reshID=reshID, enhetsUtvalg=enhetsUtvalg,
-                   hentData=0, preprosess=0)
-
-      NSFigAndeler(RegData=HovedSkjema12mnd, valgtVar='KomplPrim',
-                   datoFra=datoFra, datoTil=datoTil, datoUt = 1,
-                   outfile='KomplPrim.pdf',
-                   reshID=reshID, enhetsUtvalg=enhetsUtvalg,
-                   hentData=0, preprosess=0)
-
-@
-\begin{frame}[fragile]
-\begin{figure}[ht]
-\centering
-\includegraphics[scale=0.35]{TarmNBD.pdf}
-\caption{NBD-skår}
-\end{figure}
-\end{frame}
-
-\begin{frame}[fragile]
-\begin{figure}[ht]
-\centering
-\includegraphics[scale=0.35]{KomplPrim.pdf}
-\caption{Komplikasjoner, primærrehabilitering}
-\end{figure}
-\end{frame}
-
-
 \section{Livskvalitet}
-
 <<'FigLivskval', results='asis'>>=
 
 variabler <- c('LivsGen', 'LivsFys', 'LivsPsyk', 'LivsSosLiv')
@@ -478,7 +432,26 @@ for (valgtVar in variabler) {
 \end{frame}
 
 
+\section{Komplikasjoner}
 
+\begin{frame}[fragile]
+\begin{figure}[ht]
+\centering
+\includegraphics[scale=0.35]{KomplPrim.pdf}
+\caption{Beskrivelse av de ulike komplikasjoner er beskrevet i registerets
+         brukermanual på www.norscir.no}
+\end{figure}
+\end{frame}
+
+\section{Anbefalt tid til kontroll}
+
+\begin{frame}[fragile]
+\begin{figure}[ht]
+\centering
+\includegraphics[scale=0.35]{AnbefTidKtr.pdf}
+\caption{Anbefalt tid til kontroll}
+\end{figure}
+\end{frame}
 
 
 \end{tiny}

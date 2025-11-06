@@ -411,9 +411,10 @@ Kont.CAis
 
   RegData <- rapbase::loadRegData(registryName = 'data', query = query, dbType="mysql")
 
-  if (valgtSkjema=='Kont' | koblSkjema=='Kont'){
-    RegData <- RegData[RegData$ControlStatus==0, ] #Bare de med gjennomført kontroll, 0-Aktiv, 1-Avbrutt
-  }
+  # Fjerner denne for å kunne se på tilfeller hvor kontroll avbrutt
+  # if (valgtSkjema=='Kont' | koblSkjema=='Kont'){
+  #   RegData <- RegData[RegData$ControlStatus==0, ] #Bare de med gjennomført kontroll, 0-Aktiv, 1-Avbrutt
+  # }
 
   if (valgtSkjema=='Tilf') {
     #RegData er nå Hovedskjema eller Kontrollskjema

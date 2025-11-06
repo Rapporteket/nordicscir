@@ -160,7 +160,7 @@ ui_norscir <- function() {
               "Opphold, totalt antall dager" = "OpphTot",
               "Operasjon på ryggsøylen" = "SpnlSurg2",
               "Planlagt utskrevet til" = "PPlaceDis",
-              "Pustehjelp (f.o.m. 2024)" = "VentAssi2",
+              "Ventilasjonsstøtte (f.o.m 2024)" = "VentAssi2",
               "Registreringsforsinkelse" = "RegForsinkelse",
               "Komplikasjoner, primæropph" = "KomplPrim",
               "Skadeårsak " = "SkadeArsak",
@@ -191,6 +191,7 @@ ui_norscir <- function() {
               "Tarm: Avføringsmiddelbruk" = "TarmAvfmiddel",
               "Tarm: Avføringsmidler, hvilke" = "TarmAvfmiddelHvilke",
               "Tarm: Fekal inkontinens (fra 2019)" = "TarmInkontinensFra2019",
+              "Tarm: Fekal inkontinens (før 2019)" = "TarmInkontinensTom2018",
               "Tarm: Kirurgisk inngrep" = "TarmKirInngrep",
               "Tarm: Kirurgiske inngrep, hvilke" = "TarmKirInngrepHvilke",
               "Tarm: NBD" = "TarmNBD",
@@ -579,7 +580,7 @@ ui_norscir <- function() {
             shiny::selectInput(
               inputId = "tidsenhetReg",
               label="Velg tidsenhet",
-              choices = tidsenheter #rev(c("År"= "Aar", "Måned"="Mnd"))
+              choices = tidsenheter
           ),
           shiny::selectInput(
             inputId = "antTidsenhReg",
