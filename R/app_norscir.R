@@ -580,7 +580,7 @@ ui_norscir <- function() {
             shiny::selectInput(
               inputId = "tidsenhetReg",
               label="Velg tidsenhet",
-              choices = tidsenheter #rev(c("År"= "Aar", "Måned"="Mnd"))
+              choices = tidsenheter
           ),
           shiny::selectInput(
             inputId = "antTidsenhReg",

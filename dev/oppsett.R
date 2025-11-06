@@ -24,7 +24,12 @@ NSFigAndelerGrVar(RegData=RegData,preprosess=0,
 AlleTab <- nordicscir::getRealData(register = 'norscir')
 sapply(RegData, class)
 
-RegDataKtr <- rapbase::loadRegData(registryName = 'data', query = 'select *  FROM control_form', dbType="mysql")
+DataKtr <- rapbase::loadRegData(registryName = 'data', query = 'select *  FROM control_form', dbType="mysql")
+DataHovedKtr <- NSRegDataSQL(valgtVar = 'KontXX')
+# Kontrollskjema som ikke er knyttet til hovedskjema:
+  sjekk <- setdiff(DataKtr$SkjemaGUID, DataHovedKtr$SkjemaGUIDKont)
+table(DataHovedKtr$CNum)
+
 
 sship::dec("c://Users/lro2402unn/RegistreGIT/data/deformitet16ab69750.sql.gz__20251009_122654.tar.gz",
                      keyfile = "c://Users/lro2402unn/.ssh/id_rsa",
