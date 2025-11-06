@@ -111,7 +111,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
                      AAis = 'AIS ved innleggelse',
                      FAis = 'AIS ved utskriving',
                      AAisFAis = 'AIS ved innleggelse og utskriving',
-                     KontFAis = 'AIS ved utskriving og 1. kontroll')
+                     KontFAis = 'AIS ved utskriving og 1.kontroll')
     grtxt <- c('A: Komplett', 'B: Inkomplett', 'C: Inkomplett', 'D: Inkomplett', 'E: Normal',
                'Ukjent/Ikke klassifiserbar', 'Ikke utført')
     xAkseTxt <- 'AIS-kategori'
