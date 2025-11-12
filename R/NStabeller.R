@@ -159,15 +159,16 @@ tabSkjemaTilknyttet <- function(Data=AlleTab, moderSkjema='Hoved',
     RaaTab <- data.frame(Sykehus = ModerSkjema$ShNavn,
                          Livskvalitet = ModerSkjema$SkjemaGUIDHoved %in% Data$LivskvalH$HovedskjemaGUID,
                          Urin = ModerSkjema$SkjemaGUIDHoved %in% Data$UrinH$HovedskjemaGUID,
-                         Tarm = ModerSkjema$SkjemaGUIDHoved %in% Data$TarmH$HovedskjemaGUID,
-                         Eq5d = ModerSkjema$SkjemaGUIDHoved %in% Data$EQ5DH$HovedskjemaGUID
+                         Tarm = ModerSkjema$SkjemaGUIDHoved %in% Data$TarmH$HovedskjemaGUID
+
     )
+    if ('EQ5DH' %in% names(Data)) {
+      RaaTab <- cbind(RaaTab,
+                      Eq5d = ModerSkjema$SkjemaGUIDHoved %in% Data$EQ5DH$HovedskjemaGUID )}
     if ('AktivFunksjonH' %in% names(Data)) {
       RaaTab <- cbind(RaaTab,
                       Funksjon = ModerSkjema$SkjemaGUIDHoved %in% Data$AktivFunksjonH$HovedskjemaGUID,
-                      Tilfredshet = ModerSkjema$SkjemaGUIDHoved %in% Data$AktivTilfredshetH$SkjemaGUID #(SkjemaGUID er fra hovedskjema)
-      )
-    }
+                      Tilfredshet = ModerSkjema$SkjemaGUIDHoved %in% Data$AktivTilfredshetH$SkjemaGUID)} #(SkjemaGUID er fra hovedskjema)
   }
 
   if (moderSkjema == 'Kont') {

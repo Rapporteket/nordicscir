@@ -156,6 +156,8 @@ ui_norscir <- function() {
               "Ais ved innleggelse" = "AAis" ,
               "Ais ved utskriving" = "FAis",
               "Anbefalt tid til kontroll" = "AnbefTidKtr",
+              'BMI ved innleggelse' = 'ABMI',
+              'BMI ved utskriving' = 'FBMI',
               "Lengde på rehab.opphold" = "DagerRehab",
               "Opphold, totalt antall dager" = "OpphTot",
               "Operasjon på ryggsøylen" = "SpnlSurg2",

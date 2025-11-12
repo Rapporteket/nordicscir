@@ -25,6 +25,10 @@ aarTil <- lubridate::year(datoTil)
 datoFra <- as.Date(paste0(aarTil-1,'-', lubridate::month(datoTil), '-', '01'))
 aarFra <- paste0(aarTil-5, '-01-01')
 nordisk <- ifelse(sum(as.numeric(unique(HovedSkjema$LandKode)))==1, 0, 1)
+fjernSide <- ifelse(nordisk==1, '<0>[noframenumbering]', '')
+Komplikasjoner <- ifelse(nordisk==1, '', 'Komplikasjoner')
+pktKtrKompl <- ifelse(nordisk==0,, '')
+
 #Bare gyldige kontrollskjema:
 if (nordisk == 0) {
 KontrollH <- KontrollH[KontrollH$ControlStatus==0, ]}
@@ -84,8 +88,8 @@ Rapporten viser følgende:
 \item NBD-skår
 \item Liggetider ved eget sykehus
 \item Livskvalitet
-\item Komplikasjoner
-\item Anbefalt tid til kontroll
+\item Komplikasjoner - (ikke for nordisk)
+\item Anbefalt tid til kontroll - (ikke for nordisk)
 \end{itemize}
 
 \end{frame}
@@ -133,9 +137,9 @@ xtable::xtable(tabTilknHovedSkjema$Andeler, digits=1, align=c('l', rep('r', ncol
 
 
 
-\begin{frame}<0>[noframenumbering]
+\begin{frame} \Sexpr{fjernSide}
+% <0>[noframenumbering]
 %[fragile]
-%[exclude]{Kontrollskjema er nå filtrert på NoControll=FALSE og CNum=1}
 
 
 <<'AndelKtrMOppfolg', results='asis'>>=
@@ -341,6 +345,7 @@ xtable::xtable(NevrKlass28, digits=0, align=c('l', rep('r', ncol(NevrKlass28))),
                    hentData=0, preprosess=0)
 
 @
+
 \begin{frame}[fragile]
 \begin{figure}[ht]
 \centering
@@ -432,9 +437,9 @@ for (valgtVar in variabler) {
 \end{frame}
 
 
-\section{Komplikasjoner}
+\section{\Sexpr{Komplikasjoner}}
 
-\begin{frame}[fragile]
+\begin{frame} \Sexpr{fjernSide}
 \begin{figure}[ht]
 \centering
 \includegraphics[scale=0.35]{KomplPrim.pdf}
@@ -443,9 +448,9 @@ for (valgtVar in variabler) {
 \end{figure}
 \end{frame}
 
-\section{Anbefalt tid til kontroll}
 
-\begin{frame}[fragile]
+\begin{frame} \Sexpr{fjernSide}
+\section{Anbefalt tid til kontroll}
 \begin{figure}[ht]
 \centering
 \includegraphics[scale=0.35]{AnbefTidKtr.pdf}
