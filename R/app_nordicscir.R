@@ -1295,7 +1295,9 @@ server_nordicscir <- function(input, output, session) {
   #----------- Eksport ----------------
   registryName <- "nordicscir"
   ## brukerkontroller
-  rapbase::exportUCServer("nordicscirExport", registryName)
+  rapbase::exportUCServer("nordicscirExport",
+                          registryName, #databasenavn
+                          registryName) ## navn på team, for tilhørighet på github
 
   ## veileding
   rapbase::exportGuideServer("nordicscirExportGuide", registryName)
