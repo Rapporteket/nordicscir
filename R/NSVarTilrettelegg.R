@@ -816,6 +816,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
   if (valgtVar == 'KontrKompl'){
     tittel <- 'Komplikasjoner, kontroll ?'
     RegData <- RegData[which(RegData$ControlStatus==0 & RegData$Aar >= 2022), ]
+    RegData$Alder <- RegData$PatientAgeKont #For å få filtrering på alder ved kontroll, ikke innleggelse
     flerevar <- 1
     retn <- 'H'
     variable <- c(
@@ -831,6 +832,18 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
     RegData[ ,variable] <- 0
     RegData[ ,variable][ind1] <- 1
   }
+
+
+  if (valgtVar=='KontUtfHvordan') {
+    tittel <- 'Hvordan ble kontrollen utført?'
+    RegData$Alder <- RegData$PatientAgeKont #For å få filtrering på alder ved kontroll, ikke innleggelse
+    retn <- 'H'
+    gr <- rev(1:4)
+    RegData <- RegData[RegData$ControlPerformed %in% gr,]
+    grtxt <- rev(c('Innleggelse', 'Poliklinisk', 'Videokonsultasjon', 'Telefon'))
+    RegData$VariabelGr <- factor(RegData$ControlPerformed, levels = gr, labels = grtxt)
+  }
+
 
 
 

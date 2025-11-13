@@ -203,6 +203,7 @@ ui_norscir <- function() {
               "EQ5D: Smerter, ubehag" = "Eq5dQ4PainDiscomfort",
               "EQ5D: Angst og depresjon" = "Eq5dQ5AnxietyDepression",
               "EQ5D: Generell helsetilstand" = "Eq5dQ6HealthToday",
+              "Kontroll: Hvordan ble kontrollen gjennomført?" = "KontUtfHvordan",
               "Kontroll: Komplikasjoner" = "KontrKompl",
               "Kontroll: Årsak, ikke gj.ført kontroll" = "KontControlInterruptedReason"
             ),

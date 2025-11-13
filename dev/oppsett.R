@@ -10,18 +10,18 @@ source("dev/sysSetenv.R")
 Sys.setenv(MYSQL_DB_DATA="norscir")
 nordicscir::kjor_NSapper(register = "norscir", browser = TRUE)
 
-RegData <- nordicscir::NSPreprosesser(RegData=nordicscir::NSRegDataSQL(valgtVar = 'Alder'))
+RegData <- nordicscir::NSPreprosesser(RegData=nordicscir::NSRegDataSQL(valgtVar = 'Kontroll'))
 
 NSFigAndeler(RegData = NSRegDataSQL(valgtVar = 'KontControlInterruptedReason'), valgtVar = 'KontControlInterruptedReason')
 table(RegData$ControlInterruptedReason, RegData$Aar)
 
-NSFigAndelerGrVar(RegData=RegData,preprosess=0,
-                              valgtVar='ABMI', datoFra='2015-01-01', datoTil=Sys.Date(),
-                              minald=0, maxald=130, erMann='',
-                              enhetsUtvalg=0,
-                              Ngrense=10, reshID=0)
+NSFigAndeler(RegData=RegData,preprosess=0,
+                              valgtVar='KontUtfHvordan')
 
-
+AlleTab <- nordicscir::getRealData(register = 'norscir')
+AlleTab <- nordicscir::processAllData(AlleTab, register = 'norscir')
+attach(AlleTab)
+reshID <- 106896
 
 #Div undersøkelse av kontroller:
 
