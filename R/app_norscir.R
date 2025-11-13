@@ -156,6 +156,8 @@ ui_norscir <- function() {
               "Ais ved innleggelse" = "AAis" ,
               "Ais ved utskriving" = "FAis",
               "Anbefalt tid til kontroll" = "AnbefTidKtr",
+              'BMI ved innleggelse' = 'ABMI',
+              'BMI ved utskriving' = 'FBMI',
               "Lengde på rehab.opphold" = "DagerRehab",
               "Opphold, totalt antall dager" = "OpphTot",
               "Operasjon på ryggsøylen" = "SpnlSurg2",
@@ -201,6 +203,7 @@ ui_norscir <- function() {
               "EQ5D: Smerter, ubehag" = "Eq5dQ4PainDiscomfort",
               "EQ5D: Angst og depresjon" = "Eq5dQ5AnxietyDepression",
               "EQ5D: Generell helsetilstand" = "Eq5dQ6HealthToday",
+              "Kontroll: Hvordan ble kontrollen gjennomført?" = "KontUtfHvordan",
               "Kontroll: Komplikasjoner" = "KontrKompl",
               "Kontroll: Årsak, ikke gj.ført kontroll" = "KontControlInterruptedReason"
             ),

@@ -331,6 +331,7 @@ Kont.CAis
 ,Kont.CComplicNone
 ,Kont.CComplicOther
 ,Kont.ControlInterruptedReason
+,Kont.ControlPerformed
 ,Kont.ControlStatus
 ,Kont.COrthostaticHypotension
 ,Kont.COsteoporosis
@@ -358,6 +359,7 @@ Kont.CAis
 ,Kont.FormStatus
 ,Kont.FormTypeId
 ,Kont.LastUpdate
+,Kont.PatientAge AS PatientAgeKont
 ,Kont.ProceedingID
 -- ,Kont.SkjemaGUID
 ,Kont.SkjemaGUID AS SkjemaGUIDKont

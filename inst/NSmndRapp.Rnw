@@ -25,6 +25,10 @@ aarTil <- lubridate::year(datoTil)
 datoFra <- as.Date(paste0(aarTil-1,'-', lubridate::month(datoTil), '-', '01'))
 aarFra <- paste0(aarTil-5, '-01-01')
 nordisk <- ifelse(sum(as.numeric(unique(HovedSkjema$LandKode)))==1, 0, 1)
+fjernSide <- ifelse(nordisk==1, '<0>[noframenumbering]', '[fragile]')
+Komplikasjoner <- ifelse(nordisk==1, '', 'Komplikasjoner')
+utNord <- ifelse(nordisk==1, '- ikke for nordisk', '')
+
 #Bare gyldige kontrollskjema:
 if (nordisk == 0) {
 KontrollH <- KontrollH[KontrollH$ControlStatus==0, ]}
@@ -84,8 +88,8 @@ Rapporten viser følgende:
 \item NBD-skår
 \item Liggetider ved eget sykehus
 \item Livskvalitet
-\item Komplikasjoner
-\item Anbefalt tid til kontroll
+\item Komplikasjoner \Sexpr{utNord}
+\item Anbefalt tid til kontroll \Sexpr{utNord}
 \end{itemize}
 
 \end{frame}
@@ -133,66 +137,74 @@ xtable::xtable(tabTilknHovedSkjema$Andeler, digits=1, align=c('l', rep('r', ncol
 
 
 
-\begin{frame}<0>[noframenumbering]
+\begin{frame} \Sexpr{fjernSide}
+% <0>[noframenumbering]
 %[fragile]
-%[exclude]{Kontrollskjema er nå filtrert på NoControll=FALSE og CNum=1}
-
 
 <<'AndelKtrMOppfolg', results='asis'>>=
 #Tabell: Andel kontrollskjema med oppfølging
-RaaTabKtr <- data.frame(Sykehus = KontrollH$HealthUnitShortName,
-      #Aar = as.POSIXlt(Hskjema$AdmitDt, format="%Y-%m-%d")$year +1900,
-      Livskval = KontrollH$SkjemaGUID %in% LivskvalH$HovedskjemaGUID,
-      Urin = KontrollH$SkjemaGUID %in% UrinH$HovedskjemaGUID,
-      Tarm = KontrollH$SkjemaGUID %in% TarmH$HovedskjemaGUID,
-      Funksjon = KontrollH$SkjemaGUID %in% AktivFunksjonH$HovedskjemaGUID,
-      Tilfredshet = KontrollH$SkjemaGUID %in%
-            AktivFunksjonH$SkjemaGUID[AktivFunksjonH$SkjemaGUID %in% AktivTilfredshetH$HovedskjemaGUID]
-)
+# RaaTabKtr <- data.frame(Sykehus = KontrollH$HealthUnitShortName,
+#       #Aar = as.POSIXlt(Hskjema$AdmitDt, format="%Y-%m-%d")$year +1900,
+#       Livskval = KontrollH$SkjemaGUID %in% LivskvalH$HovedskjemaGUID,
+#       Urin = KontrollH$SkjemaGUID %in% UrinH$HovedskjemaGUID,
+#       Tarm = KontrollH$SkjemaGUID %in% TarmH$HovedskjemaGUID,
+#       Funksjon = KontrollH$SkjemaGUID %in% AktivFunksjonH$HovedskjemaGUID,
+#       Tilfredshet = KontrollH$SkjemaGUID %in%
+#             AktivFunksjonH$SkjemaGUID[AktivFunksjonH$SkjemaGUID %in% AktivTilfredshetH$HovedskjemaGUID]
+# )
 
-AntRegKtr <- table(KontrollH$HealthUnitShortName)
-AntOppfKtr <- apply(RaaTabKtr[ ,-1], MARGIN=2,
-                       FUN=function(x) tapply(x,INDEX=RaaTabKtr$Sykehus, sum))
-AntKtr <- rbind(KontrollH=AntRegKtr, t(AntOppfKtr))
-AndelOppfKtr <- t(100*AntOppfKtr / as.vector(AntRegKtr))
+# AntRegKtr <- table(KontrollH$HealthUnitShortName)
+# AntOppfKtr <- apply(RaaTabKtr[ ,-1], MARGIN=2,
+#                        FUN=function(x) tapply(x,INDEX=RaaTabKtr$Sykehus, sum))
+# AntKtr <- rbind(KontrollH=AntRegKtr, t(AntOppfKtr))
+# AndelOppfKtr <- t(100*AntOppfKtr / as.vector(AntRegKtr))
+# xtable::xtable(AntKtr, digits=0, align=c('l', rep('r', ncol(AntKtr))),
+# 		caption=paste0('Antall kontrollskjema og antall av disse som har tilknyttede skjema. Innleggelser fra og med 2011.'))
+#
+# xtable::xtable(AndelOppfKtr, digits=1, align=c('l', rep('r', ncol(AndelOppfKtr))),
+# 		caption=paste0('Andel (prosent) av kontrollskjemaene som har tilknyttede skjema.'))
 
+tabTilknKtrSkjema <- tabSkjemaTilknyttet(
+        Data = AlleTab,
+        moderSkjema = "Kont",
+        datoUt=1,
+        datoFra = datoFra,
+        datoTil = datoTil
+      )
+xtable::xtable(tabTilknKtrSkjema$Antall, digits=0, align=c('l', rep('r', ncol(tabTilknKtrSkjema$Antall))),
+		caption=paste0('Antall kontrollskjema og antall av disse som har tilknyttede skjema. Pasienter utskrevet  fra og med ', datoFra, '.
+		               (Basert på hovedskjema) DENNE TABELLEN MÅ SJEKKES HVIS DEN SKAL VÆRE MED'))
 
-xtable::xtable(AntKtr, digits=0, align=c('l', rep('r', ncol(AntKtr))),
-		caption=paste0('Antall kontrollskjema og antall av disse som har tilknyttede skjema. Innleggelser fra og med 2011.'))
+xtable::xtable(tabTilknKtrSkjema$Andeler, digits=1, align=c('l', rep('r', ncol(tabTilknKtrSkjema$Andeler))),
+		caption=paste0('Andel (prosent) av kontrollskjemaene som har ulike typer oppfølgingsskjema.DENNE TABELLEN MÅ SJEKKES HVIS DEN SKAL VÆRE MED'))
 
-xtable::xtable(AndelOppfKtr, digits=1, align=c('l', rep('r', ncol(AndelOppfKtr))),
-		caption=paste0('Andel (prosent) av kontrollskjemaene som har tilknyttede skjema.'))
 @
 \end{frame}
 
 
 
-\begin{frame} <handout:0 beamer:0>
-%[fragile]{Tas ut til koblingsnøkkel for kontrollskjema er riktig. FJERN?}
+% \begin{frame}
+% [fragile]{Tas ut til koblingsnøkkel for kontrollskjema er riktig. FJERN?}
 
-
-<<'AndelUOppf', results='asis'>>=
-#Andel med kontroll per sykehus og år
-
-indOppf <- which(HovedSkjema$SkjemaGUID %in% KontrollH$HovedskjemaGUID)
-
-RegShAar <- addmargins(table(HovedSkjema$Aar, HovedSkjema$ShNavn))
-RegShAarKtr <- addmargins(table(HovedSkjema$Aar[indOppf], HovedSkjema$ShNavn[indOppf]))
-AndelMKtr <- 100*RegShAarKtr/RegShAar
-rownames(AndelMKtr)[dim(AndelMKtr)[1] ]<- 'Alle år'
-colnames(AndelMKtr)[dim(AndelMKtr)[2] ]<- 'Hele landet'
-
-xtable::xtable(AndelMKtr, digits=1, align=c('l', rep('r', ncol(AndelMKtr))),
-		caption='Andel pasienter (prosent) som til nå har hatt kontroll, per utskrivingsår og avdeling.')
-@
-\end{frame}
-
+% #Andel med kontroll per sykehus og år
+%
+% indOppf <- which(HovedSkjema$SkjemaGUID %in% KontrollH$HovedskjemaGUID)
+%
+% RegShAar <- addmargins(table(HovedSkjema$Aar, HovedSkjema$ShNavn))
+% RegShAarKtr <- addmargins(table(HovedSkjema$Aar[indOppf], HovedSkjema$ShNavn[indOppf]))
+% AndelMKtr <- 100*RegShAarKtr/RegShAar
+% rownames(AndelMKtr)[dim(AndelMKtr)[1] ]<- 'Alle år'
+% colnames(AndelMKtr)[dim(AndelMKtr)[2] ]<- 'Hele landet'
+%
+%  xtable::xtable(AndelMKtr, digits=1, align=c('l', rep('r', ncol(AndelMKtr))),
+%  		caption='Andel pasienter (prosent) som til nå har hatt kontroll, per utskrivingsår og avdeling.')
+%
+% \end{frame}
 
 
 
 
-
-<<'LageFigurer', include=FALSE>>=
+ <<'LageFigurer', include=FALSE>>=
 
 variabler <- c('SkadeArsak', 'Ntsci', 'AAis', 'FAis','RegForsinkelse', 'AnbefTidKtr')
 for (valgtVar in variabler) {
@@ -203,24 +215,10 @@ for (valgtVar in variabler) {
                    hentData=0, preprosess=0)
 }
 
-datoTilReg <- datoTil-30
-
-NSFigAndeler(RegData=HovedSkjema, valgtVar=valgtVar,
-                   datoFra=datoFra, datoTil=datoTilReg, datoUt = 1,
-                   outfile=outfile, reshID=reshID, enhetsUtvalg=enhetsUtvalg,
-                   hentData=0, preprosess=0)
-
-# NSFigGjsnTid(RegData=HovedSkjema, valgtVar='RegForsinkelse',
-#              preprosess=0, datoFra=datoFra,datoTil=datoTilReg,
-#              datoUt = 1, tidsenhet='Kvartal', reshID=reshID,
-#              enhetsUtvalg=1, valgtMaal='gjsn',
-#              outfile='RegForsinkelseGjsnTid.pdf')
-
 NSFigGjsnGrVar(RegData=HovedSkjema12mnd, valgtVar='RegForsinkelse', valgtMaal='gjsn', grVar=grVar,
-                              datoFra=datoFra, datoTil=datoTilReg, datoUt=1,
+                              datoFra=datoFra, datoTil=datoTil-30, datoUt=1,
 					                    preprosess=0, outfile='RegForsinkelseGjsnEnh.pdf')
-
-@
+ @
 
 
 \begin{frame}[fragile]
@@ -341,6 +339,7 @@ xtable::xtable(NevrKlass28, digits=0, align=c('l', rep('r', ncol(NevrKlass28))),
                    hentData=0, preprosess=0)
 
 @
+
 \begin{frame}[fragile]
 \begin{figure}[ht]
 \centering
@@ -432,9 +431,9 @@ for (valgtVar in variabler) {
 \end{frame}
 
 
-\section{Komplikasjoner}
+\section{\Sexpr{Komplikasjoner}}
 
-\begin{frame}[fragile]
+\begin{frame} \Sexpr{fjernSide}
 \begin{figure}[ht]
 \centering
 \includegraphics[scale=0.35]{KomplPrim.pdf}
@@ -443,9 +442,9 @@ for (valgtVar in variabler) {
 \end{figure}
 \end{frame}
 
-\section{Anbefalt tid til kontroll}
 
-\begin{frame}[fragile]
+\begin{frame} \Sexpr{fjernSide}
+\section{Anbefalt tid til kontroll}
 \begin{figure}[ht]
 \centering
 \includegraphics[scale=0.35]{AnbefTidKtr.pdf}
