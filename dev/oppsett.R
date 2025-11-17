@@ -10,13 +10,7 @@ source("dev/sysSetenv.R")
 Sys.setenv(MYSQL_DB_DATA="norscir")
 nordicscir::kjor_NSapper(register = "norscir", browser = TRUE)
 
-RegData <- nordicscir::NSPreprosesser(RegData=nordicscir::NSRegDataSQL(valgtVar = 'Kontroll'))
-
-NSFigAndeler(RegData = NSRegDataSQL(valgtVar = 'KontControlInterruptedReason'), valgtVar = 'KontControlInterruptedReason')
-table(RegData$ControlInterruptedReason, RegData$Aar)
-
-NSFigAndeler(RegData=RegData,preprosess=0,
-                              valgtVar='KontUtfHvordan')
+RegData <- nordicscir::NSPreprosesser(RegData=nordicscir::NSRegDataSQL(valgtVar = 'Alder'))
 
 AlleTab <- nordicscir::getRealData(register = 'norscir')
 AlleTab <- nordicscir::processAllData(AlleTab, register = 'norscir')
@@ -34,9 +28,13 @@ DataHovedKtr <- NSRegDataSQL(valgtVar = 'KontXX') #1928
 # Kontrollskjema som ikke er knyttet til hovedskjema:
   manglerHoved <- setdiff(DataKtr$SkjemaGUID, DataHovedKtr$SkjemaGUIDKont) #686 stk
   KtrUtenHoved <- DataKtr[!(DataKtr$HovedskjemaGUID %in% HovedSkjema$SkjemaGUIDHoved),]
-  range(DataKtr$CreationDate[is.na(DataKtr$CNum)])
-  table(DataKtr$CNum, useNA = 'a')
+  write.table(KtrUtenHoved[,c("SkjemaGUID", "CNeuExmDt", 'ControlStatus')], file = '../data/KtrUtenHoved.csv', row.names = F, sep = ';')
+  range(KtrUtenHoved$CNeuExmDt)
+  table(DataKtr$CNum[DataKtr$ControlStatus==0], useNA = 'a')
   sum(is.na(DataKtr$CNum))
+
+  unique(DataKtr[ ,c("Skjematype", "CNum", "ControlStatus")])
+  range(DataKtr$CNeuExmDt[DataKtr$ControlStatus==0 & is.na(DataKtr$CNum)])
 
   length(unique(DataHovedKtr$SkjemaGUIDKont)) #, '')]))
   DataHovedKtr$SkjemaGUIDHoved
@@ -51,7 +49,7 @@ table(DataHovedKtr$CNum)
 table(DataKtr$CNum)
 
 
-sship::dec("c://Users/lro2402unn/RegistreGIT/data/deformitet16ab69750.sql.gz__20251009_122654.tar.gz",
+sship::dec("c://Users/lro2402unn/RegistreGIT/data/nordicscir1324ad7da.sql.gz__20251113_091431.tar.gz",
                      keyfile = "c://Users/lro2402unn/.ssh/id_rsa",
                      target_dir = "c://Users/lro2402unn/RegistreGIT/data/."
                      )

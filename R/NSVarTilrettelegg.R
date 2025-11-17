@@ -149,7 +149,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
     }
 
   if (valgtVar %in% c('ABMI', 'FBMI')) { #fordeling, andelgrvar
-    RegData <- RegData[RegData$InnDato >= '2024-01-01', ]
+    RegData <- RegData[RegData$AdmitDt >= '2025-01-01', ]
     tittel <- paste0(ifelse(figurtype == 'andeler', 'BMI', 'Målt høyde og vekt'),
                      ' ved ',
                      ifelse(valgtVar == 'ABMI', 'innleggelse', 'utskriving'))
@@ -158,10 +158,11 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
     RegData$Variabel[ind] <- 1
   #  RegData <- RegData[which(RegData$BMI >10), ]
     if (figurtype == 'andeler') {
+      RegData <- RegData[which(RegData$Alder >= 18), ]
       gr <- c(0, 18.5, 25, 30, 35, 40, 1000)
+      RegData$VariabelGr <- cut(RegData[ ,valgtVar], breaks=gr, include.lowest=TRUE, right=FALSE)
       grtxt <- c('<18,5', levels(RegData$VariabelGr)[2:(length(gr)-2)],'40+')
       grtxt2 <- c('Undervekt', 'Normalvekt', 'Overvekt', 'Fedme', 'Fedme kl II', 'Fedme kl III')
-      RegData$VariabelGr <- cut(RegData[ ,valgtVar], breaks=gr, include.lowest=TRUE, right=FALSE)
       }
   }
 
@@ -256,8 +257,8 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
   }
 
   if (valgtVar == 'KomplPrim'){
-  tittel <- 'Komplikasjoner primærrehab. (f.o.m. 2022)'
-  RegData <- RegData[which(RegData$Aar >= 2022), ]
+  tittel <- 'Komplikasjoner ved primærrehab.'
+  RegData <- RegData[which(RegData$Aar >= 2023), ]
   flerevar <- 1
   retn <- 'H'
   variable <- c(
@@ -345,7 +346,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
     RegData <- RegData[which(RegData$SpnlSurg2 %in% c(0,1,9)) %i%
                          which(RegData$InnDato >= as.Date('2024-01-01')), ]
     grtxt <- c('Nei', 'Ja', 'Ukjent')
-    RegData$VariabelGr <- factor(as.numeric(RegData$SpnlSurg2), levels=c(0,1,8,9), labels = grtxt)
+    RegData$VariabelGr <- factor(as.numeric(RegData$SpnlSurg2), levels=c(0,1,9), labels = grtxt)
     retn <- 'H'
   }
 
@@ -354,9 +355,9 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
     # 3 = Ja, ukjent antall timer/dag ved utskrivning, 4 = Ventilasjonsstøtte kun ved pusteforstyrrelser under søvn
     # 9 = Ukjent
 
-    tittel <- 'Ventilasjonsstøtte ved utskriving (f.o.m. 2024)'
+    tittel <- 'Ventilasjonsstøtte ved utskriving (f.o.m. 2025)'
     RegData <- RegData[which(RegData$VentAssi2 %in% c(1:4,0,9)) %i%
-                         which(RegData$InnDato >= as.Date('2024-01-01')), ]
+                         which(RegData$InnDato >= as.Date('2025-01-01')), ]
     grtxt <- c('Ja, < 24 t/døgn', 'Ja, hele døgnet', 'Ja, ukjent ant. t/døgn',
                'Ja, v/pusteforstyrr. søvn', 'Nei', 'Ukjent')
     RegData$VariabelGr <- factor(as.numeric(RegData$VentAssi2), levels=c(1:4,0,9), labels = grtxt)
@@ -815,7 +816,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
 
   if (valgtVar == 'KontrKompl'){
     tittel <- 'Komplikasjoner, kontroll ?'
-    RegData <- RegData[which(RegData$ControlStatus==0 & RegData$Aar >= 2022), ]
+    RegData <- RegData[which(RegData$ControlStatus==0 & RegData$Creation >= 2022), ]
     RegData$Alder <- RegData$PatientAgeKont #For å få filtrering på alder ved kontroll, ikke innleggelse
     flerevar <- 1
     retn <- 'H'
@@ -835,7 +836,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
 
 
   if (valgtVar=='KontUtfHvordan') {
-    tittel <- 'Hvordan ble kontrollen utført?'
+    tittel <- 'Kontrollen er utført på følgende måte'
     RegData$Alder <- RegData$PatientAgeKont #For å få filtrering på alder ved kontroll, ikke innleggelse
     retn <- 'H'
     gr <- rev(1:4)

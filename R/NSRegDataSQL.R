@@ -354,6 +354,7 @@ Kont.CAis
 ,Kont.CUTI
 ,Kont.CVentAssi
 ,Kont.CVTE
+,Kont.CreationDate AS KontCreationDate
 ,Kont.FirstTimeClosed
 ,Kont.FormDate
 ,Kont.FormStatus
@@ -413,10 +414,10 @@ Kont.CAis
 
   RegData <- rapbase::loadRegData(registryName = 'data', query = query, dbType="mysql")
 
-  # Fjerner denne for å kunne se på tilfeller hvor kontroll avbrutt
-  # if (valgtSkjema=='Kont' | koblSkjema=='Kont'){
-  #   RegData <- RegData[RegData$ControlStatus==0, ] #Bare de med gjennomført kontroll, 0-Aktiv, 1-Avbrutt
-  # }
+  if (valgtSkjema=='Kont' | koblSkjema=='Kont'){
+    RegData <- RegData[!is.na(RegData$CNum), ]
+  # RegData <- RegData[RegData$ControlStatus==0, ] #Bare de med gjennomført kontroll, 0-Aktiv, 1-Avbrutt
+}
 
   if (valgtSkjema=='Tilf') {
     #RegData er nå Hovedskjema eller Kontrollskjema
