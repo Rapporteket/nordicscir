@@ -172,11 +172,11 @@ tabTilknKtrSkjema <- tabSkjemaTilknyttet(
         datoTil = datoTil
       )
 xtable::xtable(tabTilknKtrSkjema$Antall, digits=0, align=c('l', rep('r', ncol(tabTilknKtrSkjema$Antall))),
-		caption=paste0('Antall kontrollskjema og antall av disse som har tilknyttede skjema. Pasienter utskrevet  fra og med ', datoFra, '.
-		               (Basert på hovedskjema) DENNE TABELLEN MÅ SJEKKES HVIS DEN SKAL VÆRE MED'))
+		caption=paste0('Antall kontrollskjema og antall av disse som har tilknyttede skjema.
+		Tabellen oppsummerer pasienter som har vært til kontroll  fra og med ', datoFra, '.'))
 
 xtable::xtable(tabTilknKtrSkjema$Andeler, digits=1, align=c('l', rep('r', ncol(tabTilknKtrSkjema$Andeler))),
-		caption=paste0('Andel (prosent) av kontrollskjemaene som har ulike typer oppfølgingsskjema.DENNE TABELLEN MÅ SJEKKES HVIS DEN SKAL VÆRE MED'))
+		caption=paste0('Andel (prosent) av kontrollskjemaene som har ulike typer oppfølgingsskjema.'))
 
 @
 \end{frame}

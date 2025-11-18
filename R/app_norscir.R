@@ -162,7 +162,7 @@ ui_norscir <- function() {
               "Opphold, totalt antall dager" = "OpphTot",
               "Operasjon på ryggsøylen" = "SpnlSurg2",
               "Planlagt utskrevet til" = "PPlaceDis",
-              "Ventilasjonsstøtte (f.o.m 2024)" = "VentAssi2",
+              "Ventilasjonsstøtte (f.o.m 2025)" = "VentAssi2",
               "Registreringsforsinkelse" = "RegForsinkelse",
               "Komplikasjoner, primæropph" = "KomplPrim",
               "Skadeårsak " = "SkadeArsak",
@@ -308,7 +308,7 @@ ui_norscir <- function() {
                    selectInput(
                      inputId = "valgtVarPP",
                      label="Velg variabel ",
-                     choices = c("AIS, utskriving/kontroll"="KontFAis",
+                     choices = c(# "AIS, utskriving/kontroll"="KontFAis",
                                  "Utskrevet til "="KontUtTil")
                    )),
                  conditionalPanel(
@@ -356,13 +356,13 @@ ui_norscir <- function() {
                              downloadButton(
                                outputId = "lastNed_figfordPrePost", label="Last ned figur"
                              )
-                   ),
-                   tabPanel('Stabelplott, før/etter',
-                            plotOutput("figStabelPrePost", height = "auto"),
-                            downloadButton(
-                              outputId = "lastNed_figStabelPrePost", label="Last ned figur"
-                            )
-                   )
+                   ) # ,
+                   # tabPanel('Stabelplott, før/etter',
+                   #          plotOutput("figStabelPrePost", height = "auto"),
+                   #          downloadButton(
+                   #            outputId = "lastNed_figStabelPrePost", label="Last ned figur"
+                   #          )
+                   # )
                  ) ) #main
       ), #Resultater over tid
 

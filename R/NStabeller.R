@@ -172,6 +172,7 @@ tabSkjemaTilknyttet <- function(Data=AlleTab, moderSkjema='Hoved',
   }
 
   if (moderSkjema == 'Kont') {
+    ModerSkjema <- ModerSkjema[ModerSkjema$ControlStatus==0, ]
     indDato <- which(as.Date(ModerSkjema$CNeuExmDt) >= datoFra &
                        as.Date(ModerSkjema$CNeuExmDt) <= datoTil)
     ModerSkjema <- ModerSkjema[indDato, ]
