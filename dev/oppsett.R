@@ -10,7 +10,8 @@ source("dev/sysSetenv.R")
 Sys.setenv(MYSQL_DB_DATA="norscir")
 nordicscir::kjor_NSapper(register = "norscir", browser = TRUE)
 
-RegData <- nordicscir::NSPreprosesser(RegData=nordicscir::NSRegDataSQL(valgtVar = 'Alder'))
+RegData <- nordicscir::NSPreprosesser(RegData=nordicscir::NSRegDataSQL(valgtVar = 'Kontr'))
+RegDatau112 <- RegData[!(is.na(RegData$CNum) & RegData$ControlStatus==0), ]
 
 AlleTab <- nordicscir::getRealData(register = 'norscir')
 AlleTab <- nordicscir::processAllData(AlleTab, register = 'norscir')
@@ -23,6 +24,8 @@ AlleTab <- nordicscir::getRealData(register = 'norscir')
 attach(AlleTab)
 dim(KontrollH)
 DataKtr <- rapbase::loadRegData(registryName = 'data', query = 'select *  FROM control_form', dbType="mysql") #2614
+DataKtr <- DataKtr[DataKtr$CNeuExmDt >=  '2024-01-01', ]
+DataKtr <- DataKtr[!is.na(DataKtr$CNum), ]
 
 DataHovedKtr <- NSRegDataSQL(valgtVar = 'KontXX') #1928
 # Kontrollskjema som ikke er knyttet til hovedskjema:

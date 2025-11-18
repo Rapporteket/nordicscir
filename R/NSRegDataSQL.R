@@ -415,7 +415,7 @@ Kont.CAis
   RegData <- rapbase::loadRegData(registryName = 'data', query = query, dbType="mysql")
 
   if (valgtSkjema=='Kont' | koblSkjema=='Kont'){
-    RegData <- RegData[!is.na(RegData$CNum), ]
+    RegData <- RegData[!(is.na(RegData$CNum) & RegData$ControlStatus==0), ]
   # RegData <- RegData[RegData$ControlStatus==0, ] #Bare de med gjennomført kontroll, 0-Aktiv, 1-Avbrutt
 }
 

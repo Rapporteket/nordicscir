@@ -816,7 +816,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
 
   if (valgtVar == 'KontrKompl'){
     tittel <- 'Komplikasjoner, kontroll ?'
-    RegData <- RegData[which(RegData$ControlStatus==0 & RegData$Creation >= 2022), ]
+    RegData <- RegData[which(RegData$ControlStatus==0 & RegData$KontCreationDate >= '2023-02-15'), ]
     RegData$Alder <- RegData$PatientAgeKont #For å få filtrering på alder ved kontroll, ikke innleggelse
     flerevar <- 1
     retn <- 'H'
