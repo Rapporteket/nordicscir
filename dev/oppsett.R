@@ -19,7 +19,7 @@ attach(AlleTab)
 reshID <- 106896
 
 #Div undersøkelse av kontroller:
-
+library(nordicscir)
 AlleTab <- nordicscir::getRealData(register = 'norscir')
 attach(AlleTab)
 dim(KontrollH)

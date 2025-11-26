@@ -776,10 +776,10 @@ ui_norscir <- function() {
 #' @export
 server_norscir <- function(input, output, session) {
 
-rapbase::appLogger(
-  session = session,
-  msg = "Starter norscir-app'en"
-)
+# rapbase::appLogger(
+#   session = session,
+#   msg = "Starter norscir-app'en"
+# )
 
   isGetDataOk <- TRUE
   isprocessAllDataOk <- TRUE
