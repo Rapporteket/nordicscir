@@ -90,8 +90,8 @@ NSUtvalgEnh <- function(RegData, datoFra='2010-01-01', datoTil=Sys.Date(), datoU
 
   #Enhetsutvalg:
   #Benytter variabelen LandKode til å sjekke om det er nordiske eller norske data
-  nordisk <- ifelse(sum(as.numeric(unique(RegData$LandKode)))==1, 0, 1)
-  alleTxt <- ifelse(sum(as.numeric(unique(RegData$LandKode)))==1, 'Hele landet', 'Hele Norden')
+  nordisk <- ifelse(sum(as.numeric(unique(RegData$LandKode)), na.rm = T)==1, 0, 1)
+  alleTxt <- ifelse(sum(as.numeric(unique(RegData$LandKode)), na.rm = T)==1, 'Hele landet', 'Hele Norden')
 
   indEgen1 <- match(reshID, RegData$ReshId)
 
