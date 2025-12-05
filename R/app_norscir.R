@@ -202,10 +202,10 @@ ui_norscir <- function() {
               "EQ5D: Daglige gjøremål" = "Eq5dQ3UsualActivities",
               "EQ5D: Smerter, ubehag" = "Eq5dQ4PainDiscomfort",
               "EQ5D: Angst og depresjon" = "Eq5dQ5AnxietyDepression",
-              "EQ5D: Generell helsetilstand" = "Eq5dQ6HealthToday",
-              "Kontroll: Hvordan ble kontrollen gjennomført?" = "KontUtfHvordan",
-              "Kontroll: Komplikasjoner" = "KontrKompl",
-              "Kontroll: Årsak, ikke gj.ført kontroll" = "KontControlInterruptedReason"
+              "EQ5D: Generell helsetilstand" = "Eq5dQ6HealthToday"
+              # "Kontroll: Hvordan ble kontrollen gjennomført?" = "KontUtfHvordan",
+              # "Kontroll: Komplikasjoner" = "KontrKompl",
+              # "Kontroll: Årsak, ikke gj.ført kontroll" = "KontControlInterruptedReason"
             ),
              selected = c("Registreringsforsinkelse" = "RegForsinkelse")
           ),
@@ -368,9 +368,8 @@ ui_norscir <- function() {
 
 
       #----------Andeler-----------------------------
-      tabPanel(p("Andeler: per sykehus og tid", title='Alder, antibiotika, ASA, fedme, gjennomføringsgrad, komplikasjoner,
-           konvertering, oppfølging, registreringsforsinkelse, komplikasjoner, TSS2, utdanning'),
-               h2("Sykehusvise andeler og utvikling over tid for valgt variabel", align='center'),
+      tabPanel(p("Andeler: per sykehus", title=''),
+               h2("Sykehusvise andeler for valgt variabel", align='center'), #og utvikling over tid
                h5("Hvilken variabel man ønsker å se resultater for, velges fra rullegardinmenyen
             til venstre. Man kan også gjøre ulike filtreringer.", align='center'),
                br(),
@@ -390,20 +389,19 @@ ui_norscir <- function() {
                  # selectInput(inputId = "bildeformatAndel",
                  #             label = "Velg format for nedlasting av figur",
                  #             choices = c('pdf', 'png', 'jpg', 'bmp', 'tif', 'svg')),
-                 br(),
-                 br(),
-                 p(em('Følgende utvalg gjelder bare figuren/tabellen som viser utvikling over tid')),
-                 selectInput(inputId = 'enhetsUtvalgAndel', label='Egen enhet og/eller landet',
-                             choices = c("Egen mot resten av landet"=1, "Hele landet"=0, "Egen enhet"=2)),
-                 selectInput(inputId = "tidsenhetAndel", label="Velg tidsenhet",
-                             choices = rev(tidsenheter))
+                 br()
+                 # p(em('Følgende utvalg gjelder bare figuren/tabellen som viser utvikling over tid')),
+                 # selectInput(inputId = 'enhetsUtvalgAndel', label='Egen enhet og/eller landet',
+                 #             choices = c("Egen mot resten av landet"=1, "Hele landet"=0, "Egen enhet"=2)),
+                 # selectInput(inputId = "tidsenhetAndel", label="Velg tidsenhet",
+                 #             choices = rev(tidsenheter))
                ),
                mainPanel(
                  tabsetPanel(
                    tabPanel("Figurer",
-                            h3(em("Utvikling over tid")),
-                            br(),
-                            h4('Kommer...'),
+                            # h3(em("Utvikling over tid")),
+                            # br(),
+                            # h4('Kommer...'),
                             #plotOutput("andelTid", height = 'auto'),
                             #downloadButton('LastNedFigAndelTid', label='Velg format (til venstre) og last ned figur'),
                             br(),
