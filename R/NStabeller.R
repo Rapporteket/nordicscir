@@ -97,13 +97,16 @@ tabAntOpphShTid <- function(RegData, datoTil=Sys.Date(), tidsenhet='Aar', antTid
                          traume=traume)$RegData
 
   tid <- SorterOgNavngiTidsEnhet(RegData, tidsenhet=tidsenhet, tab=0, datoUt=datoUt)
-  sluttTid <- max(tid$RegData$TidsEnhetSort)
-  startTid <- sluttTid-antTidsenh+1
   RegData <- tid$RegData
+  sluttTid <- max(RegData$TidsEnhetSort)
+  antTidsenh <- min(antTidsenh, sluttTid)
+  startTid <- sluttTid-antTidsenh+1
+  indMed <- startTid:sluttTid
+
   tabAvdTid <- table(RegData[ , c('ShNavn', 'TidsEnhet')])
 
-  colnames(tabAvdTid) <- tid$tidtxt
-  tabAvdTid <- tabAvdTid[ ,startTid:sluttTid] #Filtrering bør komme tidligere...
+  tabAvdTid <- tabAvdTid[ ,indMed] #Filtrering bør komme tidligere...
+  colnames(tabAvdTid) <- tid$tidtxt[indMed]
   tabAvdTid <- addmargins(tabAvdTid)
   tabAvdTid <- xtable::xtable(tabAvdTid)
 

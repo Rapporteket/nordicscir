@@ -700,31 +700,6 @@ server_nordicscir <- function(input, output, session) {
   })
   shiny::observe({
     if (isDataOk) {
-      # tabAntOpphShMndAar <-
-      #   switch(
-      #     input$tidsenhetReg,
-      #     Mnd = tabAntOpphShMnd(
-      #       RegData = HovedSkjema,
-      #       datoTil = input$sluttDatoReg,
-      #       traume = input$traumeReg,
-      #       antMnd = 12
-      #     ),
-      #     Aar = tabAntOpphShAar(
-      #       RegData = HovedSkjema,
-      #       datoTil = input$sluttDatoReg,
-      #       traume = input$traumeReg
-      #     )
-      #   )
-      #
-      # output$tabAntOpphShMnd12 <- shiny::renderTable(
-      #   tabAntOpphShMndAar, rownames = TRUE, digits = 0, spacing = "xs"
-      # )
-      # output$lastNed_tabAntOpph <- shiny::downloadHandler(
-      #   filename = function() {paste0("tabAntOpph.csv")},
-      #   content = function(file, filename) {
-      #     write.csv2(tabAntOpphShMndAar, file, row.names = TRUE, na = "")
-      #   }
-      # )
       tabAntOpphShTid <- tabAntOpphShTid(RegData=HovedSkjema,
                                          datoTil=input$sluttDatoReg,
                                          tidsenhet = input$tidsenhetReg,

@@ -13,15 +13,14 @@ nordicscir::kjor_NSapper(register = "norscir", browser = TRUE)
 RegData <- nordicscir::NSPreprosesser(RegData=nordicscir::NSRegDataSQL(valgtVar = 'Kontr'))
 RegDatau112 <- RegData[!(is.na(RegData$CNum) & RegData$ControlStatus==0), ]
 
-AlleTab <- nordicscir::getRealData(register = 'norscir')
-AlleTab <- nordicscir::processAllData(AlleTab, register = 'norscir')
+reg = 'nordicscir'
+AlleTab <- nordicscir::getRealData(register = reg)
+AlleTab <- nordicscir::processAllData(AlleTab, register = reg)
 attach(AlleTab)
 reshID <- 106896
+RegData <- HovedSkjema
 
 #Div undersøkelse av kontroller:
-
-AlleTab <- nordicscir::getRealData(register = 'norscir')
-attach(AlleTab)
 dim(KontrollH)
 DataKtr <- rapbase::loadRegData(registryName = 'data', query = 'select *  FROM control_form', dbType="mysql") #2614
 DataKtr <- DataKtr[DataKtr$CNeuExmDt >=  '2024-01-01', ]
