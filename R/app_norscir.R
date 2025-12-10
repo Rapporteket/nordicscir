@@ -1714,7 +1714,7 @@ server_norscir <- function(input, output, session) {
         paramNames = c("rnwFil", "reshID", "register"),
         paramValues = c("NSsamleRapp.Rnw", 0, 'norscir')
       ),
-      runAutoReportButton = TRUE
+      runAutoReportButton = (Sys.getenv("R_RAP_INSTANCE") == "QAC")
     ),
     orgs = orgs,
     eligible = vis_rapp,
@@ -1759,7 +1759,7 @@ server_norscir <- function(input, output, session) {
       )
     ),
     user = user,
-    runAutoReportButton = TRUE
+    runAutoReportButton = (Sys.getenv("R_RAP_INSTANCE") == "QAC")
   )
 
     #----------- Eksport ----------------
