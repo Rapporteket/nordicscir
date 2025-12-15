@@ -1696,7 +1696,7 @@ server_norscir <- function(input, output, session) {
   })
   rapbase::autoReportServer(
     id = "NSuts",
-    registryName = "nordicscir",
+    registryName = "norscir",
     type = "dispatchment",
     org = org$value,
     paramNames = paramNames,
@@ -1704,16 +1704,17 @@ server_norscir <- function(input, output, session) {
     reports = list(
       MndRapp = list(
         synopsis = "Rapporteket-NorSCIR: Månedsrapport",
-        fun = "abonnement",
+        fun = "nordicscir::abonnement",
         paramNames = c('rnwFil', "reshID", "register"),
         paramValues = c('NSmndRapp.Rnw', 0, 'norscir')
       ),
       SamleRapp = list(
         synopsis = "Rapporteket-NorSCIR: Rapport, div. resultater",
-        fun = "abonnement",
+        fun = "nordicscir::abonnement",
         paramNames = c("rnwFil", "reshID", "register"),
         paramValues = c("NSsamleRapp.Rnw", 0, 'norscir')
-      )
+      ),
+      runAutoReportButton = (Sys.getenv("R_RAP_INSTANCE") == "QAC")
     ),
     orgs = orgs,
     eligible = vis_rapp,
@@ -1744,7 +1745,7 @@ server_norscir <- function(input, output, session) {
 
   rapbase::autoReportServer(
     id = "ns-subscription",
-    registryName = "nordicscir", #Must correspond to the registry R package name.
+    registryName = "norscir",
     type = "subscription",
     paramNames = paramNamesAbb,
     paramValues = paramValuesAbb,
@@ -1752,12 +1753,13 @@ server_norscir <- function(input, output, session) {
       # `Månedsrapport` = list(
       Maanedsrapport = list(
           synopsis = "Rapporteket-NorSCIR: månedsrapport, abonnement",
-        fun = "abonnement",
+        fun = "nordicscir::abonnement",
         paramNames = c("rnwFil", "reshID", "register"),
         paramValues = c("NSmndRapp.Rnw", 0, 'norscir')
       )
     ),
-    user = user
+    user = user,
+    runAutoReportButton = (Sys.getenv("R_RAP_INSTANCE") == "QAC")
   )
 
     #----------- Eksport ----------------
