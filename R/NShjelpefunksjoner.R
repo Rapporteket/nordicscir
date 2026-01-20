@@ -11,18 +11,17 @@ kjor_NSapper <- function(register = 'norscir', browser = FALSE, logAsJson = FALS
   if (logAsJson) {
     rapbase::loggerSetup()
   }
+  if (browser) {
+    options(shiny.launch.browser = TRUE)
+  }
   app <- switch(register,
                 'norscir' = shiny::shinyApp(
                   ui = nordicscir::ui_norscir,
-                  server = nordicscir::server_norscir,
-                  # ui = norscir::ui_norscir,
-                  # server = norscir::server_norscir,
-                  options = list(launch.browser = browser)
+                  server = nordicscir::server_norscir
                 ),
                 'nordicscir' = shiny::shinyApp(
                   ui = nordicscir::ui_nordicscir,
-                  server = nordicscir::server_nordicscir,
-                  options = list(launch.browser = browser)
+                  server = nordicscir::server_nordicscir
                 )
   )
 
