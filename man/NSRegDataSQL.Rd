@@ -19,8 +19,8 @@ Variabler uten prefiks hentes fra hovedtabellen (Main...)}
 
 \item{register}{Hvilket register det skal hentes data for: 'norscir' (standard) eller 'nordicscir'}
 
-\item{koblSkjema}{Hvilket skjema skal regnes som "hovedskjema". Standard: 'Hoved' (spinal_cord_injury_core_data_set),
-'Kont' (control_form). Bare NorScir har kontrollskjema}
+\item{koblSkjema}{Hvilket skjema skal regnes som "hovedskjema". Standard: 'Hoved' (spinal_cord_injury_core_data_set_1),
+'Kont' (control_form_2). Bare NorScir har kontrollskjema}
 }
 \value{
 RegData data frame
@@ -30,14 +30,14 @@ Spørring som henter og kobler sammen data fra ulike skjema i valgt register
 }
 \details{
 Aktuelle skjema:
-spinal_cord_injury_core_data_set: HOVEDSKJEMA
-bowel_function: Tarmfunksjon (?)
-registration_of_quality_of_life: Livskvalitet
-lower_urinary_tract_function: Urinfunksjon
-activities_and_participation_performance: Aktivitetsfunksjon.
+spinal_cord_injury_core_data_set_1: HOVEDSKJEMA
+bowel_function_5: Tarmfunksjon (?)
+registration_of_quality_of_life_3: Livskvalitet
+lower_urinary_tract_function_4: Urinfunksjon
+activities_and_participation_performance_6: Aktivitetsfunksjon.
      Skjema kun i det norske registeret
-activities_and_participation_satisfaction: Aktivitetsfornøydhet.
+activities_and_participation_satisfaction_7: Aktivitetsfornøydhet.
      Skjema kun i det norske registeret
-control_form: Kontroll. Noen variable er oppfølging av målinger i hovedskjema.
+control_form_2: Kontroll. Noen variable er oppfølging av målinger i hovedskjema.
      Skjema kun i det norske registeret
 }
