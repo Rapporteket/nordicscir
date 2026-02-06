@@ -2,7 +2,7 @@ Package: nordicscir
 Type: Package
 Title: R-pakke for å generere resultater fra NordicScir
 Version: 4.3.2
-Date: 2026-02-66
+Date: 2026-02-06
 Authors@R: c(
      person(given = "Lena Ringstad",
            family = "Olsen",
