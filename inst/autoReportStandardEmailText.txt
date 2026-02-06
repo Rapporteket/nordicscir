@@ -4,10 +4,10 @@ Vedlegg til denne eposten inneholder resultater fra Norsk ryggmargsskaderegister
 Rapporten er bestilt av deg eller av en som administrerer registeret.
 
 Om du ikke ønsker å motta denne rapporten eller har spørsmål om rapporten eller innholdet, kan du ta kontakt med
-NorScir på epost: NorSCIR@stolav.no
+NordicSCIR på epost: NordicSCIR@stolav.no
 
 Nærmere info om registeret finner du her:
-www.stolav.no/norscir
+www.nordicscir.no
 
 
 Denne eposten inneholder ikke sensitive helseopplysninger. Forespørsler til avsender av denne eposten vil ikke bli besvart.
@@ -15,3 +15,17 @@ Denne eposten inneholder ikke sensitive helseopplysninger. Forespørsler til avs
 Vennlig hilsen
 Rapporteket - en resultattjeneste for medisinske kvalitetsregistre
 
+
+This email contains results from medical registries as requested by you or a person acting on your behalf.
+If you have questions or do not want to receive such emails please contact
+NordicSCIR by email: NordicSCIR@stolav.no
+
+You can find further information about the registry on this web page:
+www.nordicscir.no
+
+This email does not contain any health related data that void Norwegian legal privacy regulations.
+Requests to the sender of this email will not be responded to.
+
+
+RAPPORTEKET
+reporting service for medical quality registries
