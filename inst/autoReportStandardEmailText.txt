@@ -20,7 +20,7 @@ The report has been commissioned either by you or by an individual responsible f
 If you do not wish to receive this report or have questions about the report or its content, you can contact NordicScir by email: NorSCIR@stolav.no
 
 Further information about the registry is available at:
-www.nordicscir.no
+https://www.nordicscir.no
 
 This email does not contain sensitive health information. Requests to the sender of this email will not be answered.
 
