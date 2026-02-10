@@ -1,5 +1,6 @@
 
-Sys.setenv(FALK_EXTENDED_USER_RIGHTS="[{\"A\":80,\"R\":\"SC\",\"U\":105593},{\"A\":80,\"R\":\"LC\",\"U\":106896},{\"A\":81,\"R\":\"LC\",\"U\":2}]")
+Sys.setenv(FALK_EXTENDED_USER_RIGHTS="[{\"A\":80,\"R\":\"SC\",\"U\":105593},{\"A\":80,\"R\":\"LC\",\"U\":106896},
+           {\"A\":80,\"R\":\"SC\",\"U\":40000001}]")
 Sys.setenv(MYSQL_DB_DATA="nordicscir")
 #Sys.setenv(MYSQL_DB_DATA="nordicscirreportdatastaging")
 Sys.setenv(FALK_APP_ID="80")

@@ -156,11 +156,13 @@ ui_norscir <- function() {
               "Ais ved innleggelse" = "AAis" ,
               "Ais ved utskriving" = "FAis",
               "Anbefalt tid til kontroll" = "AnbefTidKtr",
+              'BMI ved innleggelse' = 'ABMI',
+              'BMI ved utskriving' = 'FBMI',
               "Lengde på rehab.opphold" = "DagerRehab",
               "Opphold, totalt antall dager" = "OpphTot",
               "Operasjon på ryggsøylen" = "SpnlSurg2",
               "Planlagt utskrevet til" = "PPlaceDis",
-              "Pustehjelp (f.o.m. 2024)" = "VentAssi2",
+              "Ventilasjonsstøtte (f.o.m 2025)" = "VentAssi2",
               "Registreringsforsinkelse" = "RegForsinkelse",
               "Komplikasjoner, primæropph" = "KomplPrim",
               "Skadeårsak " = "SkadeArsak",
@@ -191,6 +193,7 @@ ui_norscir <- function() {
               "Tarm: Avføringsmiddelbruk" = "TarmAvfmiddel",
               "Tarm: Avføringsmidler, hvilke" = "TarmAvfmiddelHvilke",
               "Tarm: Fekal inkontinens (fra 2019)" = "TarmInkontinensFra2019",
+              "Tarm: Fekal inkontinens (før 2019)" = "TarmInkontinensTom2018",
               "Tarm: Kirurgisk inngrep" = "TarmKirInngrep",
               "Tarm: Kirurgiske inngrep, hvilke" = "TarmKirInngrepHvilke",
               "Tarm: NBD" = "TarmNBD",
@@ -199,9 +202,10 @@ ui_norscir <- function() {
               "EQ5D: Daglige gjøremål" = "Eq5dQ3UsualActivities",
               "EQ5D: Smerter, ubehag" = "Eq5dQ4PainDiscomfort",
               "EQ5D: Angst og depresjon" = "Eq5dQ5AnxietyDepression",
-              "EQ5D: Generell helsetilstand" = "Eq5dQ6HealthToday",
-              "Kontroll: Komplikasjoner" = "KontrKompl",
-              "Kontroll: Årsak, ikke gj.ført kontroll" = "KontControlInterruptedReason"
+              "EQ5D: Generell helsetilstand" = "Eq5dQ6HealthToday"
+              # "Kontroll: Hvordan ble kontrollen gjennomført?" = "KontUtfHvordan",
+              # "Kontroll: Komplikasjoner" = "KontrKompl",
+              # "Kontroll: Årsak, ikke gj.ført kontroll" = "KontControlInterruptedReason"
             ),
              selected = c("Registreringsforsinkelse" = "RegForsinkelse")
           ),
@@ -304,7 +308,7 @@ ui_norscir <- function() {
                    selectInput(
                      inputId = "valgtVarPP",
                      label="Velg variabel ",
-                     choices = c("AIS, utskriving/kontroll"="KontFAis",
+                     choices = c(# "AIS, utskriving/kontroll"="KontFAis",
                                  "Utskrevet til "="KontUtTil")
                    )),
                  conditionalPanel(
@@ -352,21 +356,20 @@ ui_norscir <- function() {
                              downloadButton(
                                outputId = "lastNed_figfordPrePost", label="Last ned figur"
                              )
-                   ),
-                   tabPanel('Stabelplott, før/etter',
-                            plotOutput("figStabelPrePost", height = "auto"),
-                            downloadButton(
-                              outputId = "lastNed_figStabelPrePost", label="Last ned figur"
-                            )
-                   )
+                   ) # ,
+                   # tabPanel('Stabelplott, før/etter',
+                   #          plotOutput("figStabelPrePost", height = "auto"),
+                   #          downloadButton(
+                   #            outputId = "lastNed_figStabelPrePost", label="Last ned figur"
+                   #          )
+                   # )
                  ) ) #main
       ), #Resultater over tid
 
 
       #----------Andeler-----------------------------
-      tabPanel(p("Andeler: per sykehus og tid", title='Alder, antibiotika, ASA, fedme, gjennomføringsgrad, komplikasjoner,
-           konvertering, oppfølging, registreringsforsinkelse, komplikasjoner, TSS2, utdanning'),
-               h2("Sykehusvise andeler og utvikling over tid for valgt variabel", align='center'),
+      tabPanel(p("Andeler: per sykehus", title=''),
+               h2("Sykehusvise andeler for valgt variabel", align='center'), #og utvikling over tid
                h5("Hvilken variabel man ønsker å se resultater for, velges fra rullegardinmenyen
             til venstre. Man kan også gjøre ulike filtreringer.", align='center'),
                br(),
@@ -386,31 +389,30 @@ ui_norscir <- function() {
                  # selectInput(inputId = "bildeformatAndel",
                  #             label = "Velg format for nedlasting av figur",
                  #             choices = c('pdf', 'png', 'jpg', 'bmp', 'tif', 'svg')),
-                 br(),
-                 br(),
-                 p(em('Følgende utvalg gjelder bare figuren/tabellen som viser utvikling over tid')),
-                 selectInput(inputId = 'enhetsUtvalgAndel', label='Egen enhet og/eller landet',
-                             choices = c("Egen mot resten av landet"=1, "Hele landet"=0, "Egen enhet"=2)),
-                 selectInput(inputId = "tidsenhetAndel", label="Velg tidsenhet",
-                             choices = rev(tidsenheter))
+                 br()
+                 # p(em('Følgende utvalg gjelder bare figuren/tabellen som viser utvikling over tid')),
+                 # selectInput(inputId = 'enhetsUtvalgAndel', label='Egen enhet og/eller landet',
+                 #             choices = c("Egen mot resten av landet"=1, "Hele landet"=0, "Egen enhet"=2)),
+                 # selectInput(inputId = "tidsenhetAndel", label="Velg tidsenhet",
+                 #             choices = rev(tidsenheter))
                ),
                mainPanel(
                  tabsetPanel(
                    tabPanel("Figurer",
-                            h3(em("Utvikling over tid")),
-                            br(),
-                            h4('Kommer...'),
+                            # h3(em("Utvikling over tid")),
+                            # br(),
+                            # h4('Kommer...'),
                             #plotOutput("andelTid", height = 'auto'),
                             #downloadButton('LastNedFigAndelTid', label='Velg format (til venstre) og last ned figur'),
                             br(),
                             h3(em("Sykehusvise resultater")),
                             plotOutput("andelerGrVar", height='auto'),
                             #downloadButton('LastNedFigAndelGrVar', label='Velg format (til venstre) og last ned figur')
-                   ),
-                    tabPanel("Tabeller",
-                             uiOutput("tittelAndel"),
-                             br(),
-                             h3('Her kan det komme en tabell med verdier fra figuren på forrige side')
+                   ) # ,
+                    # tabPanel("Tabeller",
+                    #          uiOutput("tittelAndel"),
+                    #          br(),
+                    #          h3('Her kan det komme en tabell med verdier fra figuren på forrige side')
                    #          column(width = 4,
                    #                 h3("Sykehusvise resultater"),
                    #                 tableOutput("andelerGrVarTab"),
@@ -420,7 +422,7 @@ ui_norscir <- function() {
                    #                 h3("Utvikling over tid"),
                    #                 tableOutput("andelTidTab"),
                    #                 downloadButton(outputId = 'lastNed_tabAndelTid', label='Last ned tabell'))
-                    ))
+                    ) #)
                ) #mainPanel
 
       ), #tab
@@ -579,7 +581,7 @@ ui_norscir <- function() {
             shiny::selectInput(
               inputId = "tidsenhetReg",
               label="Velg tidsenhet",
-              choices = tidsenheter #rev(c("År"= "Aar", "Måned"="Mnd"))
+              choices = tidsenheter
           ),
           shiny::selectInput(
             inputId = "antTidsenhReg",
@@ -772,10 +774,10 @@ ui_norscir <- function() {
 #' @export
 server_norscir <- function(input, output, session) {
 
-rapbase::appLogger(
-  session = session,
-  msg = "Starter norscir-app'en"
-)
+# rapbase::appLogger(
+#   session = session,
+#   msg = "Starter norscir-app'en"
+# )
 
   isGetDataOk <- TRUE
   isprocessAllDataOk <- TRUE
@@ -1694,7 +1696,7 @@ rapbase::appLogger(
   })
   rapbase::autoReportServer(
     id = "NSuts",
-    registryName = "nordicscir",
+    registryName = "norscir",
     type = "dispatchment",
     org = org$value,
     paramNames = paramNames,
@@ -1702,16 +1704,17 @@ rapbase::appLogger(
     reports = list(
       MndRapp = list(
         synopsis = "Rapporteket-NorSCIR: Månedsrapport",
-        fun = "abonnement",
+        fun = "nordicscir::abonnement",
         paramNames = c('rnwFil', "reshID", "register"),
         paramValues = c('NSmndRapp.Rnw', 0, 'norscir')
       ),
       SamleRapp = list(
         synopsis = "Rapporteket-NorSCIR: Rapport, div. resultater",
-        fun = "abonnement",
+        fun = "nordicscir::abonnement",
         paramNames = c("rnwFil", "reshID", "register"),
         paramValues = c("NSsamleRapp.Rnw", 0, 'norscir')
-      )
+      ),
+      runAutoReportButton = (Sys.getenv("R_RAP_INSTANCE") == "QAC")
     ),
     orgs = orgs,
     eligible = vis_rapp,
@@ -1742,7 +1745,7 @@ rapbase::appLogger(
 
   rapbase::autoReportServer(
     id = "ns-subscription",
-    registryName = "nordicscir", #Must correspond to the registry R package name.
+    registryName = "norscir",
     type = "subscription",
     paramNames = paramNamesAbb,
     paramValues = paramValuesAbb,
@@ -1750,20 +1753,23 @@ rapbase::appLogger(
       # `Månedsrapport` = list(
       Maanedsrapport = list(
           synopsis = "Rapporteket-NorSCIR: månedsrapport, abonnement",
-        fun = "abonnement",
+        fun = "nordicscir::abonnement",
         paramNames = c("rnwFil", "reshID", "register"),
         paramValues = c("NSmndRapp.Rnw", 0, 'norscir')
       )
     ),
-    user = user
+    user = user,
+    runAutoReportButton = (Sys.getenv("R_RAP_INSTANCE") == "QAC")
   )
 
     #----------- Eksport ----------------
   ## brukerkontroller
-  rapbase::exportUCServer("norscirExport",
-                          registryName = 'norscir', #i dbConfig
-                          repoName = 'nordicscir') #pakke, for tilhørighet på github
+  rapbase::exportUCServer(
+    "norscirExport",
+    "norscir", # databasenavn
+    "nordicscir" # navn på team, for tilhørighet på github
+  )
   ## veileding
   rapbase::exportGuideServer("norscirExportGuide",
-                             registryName = 'norscir')
+                             "norscir")
 }

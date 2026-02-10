@@ -95,7 +95,7 @@ NSFigAndelerSh <- function(RegData, outfile='', valgtVar='Alder',
             RegData <- Utvalg$RegData
             utvalgTxt <- Utvalg$utvalgTxt
             #Benytter variabelen LandKode til å sjekke om det er nordiske eller norske data
-            nordisk <- ifelse(sum(as.numeric(unique(RegData$LandKode)))==1, 0, 1)
+            nordisk <- ifelse(sum(as.numeric(unique(RegData$LandKode)), na.rm = T)==1, 0, 1)
             grVar <- c('ShNavn', 'Land')[nordisk+1]
             RegData$GrVar <- as.factor(RegData[ ,grVar])
 

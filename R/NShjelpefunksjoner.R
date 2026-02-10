@@ -11,18 +11,17 @@ kjor_NSapper <- function(register = 'norscir', browser = FALSE, logAsJson = FALS
   if (logAsJson) {
     rapbase::loggerSetup()
   }
+  if (browser) {
+    options(shiny.launch.browser = TRUE)
+  }
   app <- switch(register,
                 'norscir' = shiny::shinyApp(
                   ui = nordicscir::ui_norscir,
-                  server = nordicscir::server_norscir,
-                  # ui = norscir::ui_norscir,
-                  # server = norscir::server_norscir,
-                  options = list(launch.browser = browser)
+                  server = nordicscir::server_norscir
                 ),
                 'nordicscir' = shiny::shinyApp(
                   ui = nordicscir::ui_nordicscir,
-                  server = nordicscir::server_nordicscir,
-                  options = list(launch.browser = browser)
+                  server = nordicscir::server_nordicscir
                 )
   )
 
@@ -51,6 +50,7 @@ SorterOgNavngiTidsEnhet <- function(RegData, tidsenhet='Aar', tab=0, datoUt=0) {
 
 
   #Lager sorteringsvariabel for tidsenhet:
+  AarMReg <- min(RegData$Aar):max(RegData$Aar)
   RegData$TidsEnhetSort <- switch(tidsenhet,
                                   Aar = RegData$Aar-min(RegData$Aar)+1,
                                   Mnd = RegData$MndNum-min(RegData$MndNum[RegData$Aar==min(RegData$Aar)])+1
@@ -60,22 +60,32 @@ SorterOgNavngiTidsEnhet <- function(RegData, tidsenhet='Aar', tab=0, datoUt=0) {
                                   Halvaar = RegData$Halvaar-min(RegData$Halvaar[RegData$Aar==min(RegData$Aar)])+1+
                                     (RegData$Aar-min(RegData$Aar))*2
   )
-
-      tidtxt <- switch(tidsenhet,
+  tidsenhetTxt <- ifelse(tidsenhet=='Halvaar', 'Kvartal', tidsenhet)
+      tidtxt <- switch(tidsenhetTxt,
                        Mnd = format.Date(seq(from=lubridate::floor_date(as.Date(min(as.Date(RegData$RapDato), na.rm = T)), 'month'),
                                              to=max(as.Date(RegData$RapDato), na.rm = T), by='month'), format = '%B%y'), #Hele måneden
                        Kvartal = unique(c(lubridate::quarter(seq.Date(as.Date(lubridate::floor_date(min(RegData$RapDato), 'month')),
                                                              max(RegData$RapDato),
                                                  by = "quarter"), with_year = T),
                                           lubridate::quarter(max(RegData$RapDato),, with_year = T))),
-                       Halvaar = paste(substr(RegData$Aar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)], 3,4),
-                                       sprintf('%01.0f', RegData$Halvaar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)]), sep='-'),
-                       Aar = min(RegData$Aar):max(RegData$Aar)
+                       # Halvaar = paste(substr(RegData$Aar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)], 3,4),
+                       #                 sprintf('%01.0f', RegData$Halvaar[match(1:max(RegData$TidsEnhetSort), RegData$TidsEnhetSort)]), sep='-'),
+                       Aar = AarMReg
       )
+if (tidsenhet == 'Halvaar') {
+ txt <- as.character(tidtxt)
+  substr(txt, 5,5)  <- '-'
+  txt <- gsub('-2', '-1',txt)
+  txt <- gsub('-3', '-2',txt)
+  txt <- gsub('-4', '-2',txt)
+  tidtxt <- sort(unique(txt))
+}
 
       substrRight <- function(x, n){substr(x, nchar(x)-n+1, nchar(x))}
       if (tidsenhet=='Mnd') {tidtxt <- paste0(substr(tidtxt, 1,3), ' '[tab], substrRight(tidtxt, 2))}
 
+      tekstetiketter <- tidtxt[1:max(RegData$TidsEnhetSort)]
+      #tekstetiketter[is.na(tekstetiketter)] <-
       RegData$TidsEnhet <- factor(RegData$TidsEnhetSort, ordered = TRUE,
                                   levels = min(RegData$TidsEnhetSort):max(RegData$TidsEnhetSort),
                                   labels=tidtxt[1:max(RegData$TidsEnhetSort)])

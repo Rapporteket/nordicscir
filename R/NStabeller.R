@@ -16,7 +16,6 @@ tabBelegg <- function(RegData, tidsenhet='Mnd', datoTil=Sys.Date(), enhetsUtvalg
                         Mnd = lubridate::floor_date(as.Date(datoTil)%m-% months(12, abbreviate = T), 'month'), #as.Date(paste0(as.numeric(substr(datoTil,1,4))-1, substr(datoTil,5,8), '01'), tz='UTC')
                         Aar = paste0(lubridate::year(as.Date(datoTil))-4, '-01-01')
       )
-      #sep23: NSUtvalg -> NSUtvalgEnh
       RegData <- NSUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil = datoTil,
                              enhetsUtvalg = enhetsUtvalg, reshID = reshID)$RegData
       RegData <- SorterOgNavngiTidsEnhet(RegData, tidsenhet=tidsenhet)$RegData
@@ -94,16 +93,20 @@ tabAntOpphShAar <- function(RegData, datoTil=Sys.Date(), antAar=10, traume=''){
 tabAntOpphShTid <- function(RegData, datoTil=Sys.Date(), tidsenhet='Aar', antTidsenh=10,
                                 datoUt=0, traume=''){
 
-  RegData <- NSUtvalgEnh(RegData = RegData, datoTil = datoTil, traume=traume)$RegData
+  RegData <- NSUtvalgEnh(RegData = RegData, datoTil = datoTil, datoUt=datoUt,
+                         traume=traume)$RegData
 
   tid <- SorterOgNavngiTidsEnhet(RegData, tidsenhet=tidsenhet, tab=0, datoUt=datoUt)
-  sluttTid <- max(tid$RegData$TidsEnhetSort)
-  startTid <- sluttTid-antTidsenh+1
   RegData <- tid$RegData
+  sluttTid <- max(RegData$TidsEnhetSort)
+  antTidsenh <- min(antTidsenh, sluttTid)
+  startTid <- sluttTid-antTidsenh+1
+  indMed <- startTid:sluttTid
+
   tabAvdTid <- table(RegData[ , c('ShNavn', 'TidsEnhet')])
 
-  colnames(tabAvdTid) <- tid$tidtxt
-  tabAvdTid <- tabAvdTid[ ,startTid:sluttTid] #Filtrering bør komme tidligere...
+  tabAvdTid <- tabAvdTid[ ,indMed] #Filtrering bør komme tidligere...
+  colnames(tabAvdTid) <- tid$tidtxt[indMed]
   tabAvdTid <- addmargins(tabAvdTid)
   tabAvdTid <- xtable::xtable(tabAvdTid)
 
@@ -160,16 +163,19 @@ tabSkjemaTilknyttet <- function(Data=AlleTab, moderSkjema='Hoved',
                          Livskvalitet = ModerSkjema$SkjemaGUIDHoved %in% Data$LivskvalH$HovedskjemaGUID,
                          Urin = ModerSkjema$SkjemaGUIDHoved %in% Data$UrinH$HovedskjemaGUID,
                          Tarm = ModerSkjema$SkjemaGUIDHoved %in% Data$TarmH$HovedskjemaGUID
+
     )
+    if ('EQ5DH' %in% names(Data)) {
+      RaaTab <- cbind(RaaTab,
+                      Eq5d = ModerSkjema$SkjemaGUIDHoved %in% Data$EQ5DH$HovedskjemaGUID )}
     if ('AktivFunksjonH' %in% names(Data)) {
       RaaTab <- cbind(RaaTab,
                       Funksjon = ModerSkjema$SkjemaGUIDHoved %in% Data$AktivFunksjonH$HovedskjemaGUID,
-                      Tilfredshet = ModerSkjema$SkjemaGUIDHoved %in% Data$AktivTilfredshetH$SkjemaGUID #(SkjemaGUID er fra hovedskjema)
-      )
-    }
+                      Tilfredshet = ModerSkjema$SkjemaGUIDHoved %in% Data$AktivTilfredshetH$SkjemaGUID)} #(SkjemaGUID er fra hovedskjema)
   }
 
   if (moderSkjema == 'Kont') {
+    ModerSkjema <- ModerSkjema[ModerSkjema$ControlStatus==0, ]
     indDato <- which(as.Date(ModerSkjema$CNeuExmDt) >= datoFra &
                        as.Date(ModerSkjema$CNeuExmDt) <= datoTil)
     ModerSkjema <- ModerSkjema[indDato, ]
@@ -177,6 +183,7 @@ tabSkjemaTilknyttet <- function(Data=AlleTab, moderSkjema='Hoved',
                          Livskvalitet = ModerSkjema$SkjemaGUIDKont %in% Data$LivskvalK$HovedskjemaGUID,
                          Urin = ModerSkjema$SkjemaGUIDKont %in% Data$UrinK$HovedskjemaGUID,
                          Tarm = ModerSkjema$SkjemaGUIDKont %in% Data$TarmK$HovedskjemaGUID,
+                         Eq5d = ModerSkjema$SkjemaGUIDKont %in% Data$EQ5DK$HovedskjemaGUID,
                           Funksjon = ModerSkjema$SkjemaGUIDKont %in% Data$AktivFunksjonK$HovedskjemaGUID,
                           Tilfredshet = ModerSkjema$SkjemaGUIDKont %in% Data$AktivTilfredshetK$SkjemaGUID
       )
@@ -206,9 +213,10 @@ tabAntSkjema <- function(Data=AlleTab, datoFra='2017-01-01', datoTil=Sys.Date())
   # sep23: NSUtvalg -> NSUtvalgEnh
       AntSkjema <- rbind(Hovedskjema = table(NSUtvalgEnh(Data$HovedSkjema, datoFra = datoFra, datoTil = datoTil)$RegData$ShNavn),
             Livskvalitet = table(NSUtvalg(Data$LivskvalitetH, datoFra = datoFra, datoTil = datoTil)$RegData$ShNavn),
-                      #Kontroll = table(Data$LivskvalitetH$ShNavn),
-                      Urin = table(NSUtvalgEnh(Data$UrinH, datoFra = datoFra, datoTil = datoTil)$RegData$ShNavn),
-                      Tarm = table(NSUtvalgEnh(Data$TarmH, datoFra = datoFra, datoTil = datoTil)$RegData$ShNavn),
+            #Kontroll = table(Data$LivskvalitetH$ShNavn),
+            Urin = table(NSUtvalgEnh(Data$UrinH, datoFra = datoFra, datoTil = datoTil)$RegData$ShNavn),
+            Tarm = table(NSUtvalgEnh(Data$TarmH, datoFra = datoFra, datoTil = datoTil)$RegData$ShNavn),
+            Eq5d = table(NSUtvalgEnh(Data$EQ5DH, datoFra = datoFra, datoTil = datoTil)$RegData$ShNavn),
                       Funksjon = table(NSUtvalgEnh(Data$FunksjonH, datoFra = datoFra, datoTil = datoTil)$RegData$ShNavn),
                       Tilfredshet = table(NSUtvalgEnh(Data$TilfredsH, datoFra = datoFra, datoTil = datoTil)$RegData$ShNavn)
       )

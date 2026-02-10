@@ -42,17 +42,8 @@ ui_nordicscir <- function() {
     shiny::navbarPage(
       id = "hovedark",
       title = rapbase::title(regTitle),
-      # title = shiny::div(
-      #   shiny::a(
-      #     shiny::includeHTML(
-      #       system.file("www/logo.svg", package = "rapbase")
-      #     )
-      #   ),
-      #   regTitle),
-      # sett inn tittel også i browser-vindu
       windowTitle = regTitle,
-      # velg css (foreløpig den eneste bortsett fra "naken" utgave)
-      theme = rapbase::theme(), # "rap/bootstrap.css",
+      theme = rapbase::theme(),
 
       #----startside--------
       shiny::tabPanel(
@@ -67,21 +58,21 @@ ui_nordicscir <- function() {
           width = 3,
           shiny::br(),
           # Tar bort månedsrapport inntil videre...
-          # shiny::h3("Månedsrapport"), #),
-          # shiny::downloadButton(
-          #   outputId = "mndRapp.pdf",
-          #   label = "Last ned MÅNEDSRAPPORT",
-          #   class = "butt"
-          # ),
-          # shiny::br(),
-          # shiny::br(paste("NB: Nedlasting tar litt tid. I mellomtida får man",
-          #                 "ikke sett på andre resultater.")),
-          # shiny::br(),
-          # shiny::br(paste("Hvis du ønsker månedsrapporten regelmessig tilsendt",
-          #                 "på e-post, kan du gå til fanen 'Abonnement' og",
-          #                 "bestille dette.")),
-          # shiny::br(),
-          # shiny::br(),
+          shiny::h3("Månedsrapport"), #),
+          shiny::downloadButton(
+            outputId = "mndRapp.pdf",
+            label = "Last ned MÅNEDSRAPPORT",
+            class = "butt"
+          ),
+          shiny::br(),
+          shiny::br(paste("NB: Nedlasting tar litt tid. I mellomtida får man",
+                          "ikke sett på andre resultater.")),
+          shiny::br(),
+          shiny::br(paste("Hvis du ønsker månedsrapporten regelmessig tilsendt",
+                          "på e-post, kan du gå til fanen 'Abonnement' og",
+                          "bestille dette.")),
+          shiny::br(),
+          shiny::br(),
           shiny::conditionalPanel(
             condition = "input.startside == 'Status'",
             shiny::h4(
@@ -151,14 +142,13 @@ ui_nordicscir <- function() {
               "Operasjon på ryggsøylen" = "SpnlSurg2",
               "Opphold, totalt antall dager" = "OpphTot",
               "Planlagt utskrevet til" = "PPlaceDis",
-              "Pustehjelp (f.o.m. 2024)" = "VentAssi2",
               "Registreringsforsinkelse" = "RegForsinkelse",
-              "Komplikasjoner, primæropph" = "KomplPrim",
               "Skadeårsak " = "SkadeArsak",
               "Skadeårsak, ikke-traumatisk" = "Ntsci",
               "Tid fra skade til oppstart rehab." = "DagerTilRehab",
               "Tid med rehabilitering" = "DagerRehab",
               "Utskrevet til" = "UtTil",
+              "Ventilasjonsstøtte (f.o.m. 2025)" = "VentAssi2",
               "Livskval.: Tilfredshet med livet" = "LivsGen",
               "Livskval.: Tilfredshet med fysisk helse" = "LivsFys",
               "Livskval.: Tilfredshet med psykisk helse" = "LivsPsyk",
@@ -506,20 +496,20 @@ ui_nordicscir <- function() {
 
         shiny::tabsetPanel(
           id = "ark",
-          shiny::tabPanel(
-            "Månedsrapport",
-            #title = "Månedsrapport",
-          shiny::h3("Månedsrapport"),
-          shiny::sidebarLayout(
-            shiny::sidebarPanel(
-              shiny::downloadButton(
-            outputId = "mndRapp.pdf",
-            label = "Last ned MÅNEDSRAPPORT",
-            class = "butt")
-            ),
-            shiny::mainPanel()
-          )
-          ),
+          # shiny::tabPanel(
+          #   "Månedsrapport",
+          #   #title = "Månedsrapport",
+          # shiny::h3("Månedsrapport"),
+          # shiny::sidebarLayout(
+          #   shiny::sidebarPanel(
+          #     shiny::downloadButton(
+          #   outputId = "mndRapp.pdf",
+          #   label = "Last ned MÅNEDSRAPPORT",
+          #   class = "butt")
+          #   ),
+          #   shiny::mainPanel()
+          # )
+          # ),
 
           shiny::tabPanel(
             "Utsendinger",
@@ -710,31 +700,6 @@ server_nordicscir <- function(input, output, session) {
   })
   shiny::observe({
     if (isDataOk) {
-      # tabAntOpphShMndAar <-
-      #   switch(
-      #     input$tidsenhetReg,
-      #     Mnd = tabAntOpphShMnd(
-      #       RegData = HovedSkjema,
-      #       datoTil = input$sluttDatoReg,
-      #       traume = input$traumeReg,
-      #       antMnd = 12
-      #     ),
-      #     Aar = tabAntOpphShAar(
-      #       RegData = HovedSkjema,
-      #       datoTil = input$sluttDatoReg,
-      #       traume = input$traumeReg
-      #     )
-      #   )
-      #
-      # output$tabAntOpphShMnd12 <- shiny::renderTable(
-      #   tabAntOpphShMndAar, rownames = TRUE, digits = 0, spacing = "xs"
-      # )
-      # output$lastNed_tabAntOpph <- shiny::downloadHandler(
-      #   filename = function() {paste0("tabAntOpph.csv")},
-      #   content = function(file, filename) {
-      #     write.csv2(tabAntOpphShMndAar, file, row.names = TRUE, na = "")
-      #   }
-      # )
       tabAntOpphShTid <- tabAntOpphShTid(RegData=HovedSkjema,
                                          datoTil=input$sluttDatoReg,
                                          tidsenhet = input$tidsenhetReg,
@@ -1315,7 +1280,9 @@ server_nordicscir <- function(input, output, session) {
   #----------- Eksport ----------------
   registryName <- "nordicscir"
   ## brukerkontroller
-  rapbase::exportUCServer("nordicscirExport", registryName)
+  rapbase::exportUCServer("nordicscirExport",
+                          registryName, #databasenavn
+                          registryName) ## navn på team, for tilhørighet på github
 
   ## veileding
   rapbase::exportGuideServer("nordicscirExportGuide", registryName)
