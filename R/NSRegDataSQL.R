@@ -3,36 +3,36 @@
 #' Spørring som henter og kobler sammen data fra ulike skjema i valgt register
 #'
 #' Aktuelle skjema:
-#' spinal_cord_injury_core_data_set: HOVEDSKJEMA
-#' bowel_function: Tarmfunksjon (?)
-#' registration_of_quality_of_life: Livskvalitet
-#' lower_urinary_tract_function: Urinfunksjon
-#' activities_and_participation_performance: Aktivitetsfunksjon.
+#' spinal_cord_injury_core_data_set_1: HOVEDSKJEMA
+#' bowel_function_5: Tarmfunksjon (?)
+#' registration_of_quality_of_life_3: Livskvalitet
+#' lower_urinary_tract_function_4: Urinfunksjon
+#' activities_and_participation_performance_6: Aktivitetsfunksjon.
 #'      Skjema kun i det norske registeret
-#' activities_and_participation_satisfaction: Aktivitetsfornøydhet.
+#' activities_and_participation_satisfaction_7: Aktivitetsfornøydhet.
 #'      Skjema kun i det norske registeret
-#' control_form: Kontroll. Noen variable er oppfølging av målinger i hovedskjema.
+#' control_form_2: Kontroll. Noen variable er oppfølging av målinger i hovedskjema.
 #'      Skjema kun i det norske registeret
 #' @param valgtVar Valg av variabel angir hvilket skjema som skal knyttes til hovedskjema
 #'        siden de fire første bokstavene i variabelnavnet utgjør et prefiks for
 #'        å identifisere hvilken tabell variabelen skal hentes fraaktuell tabell. Eks LivsAlder
 #'        Variabler uten prefiks hentes fra hovedtabellen (Main...)
 #' @param register Hvilket register det skal hentes data for: 'norscir' (standard) eller 'nordicscir'
-#' @param koblSkjema Hvilket skjema skal regnes som "hovedskjema". Standard: 'Hoved' (spinal_cord_injury_core_data_set),
-#'  'Kont' (control_form). Bare NorScir har kontrollskjema
+#' @param koblSkjema Hvilket skjema skal regnes som "hovedskjema". Standard: 'Hoved' (spinal_cord_injury_core_data_set_1),
+#'  'Kont' (control_form_2). Bare NorScir har kontrollskjema
 #' @return RegData data frame
 #' @export
 
 NSRegDataSQL <- function(valgtVar='Alder', register='norscir', koblSkjema = 'Hoved', ...) {
 
-  #HovedSkjema: spinal_cord_injury_core_data_set
-  #Livs: registration_of_quality_of_life
-  #Urin: lower_urinary_tract_function
-  #Tarm: bowel_function
-  #Sati: activities_and_participation_satisfaction (bare NorScir)
-  #Perf: activities_and_participation_performance (bare NorScir)
-  #Kont: control_form (bare NorScir)
-  #Eq5d: eq_5d_5l (bare NorScir)
+  #HovedSkjema: spinal_cord_injury_core_data_set_1
+  #Livs: registration_of_quality_of_life_3
+  #Urin: lower_urinary_tract_function_4
+  #Tarm: bowel_function_5
+  #Sati: activities_and_participation_satisfaction_7 (bare NorScir)
+  #Perf: activities_and_participation_performance_6 (bare NorScir)
+  #Kont: control_form_2 (bare NorScir)
+  #Eq5d: eq_5d_5l_9 (bare NorScir)
 
   if ("session" %in% names(list(...))) {
     rapbase::repLogger(session = list(...)[["session"]],
@@ -382,32 +382,32 @@ Kont.CAis
                        Kont = varKont)
     variable <- paste0(', ', variable)
     qSkjema <- paste0(switch(valgtSkjema, #Dette vil bare fungere hvis konsekvent med navngiving i valgtVar
-                             Livs = 'INNER JOIN registration_of_quality_of_life Livs ',
-                             Urin = 'INNER JOIN lower_urinary_tract_function Urin ',
-                             Tarm = 'INNER JOIN bowel_function Tarm ',
-                             Funk = 'INNER JOIN activities_and_participation_performance Funk ',
-                             Eq5d = 'INNER JOIN eq_5d_5l Eq5d ',
-                             Kont = 'INNER JOIN control_form Kont '
+                             Livs = 'INNER JOIN registration_of_quality_of_life_3 Livs ',
+                             Urin = 'INNER JOIN lower_urinary_tract_function_4 Urin ',
+                             Tarm = 'INNER JOIN bowel_function_5 Tarm ',
+                             Funk = 'INNER JOIN activities_and_participation_performance_6 Funk ',
+                             Eq5d = 'INNER JOIN eq_5d_5l_9 Eq5d ',
+                             Kont = 'INNER JOIN control_form_2 Kont '
     ),
     'ON ',koblSkjema ,'.SkjemaGUID = ',valgtSkjema , '.HovedskjemaGUID ')
   }
-  #KontData <- rapbase::loadRegData(registryNam register, query='select * from control_form', dbType="mysql")
-  #TilfData <-  rapbase::loadRegData(registryName = register, query='select * from activities_and_participation_satisfaction', dbType="mysql")
-  #HovedSkjema <- rapbase::loadRegData(registryName = register, query='select * from spinal_cord_injury_core_data_set', dbType="mysql")
-  #LivsSkjema <- rapbase::loadRegData(registryName = register, query='select * from registration_of_quality_of_life', dbType="mysql")
+  #KontData <- rapbase::loadRegData(registryNam register, query='select * from control_form_2', dbType="mysql")
+  #TilfData <-  rapbase::loadRegData(registryName = register, query='select * from activities_and_participation_satisfaction_7', dbType="mysql")
+  #HovedSkjema <- rapbase::loadRegData(registryName = register, query='select * from spinal_cord_injury_core_data_set_1', dbType="mysql")
+  #LivsSkjema <- rapbase::loadRegData(registryName = register, query='select * from registration_of_quality_of_life_3', dbType="mysql")
 
   if (koblSkjema=='Hoved'){
     query <- paste0('SELECT ',
                     varHoved,
                     variable,
-                    ' FROM spinal_cord_injury_core_data_set Hoved ',
+                    ' FROM spinal_cord_injury_core_data_set_1 Hoved ',
                     qSkjema)
   }
   if (koblSkjema=='Kont'){
     query <- paste0('SELECT ',
                     varKont,
                     variable,
-                    ' FROM control_form Kont ',
+                    ' FROM control_form_2 Kont ',
                     qSkjema
     )
   }
@@ -423,11 +423,11 @@ Kont.CAis
     #RegData er nå Hovedskjema eller Kontrollskjema
     qTilf <- 'SELECT HovedskjemaGUID AS FunkskjemaGUID,
                     DataClDtS, DreslbdyS, FeedingS, FirstTimeClosed, MobilmodS, ToiletinS
-              FROM activities_and_participation_satisfaction'
+              FROM activities_and_participation_satisfaction_7'
     TilfData <- rapbase::loadRegData(registryName = 'data', query = qTilf, dbType = "mysql")
 
     qFunkTilf <- 'SELECT HovedskjemaGUID, SkjemaGUID AS FunkskjemaGUID FROM
-                          activities_and_participation_performance'
+                          activities_and_participation_performance_6'
     FunkVarKobl <- rapbase::loadRegData(registryName = 'data', query = qFunkTilf, dbType = "mysql")
 
     FunkTilf <- FunkVarKobl %>%

@@ -1,5 +1,3 @@
-
-
 Vedlegg til denne eposten inneholder resultater fra Norsk ryggmargsskaderegister  (NorSCIR).
 Rapporten er bestilt av deg eller av en som administrerer registeret.
 
@@ -16,16 +14,17 @@ Vennlig hilsen
 Rapporteket - en resultattjeneste for medisinske kvalitetsregistre
 
 
-This email contains results from medical registries as requested by you or a person acting on your behalf.
-If you have questions or do not want to receive such emails please contact
-NordicSCIR by email: NordicSCIR@stolav.no
 
-You can find further information about the registry on this web page:
+Attachments to this e-mail contains results from Nordic Spinal Cord Injury Registry (NordicScir).
+The report has been commissioned either by you or by an individual responsible for administering the registry.
+If you do not wish to receive this report or have questions about the report or its content, you can contact NordicScir by email: NorSCIR@stolav.no
+
+Further information about the registry is available at:
 www.nordicscir.no
 
-This email does not contain any health related data that void Norwegian legal privacy regulations.
-Requests to the sender of this email will not be responded to.
+This email does not contain sensitive health information. Requests to the sender of this email will not be answered.
 
 
-RAPPORTEKET
-reporting service for medical quality registries
+Sincerely, Rapporteket – a results service for medical quality registries
+
+

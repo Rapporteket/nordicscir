@@ -25,7 +25,7 @@ library(nordicscir)
 AlleTab <- nordicscir::getRealData(register = 'norscir')
 attach(AlleTab)
 dim(KontrollH)
-DataKtr <- rapbase::loadRegData(registryName = 'data', query = 'select *  FROM control_form', dbType="mysql") #2614
+DataKtr <- rapbase::loadRegData(registryName = 'data', query = 'select *  FROM control_form_2', dbType="mysql") #2614
 DataKtr <- DataKtr[DataKtr$CNeuExmDt >=  '2024-01-01', ]
 DataKtr <- DataKtr[!is.na(DataKtr$CNum), ]
 

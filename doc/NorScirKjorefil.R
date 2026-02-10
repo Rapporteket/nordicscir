@@ -22,27 +22,27 @@ attach(AlleTab)
 View(AlleTab)
 register <- 'norscir'
 Hoved <- rapbase::loadRegData(registryName = register, dbType="mysql",
-                            query='Select * from spinal_cord_injury_core_data_set ')
+                            query='Select * from spinal_cord_injury_core_data_set_1 ')
 Ktr <- rapbase::loadRegData(registryName = register, dbType="mysql",
-                            query='Select * from control_form ')
+                            query='Select * from control_form_2 ')
 Ktr <- Ktr[Ktr$ControlStatus==0, ]
 Livs <- rapbase::loadRegData(registryName = register, dbType="mysql",
-                            query= 'Select * from registration_of_quality_of_life ')
+                            query= 'Select * from registration_of_quality_of_life_3 ')
 #mister 2 skjema etter kobl H og K
 Urin <- rapbase::loadRegData(registryName = register, dbType="mysql",
-                             query= 'Select * from lower_urinary_tract_function ')
+                             query= 'Select * from lower_urinary_tract_function_4 ')
 #mister 0
 Tarm <- rapbase::loadRegData(registryName = register, dbType="mysql",
-                             query= 'Select * from bowel_function ')
+                             query= 'Select * from bowel_function_5 ')
 #mister 0
 Funk <- rapbase::loadRegData(registryName = register, dbType="mysql",
-                             query= 'Select * from activities_and_participation_performance ')
+                             query= 'Select * from activities_and_participation_performance_6 ')
 #Mister 0
 Tilf <- rapbase::loadRegData(registryName = register, dbType="mysql",
-                             query= 'Select * from activities_and_participation_satisfaction ')
+                             query= 'Select * from activities_and_participation_satisfaction_7 ')
 # Mister 0
 Eq5d <- rapbase::loadRegData(registryName = register, dbType="mysql",
-                             query= 'Select * from eq_5d_5l ')
+                             query= 'Select * from eq_5d_5l_9 ')
 #Mister 0
 
 tabH <- tabSkjemaTilknyttet(Data=AlleTab, moderSkjema='Hoved')
@@ -270,7 +270,7 @@ median(RegData$TidUtLiv)
 hist(RegData$SatGenrl)
 
 #Livskvalitetsskjema
-query <- 'select * FROM registration_of_quality_of_life Livs'
+query <- 'select * FROM registration_of_quality_of_life_3 Livs'
 LivskvalData <- rapbase::LoadRegData(registryName = 'nordicscir', query)
 LivskvalData <- LivskvalData[order(LivskvalData$FormDate), ]
 LivskvalData$FormDate <- as.Date(LivskvalData$FormDate)
