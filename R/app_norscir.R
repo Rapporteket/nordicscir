@@ -408,11 +408,11 @@ ui_norscir <- function() {
                             h3(em("Sykehusvise resultater")),
                             plotOutput("andelerGrVar", height='auto'),
                             #downloadButton('LastNedFigAndelGrVar', label='Velg format (til venstre) og last ned figur')
-                   ),
-                    tabPanel("Tabeller",
-                             uiOutput("tittelAndel"),
-                             br(),
-                             h3('Her kan det komme en tabell med verdier fra figuren på forrige side')
+                   ) # ,
+                    # tabPanel("Tabeller",
+                    #          uiOutput("tittelAndel"),
+                    #          br(),
+                    #          h3('Her kan det komme en tabell med verdier fra figuren på forrige side')
                    #          column(width = 4,
                    #                 h3("Sykehusvise resultater"),
                    #                 tableOutput("andelerGrVarTab"),
@@ -422,7 +422,7 @@ ui_norscir <- function() {
                    #                 h3("Utvikling over tid"),
                    #                 tableOutput("andelTidTab"),
                    #                 downloadButton(outputId = 'lastNed_tabAndelTid', label='Last ned tabell'))
-                    ))
+                    ) #)
                ) #mainPanel
 
       ), #tab
