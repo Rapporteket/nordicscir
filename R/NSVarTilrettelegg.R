@@ -150,15 +150,16 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
 
   if (valgtVar %in% c('ABMI', 'FBMI')) { #fordeling, andelgrvar
     RegData <- RegData[RegData$AdmitDt >= '2025-01-01', ]
+    RegData <- RegData[which(RegData$Alder >= 18), ]
     tittel <- paste0(ifelse(figurtype == 'andeler', 'BMI', 'Målt høyde og vekt'),
                      ' ved ',
                      ifelse(valgtVar == 'ABMI', 'innleggelse', 'utskriving'))
     varTxt <- 'registrert med BMI'
     ind <- which(!is.na(RegData[,valgtVar]))
     RegData$Variabel[ind] <- 1
-  #  RegData <- RegData[which(RegData$BMI >10), ]
+
     if (figurtype == 'andeler') {
-      RegData <- RegData[which(RegData$Alder >= 18), ]
+      RegData <- RegData[ind, ]
       gr <- c(0, 18.5, 25, 30, 35, 40, 1000)
       RegData$VariabelGr <- cut(RegData[ ,valgtVar], breaks=gr, include.lowest=TRUE, right=FALSE)
       grtxt <- c('<18,5', levels(RegData$VariabelGr)[2:(length(gr)-2)],'40+')
@@ -166,24 +167,7 @@ NSVarTilrettelegg  <- function(RegData, valgtVar, grVar='', figurtype='andeler')
       }
   }
 
-  if (valgtVar == 'BMI') { #Fordeling, AndelGrVar
-    #BMI > 30
-    RegData <- RegData[which(RegData$BMI >10), ]
-    gr <- c(0, 18.5, 25, 30, 35, 40, 1000)
-    RegData$VariabelGr <- cut(RegData$BMI, breaks=gr, include.lowest=TRUE, right=FALSE)
-    tittel <- 'Pasientenes BMI (Body Mass Index)'
-    grtxt <- c('<18,5', levels(RegData$VariabelGr)[2:(length(gr)-2)],'40+')
-    grtxt2 <- c('Undervekt', 'Normalvekt', 'Overvekt', 'Fedme', 'Fedme kl II', 'Fedme kl III')
-    xAkseTxt <- '"Body Mass Index"'
-    if (figurtype %in% c('andelGrVar', 'andelTid')) {
-      RegData$Variabel[which(RegData$BMI > 30)] <- 1
-      tittel <- 'Pasienter med fedme: (BMI>30)'
-      varTxt <- 'BMI>30'
-      sortAvtagende <- FALSE
-    }}
-
-
-  if (valgtVar == 'AnbefTidKtr') {
+if (valgtVar == 'AnbefTidKtr') {
     tittel <- 'Anbefalt tid til kontroll'
     retn <- 'H'
     gr <- 1:8 #8:1

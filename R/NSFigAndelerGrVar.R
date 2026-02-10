@@ -32,21 +32,6 @@ NSFigAndelerGrVar <- function(RegData=0,preprosess=1, # hentData=0,
     rapbase::repLogger(session = list(...)[["session"]], msg = paste0('AndelPrShus: ',valgtVar))
   }
 
-    # Ngr <- RegData$Total
-    # Ngrtxt <- as.character(Ngr)
-    # AndelHele <- 100*sum(RegData$RegNKR)/sum(RegData$Total)   #RegData$DG_nkr[indLandet]
-    # AndelerGr <- 100*RegData$RegNKR/RegData$Total #RegData$DG_nkr #[-indLandet]
-    # fargepalett='BlaaOff'
-    # utvalgTxt <- ''
-    # sortAvtagende <- T
-    # AntGr <- length(AndelerGr)
-    # GrNavn <- RegData$ShNavn
-    # hovedgrTxt <- 'Hele landet'
-    # N <- sum(RegData$Total)
-    # grVar <- 'ShNavn'
-    # Ngrense <- 0
-
-
     # if (hentData == 1) {
     #   RegData <- NSRegDataSQLV2V3()
     # }
@@ -143,7 +128,7 @@ NSFigAndelerGrVar <- function(RegData=0,preprosess=1, # hentData=0,
 
     #--------------------------FIGUR---------------------------------------------------
     #----------- Figurparametre ------------------------------
-    cexShNavn <- 0.9 #0.85
+    cexShNavn <- 1.1 #0.85
 
     FigTypUt <- rapFigurer::figtype(outfile, height=3*800, fargepalett=fargepalett)
     farger <- FigTypUt$farger
@@ -156,13 +141,13 @@ NSFigAndelerGrVar <- function(RegData=0,preprosess=1, # hentData=0,
     xmax <- min(max(AndelerGrSort, na.rm=T),100)*1.15
     pos <- rev(barplot(rev(as.numeric(AndelerGrSort)), horiz=T, border=NA, col=farger[4], #main=Tittel,
                        xlim=c(0,xmax), ylim=c(0.05, 1.25)*length(GrNavnSort), font.main=1, #xlab='Andel (%)',
-                       las=1, cex.names=cexShNavn*0.9))
+                       las=1, cex.names=cexShNavn))
     ybunn <- 0.1
     ytopp <- max(pos)+0.4
 
     pos <- rev(barplot(rev(as.numeric(AndelerGrSort)), horiz=T, border=NA, col=farger[4],
                        xlim=c(0,xmax), ylim=c(0.05, 1.25)*length(GrNavnSort), font.main=1, #xlab='Andel (%)',
-                       las=1, cex.names=cexShNavn*0.9, add=T))
+                       las=1, cex.names=cexShNavn, add=T))
     mtext('Andel (%)', side=1, line=2)
     #Linje for hele landet/utvalget:
     lines(x=rep(AndelHele, 2), y=c(ybunn, ytopp), col=farger[2], lwd=2)
