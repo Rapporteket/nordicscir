@@ -1264,7 +1264,8 @@ server_nordicscir <- function(input, output, session) {
     reports = disReports,
     orgs = orgs,
     eligible = visRapp,
-    user = user
+    user = user,
+    runAutoReportButton = (Sys.getenv("R_RAP_INSTANCE") == "QAC")
   )
 
   #----------- Eksport ----------------
