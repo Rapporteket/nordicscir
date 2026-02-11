@@ -4,8 +4,7 @@ Rapporten er bestilt av deg eller av en som administrerer registeret.
 Om du ikke ønsker å motta denne rapporten eller har spørsmål om rapporten eller innholdet, kan du ta kontakt med
 NordicSCIR på epost: NordicSCIR@stolav.no
 
-Nærmere info om registeret finner du her:
-www.nordicscir.no
+Nærmere info om registeret finner du på <a href="https://www.norscir.no">hjemmesiden til Norscir-registeret</a>.
 
 
 Denne eposten inneholder ikke sensitive helseopplysninger. Forespørsler til avsender av denne eposten vil ikke bli besvart.
