@@ -41,9 +41,9 @@ ui_nordicscir <- function() {
     shinyjs::useShinyjs(),
     shiny::navbarPage(
       id = "hovedark",
-      title = rapbase::title(regTitle),
+      title = rapbase::regTitle(regTitle),
       windowTitle = regTitle,
-      theme = rapbase::theme(),
+      theme = rapbase::rapTheme(),
 
       #----startside--------
       shiny::tabPanel(

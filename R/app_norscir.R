@@ -40,9 +40,9 @@ ui_norscir <- function() {
     shinyjs::useShinyjs(),
     shiny::navbarPage(
       id = "hovedark",
-      title = rapbase::title(regTitle),
+      title = rapbase::regTitle(regTitle),
       windowTitle = regTitle,
-      theme = rapbase::theme(),  # "rap/bootstrap.css",
+      theme = rapbase::rapTheme(),  # "rap/bootstrap.css",
 
       #----startside--------
       shiny::tabPanel(
