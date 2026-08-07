@@ -2,6 +2,13 @@
 devtools::install("../rapbase/.")
 devtools::install(upgrade = FALSE)
 
+setwd("C:/Users/lro2402unn/RegistreGIT/nordicscir")
+setwd('../data')
+sship::dec("c://Users/lro2402unn/RegistreGIT/data/nordicscir17691e2aa.sql.gz__20260513_074115.tar.gz",
+           keyfile = "c://Users/lro2402unn/.ssh/id_rsa",
+           target_dir = "c://Users/lro2402unn/RegistreGIT/data/.")
+# source c://Users/lro2402unn/RegistreGIT/data/norscir1628fd37e.sql;
+
 
 source("dev/sysSetenv.R")
 nordicscir::kjor_NSapper(register = "nordicscir", browser = TRUE)
@@ -14,11 +21,13 @@ RegData <- nordicscir::NSPreprosesser(RegData=nordicscir::NSRegDataSQL(valgtVar 
 RegDatau112 <- RegData[!(is.na(RegData$CNum) & RegData$ControlStatus==0), ]
 
 reg = 'nordicscir'
-AlleTab <- nordicscir::getRealData(register = reg)
-AlleTab <- nordicscir::processAllData(AlleTab, register = reg)
+AlleTabV2 <- nordicscir::getRealData(register = reg)
+AlleTabV2 <- nordicscir::processAllData(AlleTabV2, register = reg)
 attach(AlleTab)
 reshID <- 106896
-RegData <- HovedSkjema
+HovedSkjema <- AlleTabV2$HovedSkjema
+class(RegData$Aar)
+test <- SorterOgNavngiTidsEnhet(RegData=HovedSkjema, tidsenhet='Aar', tab=0, datoUt=0)
 
 #Div undersøkelse av kontroller:
 library(nordicscir)
