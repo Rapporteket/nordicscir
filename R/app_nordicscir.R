@@ -1192,7 +1192,17 @@ server_nordicscir <- function(input, output, session) {
       }
     )
   } else {
-    output$mndRapp.pdf <- NULL
+    output$mndRapp.pdf <- shiny::downloadHandler(
+      filename = function() {paste0("MndRapp", Sys.time(), ".pdf")},
+      content = function(file) {
+        src <- normalizePath(system.file("test.Rnw", package="nordicscir"))
+        owd <- setwd(tempdir())
+        on.exit(setwd(owd))
+        file.copy(src, "tmpNSmndRapp.Rnw", overwrite = TRUE)
+        knitr::knit2pdf("tmpNSmndRapp.Rnw")
+        file.copy(paste0(substr("tmpNSmndRapp.Rnw", 1, nchar("tmpNSmndRapp.Rnw") - 3), "pdf"), file)
+      }
+    )
   }
 
   #------------------ Abonnement -----------------------------------------------
