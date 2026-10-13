@@ -25,7 +25,7 @@ AlleTab <- nordicscir::getRealData(register = reg)
 AlleTab <- nordicscir::processAllData(AlleTab, register = reg)
 attach(AlleTab)
 reshID <- 106896
-HovedSkjema <- AlleTabV2$HovedSkjema
+HovedSkjema <- AlleTab$HovedSkjema
 NevrKlass <- lagTabNevrKlass(HovedSkjema = AlleTabV2$HovedSkjema, datoFra = '2025-10-01', datoUt=1)
 
 
