@@ -284,7 +284,7 @@ lagTabavFigGjsnGrVar <- function(UtDataFraFig){
 #' @export
 lagTabNevrKlass <- function(HovedSkjema, datoFra='2018-01-01', datoTil=Sys.Date(), datoUt=0){
 
-      Utvalg <- NSUtvalgEnh(HovedSkjema, datoFra = datoFra, datoTil = datoTil, datoUt = datoUt)
+  Utvalg <- NSUtvalgEnh(HovedSkjema, datoFra = datoFra, datoTil = datoTil, datoUt = datoUt)
       HovedSkjema <- Utvalg$RegData
       HovedSkjema$ShNavn <- as.factor(HovedSkjema$ShNavn)
       Ant <- addmargins(table(HovedSkjema$ShNavn))
@@ -304,9 +304,12 @@ NevrKlass <- rbind(
                                                      & HovedSkjema$FAis == -1])),
       'Utført, ikke klassifiserbar, ut: ' =
             addmargins(table(HovedSkjema$ShNavn[HovedSkjema$FAis==9])),
-      'Utført ved både inn og ut: ' =
-            paste0(sprintf('%.0f',AntKlassInnUt/Ant*100), '%')
-)
+      'Utført ved både inn og ut: ' = paste0(sprintf('%.0f',AntKlassInnUt/Ant*100), '%')
+        #    gsub('NaN%', '', paste0(sprintf('%.0f',AntKlassInnUt/Ant*100), '%'))
+      )
+
+NevrKlass <- NevrKlass[ ,-grep('NaN%', NevrKlass[7, ] )]
+
 colnames(NevrKlass)[dim(NevrKlass)[2] ] <- 'Alle enheter'
 
 return(NevrKlass)

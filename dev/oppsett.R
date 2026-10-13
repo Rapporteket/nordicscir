@@ -2,6 +2,13 @@
 devtools::install("../rapbase/.")
 devtools::install(upgrade = FALSE)
 
+setwd("C:/Users/lro2402unn/RegistreGIT/nordicscir")
+setwd('../data')
+sship::dec("norscir14dc7d59b.sql.gz__20261013_122347.tar.gz",
+           keyfile = "c://Users/lro2402unn/.ssh/id_rsa",
+           target_dir = "c://Users/lro2402unn/RegistreGIT/data/.")
+# source c://Users/lro2402unn/RegistreGIT/data/norscir14dc7d59b.sql;
+
 
 source("dev/sysSetenv.R")
 nordicscir::kjor_NSapper(register = "nordicscir", browser = TRUE)
@@ -18,7 +25,9 @@ AlleTab <- nordicscir::getRealData(register = reg)
 AlleTab <- nordicscir::processAllData(AlleTab, register = reg)
 attach(AlleTab)
 reshID <- 106896
-RegData <- HovedSkjema
+HovedSkjema <- AlleTab$HovedSkjema
+NevrKlass <- lagTabNevrKlass(HovedSkjema = AlleTabV2$HovedSkjema, datoFra = '2025-10-01', datoUt=1)
+
 
 #Div undersøkelse av kontroller:
 library(nordicscir)
