@@ -24,10 +24,7 @@ NSFigGjsnGrVar <- function(RegData, valgtVar, valgtMaal='gjsn', grVar='ShNavn',
 					AIS='', minald=0, maxald=130, erMann='', traume='alle', nivaaUt=99,
 					preprosess=1, outfile='', hentData=0, ...) {
 
-  # if ("session" %in% names(list(...))) {
-  #   rapbase::repLogger(session = list(...)[["session"]], msg = "Sentralmaal per sykehus, figur")
-  # }
-      if (hentData == 1) {
+       if (hentData == 1) {
             RegData <- NSRegDataSQL(valgtVar=valgtVar)
       }
       if (preprosess == 1) {

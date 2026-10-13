@@ -28,15 +28,7 @@ NSFigAndelerGrVar <- function(RegData=0,preprosess=1, # hentData=0,
                                 minald=0, maxald=130, erMann='',
                                 enhetsUtvalg=0, grVar='ShNavn',
                                 Ngrense=10, reshID=0, outfile='', ...) {
-  if ("session" %in% names(list(...))) {
-    rapbase::repLogger(session = list(...)[["session"]], msg = paste0('AndelPrShus: ',valgtVar))
-  }
-
-    # if (hentData == 1) {
-    #   RegData <- NSRegDataSQLV2V3()
-    # }
-
-    # Preprosessere data
+     # Preprosessere data
     if ((preprosess==1) & (dim(RegData)[1] >1)){
       RegData <- NSPreprosess(RegData=RegData)}
 

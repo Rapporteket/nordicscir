@@ -44,10 +44,6 @@ getRealData <- function(register='norscir', ...) {
              ))
       }
 
-    if ("session" %in% names(list(...))) {
-      rapbase::repLogger(session = list(...)[["session"]],
-                        msg = 'Har hentet alle data fra database')
-    }
 
     return(data)},
     error = function(e) {
@@ -107,10 +103,6 @@ processAllData <- function(data, register = 'norscir', ...) {
   # Prosesserer data som er koblet med hovedskjema, dvs. ikke de som er koblet bare med kontrollskjema
   #Vurder å koble på hovedskjema til disse kontrollskjemaene også.
 
-  if ("session" %in% names(list(...))) {
-    rapbase::repLogger(session = list(...)[["session"]],
-                      msg = 'Starter prosessering av data')
-  }
   tryCatch({
     HovedSkjema <- NSPreprosesser(data$HovedSkjema)
     LivskvalH <- NSPreprosesser(data$LivskvalH)
@@ -138,11 +130,6 @@ processAllData <- function(data, register = 'norscir', ...) {
         )
 
       Skjemaer <- append(Skjemaer, NorskeSkjemaer)
-
-if ("session" %in% names(list(...))) {
-  rapbase::repLogger(session = list(...)[["session"]],
-                    msg = paste0('Har prosessert kontroll og aktivitetstabeller'))
-}
     }
 
     return(Skjemaer)

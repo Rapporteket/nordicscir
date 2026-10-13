@@ -34,10 +34,6 @@ NSRegDataSQL <- function(valgtVar='Alder', register='norscir', koblSkjema = 'Hov
   #Kont: control_form_2 (bare NorScir)
   #Eq5d: eq_5d_5l_9 (bare NorScir)
 
-  if ("session" %in% names(list(...))) {
-    rapbase::repLogger(session = list(...)[["session"]],
-                       msg = "Starter SQL-funksjon")
-  }
 
   valgtSkjema <- substr(valgtVar,1,4)
 
@@ -438,10 +434,5 @@ Kont.CAis
       dplyr::inner_join(FunkTilf, by = dplyr::join_by(SkjemaGUID == HovedskjemaGUID))
   }
 
-  if ("session" %in% names(list(...))) {
-    rapbase::repLogger(session = list(...)[["session"]],
-                       msg = paste0('Har hentet skjema ', valgtSkjema, 'fra database'))
-  }
-
-  return(RegData)
+   return(RegData)
 }
