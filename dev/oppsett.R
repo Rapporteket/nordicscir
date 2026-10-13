@@ -4,10 +4,10 @@ devtools::install(upgrade = FALSE)
 
 setwd("C:/Users/lro2402unn/RegistreGIT/nordicscir")
 setwd('../data')
-sship::dec("c://Users/lro2402unn/RegistreGIT/data/nordicscir17691e2aa.sql.gz__20260513_074115.tar.gz",
+sship::dec("norscir14dc7d59b.sql.gz__20261013_122347.tar.gz",
            keyfile = "c://Users/lro2402unn/.ssh/id_rsa",
            target_dir = "c://Users/lro2402unn/RegistreGIT/data/.")
-# source c://Users/lro2402unn/RegistreGIT/data/norscir1628fd37e.sql;
+# source c://Users/lro2402unn/RegistreGIT/data/norscir14dc7d59b.sql;
 
 
 source("dev/sysSetenv.R")
@@ -21,13 +21,13 @@ RegData <- nordicscir::NSPreprosesser(RegData=nordicscir::NSRegDataSQL(valgtVar 
 RegDatau112 <- RegData[!(is.na(RegData$CNum) & RegData$ControlStatus==0), ]
 
 reg = 'nordicscir'
-AlleTabV2 <- nordicscir::getRealData(register = reg)
-AlleTabV2 <- nordicscir::processAllData(AlleTabV2, register = reg)
+AlleTab <- nordicscir::getRealData(register = reg)
+AlleTab <- nordicscir::processAllData(AlleTab, register = reg)
 attach(AlleTab)
 reshID <- 106896
 HovedSkjema <- AlleTabV2$HovedSkjema
-class(RegData$Aar)
-test <- SorterOgNavngiTidsEnhet(RegData=HovedSkjema, tidsenhet='Aar', tab=0, datoUt=0)
+NevrKlass <- lagTabNevrKlass(HovedSkjema = AlleTabV2$HovedSkjema, datoFra = '2025-10-01', datoUt=1)
+
 
 #Div undersøkelse av kontroller:
 library(nordicscir)
