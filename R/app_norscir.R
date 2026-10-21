@@ -659,106 +659,7 @@ ui_norscir <- function() {
             )
           )
         )
-      ), #tab Registreringsoversikter
-
-      #----------------------Registeradministrasjon-----------------------------
-
-      shiny::tabPanel(
-        "Registeradministrasjon",
-        shiny::h2("Fane som bare er synlig for SC-bruker."),
-
-        shiny::tabsetPanel(
-          id = "ark",
-          shiny::tabPanel(
-            "Samlerapporter",
-            shiny::sidebarPanel(
-              width=3,
-              shiny::h3("Utvalg"),
-              shiny::dateRangeInput(
-                inputId = "datovalgSamleRapp",
-                start = startDato-150,
-                end = Sys.Date(),
-                label = "Tidsperiode",
-                separator="t.o.m.",
-                language="nb"
-              ),
-              br()
-            ),
-
-            shiny::mainPanel(
-              shiny::br(),
-              shiny::br(),
-              shiny::h3("Resultater, hele landet"), #),
-              shiny::downloadButton(
-                outputId = "samleRappLand.pdf",
-                label="Last ned samlerapport, hele landet", class = "butt"
-              ),
-              shiny::br(),
-              shiny::h3("Resultater eget sykehus"), #),
-              shiny::downloadButton(
-                outputId = "samleRappEgen.pdf",
-                label="Last ned egen samlerapport", class = "butt"
-              ),
-              shiny::br()
-
-            )
-          ),
-          shiny::tabPanel(
-            "Utsendinger",
-            title = "Utsending av rapporter",
-            shiny::sidebarLayout(
-              shiny::sidebarPanel(
-                rapbase::autoReportOrgInput("NSuts"),
-                rapbase::autoReportInput("NSuts"),
-                br(),
-                br()
-                # shiny::actionButton(inputId = "run_autoreport",
-                #                     label = "Kjør autorapporter"),
-                # shiny::dateInput(inputId = "rapportdato",
-                #                  label = "Kjør rapporter med dato:",
-                #                  value = Sys.Date(),
-                #                  min = Sys.Date(),
-                #                  max = Sys.Date() + 366
-                # )
-                #, shiny::checkboxInput(inputId = "dryRun", label = "Send e-post")
-              ),
-              shiny::mainPanel(
-                rapbase::autoReportUI("NSuts"),
-                shiny::br()
-              #     p(em("System message:")),
-              #     verbatimTextOutput("sysMessage"),
-              #     p(em("Function message:")),
-              #     verbatimTextOutput("funMessage")
-              # #  )
-              )
-            )
-          ),
-          shiny::tabPanel(
-            "Eksport, krypterte data",
-            shiny::sidebarPanel(
-              rapbase::exportUCInput("norscirExport")
-            ),
-            shiny::mainPanel(
-              rapbase::exportGuideUI("norscirExportGuide")
-            )
-          ) #Eksport-tab
-        ) #tabsetPanel
-      ), #Registeradm-tab
-
-      #------------------Abonnement------------------------
-      shiny::tabPanel(
-        shiny::p(
-          "Abonnement",
-          title="Bestill automatisk utsending av månedsrapport på e-post"),
-        shiny::sidebarLayout(
-          shiny::sidebarPanel(
-            rapbase::autoReportInput("ns-subscription")
-          ),
-          shiny::mainPanel(
-            rapbase::autoReportUI("ns-subscription")
-          )
-        )
-      )
+      ) #tab Registreringsoversikter
     ) #navbar
   ) #tagList
 }
@@ -810,11 +711,122 @@ server_norscir <- function(input, output, session) {
     caller = "norscir"
   )
 
+  startDato <- as.Date(
+    paste0(as.numeric(format(Sys.Date()-400, "%Y")), '-01-01')
+  )
+
+  scTabsInserted <- shiny::reactiveVal(FALSE)
   observeEvent(user$role(), {
     if (user$role() == 'SC') {
-      showTab(inputId = "hovedark", target = "Registeradministrasjon")
-    } else {
-      hideTab(inputId = "hovedark", target = "Registeradministrasjon")
+      if (!scTabsInserted()) {
+        shiny::insertTab(
+          inputId = "hovedark",
+          target = "Registreringsoversikter",
+          position = "after",
+          select = FALSE,
+          tab = shiny::tabPanel(
+            "Registeradministrasjon",
+            shiny::h2("Fane som bare er synlig for SC-bruker."),
+
+            shiny::tabsetPanel(
+              id = "ark",
+              shiny::tabPanel(
+                "Samlerapporter",
+                shiny::sidebarPanel(
+                  width=3,
+                  shiny::h3("Utvalg"),
+                  shiny::dateRangeInput(
+                    inputId = "datovalgSamleRapp",
+                    start = startDato-150,
+                    end = Sys.Date(),
+                    label = "Tidsperiode",
+                    separator="t.o.m.",
+                    language="nb"
+                  ),
+                  br()
+                ),
+
+                shiny::mainPanel(
+                  shiny::br(),
+                  shiny::br(),
+                  shiny::h3("Resultater, hele landet"), #),
+                  shiny::downloadButton(
+                    outputId = "samleRappLand.pdf",
+                    label="Last ned samlerapport, hele landet", class = "butt"
+                  ),
+                  shiny::br(),
+                  shiny::h3("Resultater eget sykehus"), #),
+                  shiny::downloadButton(
+                    outputId = "samleRappEgen.pdf",
+                    label="Last ned egen samlerapport", class = "butt"
+                  ),
+                  shiny::br()
+
+                )
+              ),
+              shiny::tabPanel(
+                "Utsendinger",
+                title = "Utsending av rapporter",
+                shiny::sidebarLayout(
+                  shiny::sidebarPanel(
+                    rapbase::autoReportOrgInput("NSuts"),
+                    rapbase::autoReportInput("NSuts"),
+                    br(),
+                    br()
+                    # shiny::actionButton(inputId = "run_autoreport",
+                    #                     label = "Kjør autorapporter"),
+                    # shiny::dateInput(inputId = "rapportdato",
+                    #                  label = "Kjør rapporter med dato:",
+                    #                  value = Sys.Date(),
+                    #                  min = Sys.Date(),
+                    #                  max = Sys.Date() + 366
+                    # )
+                    #, shiny::checkboxInput(inputId = "dryRun", label = "Send e-post")
+                  ),
+                  shiny::mainPanel(
+                    rapbase::autoReportUI("NSuts"),
+                    shiny::br()
+                  )
+                )
+              ),
+              shiny::tabPanel(
+                "Eksport, krypterte data",
+                shiny::sidebarPanel(
+                  rapbase::exportUCInput("norscirExport")
+                ),
+                shiny::mainPanel(
+                  rapbase::exportGuideUI("norscirExportGuide")
+                )
+              ) #Eksport-tab
+            ) #tabsetPanel
+          )
+        )
+        shiny::insertTab(
+          inputId = "hovedark",
+          target = "Registeradministrasjon",
+          position = "after",
+          select = FALSE,
+          tab = shiny::tabPanel(
+            shiny::p(
+              "Abonnement",
+              title="Bestill automatisk utsending av månedsrapport på e-post"),
+            shiny::sidebarLayout(
+              shiny::sidebarPanel(
+                rapbase::autoReportInput("ns-subscription")
+              ),
+              shiny::mainPanel(
+                rapbase::autoReportUI("ns-subscription")
+              )
+            ),
+            value = "Abonnement"
+          )
+        )
+        scTabsInserted(TRUE)
+      }
+    } else if (scTabsInserted()) {
+      shiny::removeTab(inputId = "hovedark", target = "Abonnement")
+      shiny::removeTab(inputId = "hovedark", target = "Registeradministrasjon")
+      scTabsInserted(FALSE)
     }
   })
 
