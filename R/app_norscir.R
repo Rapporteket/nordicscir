@@ -659,7 +659,22 @@ ui_norscir <- function() {
             )
           )
         )
-      ) #tab Registreringsoversikter
+      ), #tab Registreringsoversikter
+
+      #------------------Abonnement------------------------
+      shiny::tabPanel(
+        shiny::p(
+          "Abonnement",
+          title="Bestill automatisk utsending av månedsrapport på e-post"),
+        shiny::sidebarLayout(
+          shiny::sidebarPanel(
+            rapbase::autoReportInput("ns-subscription")
+          ),
+          shiny::mainPanel(
+            rapbase::autoReportUI("ns-subscription")
+          )
+        )
+      )
     ) #navbar
   ) #tagList
 }
@@ -801,30 +816,9 @@ server_norscir <- function(input, output, session) {
             ) #tabsetPanel
           )
         )
-        shiny::insertTab(
-          inputId = "hovedark",
-          target = "Registeradministrasjon",
-          position = "after",
-          select = FALSE,
-          tab = shiny::tabPanel(
-            shiny::p(
-              "Abonnement",
-              title="Bestill automatisk utsending av månedsrapport på e-post"),
-            shiny::sidebarLayout(
-              shiny::sidebarPanel(
-                rapbase::autoReportInput("ns-subscription")
-              ),
-              shiny::mainPanel(
-                rapbase::autoReportUI("ns-subscription")
-              )
-            ),
-            value = "Abonnement"
-          )
-        )
         scTabsInserted(TRUE)
       }
     } else if (scTabsInserted()) {
-      shiny::removeTab(inputId = "hovedark", target = "Abonnement")
       shiny::removeTab(inputId = "hovedark", target = "Registeradministrasjon")
       scTabsInserted(FALSE)
     }
