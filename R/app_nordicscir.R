@@ -484,75 +484,7 @@ ui_nordicscir <- function() {
             )
           )
         )
-      ), #tab Registreringsoversikter
-
-      #----------------------Registeradministrasjon-----------------------------
-
-      shiny::tabPanel(
-        "Registeradministrasjon",
-        shiny::h2("Fane som bare er synlig for SC-bruker."),
-        h3('NB: Samlerapporten er ikke tilpasset nordiske data'),
-        h3('Månedsrapporten er tilpasset nordiske data'),
-
-        shiny::tabsetPanel(
-          id = "ark",
-          # shiny::tabPanel(
-          #   "Månedsrapport",
-          #   #title = "Månedsrapport",
-          # shiny::h3("Månedsrapport"),
-          # shiny::sidebarLayout(
-          #   shiny::sidebarPanel(
-          #     shiny::downloadButton(
-          #   outputId = "mndRapp.pdf",
-          #   label = "Last ned MÅNEDSRAPPORT",
-          #   class = "butt")
-          #   ),
-          #   shiny::mainPanel()
-          # )
-          # ),
-
-          shiny::tabPanel(
-            "Utsendinger",
-            title = "Utsending av rapporter",
-            shiny::sidebarLayout(
-              shiny::sidebarPanel(
-                rapbase::autoReportOrgInput("NSuts"),
-                rapbase::autoReportInput("NSuts")
-              ),
-              shiny::mainPanel(
-                h4('NB: Samlerapporten er ikke tilpasset nordiske data'),
-                h4('Månedsrapporten er tilpasset nordiske data'),
-                br(),
-                br(),
-                rapbase::autoReportUI("NSuts")
-              )
-            )
-          ),
-          shiny::tabPanel(
-            "Eksport, krypterte data",
-            shiny::sidebarPanel(
-              rapbase::exportUCInput("nordicscirExport")
-            ),
-            shiny::mainPanel(
-              rapbase::exportGuideUI("nordicscirExportGuide")
-            )
-          ) #Eksport-tab
-        ) #tabsetPanel
-      ), #Registeradm-tab
-      # ------------------Abonnement------------------------
-      shiny::tabPanel("Abonnement",
-        shiny::p("Abonnement",
-          title="Bestill automatisk utsending av månedsrapport på e-post"
-        ),
-        shiny::sidebarLayout(
-          shiny::sidebarPanel(
-            rapbase::autoReportInput("ns-subscription")
-          ),
-          shiny::mainPanel(
-            rapbase::autoReportUI("ns-subscription")
-          )
-        )
-      )
+      ) #tab Registreringsoversikter
     ) #navbar
   ) #tagList
 }
@@ -613,13 +545,93 @@ server_nordicscir <- function(input, output, session) {
     caller = "nordicscir"
   )
 
+  scTabsInserted <- shiny::reactiveVal(FALSE)
   observeEvent(user$role(), {
     if (user$role() == 'SC') {
-      showTab(inputId = "hovedark", target = "Registeradministrasjon")
-      showTab(inputId = "hovedark", target = "Abonnement")
-    } else {
-      hideTab(inputId = "hovedark", target = "Registeradministrasjon")
-      hideTab(inputId = "hovedark", target = "Abonnement")
+      if (!scTabsInserted()) {
+        shiny::insertTab(
+          inputId = "hovedark",
+          target = "Registreringsoversikter",
+          position = "after",
+          select = FALSE,
+          tab = shiny::tabPanel(
+            "Registeradministrasjon",
+            shiny::h2("Fane som bare er synlig for SC-bruker."),
+            h3('NB: Samlerapporten er ikke tilpasset nordiske data'),
+            h3('Månedsrapporten er tilpasset nordiske data'),
+
+            shiny::tabsetPanel(
+              id = "ark",
+              # shiny::tabPanel(
+              #   "Månedsrapport",
+              #   #title = "Månedsrapport",
+              # shiny::h3("Månedsrapport"),
+              # shiny::sidebarLayout(
+              #   shiny::sidebarPanel(
+              #     shiny::downloadButton(
+              #   outputId = "mndRapp.pdf",
+              #   label = "Last ned MÅNEDSRAPPORT",
+              #   class = "butt")
+              #   ),
+              #   shiny::mainPanel()
+              # )
+              # ),
+
+              shiny::tabPanel(
+                "Utsendinger",
+                title = "Utsending av rapporter",
+                shiny::sidebarLayout(
+                  shiny::sidebarPanel(
+                    rapbase::autoReportOrgInput("NSuts"),
+                    rapbase::autoReportInput("NSuts")
+                  ),
+                  shiny::mainPanel(
+                    h4('NB: Samlerapporten er ikke tilpasset nordiske data'),
+                    h4('Månedsrapporten er tilpasset nordiske data'),
+                    br(),
+                    br(),
+                    rapbase::autoReportUI("NSuts")
+                  )
+                )
+              ),
+              shiny::tabPanel(
+                "Eksport, krypterte data",
+                shiny::sidebarPanel(
+                  rapbase::exportUCInput("nordicscirExport")
+                ),
+                shiny::mainPanel(
+                  rapbase::exportGuideUI("nordicscirExportGuide")
+                )
+              ) #Eksport-tab
+            ) #tabsetPanel
+          )
+        )
+        shiny::insertTab(
+          inputId = "hovedark",
+          target = "Registeradministrasjon",
+          position = "after",
+          select = FALSE,
+          tab = shiny::tabPanel(
+            "Abonnement",
+            shiny::p("Abonnement",
+              title = "Bestill automatisk utsending av månedsrapport på e-post"
+            ),
+            shiny::sidebarLayout(
+              shiny::sidebarPanel(
+                rapbase::autoReportInput("ns-subscription")
+              ),
+              shiny::mainPanel(
+                rapbase::autoReportUI("ns-subscription")
+              )
+            )
+          )
+        )
+        scTabsInserted(TRUE)
+      }
+    } else if (scTabsInserted()) {
+      shiny::removeTab(inputId = "hovedark", target = "Abonnement")
+      shiny::removeTab(inputId = "hovedark", target = "Registeradministrasjon")
+      scTabsInserted(FALSE)
     }
   })
 
